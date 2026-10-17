@@ -240,3 +240,18 @@
 .map-unit-token.focused{box-shadow:0 0 0 2px #fff7,0 2px 8px #0009}.map-unit-token.attacking{box-shadow:0 0 9px #f95e57}.map-unit-token .token-portraits img{width:27px;height:39px;border-radius:3px;object-fit:cover;margin:0}.map-unit-token .token-copy{min-width:0;display:flex;flex-direction:column;gap:0}.map-unit-token b{font-size:10px;white-space:nowrap;overflow:hidden;max-width:53px}.map-unit-token strong{font:700 17px Georgia,serif;line-height:19px}.map-unit-token small{font:9px sans-serif;margin-left:2px}.map-unit-token em{font:normal 8px sans-serif;color:#d5dfca}.map-unit-token[data-role=king]{background:#403427ed}.map-unit-token .token-portraits{display:flex}
 .battle-sequence,.scene-position{text-align:center;color:var(--muted);font-size:11px;margin:8px}.event-information{text-align:center;min-height:240px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:25px;gap:15px}.event-information>svg{color:var(--gold)}.event-information h3{font-size:21px;line-height:1.5}.event-information p{font-size:12px;line-height:1.8;color:var(--muted)}.commander-mini.fallen{opacity:.5}.visual-nation-card>small{font-size:9px;color:var(--muted);display:block;margin-top:5px}.death-judgment{text-align:center;display:flex;gap:12px;align-items:center;justify-content:center}.death-judgment .visual-die{width:66px;height:75px}.death-judgment .die-number{font-size:28px}.death-judgment .die-equation{font-size:10px}.merging-bonus{position:absolute;right:8px;bottom:20px;color:#dfbd71;animation:bonus-merge .5s ease-in both}@keyframes bonus-merge{from{transform:translateY(20px);opacity:1}to{transform:translate(-15px,-20px);opacity:0}}.visual-die.merging{box-shadow:0 0 24px #dbbc6f66}.production-details{max-height:180px;overflow:auto}
 .recording-mode .arena-heading{padding-bottom:6px}.recording-mode .arena-panel .single-judgment{margin:10px 0}.recording-mode .arena-panel .scene-portrait.compact{max-width:100px}
+
+/* Die face and final score share a light-to-red scale, including corrected scores. */
+.visual-die .die-number,.die-equation>strong{color:var(--die-ink,#f4e5ba)}
+.visual-die.locked{border-color:var(--die-ink,#dbbc74);box-shadow:0 0 24px color-mix(in srgb,var(--die-ink,#dbbc74) 22%,transparent),inset 0 0 18px #cfa55510}
+@keyframes studio-die-faces{
+  0%{content:var(--face-1);color:var(--face-color-1)}
+  15%{content:var(--face-2);color:var(--face-color-2)}
+  30%{content:var(--face-3);color:var(--face-color-3)}
+  45%{content:var(--face-4);color:var(--face-color-4)}
+  60%{content:var(--face-5);color:var(--face-color-5)}
+  75%{content:var(--face-6);color:var(--face-color-6)}
+  90%{content:var(--face-7);color:var(--face-color-7)}
+}
+.map-panel-actions{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap}
+.map-panel-actions>.button{font-size:10px;padding:7px 10px;min-height:32px;white-space:nowrap}

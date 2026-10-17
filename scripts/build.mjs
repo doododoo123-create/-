@@ -24,10 +24,12 @@ await bundle(resolve(root, 'src/app.js'));
 const script = `(() => {\n'use strict';\n${chunks.join('\n')}\n})();`.replace(/<\/script/gi, '<\\/script');
 const css = await readFile(resolve(root, 'src/ui/style.css'), 'utf8');
 const visuals = await readFile(resolve(root, 'src/ui/visuals.css'), 'utf8');
+const mapStage = await readFile(resolve(root, 'src/ui/map-stage.css'), 'utf8');
 const favicon = Buffer.from(await readFile(resolve(root, 'favicon.svg'))).toString('base64');
 let html = await readFile(resolve(root, 'index.html'), 'utf8');
 html = html.replace('<link rel="stylesheet" href="./src/ui/style.css">', `<style>${css}</style>`)
   .replace('<link rel="stylesheet" href="./src/ui/visuals.css">', `<style>${visuals}</style>`)
+  .replace('<link rel="stylesheet" href="./src/ui/map-stage.css">', `<style>${mapStage}</style>`)
   .replace('href="./favicon.svg"', `href="data:image/svg+xml;base64,${favicon}"`)
   .replace('<script type="module" src="./src/app.js"></script>', `<script>${script}</script>`);
 const dist = resolve(root, 'dist');

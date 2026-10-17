@@ -256,6 +256,168 @@
 .map-unit-token.focused{box-shadow:0 0 0 2px #fff7,0 2px 8px #0009}.map-unit-token.attacking{box-shadow:0 0 9px #f95e57}.map-unit-token .token-portraits img{width:27px;height:39px;border-radius:3px;object-fit:cover;margin:0}.map-unit-token .token-copy{min-width:0;display:flex;flex-direction:column;gap:0}.map-unit-token b{font-size:10px;white-space:nowrap;overflow:hidden;max-width:53px}.map-unit-token strong{font:700 17px Georgia,serif;line-height:19px}.map-unit-token small{font:9px sans-serif;margin-left:2px}.map-unit-token em{font:normal 8px sans-serif;color:#d5dfca}.map-unit-token[data-role=king]{background:#403427ed}.map-unit-token .token-portraits{display:flex}
 .battle-sequence,.scene-position{text-align:center;color:var(--muted);font-size:11px;margin:8px}.event-information{text-align:center;min-height:240px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:25px;gap:15px}.event-information>svg{color:var(--gold)}.event-information h3{font-size:21px;line-height:1.5}.event-information p{font-size:12px;line-height:1.8;color:var(--muted)}.commander-mini.fallen{opacity:.5}.visual-nation-card>small{font-size:9px;color:var(--muted);display:block;margin-top:5px}.death-judgment{text-align:center;display:flex;gap:12px;align-items:center;justify-content:center}.death-judgment .visual-die{width:66px;height:75px}.death-judgment .die-number{font-size:28px}.death-judgment .die-equation{font-size:10px}.merging-bonus{position:absolute;right:8px;bottom:20px;color:#dfbd71;animation:bonus-merge .5s ease-in both}@keyframes bonus-merge{from{transform:translateY(20px);opacity:1}to{transform:translate(-15px,-20px);opacity:0}}.visual-die.merging{box-shadow:0 0 24px #dbbc6f66}.production-details{max-height:180px;overflow:auto}
 .recording-mode .arena-heading{padding-bottom:6px}.recording-mode .arena-panel .single-judgment{margin:10px 0}.recording-mode .arena-panel .scene-portrait.compact{max-width:100px}
+
+/* Die face and final score share a light-to-red scale, including corrected scores. */
+.visual-die .die-number,.die-equation>strong{color:var(--die-ink,#f4e5ba)}
+.visual-die.locked{border-color:var(--die-ink,#dbbc74);box-shadow:0 0 24px color-mix(in srgb,var(--die-ink,#dbbc74) 22%,transparent),inset 0 0 18px #cfa55510}
+@keyframes studio-die-faces{
+  0%{content:var(--face-1);color:var(--face-color-1)}
+  15%{content:var(--face-2);color:var(--face-color-2)}
+  30%{content:var(--face-3);color:var(--face-color-3)}
+  45%{content:var(--face-4);color:var(--face-color-4)}
+  60%{content:var(--face-5);color:var(--face-color-5)}
+  75%{content:var(--face-6);color:var(--face-color-6)}
+  90%{content:var(--face-7);color:var(--face-color-7)}
+}
+.map-panel-actions{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap}
+.map-panel-actions>.button{font-size:10px;padding:7px 10px;min-height:32px;white-space:nowrap}
+</style>
+  <style>/* Fullscreen recording stage: stable #app owns the browser fullscreen session. */
+body.map-stage-open{overflow:hidden}
+#app.map-fullscreen,#app.map-fullscreen:fullscreen{width:100%;height:100%;background:#101722}
+.map-stage{position:fixed;inset:0;z-index:50;height:100vh;height:100dvh;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:12px;padding:16px 20px 12px;background:radial-gradient(ellipse at 80% 0,#263448,#101722 70%);color:#e4e9f1;overflow:hidden}
+.map-stage-header{display:flex;align-items:center;gap:20px;min-height:45px}
+.map-stage-title{display:flex;align-items:center;gap:12px;min-width:0;flex:1}
+.map-stage-title>svg{color:#d5bb82;flex:none}
+.map-stage-title h1{font-size:20px;line-height:1.4;font-weight:650;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:45vw}
+.map-stage-title span{color:#91a4bd;display:block;font-size:10px;letter-spacing:1px;margin-top:3px;font-variant-numeric:tabular-nums}
+.map-stage-title i,.map-stage-shortcuts i{font-style:normal;margin:0 7px;color:#5e718c}
+.map-stage-header>.button{font-size:10px;padding:8px 12px;min-height:34px;border-color:#445268;background:#182433;color:#c2ccda}
+.map-stage-heading-status{display:flex;align-items:center;gap:7px;font-size:11px;color:#acbad0}
+.map-stage-layout{min-height:0;display:grid;grid-template-columns:minmax(0,1fr) clamp(270px,22vw,350px);gap:16px}
+.map-stage-canvas{min-height:0;min-width:0;display:grid;grid-template-rows:minmax(0,1fr) auto;gap:10px}
+.map-stage-atlas{min-height:0;min-width:0;overflow:hidden;border:1px solid #465361;border-radius:10px;background:#80a4aa;box-shadow:0 9px 30px #030c1844}
+.map-stage .atlas-scroll{height:100%;max-height:none;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#80a4aa}
+.map-stage .atlas-map{height:100%;width:100%;min-width:0;aspect-ratio:auto;flex:none}
+.map-stage-nations{min-width:0}
+.map-stage-nations .visual-nations{display:flex;gap:7px;margin:0;overflow-x:auto;scrollbar-width:thin;scrollbar-color:#52647e transparent}
+.map-stage-nations .visual-nation-card{flex:1 0 88px;padding:8px 10px;border-radius:6px}
+.map-stage-nations .visual-nation-card>span{font-size:10px}
+.map-stage-nations .visual-nation-card>div{margin-top:5px}
+.map-stage-nations .visual-nation-card strong{font-size:20px}
+.map-stage-nations .visual-nation-card small{font-size:8px}
+.map-stage-nations .visual-nation-card>small{display:none}
+.map-stage-sidebar{min-height:0;min-width:0;overflow:auto;scrollbar-width:thin;scrollbar-color:#536780 transparent;display:flex;flex-direction:column;gap:12px}
+.map-stage-section-label{font-size:10px;letter-spacing:2px;color:#b9a67c;display:block;padding:2px 3px}
+.map-stage .arena-panel{position:static;top:auto;padding:16px;border-radius:10px;box-shadow:none;flex:none}
+.map-stage .arena-top{padding-bottom:7px;font-size:8px}
+.map-stage .arena-nation{font-size:11px}
+.map-stage .scene-position{text-align:right;font-size:9px;margin:0 0 10px;color:#7188a4}
+.map-stage .arena-heading{min-height:0;margin-bottom:13px}
+.map-stage .arena-heading>.eyebrow{display:none}
+.map-stage .arena-heading h2{font-size:18px;line-height:1.55;margin:0 0 5px;letter-spacing:-.4px}
+.map-stage .arena-heading p{font-size:11px;line-height:1.7;color:#b0bed0;word-break:normal}
+.map-stage .single-judgment{min-height:0;padding:5px 0 10px;gap:19px}
+.map-stage .scene-portrait{width:85px;flex-basis:85px;border-radius:6px}
+.map-stage .scene-portrait>img{height:106px}
+.map-stage .scene-portrait figcaption{padding:5px}
+.map-stage .scene-portrait figcaption strong{font-size:12px}
+.map-stage .scene-portrait figcaption small{font-size:8px}
+.map-stage .scene-portrait figcaption span{font-size:8px}
+.map-stage .visual-die{width:78px;height:90px;border-radius:11px}
+.map-stage .visual-die .die-number,.map-stage .rolling-number{font-size:46px}
+.map-stage .rolling-number{top:12px}
+.map-stage .die-caption{font-size:9px;min-height:14px;margin-bottom:5px}
+.map-stage .die-equation{font-size:15px;height:31px;margin-top:7px;gap:4px}
+.map-stage .die-equation>strong{font-size:25px}
+.map-stage .visual-die>small{font-size:7px}
+.map-stage .character-description{background:none;border:0;border-top:1px solid #35465e;border-radius:0;padding:10px 0 0;margin-top:5px}
+.map-stage .character-description>strong{display:none}
+.map-stage .character-description>p{display:none}
+.map-stage .trait-chips>b{font-size:9px}
+.map-stage .battle-sequence{font-size:10px;line-height:1.6;margin:0 0 12px;text-align:left;color:#a7b8cc}
+.map-stage .visual-duel{gap:6px;padding-bottom:0}
+.map-stage .duel-side{max-width:none}
+.map-stage .duel-side-label{font-size:10px;padding-bottom:8px}
+.map-stage .duel-side-label>span{font-size:9px}
+.map-stage .scene-portrait.compact{width:76px;margin-bottom:10px}
+.map-stage .scene-portrait.compact>img{height:92px}
+.map-stage .duel-vs{width:17px;flex-basis:17px;margin-top:82px;gap:4px}
+.map-stage .duel-vs>span{font-size:14px}
+.map-stage .duel-vs>svg{width:15px;height:15px}
+.map-stage .duel-side .visual-die{width:70px;height:80px}
+.map-stage .duel-side .visual-die .die-number,.map-stage .duel-side .rolling-number{font-size:41px}
+.map-stage .duel-side .rolling-number{top:10px}
+.map-stage .duel-side .die-equation{font-size:13px;gap:3px;height:30px;margin-top:5px}
+.map-stage .duel-side .die-equation>strong{font-size:23px}
+.map-stage .side-modifiers{gap:3px}
+.map-stage .side-modifiers>span{font-size:8px;padding:2px 3px}
+.map-stage .battle-losses{margin:12px 0 9px;padding:9px;gap:7px}
+.map-stage .battle-losses strong{font-size:23px}
+.map-stage .battle-losses p{font-size:9px;line-height:1.6}
+.map-stage .automatic-banner{padding:9px;font-size:11px;line-height:1.65;text-align:center}
+.map-stage .event-information{min-height:135px;padding:15px 3px;gap:12px}
+.map-stage .event-information>h3{display:none}
+.map-stage .event-information>p{font-size:11px;color:#c5cfdd}
+.map-stage .production-details{max-height:170px;overflow:auto}
+.map-stage .production-details p{font-size:10px;line-height:1.9}
+.map-stage .scene-status,.map-stage .arena-controls{display:none}
+.map-stage .death-judgment{font-size:11px;gap:8px;border-top:1px solid #41516a;padding-top:12px;margin-top:10px}
+.map-stage .death-judgment .visual-die{width:55px;height:64px}
+.map-stage .death-judgment .die-number{font-size:31px}
+.map-stage .death-judgment .die-caption{font-size:8px}
+.map-stage .death-judgment .die-equation{font-size:11px;height:22px}
+.map-stage-chronicle{border-top:1px solid #34445b;padding:12px 4px 2px;min-width:0}
+.map-stage-chronicle h2{font-size:10px;color:#8197b2;margin-bottom:9px;font-weight:500;letter-spacing:1px}
+.map-stage-chronicle p{display:flex;gap:9px;font-size:11px;color:#b4c1d3;line-height:1.8;margin-top:8px;overflow-wrap:anywhere}
+.map-stage-chronicle p>span{color:#657e9e;font-size:10px;font-variant-numeric:tabular-nums;padding-top:1px}
+.map-stage-outcome{display:flex;align-items:center;flex-direction:column;gap:7px;padding:16px 10px;border:1px solid #8a734a;border-radius:8px;background:#463c2588;color:#ead092;text-align:center}
+.map-stage-outcome strong{font-size:18px}
+.map-stage-outcome>span{font-size:11px;color:#c4bb9d}
+.map-stage-controls{display:flex;align-items:center;justify-content:flex-end;gap:15px;min-width:0;padding-top:2px}
+.map-stage-shortcuts{margin-right:auto;font-size:10px;color:#7d92ad;white-space:nowrap}
+.map-stage-controls .speed-label{font-size:10px;margin:0;gap:7px;color:#9cafc7}
+.map-stage-controls .speed-label select{width:64px;background:#182538;border-color:#40516a;color:#c4cfdf;font-size:11px;padding:6px 7px}
+.map-stage-names{display:flex;flex-direction:row;align-items:center;gap:6px;font-size:10px;color:#9cafc7;margin:0;white-space:nowrap}
+.map-stage-names input{width:13px;height:13px;accent-color:#d8bd86}
+.map-stage-buttons{display:flex;align-items:center;gap:7px}
+.map-stage-buttons .button{font-size:11px;min-height:35px;padding:8px 11px;gap:5px;border-color:#40516a;background:#213147;color:#cad5e3}
+.map-stage-buttons .button.primary{background:#dac18c;border-color:#dac18c;color:#252633}
+.map-stage-alert{position:absolute;bottom:65px;left:50%;transform:translateX(-50%);max-width:80vw;padding:12px 18px;border:1px solid #637d70;border-radius:7px;background:#213d33f5;color:#d1efda;font-size:12px;z-index:5;line-height:1.7;box-shadow:0 8px 24px #0006}
+.map-stage-alert.error{background:#4b2e2bf5;border-color:#a87165;color:#f4c8b7}
+.map-stage-alert[hidden]{display:none}
+@media(max-width:1250px){
+  .map-stage{padding:12px;gap:10px}.map-stage-layout{grid-template-columns:minmax(0,1fr) 270px;gap:12px}
+  .map-stage-shortcuts{font-size:9px}.map-stage-controls{gap:10px}.map-stage-buttons .button{font-size:10px;padding:8px}
+}
+@media(max-height:800px){
+  .map-stage{padding:10px 14px;gap:8px}.map-stage-header{min-height:37px}.map-stage-title h1{font-size:17px}.map-stage-title span{font-size:9px}
+  .map-stage .arena-panel{padding:12px}.map-stage .arena-heading{margin-bottom:9px}.map-stage .arena-heading h2{font-size:16px}.map-stage .arena-heading p{font-size:10px}
+  .map-stage .scene-position{margin-bottom:6px}.map-stage .battle-sequence{margin-bottom:8px}.map-stage .scene-portrait.compact>img{height:79px}.map-stage .scene-portrait.compact{width:67px;margin-bottom:8px}
+  .map-stage .duel-side .visual-die{height:70px;width:63px}.map-stage .duel-side .visual-die .die-number,.map-stage .duel-side .rolling-number{font-size:35px}
+  .map-stage .battle-losses{margin:8px 0;padding:7px}.map-stage .battle-losses strong{font-size:21px}.map-stage .duel-vs{margin-top:70px}
+  .map-stage-nations .visual-nation-card{padding:6px 8px}.map-stage-nations .visual-nation-card strong{font-size:18px}
+  .map-stage-chronicle{padding-top:9px}.map-stage-chronicle p{font-size:10px;margin-top:5px}
+}
+@media(max-width:760px){
+  .map-stage-heading-status,.map-stage-shortcuts{display:none}.map-stage-header{gap:8px}.map-stage-title h1{max-width:48vw;font-size:16px}.map-stage-title>svg{display:none}
+  .map-stage-layout{grid-template-columns:minmax(0,1fr) 235px;gap:9px}.map-stage{padding:9px;gap:8px}
+  .map-stage-controls{justify-content:space-between;gap:6px}.map-stage-names{display:none}.map-stage-buttons{gap:4px}.map-stage-buttons .button{font-size:9px;padding:7px 6px;min-height:32px}.map-stage-buttons .button svg{width:12px;height:12px}
+  .map-stage-controls .speed-label{font-size:9px;gap:4px}.map-stage-controls .speed-label select{font-size:10px;width:52px;padding-inline:4px}
+  .map-stage .arena-panel{padding:11px}.map-stage .arena-heading h2{font-size:15px}.map-stage .arena-heading p{font-size:10px}.map-stage-section-label{font-size:9px}
+  .map-stage .visual-duel{gap:3px}.map-stage .scene-portrait.compact{width:63px}.map-stage .duel-side .die-equation{font-size:11px;gap:2px}.map-stage .duel-side .die-equation strong{font-size:21px}
+}
+@media(max-width:560px){
+  .map-stage-layout{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(190px,1fr) minmax(0,.8fr);gap:8px}
+  .map-stage-canvas{gap:6px}.map-stage-nations .visual-nation-card{flex-basis:70px;padding:5px 7px}.map-stage-nations .visual-nation-card>span{font-size:9px}.map-stage-nations .visual-nation-card strong{font-size:16px}.map-stage-nations .visual-nation-card small{font-size:7px}
+  .map-stage-sidebar{display:block}.map-stage-section-label,.map-stage-chronicle{display:none}.map-stage .arena-panel{padding:12px}.map-stage .arena-top{display:none}.map-stage .scene-position{float:right}.map-stage .arena-heading h2{font-size:15px}
+  .map-stage .single-judgment{gap:28px;padding:0}.map-stage .scene-portrait>img{height:79px}.map-stage .scene-portrait{width:65px;flex-basis:65px}.map-stage .scene-portrait figcaption{padding:3px}
+  .map-stage .visual-duel{max-width:300px;margin:auto}.map-stage .scene-portrait.compact>img{height:70px}.map-stage .battle-losses{margin:8px 0}
+  .map-stage .character-description{padding-top:5px;margin-top:3px}.map-stage .event-information{min-height:80px;padding:5px;gap:5px}.map-stage .event-information>svg{width:30px;height:30px}
+  .map-stage-controls{flex-wrap:wrap}.map-stage-buttons{flex:1;justify-content:flex-end}.map-stage-buttons .button{font-size:9px;padding:7px 5px}.map-stage-controls .speed-label{flex:none}
+}
+.map-stage .waiting-equation,.map-stage .duel-side .waiting-equation{font-size:8px}
+@media(max-height:800px) and (min-width:561px){.map-stage-chronicle{display:none}}
+
+@media(max-width:760px){.map-panel>.panel-head{flex-wrap:wrap;gap:12px}.map-panel-actions{flex:1;justify-content:space-between}}
+/* Keep the map-side account brief; the normal arena retains the full breakdown. */
+.map-stage .side-modifiers,.map-stage .battle-losses p{display:none}
+.map-stage .character-description:not(:has(.trait-chips)){display:none}
+.map-stage .arena-heading p,.map-stage .event-information>p{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.map-stage .event-information:has(.production-details)>p{display:none}
+.map-stage .scene-position{display:none}
+
+@media(max-height:800px){.map-stage .death-judgment{margin-top:6px;padding-top:7px}}
 </style>
   <title>사국쟁패 Studio · 나만의 역사를 만드는 곳</title>
 </head>
@@ -968,7 +1130,23 @@ function renderCommanders(world,countryId) {
 }
 
 
+// src/ui/dice-colors.js
+// A presentation-only scale. Values above the die's maximum keep the deepest red.
+function diceColor(value,sides=10) {
+  const amount=Number.isFinite(value)&&sides>1?Math.min(1,Math.max(0,(value-1)/(sides-1))):0;
+  const start=[244,229,186],end=[255,65,57];
+  return `rgb(${start.map((channel,i)=>Math.round(channel+(end[i]-channel)*amount)).join(', ')})`;
+}
+function diceReel(sides=10) {
+  return [4,7,2,9,1,6,3].map((face,i)=>{
+    const value=1+(face-1)%sides;
+    return `--face-${i+1}:'${value}';--face-color-${i+1}:${diceColor(value,sides)}`;
+  }).join(';');
+}
+
+
 // src/ui/arena-view.js
+
 
 
 
@@ -976,15 +1154,15 @@ const signed=n=>n>0?`+${n}`:String(n||0);
 function die(value,sides,phase='waiting',label='주사위',bonus=0) {
   const rolling=phase==='rolling',revealed=Number.isInteger(value)&&!rolling;
   const total=phase==='locked'&&bonus?value+bonus:value;
-  return `<div class="visual-die-block"><span class="die-caption">${esc(label)}</span><div class="visual-die ${rolling?'rolling':''} ${revealed?'locked':''} ${phase==='merging'?'merging':''}" data-die-locked="${revealed}" aria-label="${esc(label)} ${revealed?total:rolling?'굴리는 중':'대기'}"><span class="die-corner top"></span><span class="die-number">${revealed?total:'?'}</span>${rolling?'<span class="rolling-number" aria-hidden="true"></span>':''}<small>D${sides}${phase==='locked'&&bonus?' + 보정':''}</small><span class="die-corner bottom"></span>${revealed&&bonus&&phase==='merging'?`<b class="merging-bonus">${signed(bonus)}</b>`:''}</div><div class="die-equation">${revealed?`${value}${bonus?` <b>${signed(bonus)}</b> = <strong>${value+bonus}</strong>`:' 확정'}`:'눈금 → 보정 → 최종 점수'}</div></div>`;
+  return `<div class="visual-die-block" style="--die-ink:${diceColor(revealed?total:null,sides)};${diceReel(sides)}"><span class="die-caption">${esc(label)}</span><div class="visual-die ${rolling?'rolling':''} ${revealed?'locked':''} ${phase==='merging'?'merging':''}" data-die-locked="${revealed}" data-die-value="${revealed?total:''}" data-die-sides="${sides}" aria-label="${esc(label)} ${revealed?total:rolling?'굴리는 중':'대기'}"><span class="die-corner top"></span><span class="die-number">${revealed?total:'?'}</span>${rolling?'<span class="rolling-number" aria-hidden="true"></span>':''}<small>D${sides}${phase==='locked'&&bonus?' + 보정':''}</small><span class="die-corner bottom"></span>${revealed&&bonus&&phase==='merging'?`<b class="merging-bonus">${signed(bonus)}</b>`:''}</div><div class="die-equation ${revealed?'':'waiting-equation'}">${revealed?`${value}${bonus?` <b>${signed(bonus)}</b> = <strong>${value+bonus}</strong>`:' 확정'}`:'눈금 → 보정 → 최종 점수'}</div></div>`;
 }
 function character(person,country,role,compact=false) {
   return `<figure class="scene-portrait ${compact?'compact':''}" style="--nation:${country?.color||'#8b99aa'}">${portraitImage(person,country,role)}<figcaption><small>${esc(country?.name||'')}</small><strong>${esc(person?.name||`${ROLES[role]||'지휘관'} 미배치`)}</strong><span>${ROLES[role]||'지휘관'}</span></figcaption></figure>`;
 }
-function renderArena({world,run,playback}) {
+function renderArena({world,run,playback,showControls=true}) {
   const state=playback?.state,record=state?.record,scene=playback?.scene,event=scene?.event;
   const frame=scene?.worldBefore||world;
-  const actor=findCountry(frame,record?.actorId)||frame.countries.find(c=>landCount(frame,c.id)>0)||frame.countries[0];
+  const actor=findCountry(frame,record?.actorId)||findCountry(frame,run?.schedule[run.scheduleIndex])||frame.countries.find(c=>landCount(frame,c.id)>0)||frame.countries[0];
   const nation=findCountry(frame,event?.nationId)||actor;
   const person=countryPeople(frame,nation?.id).find(p=>event?.role==='general'?p.role==='general'&&p.slot===event.slot:p.role===(event?.role||'king'));
   const b=Number.isInteger(scene?.battleIndex)?record?.battles[scene.battleIndex]:null;
@@ -1008,7 +1186,7 @@ function renderArena({world,run,playback}) {
   } else {
     content=`<div class="event-information">${icon(summary?'book':event?.type==='appointment'?'people':event?.type==='round_end'?'flag':'compass',52)}<h3>${esc(scene.title)}</h3><p>${esc(scene.detail)}</p>${summary?`<p>내정 ${record.type==='domestic'?record.action:'없음'} · 전투 ${record.battles.length}회 · 점령 ${record.changes.length}개</p>`:''}${event?.type==='round_end'?`<div class="production-details">${record.production.map(p=>`<p>${esc(p.name)} · 생산 ${p.gain}만${p.disconnected?` · 단절 지역 ${p.disconnected}만`:''}</p>`).join('')}</div>`:''}</div>`;
   }
-  return `<section data-scene="${scene?.id||'ready'}" data-event="${event?.type||'ready'}" data-phase="${phase}" data-playing="${!!playback?.playing}" class="panel arena-panel ${(result||summary)?'showing-result':''}" style="--nation:${actor?.color||'#8b99aa'}"><div class="arena-top"><span class="arena-nation"><i></i>${esc(actor?.name||'새 세계')}의 차례</span><span>TURN ${String(record?.turn||((run?.turn||0)+1)).padStart(3,'0')}</span></div><div class="scene-position">${scene?`${state.index+1} / ${state.scenes.length} 장면`:'v11 원본 시스템'}</div><div class="arena-heading" aria-live="polite"><span class="eyebrow">${b?'ON THE BATTLEFIELD':'A CHOICE SHAPES HISTORY'}</span><h2>${esc(title)}</h2><p>${esc(scene?.detail||'한 턴 진행으로 시작하세요.')}</p></div>${content}<div class="scene-status"><span class="live-indicator ${playback?.playing?'pulsing':''}"></span>${playback?.playing?'장면 진행 중':state&&!state.finished?'일시정지 · Space 다음 판정 묶음 / Enter 남은 턴':'턴 완료 지점은 자동 저장됩니다.'}</div><div class="arena-controls"><button class="button outline" data-action="scene-step" ${run?.result&&playback.complete?'disabled':''}>${icon('chevron',15)}한 단계</button><button class="button subtle" data-action="scene-skip" ${!state||state.finished?'disabled':''}>턴 결과 바로 보기 ${icon('arrow',14)}</button></div></section>`;
+  return `<section data-scene="${scene?.id||'ready'}" data-event="${event?.type||'ready'}" data-phase="${phase}" data-playing="${!!playback?.playing}" class="panel arena-panel ${(result||summary)?'showing-result':''}" style="--nation:${actor?.color||'#8b99aa'}"><div class="arena-top"><span class="arena-nation"><i></i>${esc(actor?.name||'새 세계')}의 차례</span><span>TURN ${String(record?.turn||((run?.turn||0)+1)).padStart(3,'0')}</span></div><div class="scene-position">${scene?`${state.index+1} / ${state.scenes.length} 장면`:'v11 원본 시스템'}</div><div class="arena-heading" aria-live="polite"><span class="eyebrow">${b?'ON THE BATTLEFIELD':'A CHOICE SHAPES HISTORY'}</span><h2>${esc(title)}</h2><p>${esc(scene?.detail||'한 턴 진행으로 시작하세요.')}</p></div>${content}<div class="scene-status"><span class="live-indicator ${playback?.playing?'pulsing':''}"></span>${playback?.playing?'장면 진행 중':state&&!state.finished?'일시정지 · Space 다음 판정 묶음 / Enter 남은 턴':'턴 완료 지점은 자동 저장됩니다.'}</div>${showControls?`<div class="arena-controls"><button class="button outline" data-action="scene-step" ${run?.result&&playback.complete?'disabled':''}>${icon('chevron',15)}한 단계</button><button class="button subtle" data-action="scene-skip" ${!state||state.finished?'disabled':''}>턴 결과 바로 보기 ${icon('arrow',14)}</button></div>`:''}</section>`;
 }
 
 
@@ -1082,7 +1260,33 @@ class TurnPlayback {
 }
 
 
+// src/ui/map-stage.js
+
+
+
+
+// The full map shares the current presentation and controls; it never advances the engine.
+function renderMapStage({world,run,playback,auto=false,speed=1,showNames=true,focusedCountry=null}) {
+  const state=playback.state,active=state&&!playback.complete,running=auto||playback.playing;
+  const actor=findCountry(world,active?state.record.actorId:run?.schedule[run.scheduleIndex])||world.countries.find(c=>landCount(world,c.id)>0);
+  const result=run?.result&&playback.complete?run.result:null;
+  const history=(run?.history||[]).filter(r=>!active||r.turn!==state.record.turn).slice(-2).reverse();
+  const round=active?state.record.round:run?.round||1,turn=active?state.record.turn:run?.turn||0;
+  const control=(action,label,glyph,disabled=false,style='outline')=>`<button type="button" class="button ${style}" data-action="${action}" ${disabled?'disabled':''}>${icon(glyph,15)}${label}</button>`;
+  return `<main class="map-stage simulation-page ${active&&!playback.playing?'playback-paused':''}" aria-label="지도 전체화면 녹화 화면">
+    <header class="map-stage-header"><div class="map-stage-title">${icon('compass',23)}<div><h1>${esc(world.name)}</h1><span>ROUND ${String(round).padStart(2,'0')} / ${world.rules.roundLimit} <i>·</i> TURN ${String(turn).padStart(3,'0')}</span></div></div><div class="map-stage-heading-status"><i class="live-indicator ${running?'pulsing':''}"></i>${result?'역사 기록 완료':running?'역사 진행 중':active?'판정 일시정지':actor?`${esc(actor.name)} 행동 대기`:'세계 준비 중'}</div>${control('map-fullscreen-close','전체화면 나가기','x')}</header>
+    <div class="map-stage-layout"><section class="map-stage-canvas" aria-label="지도와 국가 현황"><div class="map-stage-atlas">${renderAtlas(world,{observe:true,showNames,presentation:state,focusedCountry})}</div><div class="map-stage-nations">${renderNationCards(world,focusedCountry)}</div></section>
+    <aside class="map-stage-sidebar" aria-label="현재 인물과 판정 요약"><span class="map-stage-section-label">지금 펼쳐지는 역사</span>${renderArena({world,run,playback,showControls:false})}
+      ${result?`<div class="map-stage-outcome">${icon('crown',24)}<strong>${result.winnerIds.map(id=>esc(findCountry(world,id)?.name)).join(' · ')} ${result.winnerIds.length>1?'공동 승리':'승리'}</strong><span>${result.reason==='unification'?'천하 통일':'제한 라운드 종료'}</span></div>`:''}
+      ${history.length?`<section class="map-stage-chronicle" aria-label="최근 완료 사건"><h2>최근의 역사</h2>${history.map(r=>`<p><span>${String(r.turn).padStart(3,'0')}</span>${esc(r.title)}</p>`).join('')}</section>`:''}
+    </aside></div>
+    <footer class="map-stage-controls"><span class="map-stage-shortcuts">Space 판정 묶음 <i>·</i> Enter 한 턴 <i>·</i> Esc 닫기</span><label class="map-stage-names"><input type="checkbox" id="show-names" ${showNames?'checked':''}>영토 이름</label><label class="speed-label">배속<select id="sim-speed" aria-label="자동 진행 배속">${[.5,1,2,4].map(v=>`<option value="${v}" ${speed===v?'selected':''}>${v}×</option>`).join('')}</select></label><div class="map-stage-buttons">${control('scene-step','한 단계','chevron',!!result)}${control('step',active?'이어서 보기':'한 턴 진행','play',running||!!result)}${control('auto',running?'일시정지':'자동 진행',running?'pause':'play',!!result,'primary')}${control('scene-skip','턴 결과','arrow',!active)}</div></footer><div class="map-stage-alert" role="alert" hidden></div>
+  </main>`;
+}
+
+
 // src/app.js
+
 
 
 
@@ -1097,8 +1301,8 @@ const $ = selector => document.querySelector(selector);
 let initialError = '';
 let world;
 try { world = loadWorld(localStorage) || createDemoWorld(); } catch (error) { world = createDemoWorld(); initialError = error.message + ' 시작 예제를 표시합니다. 기존 저장 데이터는 덮어쓰지 않았습니다.'; }
-const ui = { page: 'overview', selected: world.territories[0]?.id, paint: false, brush: world.countries[0]?.id || '', countryFilter: '', roleFilter: '', search: '', showNames: true, recording: false, seed: '20261017', speed: 1, mapStyle: 'atlas', focusedCountry: null };
-let auto = false;
+const ui = { page: 'overview', selected: world.territories[0]?.id, paint: false, brush: world.countries[0]?.id || '', countryFilter: '', roleFilter: '', search: '', showNames: true, recording: false, mapFullscreen:false, seed: '20261017', speed: 1, mapStyle: 'atlas', focusedCountry: null };
+let auto = false, nativeMapFullscreen=false;
 let run = null, timer = null, saveStatus = initialError ? '저장 복구 확인 필요' : '브라우저에 자동 저장', toastTimer;
 const playback = new TurnPlayback({
   onChange: () => { if (ui.page === 'simulation') render(); },
@@ -1118,7 +1322,8 @@ const traitOptions = selected => Object.entries(PERSONALITIES).map(([v, label]) 
 const button = (action, label, glyph = '', cls = '', extra = '') => `<button type="button" class="button ${cls}" data-action="${action}" ${extra}>${glyph ? icon(glyph, 16) : ''}${label}</button>`;
 function notify(message, error = false) {
   clearTimeout(toastTimer); const el = $('#toast'); el.hidden = false; el.className = `toast ${error ? 'error' : ''}`;
-  el.textContent = message; toastTimer = setTimeout(() => { el.hidden = true; }, error ? 9000 : 3500);
+  el.textContent = message;const local=$('.map-stage-alert');if(local){local.hidden=false;local.textContent=message;local.classList.toggle('error',error);}
+  toastTimer = setTimeout(() => { el.hidden = true;if(local)local.hidden=true; }, error ? 9000 : 3500);
 }
 function persist(showMessage = false) {
   try { saveWorld(localStorage, world); saveStatus = '브라우저에 자동 저장'; if (showMessage) notify('현재 세계를 이 브라우저에 저장했습니다. 다른 기기로 옮길 때는 파일 내보내기를 사용하세요.'); }
@@ -1130,13 +1335,26 @@ function navigate(page) { if (!Object.hasOwn(pages, page)) return; stop(); ui.pa
 function setNewWorld(next) {
   stop(); playback.reset(); world = validateWorld(next); run = null; clearRun(localStorage); ui.selected = world.territories[0]?.id; ui.brush = world.countries[0]?.id || ''; ui.paint = false; ui.search = ''; ui.countryFilter = ''; ui.roleFilter = ''; ui.page = 'overview'; persist(); render();
 }
+function openMapFullscreen(){
+  ui.page='simulation';ui.mapFullscreen=true;render();
+  const root=$('#app');
+  if(!document.fullscreenElement&&document.fullscreenEnabled!==false&&root.requestFullscreen){
+    root.requestFullscreen({navigationUI:'hide'}).catch(()=>{});
+  }
+}
+function closeMapFullscreen(){
+  ui.mapFullscreen=false;render();
+  if(document.fullscreenElement===$('#app'))document.exitFullscreen().catch(()=>{});
+}
 function render() {
   document.title = `${world.name} · 사국쟁패 Studio`;
-  $('#app').className = ui.recording ? 'recording-mode' : '';
+  document.body.classList.toggle('map-stage-open',ui.mapFullscreen);
+  $('#app').className = ui.mapFullscreen?'map-fullscreen':ui.recording ? 'recording-mode' : '';
+  if(ui.mapFullscreen){$('#app').innerHTML=renderMapStage({world:playback.displayWorld||run?.world||previewWorld(world),run,playback,auto,speed:ui.speed,showNames:ui.showNames,focusedCountry:ui.focusedCountry});return;}
   $('#app').innerHTML = `
     <aside class="sidebar">
       <a class="brand" href="#" data-page="overview" aria-label="사국쟁패 Studio 세계 개요"><span class="brand-symbol">${icon('compass', 29)}</span><span><strong>사국쟁패</strong><small>HISTORY STUDIO</small></span></a>
-      <div class="workspace-label">WORKSPACE <span>v0.2.0</span></div>
+      <div class="workspace-label">WORKSPACE <span>v0.2.1</span></div>
       <button class="world-switch" data-action="world-meta"><span class="world-icon">${icon('globe', 19)}</span><span><b>${esc(world.name)}</b><small>나의 세계 · 편집 가능</small></span>${icon('edit', 13)}</button>
       <div class="nav-label">세계 만들기</div>
       <nav aria-label="주요 메뉴">${Object.entries(pages).slice(0, 4).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}<div class="nav-label nav-second">역사 관찰하기</div>${Object.entries(pages).slice(4).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}</nav>
@@ -1147,7 +1365,7 @@ function render() {
       <main id="main-content" class="${ui.page === 'simulation' ? 'simulation-page' : ''} ${playback.state&&!playback.playing&&!playback.complete?'playback-paused':''}" tabindex="-1">
         ${pageHeading()}
         ${ui.page === 'overview' ? overview() : ui.page === 'countries' ? countriesPage() : ui.page === 'people' ? peoplePage() : ui.page === 'map' ? mapPage() : ui.page === 'simulation' ? simulationPage() : rulesPage()}
-        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.2.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
+        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.2.1</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
       </main>
     </div>`;
 }
@@ -1171,12 +1389,12 @@ function mapPanel(data, editing = false, simulation = false) {
   if (!editing && ui.mapStyle === 'atlas') {
     data=previewWorld(data);
     const presentation = simulation ? playback.state : null;
-    return `<section class="panel map-panel atlas-panel"><div class="panel-head"><div><span class="eyebrow">ATLAS OF YOUR WORLD</span><h2>${esc(data.name)} <span class="tiny-badge">대륙 전도</span></h2></div><label class="map-view-select">지도 표시<select id="map-style" aria-label="지도 표시 방식"><option value="atlas" selected>대륙형</option><option value="grid">격자형</option></select></label></div>${renderAtlas(data, {selected: ui.selected, observe: simulation, showNames: ui.showNames, presentation, focusedCountry: ui.focusedCountry})}<div class="atlas-map-note"><span>${icon('sword',14)} 국왕: 수도 예비병 · 장군: 개별 주둔군 · 화살표: 전투 경로</span><span>${data.mapKind==='v11'?'원본 지도 인접 관계':'상하좌우 인접 관계'}</span></div><div class="map-legend">${data.countries.map(c => `<span>${dot(c.color)}${esc(c.name)}</span>`).join('')}</div>${!simulation ? `<div class="map-panel-footer"><span>영토를 선택해 정보를 확인하세요.</span><button class="text-button" data-page="map">지도 편집하기 ${icon('arrow', 15)}</button></div>` : ''}</section>`;
+    return `<section class="panel map-panel atlas-panel"><div class="panel-head"><div><span class="eyebrow">ATLAS OF YOUR WORLD</span><h2>${esc(data.name)} <span class="tiny-badge">대륙 전도</span></h2></div><div class="map-panel-actions">${button('map-fullscreen','지도 전체화면','expand','outline')}<label class="map-view-select">지도 표시<select id="map-style" aria-label="지도 표시 방식"><option value="atlas" selected>대륙형</option><option value="grid">격자형</option></select></label></div></div>${renderAtlas(data, {selected: ui.selected, observe: simulation, showNames: ui.showNames, presentation, focusedCountry: ui.focusedCountry})}<div class="atlas-map-note"><span>${icon('sword',14)} 국왕: 수도 예비병 · 장군: 개별 주둔군 · 화살표: 전투 경로</span><span>${data.mapKind==='v11'?'원본 지도 인접 관계':'상하좌우 인접 관계'}</span></div><div class="map-legend">${data.countries.map(c => `<span>${dot(c.color)}${esc(c.name)}</span>`).join('')}</div>${!simulation ? `<div class="map-panel-footer"><span>영토를 선택해 정보를 확인하세요.</span><button class="text-button" data-page="map">지도 편집하기 ${icon('arrow', 15)}</button></div>` : ''}</section>`;
   }
 
   const last = simulation ? run?.history.at(-1) : null;
   const changed = new Set(last?.changes.map(c => c.territoryId) || []);
-  return `<section class="panel map-panel"><div class="panel-head"><div><span class="eyebrow">WORLD MAP</span><h2>${esc(data.name)} <span class="tiny-badge">${editing ? '편집 모드' : simulation ? '관찰 모드' : '격자 지도'}</span></h2></div><span class="map-dimensions">${icon('layers', 14)} ${data.cols} × ${data.rows} · ${data.territories.length}개 영토</span>${!editing ? '<label class="map-view-select">지도 표시<select id="map-style" aria-label="지도 표시 방식"><option value="atlas">대륙형</option><option value="grid" selected>격자형</option></select></label>' : ''}</div>
+  return `<section class="panel map-panel"><div class="panel-head"><div><span class="eyebrow">WORLD MAP</span><h2>${esc(data.name)} <span class="tiny-badge">${editing ? '편집 모드' : simulation ? '관찰 모드' : '격자 지도'}</span></h2></div><span class="map-dimensions">${icon('layers', 14)} ${data.cols} × ${data.rows} · ${data.territories.length}개 영토</span>${!editing ? `<div class="map-panel-actions">${button('map-fullscreen','지도 전체화면','expand','outline')}<label class="map-view-select">지도 표시<select id="map-style" aria-label="지도 표시 방식"><option value="atlas">대륙형</option><option value="grid" selected>격자형</option></select></label></div>` : ''}</div>
   ${editing ? `<div class="map-tools"><div class="segmented"><button data-action="select-mode" class="${!ui.paint ? 'selected' : ''}">${icon('edit', 14)} 하나씩 편집</button><button data-action="paint-mode" class="${ui.paint ? 'selected' : ''}">${icon('flag', 14)} 소유권 칠하기</button></div>${ui.paint ? `<label>칠할 국가 <select id="paint-owner" aria-label="칠할 국가">${countryOptions(ui.brush, '무주지')}</select></label>` : '<span>영토를 누르면 오른쪽에서 수정할 수 있어요.</span>'}</div>` : ''}
     <div class="map-canvas ${editing ? 'editable' : ''}"><div class="map-coordinate-top">${Array.from({length: data.cols}, (_, i) => `<span>${String.fromCharCode(65 + i)}</span>`).join('')}</div><div class="grid-frame"><div class="map-coordinate-left">${Array.from({length: data.rows}, (_, i) => `<span>${String(i + 1).padStart(2, '0')}</span>`).join('')}</div><div class="territory-grid ${ui.showNames ? '' : 'hide-names'}" style="--cols:${data.cols};--rows:${data.rows}">${data.territories.map(t => {
       const c = findCountry(data, t.ownerId);
@@ -1321,6 +1539,8 @@ const actions = {
   'new-run': newRunDialog,
   'replay-run': () => {stop();if(!run)return;const next=createRun(run.initialWorld,run.seed);playback.reset();run=next;saveRun(localStorage,run);render();notify('같은 시작 세계와 시드로 처음부터 재생합니다.');},
   'reset-rules': () => {if(confirm('규칙 설정을 첨부 원본 v11 기본값으로 복원할까요?'))updateWorld({...world,rules:clone(DEFAULT_RULES)});},
+  'map-fullscreen': openMapFullscreen,
+  'map-fullscreen-close': closeMapFullscreen,
   'recording': () => { ui.recording = !ui.recording; render(); },
   'export-history': () => { if (run?.history.length) { downloadFile(`${fileName(run.initialWorld.name)}-${fileName(run.seed)}.history.json`, JSON.stringify({ kind: 'saguk-studio-history', engineVersion: ENGINE_VERSION, seed: run.seed, world: run.initialWorld, history: run.history, result: run.result, finalWorld: run.world }, null, 2)); notify('전체 역사와 시작 세계, 시드, 최종 상태를 내보냈습니다. 기록 가져오기와 재생은 후속 버전에서 지원합니다.'); } },
 };
@@ -1393,8 +1613,12 @@ document.addEventListener('input', event => {
     }
   }
 });
+document.addEventListener('fullscreenchange',()=>{
+  if(document.fullscreenElement===$('#app')){nativeMapFullscreen=true;if(!ui.mapFullscreen)document.exitFullscreen().catch(()=>{});}
+  else if(nativeMapFullscreen){nativeMapFullscreen=false;if(ui.mapFullscreen){ui.mapFullscreen=false;render();}}
+});
 document.addEventListener('visibilitychange', () => { if (document.hidden && (auto || playback.playing)) { stop(); render(); } });
-document.addEventListener('keydown', event => { if((event.key==='Enter'||event.key===' ') && event.target.matches('.atlas-cell')) { event.preventDefault();event.target.dispatchEvent(new MouseEvent('click',{bubbles:true}));return; } if(ui.page==='simulation'&&!event.target.closest('input,select,textarea,button,dialog')&&(event.code==='Space'||event.code==='Enter')){event.preventDefault();try{actions[event.code==='Space'?'scene-step':'step']();}catch(error){notify(error.message,true);}return;} if (event.key === 'Escape' && ui.recording) { ui.recording = false; render(); } });
+document.addEventListener('keydown', event => { if((event.key==='Enter'||event.key===' ') && event.target.matches('.atlas-cell')) { event.preventDefault();event.target.dispatchEvent(new MouseEvent('click',{bubbles:true}));return; } if(ui.page==='simulation'&&!event.target.closest('input,select,textarea,button,dialog')&&(event.code==='Space'||event.code==='Enter')){event.preventDefault();try{actions[event.code==='Space'?'scene-step':'step']();}catch(error){notify(error.message,true);}return;} if(event.key==='Escape'&&ui.mapFullscreen){closeMapFullscreen();return;} if (event.key === 'Escape' && ui.recording) { ui.recording = false; render(); } });
 window.addEventListener('beforeunload', event => { if (playback.state&&!playback.complete) { event.preventDefault(); event.returnValue = ''; } });
 $('#editor-dialog').addEventListener('click', event => { if (event.target === $('#editor-dialog')) { $('#editor-dialog').close(); dialogHandler = null; } });
 try { const saved=loadRun(localStorage);if(saved&&saved.initialWorld.id===world.id){run=saved;ui.seed=saved.seed;} } catch(error){initialError ||= error.message;}

@@ -36,8 +36,17 @@ with sync_playwright() as p:
     expect(page.locator('.arena-panel')).to_have_attribute('data-phase','locked',timeout=2500)
     page.locator('[data-action="scene-skip"]').click()
     expect(page.locator('.arena-panel')).to_have_attribute('data-scene','result')
+    page.locator('[data-action="map-fullscreen"]').click()
+    expect(page.locator('.map-stage')).to_have_count(1)
+    assert page.evaluate('document.fullscreenElement?.id') == 'app'
+    page.locator('.map-stage-controls [data-action="step"]').click()
+    expect(page.locator('.arena-panel')).to_have_attribute('data-phase','locked',timeout=3000)
+    assert page.locator('.visual-die-block').first.evaluate('(el)=>getComputedStyle(el).getPropertyValue("--die-ink").trim().startsWith("rgb(")')
+    page.locator('.map-stage-controls [data-action="scene-skip"]').click()
+    page.locator('[data-action="map-fullscreen-close"]').click()
+    expect(page.locator('.history-entry')).to_have_count(2)
     assert page.locator('img').evaluate_all('(imgs)=>imgs.every(i=>i.complete&&i.naturalWidth>0)')
     assert not errors, errors
-    print('PASS: 단일 HTML을 HTTP로 연 뒤 오프라인 동작·국가 추가·파일 내보내기·새로고침 복구·실제 타이머·초상화·1턴 연출; JavaScript 예외 0건')
+    print('PASS: 단일 HTML을 HTTP로 연 뒤 오프라인 동작·국가 추가·파일 내보내기·새로고침 복구·실제 타이머·초상화·턴 연출·지도 전체화면/요약/주사위 색; JavaScript 예외 0건')
     context.close()
     browser.close()
