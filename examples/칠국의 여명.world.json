@@ -1,13 +1,14 @@
 {
   "kind": "saguk-studio-world",
-  "version": 1,
+  "version": 2,
   "world": {
-    "schemaVersion": 1,
-    "id": "seven-realms-grid-demo",
+    "schemaVersion": 2,
+    "id": "seven-realms-v11",
     "name": "칠국의 여명",
-    "description": "서로 다른 일곱 나라, 아직 쓰이지 않은 하나의 역사. 사용자 원본의 국가·인물·영토를 격자로 옮긴 시작 세계입니다.",
+    "description": "원본 룰북 v11 · 7국, 80영토, 국왕·승상과 장군별 부대가 만드는 역사",
     "rows": 8,
     "cols": 10,
+    "mapKind": "v11",
     "countries": [
       {
         "id": "nation-0",
@@ -15,7 +16,10 @@
         "color": "#6da9ff",
         "troops": 10,
         "recruitment": 0,
-        "personality": "balanced"
+        "personality": "balanced",
+        "commandBonus": 0,
+        "feature": "정연한 관료국가",
+        "capitalId": "tile-12"
       },
       {
         "id": "nation-1",
@@ -23,7 +27,10 @@
         "color": "#ef8179",
         "troops": 10,
         "recruitment": 0,
-        "personality": "aggressive"
+        "personality": "aggressive",
+        "commandBonus": -1,
+        "feature": "기동전 중심 소부대 편제",
+        "capitalId": "tile-37"
       },
       {
         "id": "nation-2",
@@ -31,7 +38,10 @@
         "color": "#eac66b",
         "troops": 10,
         "recruitment": 0,
-        "personality": "peaceful"
+        "personality": "peaceful",
+        "commandBonus": 1,
+        "feature": "대부대 편제",
+        "capitalId": "tile-67"
       },
       {
         "id": "nation-3",
@@ -39,7 +49,10 @@
         "color": "#6bceb4",
         "troops": 10,
         "recruitment": 0,
-        "personality": "balanced"
+        "personality": "balanced",
+        "commandBonus": 0,
+        "feature": "유연한 지방군 체계",
+        "capitalId": "tile-61"
       },
       {
         "id": "nation-4",
@@ -47,7 +60,10 @@
         "color": "#be9aeb",
         "troops": 10,
         "recruitment": 0,
-        "personality": "peaceful"
+        "personality": "peaceful",
+        "commandBonus": 1,
+        "feature": "산지의 신중한 편제",
+        "capitalId": "tile-65"
       },
       {
         "id": "nation-5",
@@ -55,7 +71,10 @@
         "color": "#6fd4e6",
         "troops": 10,
         "recruitment": 0,
-        "personality": "balanced"
+        "personality": "balanced",
+        "commandBonus": 0,
+        "feature": "보급을 중시하는 해안국",
+        "capitalId": "tile-39"
       },
       {
         "id": "nation-6",
@@ -63,7 +82,10 @@
         "color": "#e9a65e",
         "troops": 10,
         "recruitment": 0,
-        "personality": "aggressive"
+        "personality": "aggressive",
+        "commandBonus": -1,
+        "feature": "소수 정예의 변경국",
+        "capitalId": "tile-5"
       }
     ],
     "people": [
@@ -73,7 +95,8 @@
         "countryId": "nation-0",
         "role": "king",
         "ability": 0,
-        "personality": "balanced"
+        "personality": "balanced",
+        "feature": "내치와 전쟁을 신중하게 병행"
       },
       {
         "id": "minister-0",
@@ -81,7 +104,9 @@
         "countryId": "nation-0",
         "role": "minister",
         "ability": 2,
-        "personality": "balanced"
+        "personality": "balanced",
+        "feature": "장기 병력 생산을 중시",
+        "ministerStyle": "producer"
       },
       {
         "id": "general-0-0",
@@ -89,7 +114,10 @@
         "countryId": "nation-0",
         "role": "general",
         "ability": 0,
-        "personality": "balanced"
+        "personality": "balanced",
+        "feature": "안정적인 균형형",
+        "slot": 0,
+        "commandBonus": 0
       },
       {
         "id": "general-0-1",
@@ -97,7 +125,10 @@
         "countryId": "nation-0",
         "role": "general",
         "ability": 0,
-        "personality": "balanced"
+        "personality": "balanced",
+        "feature": "병사 통솔에 능한 편제형",
+        "slot": 1,
+        "commandBonus": 1
       },
       {
         "id": "general-0-2",
@@ -105,7 +136,10 @@
         "countryId": "nation-0",
         "role": "general",
         "ability": 2,
-        "personality": "balanced"
+        "personality": "balanced",
+        "feature": "소수 정예 명장",
+        "slot": 2,
+        "commandBonus": -1
       },
       {
         "id": "general-0-3",
@@ -113,7 +147,10 @@
         "countryId": "nation-0",
         "role": "general",
         "ability": 0,
-        "personality": "balanced"
+        "personality": "balanced",
+        "feature": "실전과 통솔이 무난",
+        "slot": 3,
+        "commandBonus": 0
       },
       {
         "id": "general-0-4",
@@ -121,7 +158,10 @@
         "countryId": "nation-0",
         "role": "general",
         "ability": -2,
-        "personality": "balanced"
+        "personality": "balanced",
+        "feature": "통솔은 좋지만 전술에 약함",
+        "slot": 4,
+        "commandBonus": 1
       },
       {
         "id": "king-1",
@@ -129,7 +169,8 @@
         "countryId": "nation-1",
         "role": "king",
         "ability": 0,
-        "personality": "aggressive"
+        "personality": "aggressive",
+        "feature": "장군들을 자주 출전시킴"
       },
       {
         "id": "minister-1",
@@ -137,7 +178,9 @@
         "countryId": "nation-1",
         "role": "minister",
         "ability": -2,
-        "personality": "balanced"
+        "personality": "balanced",
+        "feature": "동원에 집착하지만 집행이 서툼",
+        "ministerStyle": "recruiter"
       },
       {
         "id": "general-1-0",
@@ -145,7 +188,10 @@
         "countryId": "nation-1",
         "role": "general",
         "ability": 2,
-        "personality": "balanced"
+        "personality": "balanced",
+        "feature": "소수로 승부하는 돌격 명장",
+        "slot": 0,
+        "commandBonus": -1
       },
       {
         "id": "general-1-1",
@@ -153,7 +199,10 @@
         "countryId": "nation-1",
         "role": "general",
         "ability": 0,
-        "personality": "balanced"
+        "personality": "balanced",
+        "feature": "다수 병력 야전형",
+        "slot": 1,
+        "commandBonus": 1
       },
       {
         "id": "general-1-2",
@@ -161,7 +210,10 @@
         "countryId": "nation-1",
         "role": "general",
         "ability": 2,
-        "personality": "balanced"
+        "personality": "balanced",
+        "feature": "노련한 전투 지휘",
+        "slot": 2,
+        "commandBonus": 0
       },
       {
         "id": "general-1-3",
@@ -169,7 +221,21 @@
         "countryId": "nation-1",
         "role": "general",
         "ability": -2,
-        "personality": "balanced"
+        "personality": "balanced",
+        "feature": "과감하지만 전술이 거침",
+        "slot": 3,
+        "commandBonus": 1
+      },
+      {
+        "id": "general-1-4",
+        "name": "장호",
+        "countryId": "nation-1",
+        "role": "general",
+        "ability": 0,
+        "personality": "balanced",
+        "feature": "기본에 충실한 기동 지휘",
+        "slot": 4,
+        "commandBonus": 0
       },
       {
         "id": "king-2",
@@ -177,7 +243,8 @@
         "countryId": "nation-2",
         "role": "king",
         "ability": 0,
-        "personality": "peaceful"
+        "personality": "peaceful",
+        "feature": "군비와 기반을 축적"
       },
       {
         "id": "minister-2",
@@ -185,7 +252,9 @@
         "countryId": "nation-2",
         "role": "minister",
         "ability": 0,
-        "personality": "balanced"
+        "personality": "balanced",
+        "feature": "장군의 지휘 규모 확대",
+        "ministerStyle": "supplier"
       },
       {
         "id": "general-2-0",
@@ -193,7 +262,10 @@
         "countryId": "nation-2",
         "role": "general",
         "ability": -2,
-        "personality": "balanced"
+        "personality": "balanced",
+        "feature": "대부대 운용·전술에 약함",
+        "slot": 0,
+        "commandBonus": 1
       },
       {
         "id": "general-2-1",
@@ -201,7 +273,10 @@
         "countryId": "nation-2",
         "role": "general",
         "ability": 0,
-        "personality": "balanced"
+        "personality": "balanced",
+        "feature": "소부대의 안정적 통솔",
+        "slot": 1,
+        "commandBonus": -1
       },
       {
         "id": "general-2-2",
@@ -209,7 +284,10 @@
         "countryId": "nation-2",
         "role": "general",
         "ability": 2,
-        "personality": "balanced"
+        "personality": "balanced",
+        "feature": "대부대 운용 명장",
+        "slot": 2,
+        "commandBonus": 1
       },
       {
         "id": "general-2-3",
@@ -217,7 +295,21 @@
         "countryId": "nation-2",
         "role": "general",
         "ability": 0,
-        "personality": "balanced"
+        "personality": "balanced",
+        "feature": "병참에 익숙한 실무형",
+        "slot": 3,
+        "commandBonus": 0
+      },
+      {
+        "id": "general-2-4",
+        "name": "조평",
+        "countryId": "nation-2",
+        "role": "general",
+        "ability": -2,
+        "personality": "balanced",
+        "feature": "큰 대열·임기응변에 약함",
+        "slot": 4,
+        "commandBonus": 1
       },
       {
         "id": "king-3",
@@ -225,7 +317,8 @@
         "countryId": "nation-3",
         "role": "king",
         "ability": 0,
-        "personality": "balanced"
+        "personality": "balanced",
+        "feature": "상황에 맞춰 공세와 내정 선택"
       },
       {
         "id": "minister-3",
@@ -233,7 +326,9 @@
         "countryId": "nation-3",
         "role": "minister",
         "ability": 0,
-        "personality": "balanced"
+        "personality": "balanced",
+        "feature": "세 내정 행동을 고르게 추진",
+        "ministerStyle": "balanced"
       },
       {
         "id": "general-3-0",
@@ -241,7 +336,10 @@
         "countryId": "nation-3",
         "role": "general",
         "ability": 2,
-        "personality": "balanced"
+        "personality": "balanced",
+        "feature": "넓은 시야의 명장",
+        "slot": 0,
+        "commandBonus": 1
       },
       {
         "id": "general-3-1",
@@ -249,7 +347,10 @@
         "countryId": "nation-3",
         "role": "general",
         "ability": 0,
-        "personality": "balanced"
+        "personality": "balanced",
+        "feature": "소부대 신중형",
+        "slot": 1,
+        "commandBonus": -1
       },
       {
         "id": "general-3-2",
@@ -257,7 +358,32 @@
         "countryId": "nation-3",
         "role": "general",
         "ability": 0,
-        "personality": "balanced"
+        "personality": "balanced",
+        "feature": "대부대 실무형",
+        "slot": 2,
+        "commandBonus": 1
+      },
+      {
+        "id": "general-3-3",
+        "name": "설목",
+        "countryId": "nation-3",
+        "role": "general",
+        "ability": -2,
+        "personality": "balanced",
+        "feature": "경험 부족 소부대 지휘",
+        "slot": 3,
+        "commandBonus": -1
+      },
+      {
+        "id": "general-3-4",
+        "name": "한솔",
+        "countryId": "nation-3",
+        "role": "general",
+        "ability": 2,
+        "personality": "balanced",
+        "feature": "빠른 상황 판단의 명장",
+        "slot": 4,
+        "commandBonus": 0
       },
       {
         "id": "king-4",
@@ -265,7 +391,8 @@
         "countryId": "nation-4",
         "role": "king",
         "ability": 0,
-        "personality": "peaceful"
+        "personality": "peaceful",
+        "feature": "내정을 먼저 다져 기회를 기다림"
       },
       {
         "id": "minister-4",
@@ -273,7 +400,9 @@
         "countryId": "nation-4",
         "role": "minister",
         "ability": 0,
-        "personality": "balanced"
+        "personality": "balanced",
+        "feature": "지속적인 충원 기반을 마련",
+        "ministerStyle": "producer"
       },
       {
         "id": "general-4-0",
@@ -281,7 +410,10 @@
         "countryId": "nation-4",
         "role": "general",
         "ability": 2,
-        "personality": "balanced"
+        "personality": "balanced",
+        "feature": "산악전에 익숙한 명장",
+        "slot": 0,
+        "commandBonus": 0
       },
       {
         "id": "general-4-1",
@@ -289,7 +421,10 @@
         "countryId": "nation-4",
         "role": "general",
         "ability": 0,
-        "personality": "balanced"
+        "personality": "balanced",
+        "feature": "보급과 통솔에 능함",
+        "slot": 1,
+        "commandBonus": 1
       },
       {
         "id": "general-4-2",
@@ -297,7 +432,32 @@
         "countryId": "nation-4",
         "role": "general",
         "ability": 0,
-        "personality": "balanced"
+        "personality": "balanced",
+        "feature": "침착한 지역 지휘",
+        "slot": 2,
+        "commandBonus": 0
+      },
+      {
+        "id": "general-4-3",
+        "name": "송겸",
+        "countryId": "nation-4",
+        "role": "general",
+        "ability": -2,
+        "personality": "balanced",
+        "feature": "편제는 좋지만 전술에 약함",
+        "slot": 3,
+        "commandBonus": 1
+      },
+      {
+        "id": "general-4-4",
+        "name": "하연",
+        "countryId": "nation-4",
+        "role": "general",
+        "ability": 0,
+        "personality": "balanced",
+        "feature": "기본에 충실한 수비형",
+        "slot": 4,
+        "commandBonus": 0
       },
       {
         "id": "king-5",
@@ -305,7 +465,8 @@
         "countryId": "nation-5",
         "role": "king",
         "ability": 0,
-        "personality": "balanced"
+        "personality": "balanced",
+        "feature": "작은 영토를 바탕으로 기회를 탐색"
       },
       {
         "id": "minister-5",
@@ -313,7 +474,9 @@
         "countryId": "nation-5",
         "role": "minister",
         "ability": 2,
-        "personality": "balanced"
+        "personality": "balanced",
+        "feature": "보급 효율과 지휘 규모 확대에 능함",
+        "ministerStyle": "supplier"
       },
       {
         "id": "general-5-0",
@@ -321,7 +484,10 @@
         "countryId": "nation-5",
         "role": "general",
         "ability": 2,
-        "personality": "balanced"
+        "personality": "balanced",
+        "feature": "해안 방어의 명장",
+        "slot": 0,
+        "commandBonus": 1
       },
       {
         "id": "general-5-1",
@@ -329,7 +495,43 @@
         "countryId": "nation-5",
         "role": "general",
         "ability": 0,
-        "personality": "balanced"
+        "personality": "balanced",
+        "feature": "보급에 익숙한 지휘",
+        "slot": 1,
+        "commandBonus": 0
+      },
+      {
+        "id": "general-5-2",
+        "name": "임겸",
+        "countryId": "nation-5",
+        "role": "general",
+        "ability": 0,
+        "personality": "balanced",
+        "feature": "대부대 운용형",
+        "slot": 2,
+        "commandBonus": 1
+      },
+      {
+        "id": "general-5-3",
+        "name": "명호",
+        "countryId": "nation-5",
+        "role": "general",
+        "ability": -2,
+        "personality": "balanced",
+        "feature": "야전 경험이 부족",
+        "slot": 3,
+        "commandBonus": 0
+      },
+      {
+        "id": "general-5-4",
+        "name": "진해",
+        "countryId": "nation-5",
+        "role": "general",
+        "ability": 0,
+        "personality": "balanced",
+        "feature": "차분한 균형형",
+        "slot": 4,
+        "commandBonus": 0
       },
       {
         "id": "king-6",
@@ -337,7 +539,8 @@
         "countryId": "nation-6",
         "role": "king",
         "ability": 0,
-        "personality": "aggressive"
+        "personality": "aggressive",
+        "feature": "작은 나라여도 먼저 승부를 거는 호전형"
       },
       {
         "id": "minister-6",
@@ -345,7 +548,9 @@
         "countryId": "nation-6",
         "role": "minister",
         "ability": 0,
-        "personality": "balanced"
+        "personality": "balanced",
+        "feature": "부족한 병력을 신속히 모집",
+        "ministerStyle": "recruiter"
       },
       {
         "id": "general-6-0",
@@ -353,7 +558,54 @@
         "countryId": "nation-6",
         "role": "general",
         "ability": 2,
-        "personality": "balanced"
+        "personality": "balanced",
+        "feature": "소수 정예를 이끄는 명장",
+        "slot": 0,
+        "commandBonus": 1
+      },
+      {
+        "id": "general-6-1",
+        "name": "담호",
+        "countryId": "nation-6",
+        "role": "general",
+        "ability": 0,
+        "personality": "balanced",
+        "feature": "과감한 돌격형",
+        "slot": 1,
+        "commandBonus": 0
+      },
+      {
+        "id": "general-6-2",
+        "name": "황건",
+        "countryId": "nation-6",
+        "role": "general",
+        "ability": 0,
+        "personality": "balanced",
+        "feature": "병사 통솔형",
+        "slot": 2,
+        "commandBonus": 1
+      },
+      {
+        "id": "general-6-3",
+        "name": "마연",
+        "countryId": "nation-6",
+        "role": "general",
+        "ability": -2,
+        "personality": "balanced",
+        "feature": "과감하지만 미숙함",
+        "slot": 3,
+        "commandBonus": 0
+      },
+      {
+        "id": "general-6-4",
+        "name": "석진",
+        "countryId": "nation-6",
+        "role": "general",
+        "ability": 2,
+        "personality": "balanced",
+        "feature": "날렵한 정예 지휘",
+        "slot": 4,
+        "commandBonus": -1
       }
     ],
     "territories": [
@@ -919,22 +1171,48 @@
       }
     ],
     "rules": {
+      "mode": "v11",
       "diceSides": 10,
       "domesticThresholds": {
         "balanced": 5,
         "peaceful": 7,
         "aggressive": 3
       },
-      "successTarget": 6,
-      "recruitGain": 3,
-      "productionGain": 3,
-      "territoryProduction": 1,
-      "armyAdvantageBonus": 1,
+      "ministerWeights": {
+        "balanced": [
+          3,
+          3,
+          4
+        ],
+        "recruiter": [
+          5,
+          2,
+          3
+        ],
+        "producer": [
+          2,
+          3,
+          5
+        ],
+        "supplier": [
+          2,
+          2,
+          6
+        ]
+      },
       "lossRates": {
         "win": 0.3,
         "tie": 0.4,
         "loss": 0.5
       },
+      "successTarget": 6,
+      "recruitGain": 3,
+      "productionGain": 3,
+      "supplyGain": 5,
+      "baseCapacity": 20,
+      "minimumReserve": 5,
+      "territoryProduction": 1,
+      "armyAdvantageBonus": 1,
       "roundLimit": 30
     }
   }

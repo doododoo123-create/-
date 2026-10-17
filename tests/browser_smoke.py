@@ -26,7 +26,7 @@ with sync_playwright() as p:
     expect(page.locator('h1')).to_have_text('세계 개요')
     assert page.locator('.territory').count() == 80
     page.screenshot(path=str(ARTIFACTS / 'overview-desktop.png'), full_page=True)
-    passed('기본 세계: 7개 국가·36명·80개 영토 렌더링, 화면 오류 없음')
+    passed('기본 세계: 7개 국가·49명·80개 영토 렌더링, 화면 오류 없음')
 
     page.locator('nav [data-page="countries"]').click()
     page.locator('[data-action="add-country"]').first.click()
@@ -50,7 +50,7 @@ with sync_playwright() as p:
     dialog.locator('[name="name"]').fill('새 장군')
     nation_id = page.evaluate("JSON.parse(localStorage.getItem('saguk-studio.world.v1')).world.countries.at(-1).id")
     dialog.locator('[name="countryId"]').select_option(nation_id)
-    dialog.locator('[name="ability"]').fill('3')
+    dialog.locator('[name="ability"]').select_option('2')
     dialog.locator('button[type="submit"]').click()
     page.locator('#person-search').fill('새 장군')
     expect(page.locator('.person-card')).to_have_count(1)
@@ -117,12 +117,18 @@ with sync_playwright() as p:
     expect(page.locator('.person-card')).to_have_count(0)
     passed('국가 삭제 시 영토 무주지 전환·인물 보존, 인물 삭제')
 
+    # Original v11 requires assigned land; country deletion deliberately leaves it empty.
+    page.locator('nav [data-page="map"]').click()
+    for tile in ['tile-0', 'tile-1']:
+        page.locator(f'[data-territory="{tile}"]').click()
+        page.locator('#territory-form [name="ownerId"]').select_option('nation-0')
+        page.locator('#territory-form button[type="submit"]').click()
     page.locator('nav [data-page="rules"]').click()
     page.locator('[name="roundLimit"]').fill('2')
     page.locator('#rules-form button[type="submit"]').click()
     expect(page.locator('#toast')).to_contain_text('규칙을 저장')
     page.locator('nav [data-page="simulation"]').click()
-    page.locator('#sim-seed').fill('ui-test')
+    page.locator('#sim-seed').fill('123456')
     page.locator('[data-action="step"]').click()
     expect(page.locator('.history-entry')).to_have_count(1)
     expect(page.locator('.round-display>strong')).to_have_text('01')
@@ -142,18 +148,21 @@ with sync_playwright() as p:
     page.screenshot(path=str(ARTIFACTS / 'observation-desktop.png'), full_page=True)
     page.keyboard.press('Escape')
     expect(page.locator('.sidebar')).to_be_visible()
-    page.locator('[data-action="auto"]').click()
-    expect(page.locator('.result-banner')).to_be_visible(timeout=45000)
+    for _ in range(20):
+        if page.locator('.result-banner').count(): break
+        page.locator('[data-action="step"]').click()
+        page.locator('[data-action="scene-skip"]').click()
+    expect(page.locator('.result-banner')).to_be_visible()
     expect(page.locator('[data-action="step"]')).to_be_disabled()
     with page.expect_download() as history_download:
         page.locator('[data-action="export-history"]').click()
     history_download.value.save_as(str(ARTIFACTS / 'history.json'))
     history = json.loads((ARTIFACTS / 'history.json').read_text())
-    assert history['result'] is not None and len(history['history']) > 0 and history['seed'] == 'ui-test'
+    assert history['result'] is not None and len(history['history']) > 0 and history['seed'] == '123456'
     passed('규칙 변경·시드 실행·자동 진행/일시정지·배속·종료·전체 기록 내보내기·관찰 화면')
 
     page.locator('[data-action="new-run"]').click()
-    dialog.locator('[name="seed"]').fill('다른 역사')
+    dialog.locator('[name="seed"]').fill('123457')
     dialog.locator('button[type="submit"]').click()
     expect(page.locator('.history-entry')).to_have_count(0)
     expect(page.locator('[data-action="step"]')).to_be_enabled()

@@ -4,19 +4,19 @@ import { createDemoWorld } from '../src/data/demo-world.js';
 import { validateWorld, removeCountry, blankWorld, landCount, neighbors } from '../src/model/world.js';
 import { serializeWorld, parseWorld, saveWorld, loadWorld, STORAGE_KEY, fileName } from '../src/storage/world-store.js';
 
-test('original example is data-driven: seven countries, 36 people, 80 territories', () => {
+test('original example is data-driven: seven countries, 49 people, 80 territories', () => {
   const world = validateWorld(createDemoWorld());
-  assert.equal(world.countries.length, 7); assert.equal(world.people.length, 36); assert.equal(world.territories.length, 80);
+  assert.equal(world.countries.length, 7); assert.equal(world.people.length, 49); assert.equal(world.territories.length, 80);
   assert.deepEqual(world.countries.map(c => landCount(world, c.id)), [20, 16, 13, 11, 9, 7, 4]);
 });
 test('world export/import preserves all edited entities and rules', () => {
   const world = createDemoWorld(); world.name = '가상 대륙'; world.territories[0].name = '서울'; world.territories[0].ownerId = null;
   world.rules.recruitGain = 12; world.people[0].name = '새 국왕';
-  assert.deepEqual(parseWorld(serializeWorld(world)), world);
+  assert.deepEqual(parseWorld(serializeWorld(world)), validateWorld(world));
 });
 test('country deletion preserves people and clears their ownership references', () => {
   const original = createDemoWorld(), next = removeCountry(original, 'nation-0');
-  assert.equal(next.countries.length, 6); assert.equal(next.people.length, 36);
+  assert.equal(next.countries.length, 6); assert.equal(next.people.length, 49);
   assert.equal(next.people.filter(p => p.countryId === null).length, 7);
   assert.equal(next.territories.filter(t => t.ownerId === null).length, 20);
   assert.equal(original.countries.length, 7); assert.equal(landCount(original, 'nation-0'), 20);

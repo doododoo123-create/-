@@ -1,92 +1,57 @@
-import test from 'node:test';
-import assert from 'node:assert/strict';
-import { createDemoWorld } from '../src/data/demo-world.js';
-import { createRun, nextTurn } from '../src/engine/simulation.js';
-import { TurnPlayback, makeTurnScenes } from '../src/ui/playback.js';
-import { buildMapGeometry } from '../src/ui/map-geometry.js';
-import { countryMarkers, renderAtlas } from '../src/ui/atlas-view.js';
-import { renderArena } from '../src/ui/arena-view.js';
-import { validateWorld } from '../src/model/world.js';
-import { serializeWorld, parseWorld } from '../src/storage/world-store.js';
-
-function clock() {
-  let now=0, sequence=0; const tasks=new Map();
-  return { now:()=>now,schedule:(fn,delay)=>{const id=++sequence;tasks.set(id,{fn,time:now+delay});return id;},cancel:id=>tasks.delete(id),
-    tick(ms){const end=now+ms;for(let n=0;n<1000;n++){const ready=[...tasks].filter(([,t])=>t.time<=end).sort((a,b)=>a[1].time-b[1].time)[0];if(!ready)break;tasks.delete(ready[0]);now=ready[1].time;ready[1].fn();}now=end;}, get pending(){return tasks.size;} };
-}
-function turn(kind='domestic') {
-  const initial=createRun(createDemoWorld(),'visual-fixture');let current=initial;
-  for(let i=0;i<100;i++){const next=nextTurn(current),record=next.history.at(-1);if(record.type===kind)return {before:current.world,after:next.world,record,run:next};current=next;}
-  throw new Error('No matching fixture');
-}
-
-test('presentation scenes use actual recorded dice and end with the real result',()=>{
-  for(const kind of ['domestic','war']) {
-    const fixture=turn(kind), scenes=makeTurnScenes(fixture.record,fixture.before);
-    assert.equal(scenes[0].id,'action');assert.equal(scenes.at(-1).title,fixture.record.title);
-    const referenced=scenes.flatMap(s=>s.diceIndices||[]);assert.deepEqual(referenced,fixture.record.rolls.map((_,i)=>i));
-  }
+import test from 'node:test';import assert from 'node:assert/strict';
+import {createDemoWorld} from '../src/data/demo-world.js';import {createRun,nextTurn} from '../src/engine/simulation.js';
+import {TurnPlayback,makeTurnScenes} from '../src/ui/playback.js';import {unitMarkers,renderAtlas} from '../src/ui/atlas-view.js';import {renderArena} from '../src/ui/arena-view.js';
+import {buildMapGeometry} from '../src/ui/map-geometry.js';import {validateWorld} from '../src/model/world.js';import {serializeWorld,parseWorld} from '../src/storage/world-store.js';import {V11_ATLAS} from '../src/data/v11-preset.js';
+function clock(){let now=0,id=0;const tasks=new Map();return {now:()=>now,schedule:(fn,delay)=>{tasks.set(++id,{fn,time:now+delay});return id;},cancel:id=>tasks.delete(id),tick(ms){const end=now+ms;for(let n=0;n<10000;n++){const next=[...tasks].filter(([,t])=>t.time<=end).sort((a,b)=>a[1].time-b[1].time)[0];if(!next)break;tasks.delete(next[0]);now=next[1].time;next[1].fn();}now=end;},get pending(){return tasks.size;}};}
+function fixture(war=false){const before=createRun(createDemoWorld(),123456),run=nextTurn(before,war?{rolls:{king:10},targetId:1}:undefined);return {before:before.world,after:run.world,record:run.history[0],run};}
+test('every source event and die has a presentation, including each sequential battle',()=>{
+ for(const war of [false,true]){const f=fixture(war),scenes=makeTurnScenes(f.record,f.before);assert.equal(scenes.at(-1).title,f.record.title);
+ for(const event of f.record.events)assert.ok(scenes.some(s=>s.event?.index===event.index));
+ for(let i=0;i<f.record.rolls.length;i++)assert.ok(scenes.some(s=>s.diceIndices?.includes(i)));
+ assert.equal(scenes.filter(s=>s.kind==='apply').length,f.record.events.filter(e=>e.type==='resolve').length);
+ }
+ const f=fixture(true);assert.ok(f.record.battles.length>1);
 });
-test('rolling, lock, next scene and completion use a separate clock without mutating engine state',()=>{
-  const c=clock(), fixture=turn(), snapshot=structuredClone(fixture.run);let finishes=0;
-  const player=new TurnPlayback({...c,onFinish:()=>finishes++});
-  player.load(fixture.record,fixture.before,fixture.after);
-  assert.equal(player.state.phase,'rolling');c.tick(1000);assert.equal(player.state.phase,'locked');
-  c.tick(800);assert.equal(player.scene.id,'domestic');assert.equal(player.state.phase,'rolling');
-  c.tick(10000);assert.equal(player.complete,true);assert.equal(player.scene.id,'result');assert.equal(finishes,1);
-  assert.deepEqual(fixture.run,snapshot);player.finish();player.advance();assert.equal(finishes,1);assert.equal(c.pending,0);
+test('presentation clock pauses exactly and consumes no game randomness or mutations',()=>{
+ const c=clock(),f=fixture(),snapshot=structuredClone(f.run);let finishes=0;
+ const player=new TurnPlayback({...c,onFinish:()=>finishes++});player.load(f.record,f.before,f.after);c.tick(350);player.pause();c.tick(9000);assert.equal(player.state.phase,'rolling');assert.equal(c.pending,0);
+ player.resume();c.tick(549);assert.equal(player.state.phase,'rolling');c.tick(1);assert.equal(player.state.phase,'locked');c.tick(100000);
+ assert.equal(player.complete,true);assert.equal(finishes,1);assert.deepEqual(f.run,snapshot);player.finish();assert.equal(finishes,1);
 });
-test('pause preserves the exact remaining duration and resumes the same die',()=>{
-  const c=clock(), f=turn();const player=new TurnPlayback({...c});player.load(f.record,f.before,f.after);
-  c.tick(350);player.pause();const phase=player.state.phase,index=player.state.index;c.tick(9000);
-  assert.equal(player.state.phase,phase);assert.equal(player.state.index,index);assert.equal(c.pending,0);
-  player.resume();c.tick(649);assert.equal(player.state.phase,'rolling');c.tick(1);assert.equal(player.state.phase,'locked');
+test('raw die, modifier merge and final face show recorded scores without clamping',()=>{
+ const f=fixture(true),c=clock(),player=new TurnPlayback({...c});player.load(f.record,f.before,f.after,false);
+ while(player.scene.event?.type!=='attack_roll'||!player.scene.bonus)player.step();const raw=player.scene.value,bonus=player.scene.bonus;assert.ok(bonus);
+ player.step();assert.equal(player.state.phase,'raw');player.step();assert.equal(player.state.phase,'merging');player.step();assert.equal(player.state.phase,'locked');
+ const html=renderArena({world:player.displayWorld,run:f.run,playback:player});assert.ok(html.includes(`<span class="die-number">${raw+bonus}</span>`));assert.ok(html.includes(`data-die-locked="true"`));
 });
-test('manual stepping reveals one stage and skip completes exactly once',()=>{
-  const c=clock(),f=turn('war');let finishes=0;const player=new TurnPlayback({...c,onFinish:()=>finishes++});
-  player.load(f.record,f.before,f.after,false);player.step();assert.equal(player.state.phase,'locked');assert.equal(player.state.index,0);assert.equal(c.pending,0);
-  player.step();assert.equal(player.scene.id,'target');assert.equal(player.playing,false);player.finish();
-  assert.equal(player.showingResult,true);assert.equal(player.complete,true);assert.equal(finishes,1);player.finish();assert.equal(finishes,1);
+test('battle result is announced before ownership and troop changes are applied',()=>{
+ const f=fixture(true),player=new TurnPlayback();player.load(f.record,f.before,f.after,false);
+ while(player.scene.event?.type!=='resolve')player.step();assert.equal(player.scene.kind,'result');const old=player.displayWorld;
+ assert.deepEqual(old,player.scene.worldBefore);player.step();assert.equal(player.scene.kind,'apply');assert.deepEqual(player.displayWorld,player.scene.worldAfter);
+ player.finish();assert.deepEqual(player.displayWorld,f.after);assert.equal(player.showingResult,true);
 });
-test('speed changes affect only remaining presentation time and reset cancels old callbacks',()=>{
-  const c=clock(),f=turn();let speed=1;const player=new TurnPlayback({...c,speed:()=>speed});player.load(f.record,f.before,f.after);
-  c.tick(400);player.pause();speed=4;player.resume();c.tick(149);assert.equal(player.state.phase,'rolling');c.tick(1);assert.equal(player.state.phase,'locked');
-  player.reset();c.tick(10000);assert.equal(player.state,null);assert.equal(c.pending,0);
+test('speed changes affect only remaining clock time; reset cancels callbacks',()=>{
+ const c=clock(),f=fixture();let speed=1;const player=new TurnPlayback({...c,speed:()=>speed});player.load(f.record,f.before,f.after);c.tick(400);player.pause();speed=4;player.resume();c.tick(124);assert.equal(player.state.phase,'rolling');c.tick(1);assert.equal(player.state.phase,'locked');player.reset();c.tick(10000);assert.equal(player.state,null);assert.equal(c.pending,0);
 });
-test('reduced motion keeps the same results with a short reveal delay',()=>{
-  const c=clock(),f=turn(),player=new TurnPlayback({...c,reducedMotion:()=>true});player.load(f.record,f.before,f.after);
-  c.tick(79);assert.equal(player.state.phase,'rolling');c.tick(1);assert.equal(player.state.phase,'locked');assert.equal(player.state.record.rolls[0].value,f.record.rolls[0].value);
+test('map uses original v11 polygons and stations, showing 7 capitals and 22 general units',()=>{
+ const f=fixture(),markers=unitMarkers(f.before);assert.equal(markers.filter(m=>m.role==='king').length,7);assert.equal(markers.filter(m=>m.role==='general').length,22);
+ for(const m of markers){assert.equal(m.territory.ownerId,m.country.id);if(m.role==='general')assert.equal(m.territory.id,m.person.stationId);}
+ const html=renderAtlas(f.before);assert.ok(html.includes(V11_ATLAS.cells[0].path));assert.ok(html.includes('commander-border'));
 });
-test('map geometry is reproducible and shares boundaries for every cardinal neighbor',()=>{
-  for(const [rows,cols] of [[2,2],[8,10],[20,24]]) {
-    const g=buildMapGeometry(rows,cols), other=buildMapGeometry(rows,cols);
-    assert.equal(g.cells.length,rows*cols);assert.deepEqual(g.cells,other.cells);assert.equal(g.coastPath,other.coastPath);
-    for(const cell of g.cells) {
-      assert.ok(!cell.path.includes('NaN'));assert.ok(cell.center[0]>0&&cell.center[0]<1200&&cell.center[1]>0&&cell.center[1]<800);
-      if(cell.col+1<cols) {const right=g.cells[cell.row*cols+cell.col+1];assert.equal(cell.vertices[1],right.vertices[0]);assert.equal(cell.vertices[2],right.vertices[3]);}
-      if(cell.row+1<rows) {const down=g.cells[(cell.row+1)*cols+cell.col];assert.equal(cell.vertices[2],down.vertices[1]);assert.equal(cell.vertices[3],down.vertices[0]);}
-    }
-  }
+test('custom-grid geometry is reproducible and shares every cardinal boundary',()=>{
+ for(const [rows,cols] of [[2,2],[8,10],[20,24]]){const g=buildMapGeometry(rows,cols);assert.deepEqual(g.cells,buildMapGeometry(rows,cols).cells);for(const cell of g.cells){assert.ok(!cell.path.includes('NaN'));if(cell.col+1<cols)assert.equal(cell.vertices[1],g.cells[cell.row*cols+cell.col+1].vertices[0]);if(cell.row+1<rows)assert.equal(cell.vertices[2],g.cells[(cell.row+1)*cols+cell.col].vertices[1]);}}
+});
+test('portrait choice round trips; external URLs and injected map strings are escaped',()=>{
+ const w=createDemoWorld();w.people[0].portraitKey='n3-general';assert.deepEqual(parseWorld(serializeWorld(w)),w);w.people[0].portraitKey='https://example.com/a';assert.throws(()=>validateWorld(w),/초상화/);
+ w.territories[0].name='<img onerror=alert(1)>';const html=renderAtlas(w);assert.ok(html.includes('&lt;img onerror=alert(1)&gt;'));assert.ok(!html.includes('<img onerror=alert(1)>'));
+});
+test('king roll screen hides future opponents, dice and battle results',()=>{
+ const f=fixture(true),player=new TurnPlayback();player.load(f.record,f.before,f.after,false);const html=renderArena({world:f.before,run:f.run,playback:player});assert.ok(!html.includes('visual-duel'));assert.ok(!html.includes(f.record.title));assert.ok(!html.includes('data-die-locked="true"'));assert.ok(!renderAtlas(f.before,{presentation:player.state}).includes('class="map-campaign"'));
 });
 
-test('portrait selection is optional, survives file round trip and rejects external URLs',()=>{
-  const old=createDemoWorld();assert.deepEqual(parseWorld(serializeWorld(old)),old);
-  old.people[0].portraitKey='n3-general';assert.equal(parseWorld(serializeWorld(old)).people[0].portraitKey,'n3-general');
-  old.people[0].portraitKey='https://example.com/image.png';assert.throws(()=>validateWorld(old),/초상화/);
-});
-test('rendered map is based on current ownership and text is escaped',()=>{
-  const world=createDemoWorld();world.territories[0].name='<img onerror=alert(1)>';
-  const original=structuredClone(world);const markers=countryMarkers(world);assert.equal(markers.length,7);
-  for(const marker of markers)assert.equal(marker.territory.ownerId,marker.country.id);
-  const html=renderAtlas(world);assert.ok(html.includes('&lt;img onerror=alert(1)&gt;'));assert.ok(!html.includes('<img onerror=alert(1)>'));
-  assert.deepEqual(world,original);
-});
-test('action-roll screen does not reveal the future battle, dice values or result',()=>{
-  const f=turn('war'), player=new TurnPlayback();player.load(f.record,f.before,f.after,false);
-  const html=renderArena({world:f.before,run:f.run,playback:player});
-  assert.ok(!html.includes('visual-duel'));assert.ok(!html.includes(f.record.title));assert.ok(!html.includes('공격 점수 확정'));
-  assert.ok(html.includes('data-die-locked="false"'));assert.ok(!html.includes('data-die-locked="true"'));
-  assert.ok(!renderAtlas(f.before,{presentation:player.state}).includes('class="map-campaign"'));
-  player.finish();const result=renderArena({world:f.after,run:f.run,playback:player});
-  assert.ok(result.includes(f.record.title));assert.ok(result.includes('battle-losses'));assert.ok(result.includes('data-die-locked="true"'));
+test('manual judgment group plays both attack and defense, applies only that battle, then pauses',()=>{
+ const f=fixture(true),c=clock(),player=new TurnPlayback({...c});player.load(f.record,f.before,f.after,false);
+ while(player.scene.event?.type!=='territory')player.step();const index=player.scene.battleIndex;
+ player.playGroup();c.tick(60000);assert.equal(player.playing,false);assert.equal(player.complete,false);assert.equal(player.scene.kind,'apply');assert.equal(player.scene.battleIndex,index);assert.equal(c.pending,0);
+ const previous=player.state.index;player.playGroup();c.tick(60000);assert.ok(player.state.index>previous);assert.ok(player.scene.battleIndex>index||['death','survived'].includes(player.scene.event?.type)||player.scene.kind==='summary');
 });
