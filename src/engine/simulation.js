@@ -5,8 +5,9 @@ export const livingCountries = world => world.countries.filter(c => landCount(wo
 export function createRun(definition, seed = '20261017') {
   const world = validateWorld(definition);
   if (livingCountries(world).length < 2) throw new Error('영토를 가진 국가가 2개 이상 필요합니다. 지도에서 국가별 영토를 지정해 주세요.');
+  const initialWorld = clone(world);
   for (const country of world.countries) if (!landCount(world, country.id)) country.troops = 0;
-  return { engineVersion: ENGINE_VERSION, seed: String(seed), rng: seedNumber(seed), world, initialWorld: clone(world), round: 1, turn: 0, schedule: livingCountries(world).map(c => c.id), scheduleIndex: 0, history: [], result: null };
+  return { engineVersion: ENGINE_VERSION, seed: String(seed), rng: seedNumber(seed), world, initialWorld, round: 1, turn: 0, schedule: livingCountries(world).map(c => c.id), scheduleIndex: 0, history: [], result: null };
 }
 export function currentActor(run) {
   if (run.result) return null;

@@ -116,6 +116,6 @@ test('dice generator is bounded and repeatable', () => {
 test('countries without starting territory do not retain armies in a run', () => {
   const world = smallWorld(); world.countries.push({ id: 'c', name: '대기국', color: '#abcdef', troops: 100, recruitment: 5, personality: 'balanced' });
   const run = createRun(world, 'landless');
-  assert.equal(run.world.countries[2].troops, 0); assert.equal(world.countries[2].troops, 100);
+  assert.equal(run.world.countries[2].troops, 0); assert.equal(world.countries[2].troops, 100); assert.equal(run.initialWorld.countries[2].troops, 100);
   assert.deepEqual(run.schedule, ['a', 'b']);
 });
