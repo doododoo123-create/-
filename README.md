@@ -6,6 +6,12 @@
 
 ## 설치 없이 실행
 
+**[바로 플레이할 HTML 파일 다운로드](https://github.com/doododoo123-create/-/raw/refs/tags/v0.2.1/%EC%82%AC%EA%B5%AD%EC%9F%81%ED%8C%A8%20Studio.html)**
+
+링크를 우클릭해 **다른 이름으로 링크 저장**을 선택한 뒤, 받은 HTML을 Chrome 또는 Edge로 열면 됩니다. ZIP 압축을 풀 필요가 없습니다. 앞으로도 수정본은 단일 HTML을 별도로 제공합니다.
+
+소스코드도 함께 받으려면 다음 ZIP 방법을 사용하세요.
+
 1. GitHub의 **Code → Download ZIP**으로 받습니다.
 2. ZIP 압축을 풉니다.
 3. 폴더 안의 **`사국쟁패 Studio.html`**을 Chrome 또는 Edge로 엽니다.
