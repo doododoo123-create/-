@@ -126,6 +126,7 @@ with sync_playwright() as p:
     page.locator('[data-action="step"]').click()
     expect(page.locator('.history-entry')).to_have_count(1)
     expect(page.locator('.round-display>strong')).to_have_text('01')
+    page.locator('[data-action="scene-skip"]').click()
     page.locator('#sim-speed').select_option('4')
     page.locator('[data-action="auto"]').click()
     expect(page.locator('[data-action="auto"]')).to_contain_text('일시정지')
@@ -142,7 +143,7 @@ with sync_playwright() as p:
     page.keyboard.press('Escape')
     expect(page.locator('.sidebar')).to_be_visible()
     page.locator('[data-action="auto"]').click()
-    expect(page.locator('.result-banner')).to_be_visible(timeout=12000)
+    expect(page.locator('.result-banner')).to_be_visible(timeout=45000)
     expect(page.locator('[data-action="step"]')).to_be_disabled()
     with page.expect_download() as history_download:
         page.locator('[data-action="export-history"]').click()

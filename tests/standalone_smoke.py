@@ -33,7 +33,11 @@ with sync_playwright() as p:
     page.locator('nav [data-page="simulation"]').click()
     page.locator('[data-action="step"]').click()
     expect(page.locator('.history-entry')).to_have_count(1)
+    expect(page.locator('.arena-panel')).to_have_attribute('data-phase','locked',timeout=2500)
+    page.locator('[data-action="scene-skip"]').click()
+    expect(page.locator('.scene-result')).to_be_visible()
+    assert page.locator('img').evaluate_all('(imgs)=>imgs.every(i=>i.complete&&i.naturalWidth>0)')
     assert not errors, errors
-    print('PASS: 단일 HTML을 HTTP로 연 뒤 오프라인 동작·국가 추가·파일 내보내기·새로고침 복구·1턴 시뮬레이션; JavaScript 예외 0건')
+    print('PASS: 단일 HTML을 HTTP로 연 뒤 오프라인 동작·국가 추가·파일 내보내기·새로고침 복구·실제 타이머·초상화·1턴 연출; JavaScript 예외 0건')
     context.close()
     browser.close()

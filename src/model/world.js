@@ -48,7 +48,8 @@ export function validateWorld(input) {
   const people = array(input.people, '인물 목록', 2000).map(p => {
     object(p, '인물');
     if (!Object.hasOwn(ROLES, p.role) || !Object.hasOwn(PERSONALITIES, p.personality)) fail('인물 직책 또는 성향이 올바르지 않습니다.');
-    return { id: id(p.id, '인물 ID'), name: text(p.name, '인물명', 40), countryId: owner(p.countryId, '인물 소속'), role: p.role, ability: number(p.ability, '능력 보정', -5, 5), personality: p.personality };
+    if (p.portraitKey !== undefined && p.portraitKey !== '' && (typeof p.portraitKey !== 'string' || !/^n[0-3]-(king|minister|general)$/.test(p.portraitKey))) fail('인물 초상화 선택이 올바르지 않습니다.');
+    return { ...(p.portraitKey ? {portraitKey: p.portraitKey} : {}), id: id(p.id, '인물 ID'), name: text(p.name, '인물명', 40), countryId: owner(p.countryId, '인물 소속'), role: p.role, ability: number(p.ability, '능력 보정', -5, 5), personality: p.personality };
   });
   unique(people.map(p => p.id), '인물 ID');
   for (const c of countries) for (const role of ['king', 'minister']) {
