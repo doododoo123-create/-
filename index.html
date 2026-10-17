@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10120f">
+  <meta name="description" content="직접 만든 세계에서 시작하는 가상역사. 국가와 인물, 지도를 편집하고 자동 시뮬레이션을 관찰하세요.">
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./src/ui/style.css">
+  <title>사국쟁패 Studio · 나만의 역사를 만드는 곳</title>
+</head>
+<body>
+  <div id="app"></div>
+  <dialog id="editor-dialog" aria-labelledby="dialog-title"></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <input id="world-file" type="file" accept=".json,application/json" hidden>
+  <script type="module" src="./src/app.js"></script>
+</body>
+</html>

@@ -4,11 +4,14 @@
   "private": true,
   "type": "module",
   "description": "사용자가 만드는 세계와 주사위 기반 가상역사 실험실",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "start": "node scripts/serve.mjs",
     "dev": "node scripts/serve.mjs",
     "test": "node --test tests/*.test.js",
-    "check": "node scripts/check.mjs"
+    "check": "node scripts/check.mjs",
+    "build": "node scripts/build.mjs"
   }
 }
