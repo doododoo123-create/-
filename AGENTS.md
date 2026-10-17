@@ -10,3 +10,5 @@
 - README.md에는 쉬운 실행법, docs/architecture.md에는 구조, docs/rules-v0.1.md에는 현재 규칙을 유지한다.
 - 클라우드 작업은 이미 격리되어 있다. 기존 체크아웃을 사용하고 명시적인 요청 없이 Git worktree를 만들지 않는다.
 - 앱의 실행에는 외부 서비스·인증·CDN이 필요 없어야 한다. Node.js 22 이상으로 npm start, npm test가 동작하도록 유지한다.
+
+- GitHub ZIP 사용자를 위해 루트의 `사국쟁패 Studio.html` 실행본을 함께 관리한다. src나 스타일을 수정한 배포 단계에서는 `npm run release`로 갱신한다. 일반 `npm run build`는 추적하지 않는 dist만 생성한다.

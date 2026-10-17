@@ -31,6 +31,10 @@ html = html.replace('<link rel="stylesheet" href="./src/ui/style.css">', `<style
 const dist = resolve(root, 'dist');
 await mkdir(dist, { recursive: true });
 await writeFile(resolve(dist, '사국쟁패 Studio.html'), html);
+if (process.argv.includes('--release')) {
+  await writeFile(resolve(root, '사국쟁패 Studio.html'), html);
+  console.log('GitHub ZIP에 포함할 루트 실행본도 갱신했습니다.');
+}
 await mkdir(resolve(dist, 'docs'), { recursive: true });
 await cp(resolve(root, 'docs/reference'), resolve(dist, 'docs/reference'), { recursive: true });
 console.log(`단독 실행본 생성: dist/사국쟁패 Studio.html (${Math.ceil(Buffer.byteLength(html) / 1024)}KB)\n브라우저에서 더블클릭해 실행할 수 있습니다. 외부 서비스와 설치가 필요 없습니다.`);

@@ -4,11 +4,11 @@
 
 ## 가장 쉬운 실행 방법
 
-1. 배포 ZIP을 내려받아 **압축을 먼저 풀어 주세요.**
+1. GitHub 저장소 위쪽의 **Code → Download ZIP**을 눌러 내려받고 **압축을 먼저 풀어 주세요.**
 2. 폴더 안의 **`사국쟁패 Studio.html`**을 더블클릭해 Chrome 또는 Edge로 여세요.
 3. 설치·가입·서버 연결 없이 사용할 수 있습니다. 처음에는 **‘칠국의 여명’** 예제 세계가 열립니다.
 
-소스코드 폴더에서 직접 작업한다면 Node.js 22 이상을 설치하고 아래의 개발 실행 방법을 쓰세요. `npm run build`로 만든 실행본은 `dist/사국쟁패 Studio.html`에 있습니다. HTML 파일 자체를 고치지 말고 `src/`를 수정한 뒤 다시 생성합니다.
+소스코드 폴더에서 직접 작업한다면 Node.js 22 이상을 설치하고 아래의 개발 실행 방법을 쓰세요. `npm run build`로 만든 실행본은 `dist/사국쟁패 Studio.html`에 있습니다. HTML 파일 자체를 고치지 말고 `src/`를 수정한 뒤 다시 생성합니다. GitHub ZIP용 루트 실행본까지 갱신하려면 `npm run release`를 사용합니다.
 
 이 클라우드의 관리형 브라우저는 `file://` 주소를 차단하므로 더블클릭 동작은 여기서 직접 검증하지 못했습니다. 같은 단일 HTML을 서버로 연 뒤 네트워크를 끄고 편집·내보내기·시뮬레이션이 동작함은 확인했습니다. Windows와 실제 Edge에서의 실행 검증은 남아 있습니다.
 
@@ -73,7 +73,8 @@ npm start
 ```sh
 npm test       # 엔진·저장·데이터 테스트
 npm run check  # JavaScript 구문 검사
-npm run build  # 더블클릭용 단일 HTML 생성
+npm run build  # dist/에 단일 HTML 생성
+npm run release # GitHub ZIP용 루트 실행본도 갱신
 ```
 
 포트가 사용 중이면 이전 실행 창을 닫으세요. 다른 포트도 가능합니다.
@@ -106,9 +107,9 @@ $env:PORT=3001; npm start
 
 ## 버전 관리
 
-사용자 원본을 보존한 초기 단계와 구현 완료 단계를 Git 커밋으로 보관했습니다. `git log --oneline`으로 확인할 수 있습니다. 앞으로 수정할 때도 관련 테스트 후 커밋을 남깁니다. 원격 저장소로 push하거나 배포하지는 않았습니다. 실행용 배포 ZIP에는 소스가 포함되지만 `.git`은 포함하지 않습니다.
+사용자 원본을 보존한 초기 단계와 구현 완료 단계를 Git 커밋으로 보관했습니다. `git log --oneline`으로 확인할 수 있습니다. 앞으로 수정할 때도 관련 테스트 후 커밋을 남깁니다. 사용자 승인을 받은 업로드는 GitHub 커밋 기록으로도 보관합니다. 웹사이트 배포나 환경 게시와는 별도입니다. 실행용 배포 ZIP에는 소스가 포함되지만 `.git`은 포함하지 않습니다.
 
-배포 ZIP에는 주요 단계의 전체 이력을 담은 `Git-history-v0.1.bundle`도 함께 넣었습니다. 개발자가 `git clone Git-history-v0.1.bundle studio`로 커밋 이력을 복원할 수 있습니다.
+별도로 만든 배포 ZIP에는 주요 단계의 전체 이력을 담은 `Git-history-v0.1.bundle`도 함께 넣었습니다. GitHub의 Download ZIP에는 이 파일이 없으며, GitHub 자체의 커밋 기록 또는 `git clone`으로 이력을 확인할 수 있습니다. 번들 파일이 있는 경우 개발자가 `git clone Git-history-v0.1.bundle studio`로 커밋 이력을 복원할 수 있습니다.
 
 ## 클라우드 환경 재사용
 
