@@ -1,6 +1,6 @@
 """v11 original map, independent units, sequential battles, playback and resume."""
 from pathlib import Path
-import os,json
+import os,json,re
 from playwright.sync_api import sync_playwright,expect
 ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'.artifacts';OUT.mkdir(exist_ok=True)
 results=[];errors=[]
@@ -48,17 +48,19 @@ with sync_playwright() as p:
  page.locator('[data-action="scene-step"]').click()
  expect(page.locator('.arena-panel')).to_have_attribute('data-event','war_target')
  expect(page.locator('.arena-panel')).to_have_attribute('data-playing','false',timeout=3500)
+ page.locator('#sim-speed').select_option('1')
  page.locator('[data-action="scene-step"]').click()
  expect(page.locator('.campaign-route.attack')).to_have_count(1)
  expect(page.locator('.campaign-route.defense')).to_have_count(1)
  expect(page.locator('.battle-target')).to_have_count(1)
  # Attack and defense run continuously into this battle's map application.
  expect(page.locator('.arena-panel')).to_have_attribute('data-event','resolve',timeout=6500)
- expect(page.locator('.arena-panel')).to_have_attribute('data-playing','false',timeout=6500)
+ expect(page.locator('.arena-panel')).to_have_attribute('data-scene',re.compile('^apply-'),timeout=6500)
+ page.locator('[data-action="auto"]').click()
  expect(page.locator('.battle-losses')).to_be_visible()
  assert 'apply-' in page.locator('.arena-panel').get_attribute('data-scene')
  assert page.locator('.captured').count()==len(fixture['record']['battles'][0]['takenCells'])
- expect(page.locator('.army-delta')).to_have_count(2)
+ expect(page.locator('.map-unit-feedback[data-effect="army"]')).to_have_count(2)
  page.screenshot(path=str(OUT/'v11-first-battle.png'),full_page=True)
  passed('장군별 실제 경로 · 양측 주사위 연속 진행 · 2영토 점령 · 양측 부대 손실 표시')
  page.locator('[data-action="scene-skip"]').click()

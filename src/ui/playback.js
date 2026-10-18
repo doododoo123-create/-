@@ -14,8 +14,8 @@ export function makeTurnScenes(record,before) {
       detail:event.detail,worldBefore:frame.before,worldAfter:frame.before,
       bonus:event.side?event.side.ability+event.side.armyBonus:event.type==='domestic_roll'?event.ability:0,
     }));
-    else scenes.push({id:`${event.type}-${event.index}`,kind:event.type==='resolve'?'result':'focus',role:event.role,event,battleIndex:event.battleIndex,title:event.title,detail:event.detail,worldBefore:frame.before,worldAfter:event.type==='resolve'?frame.before:frame.after});
-    if(event.type==='resolve')scenes.push({id:`apply-${event.index}`,kind:'apply',event,battleIndex:event.battleIndex,title:'병력과 영토에 결과 반영',detail:event.detail,worldBefore:frame.before,worldAfter:frame.after});
+    else scenes.push({id:`${event.type}-${event.index}`,kind:event.type==='resolve'?'result':'focus',role:event.role,event,battleIndex:event.battleIndex,title:event.title,detail:event.detail,worldBefore:frame.before,worldAfter:frame.before});
+    if(event.type==='resolve'||frame.after!==frame.before)scenes.push({id:`apply-${event.index}`,kind:'apply',event,battleIndex:event.battleIndex,title:'병력과 영토에 결과 반영',detail:event.detail,worldBefore:frame.before,worldAfter:frame.after});
   }
   scenes.push({id:'result',kind:'summary',title:record.title,detail:record.detail,worldBefore:record.finalWorld||before,worldAfter:record.finalWorld||before});
   return scenes;
@@ -30,7 +30,7 @@ export class TurnPlayback {
   get complete(){return !this.state||this.state.finished;}
   get showingResult(){return this.scene?.kind==='summary';}
   get displayWorld(){return this.state?.finished?this.state.after:this.scene?.worldAfter;}
-  duration(){return this.state.phase==='rolling'?(this.reducedMotion()?80:900):this.state.phase==='raw'?500:this.state.phase==='merging'?500:this.scene.kind==='summary'?1200:this.scene.kind==='result'?1400:700;}
+  duration(){return this.state.phase==='departing'?(this.reducedMotion()?80:240):this.scene.kind==='apply'?1800:this.state.phase==='rolling'?(this.reducedMotion()?80:900):this.state.phase==='raw'?500:this.state.phase==='merging'?500:this.scene.kind==='summary'?1200:this.scene.kind==='result'?1400:700;}
   clearTimer(){if(this.handle!==null)this.cancel(this.handle);this.handle=null;}
   load(record,before,after,play=true){
     this.clearTimer();this.groupEnd=null;this.groupDone=false;const scenes=makeTurnScenes(record,before);scenes.at(-1).worldAfter=after;
@@ -45,7 +45,8 @@ export class TurnPlayback {
     if(this.state.phase==='rolling')this.state.phase=this.scene.bonus?'raw':'locked';
     else if(this.state.phase==='raw')this.state.phase='merging';
     else if(this.state.phase==='merging')this.state.phase='locked';
-    else if(this.groupEnd===this.state.index&&this.state.index<this.state.scenes.length-1){this.state.playing=false;this.groupDone=true;this.onChange();return;}
+    else if(this.state.phase!=='departing'&&this.state.scenes[this.state.index+1]?.kind==='apply')this.state.phase='departing';
+    else if(this.groupEnd===this.state.index&&this.state.index<this.state.scenes.length-1){this.state.playing=false;this.groupDone=true;if(this.scene.kind==='apply')this.state.phase='settled';this.onChange();return;}
     else if(this.state.index<this.state.scenes.length-1){this.state.index++;this.state.phase=this.scene.kind==='roll'?'rolling':'holding';}
     else{this.state.finished=true;this.state.playing=false;this.onChange();this.onFinish();return;}
     this.remaining=this.duration();this.onChange();if(this.state.playing)this.arm();
@@ -54,10 +55,10 @@ export class TurnPlayback {
     if(!this.state||this.state.finished)return;
     this.pause();if(this.groupDone){this.groupEnd=null;this.groupDone=false;this.advance();}
     const scene=this.scene,event=scene.event;let end=this.state.index;
-    if(['territory','attack_roll','defense_roll','domestic_roll'].includes(event?.type)){
-      const next=this.state.scenes.findIndex((s,i)=>i>=end&&s.kind==='apply'&&s.battleIndex===scene.battleIndex);if(next>=0)end=next;
+    if(['territory','attack_roll','defense_roll','domestic_roll','appointment','resupply','round_end','roster','waiting','death','survived','elimination','resolve'].includes(event?.type)){
+      const next=this.state.scenes.findIndex((s,i)=>i>=end&&s.kind==='apply'&&(scene.battleIndex!==undefined?s.battleIndex===scene.battleIndex:s.event.index===event.index||event.type==='domestic_roll'&&s.event.type==='resolve'));if(next>=0)end=next;
     }else if(event?.type==='death_roll'){
-      const next=this.state.scenes.findIndex((s,i)=>i>end&&['death','survived'].includes(s.event?.type));if(next>=0)end=next;
+      const next=this.state.scenes.findIndex((s,i)=>i>end&&s.kind==='apply'&&['death','survived'].includes(s.event?.type));if(next>=0)end=next;
     }
     this.groupEnd=end;this.state.playing=true;this.onChange();this.arm();
   }

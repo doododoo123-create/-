@@ -1,146 +1,74 @@
-/* Fullscreen recording stage: stable #app owns the browser fullscreen session. */
+/* Original HTML's map-first presentation: a small central reading surface, then clear map. */
 body.map-stage-open{overflow:hidden}
-#app.map-fullscreen,#app.map-fullscreen:fullscreen{width:100%;height:100%;background:#101722}
-.map-stage{position:fixed;inset:0;z-index:50;height:100vh;height:100dvh;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:12px;padding:16px 20px 12px;background:radial-gradient(ellipse at 80% 0,#263448,#101722 70%);color:#e4e9f1;overflow:hidden}
-.map-stage-header{display:flex;align-items:center;gap:20px;min-height:45px}
-.map-stage-title{display:flex;align-items:center;gap:12px;min-width:0;flex:1}
-.map-stage-title>svg{color:#d5bb82;flex:none}
-.map-stage-title h1{font-size:20px;line-height:1.4;font-weight:650;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:45vw}
-.map-stage-title span{color:#91a4bd;display:block;font-size:10px;letter-spacing:1px;margin-top:3px;font-variant-numeric:tabular-nums}
-.map-stage-title i,.map-stage-shortcuts i{font-style:normal;margin:0 7px;color:#5e718c}
-.map-stage-header>.button{font-size:10px;padding:8px 12px;min-height:34px;border-color:#445268;background:#182433;color:#c2ccda}
-.map-stage-heading-status{display:flex;align-items:center;gap:7px;font-size:11px;color:#acbad0}
-.map-stage-layout{min-height:0;display:grid;grid-template-columns:minmax(0,1fr) clamp(270px,22vw,350px);gap:16px}
-.map-stage-canvas{min-height:0;min-width:0;display:grid;grid-template-rows:minmax(0,1fr) auto;gap:10px}
-.map-stage-atlas{min-height:0;min-width:0;overflow:hidden;border:1px solid #465361;border-radius:10px;background:#80a4aa;box-shadow:0 9px 30px #030c1844}
-.map-stage .atlas-scroll{height:100%;max-height:none;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#80a4aa}
-.map-stage .atlas-map{height:100%;width:100%;min-width:0;aspect-ratio:auto;flex:none}
-.map-stage-nations{min-width:0}
-.map-stage-nations .visual-nations{display:flex;gap:7px;margin:0;overflow-x:auto;scrollbar-width:thin;scrollbar-color:#52647e transparent}
-.map-stage-nations .visual-nation-card{flex:1 0 88px;padding:8px 10px;border-radius:6px}
-.map-stage-nations .visual-nation-card>span{font-size:10px}
-.map-stage-nations .visual-nation-card>div{margin-top:5px}
-.map-stage-nations .visual-nation-card strong{font-size:20px}
-.map-stage-nations .visual-nation-card small{font-size:8px}
-.map-stage-nations .visual-nation-card>small{display:none}
-.map-stage-sidebar{min-height:0;min-width:0;overflow:auto;scrollbar-width:thin;scrollbar-color:#536780 transparent;display:flex;flex-direction:column;gap:12px}
-.map-stage-section-label{font-size:10px;letter-spacing:2px;color:#b9a67c;display:block;padding:2px 3px}
-.map-stage .arena-panel{position:static;top:auto;padding:16px;border-radius:10px;box-shadow:none;flex:none}
-.map-stage .arena-top{padding-bottom:7px;font-size:8px}
-.map-stage .arena-nation{font-size:11px}
-.map-stage .scene-position{text-align:right;font-size:9px;margin:0 0 10px;color:#7188a4}
-.map-stage .arena-heading{min-height:0;margin-bottom:13px}
-.map-stage .arena-heading>.eyebrow{display:none}
-.map-stage .arena-heading h2{font-size:18px;line-height:1.55;margin:0 0 5px;letter-spacing:-.4px}
-.map-stage .arena-heading p{font-size:11px;line-height:1.7;color:#b0bed0;word-break:normal}
-.map-stage .single-judgment{min-height:0;padding:5px 0 10px;gap:19px}
-.map-stage .scene-portrait{width:85px;flex-basis:85px;border-radius:6px}
-.map-stage .scene-portrait>img{height:106px}
-.map-stage .scene-portrait figcaption{padding:5px}
-.map-stage .scene-portrait figcaption strong{font-size:12px}
-.map-stage .scene-portrait figcaption small{font-size:8px}
-.map-stage .scene-portrait figcaption span{font-size:8px}
-.map-stage .visual-die{width:78px;height:90px;border-radius:11px}
-.map-stage .visual-die .die-number,.map-stage .rolling-number{font-size:46px}
-.map-stage .rolling-number{top:12px}
-.map-stage .die-caption{font-size:9px;min-height:14px;margin-bottom:5px}
-.map-stage .die-equation{font-size:15px;height:31px;margin-top:7px;gap:4px}
-.map-stage .die-equation>strong{font-size:25px}
-.map-stage .visual-die>small{font-size:7px}
-.map-stage .character-description{background:none;border:0;border-top:1px solid #35465e;border-radius:0;padding:10px 0 0;margin-top:5px}
-.map-stage .character-description>strong{display:none}
-.map-stage .character-description>p{display:none}
-.map-stage .trait-chips>b{font-size:9px}
-.map-stage .battle-sequence{font-size:10px;line-height:1.6;margin:0 0 12px;text-align:left;color:#a7b8cc}
-.map-stage .visual-duel{gap:6px;padding-bottom:0}
-.map-stage .duel-side{max-width:none}
-.map-stage .duel-side-label{font-size:10px;padding-bottom:8px}
-.map-stage .duel-side-label>span{font-size:9px}
-.map-stage .scene-portrait.compact{width:76px;margin-bottom:10px}
-.map-stage .scene-portrait.compact>img{height:92px}
-.map-stage .duel-vs{width:17px;flex-basis:17px;margin-top:82px;gap:4px}
-.map-stage .duel-vs>span{font-size:14px}
-.map-stage .duel-vs>svg{width:15px;height:15px}
-.map-stage .duel-side .visual-die{width:70px;height:80px}
-.map-stage .duel-side .visual-die .die-number,.map-stage .duel-side .rolling-number{font-size:41px}
-.map-stage .duel-side .rolling-number{top:10px}
-.map-stage .duel-side .die-equation{font-size:13px;gap:3px;height:30px;margin-top:5px}
-.map-stage .duel-side .die-equation>strong{font-size:23px}
-.map-stage .side-modifiers{gap:3px}
-.map-stage .side-modifiers>span{font-size:8px;padding:2px 3px}
-.map-stage .battle-losses{margin:12px 0 9px;padding:9px;gap:7px}
-.map-stage .battle-losses strong{font-size:23px}
-.map-stage .battle-losses p{font-size:9px;line-height:1.6}
-.map-stage .automatic-banner{padding:9px;font-size:11px;line-height:1.65;text-align:center}
-.map-stage .event-information{min-height:135px;padding:15px 3px;gap:12px}
-.map-stage .event-information>h3{display:none}
-.map-stage .event-information>p{font-size:11px;color:#c5cfdd}
-.map-stage .production-details{max-height:170px;overflow:auto}
-.map-stage .production-details p{font-size:10px;line-height:1.9}
-.map-stage .scene-status,.map-stage .arena-controls{display:none}
-.map-stage .death-judgment{font-size:11px;gap:8px;border-top:1px solid #41516a;padding-top:12px;margin-top:10px}
-.map-stage .death-judgment .visual-die{width:55px;height:64px}
-.map-stage .death-judgment .die-number{font-size:31px}
-.map-stage .death-judgment .die-caption{font-size:8px}
-.map-stage .death-judgment .die-equation{font-size:11px;height:22px}
-.map-stage-chronicle{border-top:1px solid #34445b;padding:12px 4px 2px;min-width:0}
-.map-stage-chronicle h2{font-size:10px;color:#8197b2;margin-bottom:9px;font-weight:500;letter-spacing:1px}
-.map-stage-chronicle p{display:flex;gap:9px;font-size:11px;color:#b4c1d3;line-height:1.8;margin-top:8px;overflow-wrap:anywhere}
-.map-stage-chronicle p>span{color:#657e9e;font-size:10px;font-variant-numeric:tabular-nums;padding-top:1px}
-.map-stage-outcome{display:flex;align-items:center;flex-direction:column;gap:7px;padding:16px 10px;border:1px solid #8a734a;border-radius:8px;background:#463c2588;color:#ead092;text-align:center}
-.map-stage-outcome strong{font-size:18px}
-.map-stage-outcome>span{font-size:11px;color:#c4bb9d}
-.map-stage-controls{display:flex;align-items:center;justify-content:flex-end;gap:15px;min-width:0;padding-top:2px}
-.map-stage-shortcuts{margin-right:auto;font-size:10px;color:#7d92ad;white-space:nowrap}
-.map-stage-controls .speed-label{font-size:10px;margin:0;gap:7px;color:#9cafc7}
-.map-stage-controls .speed-label select{width:64px;background:#182538;border-color:#40516a;color:#c4cfdf;font-size:11px;padding:6px 7px}
-.map-stage-names{display:flex;flex-direction:row;align-items:center;gap:6px;font-size:10px;color:#9cafc7;margin:0;white-space:nowrap}
-.map-stage-names input{width:13px;height:13px;accent-color:#d8bd86}
-.map-stage-buttons{display:flex;align-items:center;gap:7px}
-.map-stage-buttons .button{font-size:11px;min-height:35px;padding:8px 11px;gap:5px;border-color:#40516a;background:#213147;color:#cad5e3}
-.map-stage-buttons .button.primary{background:#dac18c;border-color:#dac18c;color:#252633}
-.map-stage-alert{position:absolute;bottom:65px;left:50%;transform:translateX(-50%);max-width:80vw;padding:12px 18px;border:1px solid #637d70;border-radius:7px;background:#213d33f5;color:#d1efda;font-size:12px;z-index:5;line-height:1.7;box-shadow:0 8px 24px #0006}
-.map-stage-alert.error{background:#4b2e2bf5;border-color:#a87165;color:#f4c8b7}
+#app.map-fullscreen,#app.map-fullscreen:fullscreen{width:100%;height:100%;background:#81a5ab}
+.map-stage{position:fixed;inset:0;z-index:50;display:block;width:100%;height:100vh;height:100dvh;background:#81a5ab;overflow:hidden;padding:0}
+.map-stage-atlas{position:absolute;inset:0;overflow:hidden}
+.map-stage .atlas-scroll{position:relative;display:flex;align-items:center;justify-content:center;height:100%;max-height:none;overflow:hidden;background:#81a5ab}
+.map-stage .atlas-map{width:100%;height:100%;min-width:0;aspect-ratio:auto;flex:none}
+.map-judgment{position:absolute;z-index:30;left:50%;top:50%;transform:translate(-50%,-50%);width:fit-content;min-width:min(420px,calc(100% - 28px));max-width:min(680px,calc(100% - 24px));max-height:calc(100% - 24px);padding:16px 22px;border:1px solid #71819480;border-radius:14px;background:#0d1726ee;box-shadow:0 10px 34px #0006;color:#fff9e7;text-align:center;pointer-events:none;text-shadow:0 1px 2px #0008;animation:none}
+.map-judgment h2{font-size:21px;line-height:1.45;font-weight:600;color:#fff0bc;margin:0 0 13px;letter-spacing:-.4px;overflow-wrap:anywhere}
+.map-judgment[data-phase=departing]{animation:judgment-leave calc(.24s / var(--playback-speed,1)) ease-out both}
+.judgment-single,.judgment-roll{display:flex;align-items:center;justify-content:center;gap:22px}
+.judgment-person{margin:0;width:100px;flex:0 0 100px;border:1px solid color-mix(in srgb,var(--nation) 55%,#718194);border-radius:6px;overflow:hidden;background:#172130;box-shadow:0 4px 18px #07101c80;text-shadow:none}
+.judgment-person>img{width:100%;height:105px;display:block;object-fit:cover;object-position:center 20%}
+.judgment-person figcaption{padding:6px 4px}
+.judgment-person strong{font-size:14px;font-weight:600;display:block;line-height:1.4;color:#fff}
+.judgment-person small{font-size:10px;color:var(--nation);display:block;margin-top:2px}
+.map-judgment .visual-die-block{width:120px;max-width:130px}
+.map-judgment .visual-die{width:86px;height:96px;border-radius:11px}
+.map-judgment .visual-die .die-number,.map-judgment .rolling-number{font-size:46px}
+.map-judgment .rolling-number{top:13px}
+.map-judgment .die-caption{font-size:11px;min-height:14px;margin-bottom:5px;color:#e2d5b5}
+.map-judgment .visual-die>small{font-size:8px;letter-spacing:1px}
+.map-judgment .die-equation{font-size:16px;height:28px;gap:5px;margin-top:8px}
+.map-judgment .die-equation>strong{font-size:25px}
+.map-judgment .waiting-equation{font-size:9px}
+.judgment-feature{font-size:12px;line-height:1.6;color:#e5dfce;margin:10px 0 0;max-width:430px;overflow-wrap:anywhere}
+.judgment-feature>span{font-size:11px;color:#ffe7a2;display:block;margin-top:2px}
+.judgment-result{font-size:14px;color:#fff1bc;line-height:1.6;margin:12px 0 0}
+.map-judgment.is-duel{width:min(660px,calc(100% - 24px))}
+.judgment-duel{display:flex;align-items:center;justify-content:center;gap:15px}
+.judgment-side{flex:1;min-width:0}
+.judgment-side-label{font-size:12px;color:#f4b2a0;margin-bottom:9px}
+.judgment-side.defense .judgment-side-label{color:#b6d1ed}
+.judgment-side-label small{font-size:11px;color:#ddd7c8;margin-left:5px}
+.judgment-vs{font-family:Georgia,serif;font-size:22px;color:#fff0bb;flex:none}
+.judgment-side .judgment-roll{gap:13px}
+.judgment-side .judgment-person{width:80px;flex-basis:80px}
+.judgment-side .judgment-person>img{height:90px}
+.judgment-side .judgment-person strong{font-size:13px}
+.judgment-side .visual-die-block{width:105px}
+.judgment-side .judgment-feature{font-size:11px;max-width:260px}
+.judgment-auto{font-size:12px;line-height:1.6;color:#dfcfac;padding:12px}
+.map-stage-alert{position:absolute;z-index:40;left:50%;bottom:5%;transform:translateX(-50%);max-width:80vw;padding:12px 18px;border:1px solid #6c7e8b;border-radius:7px;background:#101a2aed;color:#e8e2d4;font-size:12px;line-height:1.7;box-shadow:0 8px 24px #0006}
+.map-stage-alert.error{border-color:#a87165;color:#f4c8b7}
 .map-stage-alert[hidden]{display:none}
-@media(max-width:1250px){
-  .map-stage{padding:12px;gap:10px}.map-stage-layout{grid-template-columns:minmax(0,1fr) 270px;gap:12px}
-  .map-stage-shortcuts{font-size:9px}.map-stage-controls{gap:10px}.map-stage-buttons .button{font-size:10px;padding:8px}
-}
-@media(max-height:800px){
-  .map-stage{padding:10px 14px;gap:8px}.map-stage-header{min-height:37px}.map-stage-title h1{font-size:17px}.map-stage-title span{font-size:9px}
-  .map-stage .arena-panel{padding:12px}.map-stage .arena-heading{margin-bottom:9px}.map-stage .arena-heading h2{font-size:16px}.map-stage .arena-heading p{font-size:10px}
-  .map-stage .scene-position{margin-bottom:6px}.map-stage .battle-sequence{margin-bottom:8px}.map-stage .scene-portrait.compact>img{height:79px}.map-stage .scene-portrait.compact{width:67px;margin-bottom:8px}
-  .map-stage .duel-side .visual-die{height:70px;width:63px}.map-stage .duel-side .visual-die .die-number,.map-stage .duel-side .rolling-number{font-size:35px}
-  .map-stage .battle-losses{margin:8px 0;padding:7px}.map-stage .battle-losses strong{font-size:21px}.map-stage .duel-vs{margin-top:70px}
-  .map-stage-nations .visual-nation-card{padding:6px 8px}.map-stage-nations .visual-nation-card strong{font-size:18px}
-  .map-stage-chronicle{padding-top:9px}.map-stage-chronicle p{font-size:10px;margin-top:5px}
-}
-@media(max-width:760px){
-  .map-stage-heading-status,.map-stage-shortcuts{display:none}.map-stage-header{gap:8px}.map-stage-title h1{max-width:48vw;font-size:16px}.map-stage-title>svg{display:none}
-  .map-stage-layout{grid-template-columns:minmax(0,1fr) 235px;gap:9px}.map-stage{padding:9px;gap:8px}
-  .map-stage-controls{justify-content:space-between;gap:6px}.map-stage-names{display:none}.map-stage-buttons{gap:4px}.map-stage-buttons .button{font-size:9px;padding:7px 6px;min-height:32px}.map-stage-buttons .button svg{width:12px;height:12px}
-  .map-stage-controls .speed-label{font-size:9px;gap:4px}.map-stage-controls .speed-label select{font-size:10px;width:52px;padding-inline:4px}
-  .map-stage .arena-panel{padding:11px}.map-stage .arena-heading h2{font-size:15px}.map-stage .arena-heading p{font-size:10px}.map-stage-section-label{font-size:9px}
-  .map-stage .visual-duel{gap:3px}.map-stage .scene-portrait.compact{width:63px}.map-stage .duel-side .die-equation{font-size:11px;gap:2px}.map-stage .duel-side .die-equation strong{font-size:21px}
-}
-@media(max-width:560px){
-  .map-stage-layout{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(190px,1fr) minmax(0,.8fr);gap:8px}
-  .map-stage-canvas{gap:6px}.map-stage-nations .visual-nation-card{flex-basis:70px;padding:5px 7px}.map-stage-nations .visual-nation-card>span{font-size:9px}.map-stage-nations .visual-nation-card strong{font-size:16px}.map-stage-nations .visual-nation-card small{font-size:7px}
-  .map-stage-sidebar{display:block}.map-stage-section-label,.map-stage-chronicle{display:none}.map-stage .arena-panel{padding:12px}.map-stage .arena-top{display:none}.map-stage .scene-position{float:right}.map-stage .arena-heading h2{font-size:15px}
-  .map-stage .single-judgment{gap:28px;padding:0}.map-stage .scene-portrait>img{height:79px}.map-stage .scene-portrait{width:65px;flex-basis:65px}.map-stage .scene-portrait figcaption{padding:3px}
-  .map-stage .visual-duel{max-width:300px;margin:auto}.map-stage .scene-portrait.compact>img{height:70px}.map-stage .battle-losses{margin:8px 0}
-  .map-stage .character-description{padding-top:5px;margin-top:3px}.map-stage .event-information{min-height:80px;padding:5px;gap:5px}.map-stage .event-information>svg{width:30px;height:30px}
-  .map-stage-controls{flex-wrap:wrap}.map-stage-buttons{flex:1;justify-content:flex-end}.map-stage-buttons .button{font-size:9px;padding:7px 5px}.map-stage-controls .speed-label{flex:none}
-}
-.map-stage .waiting-equation,.map-stage .duel-side .waiting-equation{font-size:8px}
-@media(max-height:800px) and (min-width:561px){.map-stage-chronicle{display:none}}
-
+/* Changes sit directly above their real garrison or capital. */
+.atlas-scroll{position:relative}
+.map-unit-feedback,.map-territory-feedback{--feedback:#e8dab6;animation:map-feedback-in .3s ease-out both}
+.map-unit-feedback.positive{--feedback:#aaf0b0}.map-unit-feedback.negative{--feedback:#ffad9a}.map-unit-feedback.upgrade{--feedback:#b6ddff}
+.map-unit-feedback rect,.map-territory-feedback rect{fill:#101a29ee;stroke:var(--feedback);stroke-width:1.2}
+.map-unit-feedback text{fill:var(--feedback);font-size:17px;font-weight:750;paint-order:stroke;stroke:#101a29;stroke-width:2;stroke-linejoin:round}
+.map-territory-feedback{--feedback:#fff1ad}
+.map-territory-feedback text{fill:#fff1ad;font-size:13px;font-weight:650}
+.map-event-announcement{position:absolute;left:50%;top:9%;transform:translateX(-50%);max-width:85%;padding:8px 15px;background:#101a29e6;border:1px solid #c5b58388;border-radius:6px;color:#fff0bc;font-size:clamp(12px,1.4vw,21px);font-weight:600;line-height:1.5;text-align:center;pointer-events:none;animation:map-feedback-in .25s ease-out both}
+@keyframes judgment-leave{from{opacity:1;transform:translate(-50%,-50%)}to{opacity:0;transform:translate(-50%,-52%)}}
+@keyframes map-feedback-in{from{opacity:0}to{opacity:1}}
+.playback-paused .map-unit-feedback,.playback-paused .map-territory-feedback,.playback-paused .map-event-announcement{animation:none;opacity:1}
 @media(max-width:760px){.map-panel>.panel-head{flex-wrap:wrap;gap:12px}.map-panel-actions{flex:1;justify-content:space-between}}
-/* Keep the map-side account brief; the normal arena retains the full breakdown. */
-.map-stage .side-modifiers,.map-stage .battle-losses p{display:none}
-.map-stage .character-description:not(:has(.trait-chips)){display:none}
-.map-stage .arena-heading p,.map-stage .event-information>p{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-.map-stage .event-information:has(.production-details)>p{display:none}
-.map-stage .scene-position{display:none}
-
-@media(max-height:800px){.map-stage .death-judgment{margin-top:6px;padding-top:7px}}
+@media(max-width:620px){
+  .map-judgment{padding:12px 14px;min-width:0;width:calc(100% - 24px);border-radius:11px}.map-judgment h2{font-size:18px;margin-bottom:10px}
+  .judgment-duel{gap:8px}.judgment-vs{font-size:17px}.judgment-side .judgment-roll{gap:7px;flex-wrap:wrap}
+  .judgment-side .judgment-person{width:62px;flex-basis:62px}.judgment-side .judgment-person>img{height:68px}.judgment-person strong{font-size:12px}
+  .map-judgment .visual-die{width:66px;height:78px}.map-judgment .visual-die .die-number,.map-judgment .rolling-number{font-size:38px}.map-judgment .rolling-number{top:10px}
+  .judgment-side .visual-die-block{width:88px}.map-judgment .die-equation{font-size:13px}.map-judgment .die-equation>strong{font-size:22px}
+  .judgment-feature,.judgment-result{font-size:12px}.judgment-side .judgment-feature{font-size:10px}.judgment-side-label{font-size:11px}
+  .map-event-announcement{font-size:12px;padding:6px 10px}
+}
+@media(max-height:500px){.map-judgment{padding:10px 16px}.map-judgment h2{font-size:17px;margin-bottom:8px}.judgment-person>img{height:80px}.judgment-side .judgment-person>img{height:70px}.judgment-feature{margin-top:7px}.judgment-result{margin-top:7px;font-size:12px}}
+@media(prefers-reduced-motion:reduce){.map-judgment,.map-unit-feedback,.map-territory-feedback,.map-event-announcement{animation:none!important}}
+.judgment-result{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+/* A paused entrance must remain fully readable rather than freezing at opacity zero. */
+.playback-paused .map-judgment{animation:none!important;opacity:1;transform:translate(-50%,-50%)}
+.map-unit-feedback path{fill:none;stroke:var(--feedback);stroke-width:1.4}
+.map-territory-feedback path{fill:none;stroke:#fff1ad;stroke-width:1.2;stroke-dasharray:3 2}

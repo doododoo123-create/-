@@ -8,7 +8,7 @@ test('every source event and die has a presentation, including each sequential b
  for(const war of [false,true]){const f=fixture(war),scenes=makeTurnScenes(f.record,f.before);assert.equal(scenes.at(-1).title,f.record.title);
  for(const event of f.record.events)assert.ok(scenes.some(s=>s.event?.index===event.index));
  for(let i=0;i<f.record.rolls.length;i++)assert.ok(scenes.some(s=>s.diceIndices?.includes(i)));
- assert.equal(scenes.filter(s=>s.kind==='apply').length,f.record.events.filter(e=>e.type==='resolve').length);
+ assert.equal(scenes.filter(s=>s.kind==='apply').length,f.record.events.filter(e=>e.type==='resolve'||f.record.frames[e.index].after!==f.record.frames[e.index].before).length);
  }
  const f=fixture(true);assert.ok(f.record.battles.length>1);
 });
@@ -27,7 +27,7 @@ test('raw die, modifier merge and final face show recorded scores without clampi
 test('battle result is announced before ownership and troop changes are applied',()=>{
  const f=fixture(true),player=new TurnPlayback();player.load(f.record,f.before,f.after,false);
  while(player.scene.event?.type!=='resolve')player.step();assert.equal(player.scene.kind,'result');const old=player.displayWorld;
- assert.deepEqual(old,player.scene.worldBefore);player.step();assert.equal(player.scene.kind,'apply');assert.deepEqual(player.displayWorld,player.scene.worldAfter);
+ assert.deepEqual(old,player.scene.worldBefore);player.step();assert.equal(player.state.phase,'departing');assert.deepEqual(player.displayWorld,old);player.step();assert.equal(player.scene.kind,'apply');assert.deepEqual(player.displayWorld,player.scene.worldAfter);
  player.finish();assert.deepEqual(player.displayWorld,f.after);assert.equal(player.showingResult,true);
 });
 test('speed changes affect only remaining clock time; reset cancels callbacks',()=>{

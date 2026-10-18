@@ -1,4 +1,4 @@
-# 현재 규칙 · Studio v0.2.0 / v11
+# 현재 규칙 · Studio v0.2.2 / v11
 
 이 파일명은 기존 링크를 유지하기 위한 것입니다. 현재 규칙 기준은 [첨부 원본 룰북 v11](reference/legacy-rulebook-v11.md)과 [원본 HTML](reference/legacy-play.html)입니다. 이전 Studio의 국가 통합 병력·1회 전투·1영토 점령 규칙은 교체했습니다.
 
