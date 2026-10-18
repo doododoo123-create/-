@@ -8,7 +8,7 @@ export function judgmentVisible(playback){
   return !!(playback.state&&!playback.complete&&!(playback.groupDone&&!playback.playing)&&scene&& !['apply','summary'].includes(scene.kind)&&scene.event?.type!=='territory');
 }
 function judgmentPerson(world,country,role,slot){return countryPeople(world,country?.id).find(p=>p.role===role&&(role!=='general'||p.slot===slot));}
-function judgmentPortrait(person,country,role){return `<figure class="judgment-person" style="--nation:${country?.color||'#c0b698'}">${portraitImage(person,country,role)}<figcaption><strong>${esc(person?.name||ROLES[role])}</strong><small>${esc(country?.name||'')} · ${ROLES[role]}</small></figcaption></figure>`;}
+function judgmentPortrait(person,country,role){return `<figure class="judgment-person" style="--nation:${country?.color||'#c0b698'}"><div class="framed-portrait">${portraitImage(person,country,role)}</div><figcaption><strong>${esc(person?.name||ROLES[role])}</strong><small>${esc(country?.name||'')} · ${ROLES[role]}</small></figcaption></figure>`;}
 function judgmentTraits(person,role,country){
   const trait=role==='king'?PERSONALITIES[person?.personality||country?.personality]:role==='minister'?MINISTER_STYLES[person?.ministerStyle||'balanced']:`능력 ${judgmentSign(person?.ability)}`;
   return `<p class="judgment-feature">${esc(person?.feature||trait||'')}<span>${role==='minister'?`${esc(trait)} · 능력 ${judgmentSign(person?.ability)}`:role==='king'?esc(trait||''):`능력 ${judgmentSign(person?.ability)}`}</span></p>`;

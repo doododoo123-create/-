@@ -1,12 +1,12 @@
-# 사국쟁패 Studio v0.3.0 · 삽화 지도와 경계 편집
+# 사국쟁패 Studio v0.3.1 · 칠목과 청동 UI
 
 사용자가 국가·인물·영토·규칙을 편집하고 자동 역사를 관찰하는 프로그램입니다. **이번 버전의 기본 시스템은 첨부된 `saguk-play (6).html`과 칠국쟁패 룰북 v11입니다.** 이전 Studio의 간소화한 국가 통합 병력 규칙을 원본의 장군별 부대·주둔지·생산·전투·후임 체계로 교체했습니다.
 
-![삽화 지도와 경계 편집](docs/cartography-preview.png)
+![먹빛·청동 UI](docs/bronze-ui-preview.png)
 
 ## 설치 없이 실행
 
-**[바로 플레이할 HTML 파일 다운로드](https://github.com/doododoo123-create/-/raw/refs/tags/v0.3.0/%EC%82%AC%EA%B5%AD%EC%9F%81%ED%8C%A8%20Studio.html)**
+**[바로 플레이할 HTML 파일 다운로드](https://github.com/doododoo123-create/-/raw/refs/tags/v0.3.1/%EC%82%AC%EA%B5%AD%EC%9F%81%ED%8C%A8%20Studio.html)**
 
 링크를 우클릭해 **다른 이름으로 링크 저장**을 선택한 뒤, 받은 HTML을 Chrome 또는 Edge로 열면 됩니다. ZIP 압축을 풀 필요가 없습니다. 앞으로도 수정본은 단일 HTML을 별도로 제공합니다.
 
@@ -18,6 +18,14 @@
 4. **시뮬레이션 → 한 턴 진행**을 누릅니다.
 
 `index.html`은 개발용입니다. 일반 사용자는 `사국쟁패 Studio.html`을 여세요. 실행에 계정·외부 서비스·인터넷·Node 설치가 필요하지 않습니다. 이 클라우드에서는 HTTP로 받은 단일 HTML의 오프라인 동작을 검증했습니다. 실제 Windows에서 파일을 더블클릭하는 검증은 수행하지 않았습니다.
+
+## 이번 UI 변경
+
+제공한 `사국쟁패_UI이미지_77종.zip`의 **먹빛 바탕·청동 프레임·주홍/옥색 버튼**을 적용했습니다. 지도 프레임, 인물 초상 프레임, 육각 주사위, 명령 현판과 전투 배너, 국가 깃발·장군 표식, 종이 바탕 기록과 아이콘을 사용합니다. 작은 버튼은 모서리를 보존하고 기본·호버·눌림·비활성 상태를 구분합니다.
+
+이름·병력·주사위는 실제 텍스트입니다. 보정 후 10 초과 숫자와 눈금이 높아질수록 붉어지는 효과를 유지합니다. 지도 전체화면은 상시 장식 프레임·우측 패널 없이 지도만 표시하고 판정 중에만 중앙 인물·주사위를 보여줍니다. 기존 편집 세계·저장·v11 계산은 그대로 사용합니다.
+
+![새 판정·기록 화면](docs/bronze-simulation-preview.png)
 
 ## 지도 그림과 경계 편집
 
@@ -99,6 +107,8 @@
 
 | 위치 | 역할 |
 |---|---|
+| `assets/ui-kit/`, `src/ui/lacquer-bronze.css` | 제공한 77종 자원과 UI 외형·상태 스타일 |
+| `scripts/ui-kit.mjs`, `src/ui/kit-icons.js` | SVG 아이콘을 인라인 경로로 동기화 |
 | `src/model/cartography.js` | 선택적인 지도 디자인, 경계·이미지·인접 관계 검증 |
 | `src/ui/map-editor.js`, `map-editor-view.js`, `map-editor.css` | 지도 편집 조작·그리기·배경 불러오기·확대·되돌리기 |
 | `src/ui/cartography-geometry.js`, `src/data/terrain-art.js` | 저장된 경계의 표시 좌표와 오프라인 삽화 자원 |
@@ -126,8 +136,10 @@ Node.js 22 이상에서 실행합니다. 외부 라이브러리 설치는 필요
 npm start        # 터미널에 표시되는 주소로 접속
 npm test         # 원본 대조·세계·저장·연출 검사
 npm run check    # 구문 검사
-npm run release  # dist와 루트의 실행 HTML 갱신
+npm run release  # UI 자원을 내장해 dist와 루트의 실행 HTML 갱신
 ```
+
+추가 화면 검사: 서버 실행 후 `python tests/skin_smoke.py`를 실행합니다. Playwright와 Chromium이 필요하며, 단일 HTML의 오프라인 검사는 `STUDIO_TEST_URL`에 dist HTML 주소를 지정하고 `STUDIO_OFFLINE=1`로 실행합니다.
 
 Windows에서는 Node 설치 후 `Studio 실행.cmd`도 사용할 수 있습니다. 주요 변경은 Git 커밋과 버전 태그로 보관합니다.
 

@@ -4,7 +4,7 @@ import { portraitImage } from './portraits.js';
 import { renderDie } from './die-view.js';
 const signed=n=>n>0?`+${n}`:String(n||0);
 function character(person,country,role,compact=false) {
-  return `<figure class="scene-portrait ${compact?'compact':''}" style="--nation:${country?.color||'#8b99aa'}">${portraitImage(person,country,role)}<figcaption><small>${esc(country?.name||'')}</small><strong>${esc(person?.name||`${ROLES[role]||'지휘관'} 미배치`)}</strong><span>${ROLES[role]||'지휘관'}</span></figcaption></figure>`;
+  return `<figure class="scene-portrait ${compact?'compact':''}" style="--nation:${country?.color||'#8b99aa'}"><div class="framed-portrait">${portraitImage(person,country,role)}</div><figcaption><small>${esc(country?.name||'')}</small><strong>${esc(person?.name||`${ROLES[role]||'지휘관'} 미배치`)}</strong><span>${ROLES[role]||'지휘관'}</span></figcaption></figure>`;
 }
 export function renderArena({world,run,playback,showControls=true}) {
   const state=playback?.state,record=state?.record,scene=playback?.scene,event=scene?.event;

@@ -1,3 +1,5 @@
+import { KIT_ICONS } from './kit-icons.js';
+const kitAliases={globe:'world',flag:'country',people:'general',map:'map',play:'play',pause:'pause',settings:'settings',save:'save',upload:'load',plus:'plus',chevron:'step',edit:'edit',x:'close',dice:'dice',sword:'attack',crown:'king',layers:'territory',book:'chronicle'};
 const paths = {
   compass: '<circle cx="12" cy="12" r="9"/><path d="m16 8-2.5 5.5L8 16l2.5-5.5Z"/>',
   globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c5 5 5 13 0 18-5-5-5-13 0-18Z"/>',
@@ -28,6 +30,6 @@ const paths = {
   expand: '<path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/>',
   book: '<path d="M12 5c-3-2-6-2-10-1v15c4-1 7-1 10 1 3-2 6-2 10-1V4c-4-1-7-1-10 1Zm0 0v15"/>',
 };
-export const icon = (name, size = 18) => `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name] || paths.globe}</svg>`;
+export const icon = (name, size = 18) => kitAliases[name]?`<svg class="kit-icon" data-ui-icon="${kitAliases[name]}" width="${size}" height="${size}" viewBox="0 0 128 128" aria-hidden="true">${KIT_ICONS[kitAliases[name]]}</svg>`:`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name] || paths.globe}</svg>`;
 export const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 export const format = n => new Intl.NumberFormat('ko-KR').format(n);

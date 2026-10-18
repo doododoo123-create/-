@@ -1,6 +1,6 @@
 {
   "name": "saguk-studio",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "type": "module",
   "description": "사용자가 만드는 세계와 주사위 기반 가상역사 실험실",
