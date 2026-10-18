@@ -4,7 +4,7 @@ export function freeMapFrom(world,cells){
   const next=clone(world);if(next.mapKind==='free')return next;
   next.cartography||=defaultCartography();
   next.cartography.links=world.territories.flatMap(t=>neighbors(world,t).filter(n=>t.id<n.id).map(n=>[t.id,n.id]));
-  next.territories.forEach((t,i)=>{Object.defineProperty(next.cartography.polygons,t.id,{value:{points:cells[i].points,center:cells[i].center},enumerable:true,writable:true,configurable:true});delete t.row;delete t.col;});
+  next.territories.forEach((t,i)=>{Object.defineProperty(next.cartography.polygons,t.id,{value:{points:cells[i].points,center:cells[i].center,...(cells[i].holes?{holes:cells[i].holes}:{})},enumerable:true,writable:true,configurable:true});delete t.row;delete t.col;});
   next.mapKind='free';return next;
 }
 export function sharedBoundary(a,b){
@@ -28,5 +28,11 @@ export function removeFreeTerritory(world,id){
 }
 export function moveFreeTerritory(world,id,point){
   const next=clone(world),shape=next.cartography.polygons[id],dx=point[0]-shape.center[0],dy=point[1]-shape.center[1];
-  shape.points=validatePolygon(shape.points.map(p=>[p[0]+dx,p[1]+dy]));shape.center=point;return validateWorld(next);
+  shape.points=validatePolygon(shape.points.map(p=>[p[0]+dx,p[1]+dy]));if(shape.holes)shape.holes=shape.holes.map(h=>validatePolygon(h.map(p=>[p[0]+dx,p[1]+dy])));shape.center=point;return validateWorld(next);
+}
+
+export function generatedWorld(world,shapes,links,background){
+  const next=clone(world);next.mapKind='free';next.cartography={...defaultCartography(),background,opacity:.22,polygons:{},links:[]};
+  next.territories=shapes.map((shape,i)=>{const id=`generated-${i}`;Object.defineProperty(next.cartography.polygons,id,{value:shape,enumerable:true,writable:true,configurable:true});return {id,name:`영토 ${i+1}`,ownerId:null};});
+  next.cartography.links=links.map(pair=>pair.map(i=>next.territories[i].id));next.countries.forEach(c=>c.capitalId=null);return validateWorld(next);
 }

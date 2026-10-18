@@ -1,0 +1,6 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { MapCamera } from '../src/ui/map-camera.js';
+const withoutDom=fn=>{const original=globalThis.document;globalThis.document={querySelectorAll:()=>[],querySelector:()=>null};try{fn();}finally{globalThis.document=original;}};
+test('camera zoom keeps cursor anchor fixed, clamps range and resets without a world reference',()=>withoutDom(()=>{const c=new MapCamera();assert.deepEqual(c.box('editor'),[0,0,1200,800]);c.zoom('editor',2,[900,600]);assert.deepEqual(c.box('editor'),[450,300,600,400]);const v=c.view('editor');assert.equal((900-v.x)*v.zoom,300);assert.equal((600-v.y)*v.zoom,200);c.zoom('editor',100);assert.equal(c.view('editor').zoom,5);c.zoom('editor',0);assert.equal(c.view('editor').zoom,.5);c.action('map-zoom-reset','editor');assert.deepEqual(c.box('editor'),[0,0,1200,800]);}));
+test('editor and observation cameras are independent and panning is opt-in while editing',()=>withoutDom(()=>{const c=new MapCamera();c.action('map-zoom-in','simulation');assert.equal(c.view('simulation').zoom,1.25);assert.equal(c.view('editor').zoom,1);c.action('map-pan-toggle','editor');assert(c.panEditor);c.resetAll();assert(!c.panEditor);assert.deepEqual(c.box('simulation'),[0,0,1200,800]);assert(!c.action('delete-country','editor'));}));

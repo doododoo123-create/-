@@ -1,5 +1,5 @@
 import { clone, neighbors } from '../model/world.js';
-import { defaultCartography, validatePolygon, polygonCenter, pointInPolygon, setTerritoryLinks } from '../model/cartography.js';
+import { defaultCartography, validatePolygon, polygonCenter, pointInPolygon, pointInShape, shapeAnchor, MAX_POLYGON_POINTS, setTerritoryLinks } from '../model/cartography.js';
 import { freeMapFrom, addFreeTerritory, removeFreeTerritory, moveFreeTerritory, boundaryLinks } from '../model/free-map.js';
 import { geometryFor, cellPoints } from './cartography-geometry.js';
 import { renderMapDraft } from './map-editor-view.js';
@@ -37,9 +37,10 @@ export class MapEditor {
     if(this.mode==='reshape'){
       // Preserve shared vertices so adjusting a border does not create a gap in adjacent territories.
       const moves=this.original.map((p,i)=>({from:p,to:points[i]})).filter(m=>m.to&&(m.from[0]!==m.to[0]||m.from[1]!==m.to[1]));
-      next.territories.forEach((t,i)=>{if(t.id===id)return;const old=cellPoints(geometry.cells[i]);let changed=false;const moved=old.map(p=>{const m=moves.find(m=>Math.hypot(p[0]-m.from[0],p[1]-m.from[1])<.002);if(m){changed=true;return [...m.to];}return p;});if(changed){const valid=validatePolygon(moved);Object.defineProperty(next.cartography.polygons,t.id,{value:{points:valid,center:polygonCenter(valid)},enumerable:true,writable:true,configurable:true});}});
+      next.territories.forEach((t,i)=>{if(t.id===id)return;const old=cellPoints(geometry.cells[i]);let changed=false;const moved=old.map(p=>{const m=moves.find(m=>Math.hypot(p[0]-m.from[0],p[1]-m.from[1])<.002);if(m){changed=true;return [...m.to];}return p;});if(changed){const valid=validatePolygon(moved);Object.defineProperty(next.cartography.polygons,t.id,{value:{points:valid,center:shapeAnchor(valid,geometry.cells[i].holes,geometry.cells[i].center),...(geometry.cells[i].holes?{holes:geometry.cells[i].holes}:{})},enumerable:true,writable:true,configurable:true});}});
     }
-    Object.defineProperty(next.cartography.polygons,id,{value:{points,center:polygonCenter(points)},enumerable:true,writable:true,configurable:true});
+    const current=geometry.cells[this.getWorld().territories.findIndex(t=>t.id===id)],holes=this.mode==='reshape'?current.holes||[]:[];
+    Object.defineProperty(next.cartography.polygons,id,{value:{points,center:shapeAnchor(points,holes,this.mode==='reshape'?current.center:null),...(holes.length?{holes}:{})},enumerable:true,writable:true,configurable:true});
     // Commit first: failed validation must leave the draft and existing map intact.
     this.save(next);this.draft=null;this.mode='select';this.render();this.notify('영토 경계를 저장했습니다. 인접 관계는 별도로 확인해 주세요.');
   }
@@ -48,9 +49,9 @@ export class MapEditor {
   click(event){
     if(!event.target.closest('#geographic-editor .atlas-map'))return false;
     if(this.mode==='move'){const next=moveFreeTerritory(this.freeWorld(),this.getSelected(),this.position(event));this.mode='select';this.save(next);this.notify('영토를 이동했습니다. 인접 관계에서 연결을 확인해 주세요.');return true;}
-    if(['trace','create'].includes(this.mode)){if(this.dragged){this.dragged=false;return true;}if(this.draft.length>=96)throw new Error('꼭짓점은 최대 96개입니다.');if(event.target.closest('[data-vertex]'))return true;this.draft.push(this.position(event));this.refreshDraft();return true;}
+    if(['trace','create'].includes(this.mode)){if(this.dragged){this.dragged=false;return true;}if(this.draft.length>=MAX_POLYGON_POINTS)throw new Error('꼭짓점은 최대 2048개입니다.');if(event.target.closest('[data-vertex]'))return true;this.draft.push(this.position(event));this.refreshDraft();return true;}
     if(this.mode==='reshape')return true;
-    if(this.mode==='center'){const point=this.position(event),cell=this.currentCell(),points=cellPoints(cell);if(!pointInPolygon(point,points))throw new Error('선택한 영토의 경계 안을 클릭해 주세요.');const next=this.designWorld();Object.defineProperty(next.cartography.polygons,this.getSelected(),{value:{points,center:point},enumerable:true,writable:true,configurable:true});this.mode='select';this.save(next);return true;}
+    if(this.mode==='center'){const point=this.position(event),cell=this.currentCell(),points=cellPoints(cell);if(!pointInShape(point,{points,holes:cell.holes}))throw new Error('선택한 영토의 경계 안을 클릭해 주세요.');const next=this.designWorld();Object.defineProperty(next.cartography.polygons,this.getSelected(),{value:{points,center:point,...(cell.holes?{holes:cell.holes}:{})},enumerable:true,writable:true,configurable:true});this.mode='select';this.save(next);return true;}
     if(this.mode==='links'){const tile=event.target.closest('[data-territory]'),id=this.getSelected();if(!tile||tile.dataset.territory===id)return true;const world=this.getWorld(),territory=world.territories.find(t=>t.id===id),other=tile.dataset.territory,selected=neighbors(world,territory).map(n=>n.id),all=world.territories.flatMap(t=>neighbors(world,t).filter(n=>t.id<n.id).map(n=>[t.id,n.id]));const ids=selected.includes(other)?selected.filter(n=>n!==other):[...selected,other];const next=this.designWorld();next.cartography.links=setTerritoryLinks(all,id,ids);this.save(next);this.notify(selected.includes(other)?'인접 연결을 해제했습니다.':'두 영토를 서로 연결했습니다. 새 실행부터 반영됩니다.');return true;}
     return false;
   }

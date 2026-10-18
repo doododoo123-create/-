@@ -26,7 +26,7 @@
 .cartography-hint{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:12px;line-height:1.9;color:#b3bea7;font-size:11px}
 .cartography-hint strong{color:#f1d794;font-weight:500}
 .cartography-viewport{overflow:auto;max-height:720px;background:#103e48;scrollbar-color:#657458 #17221a}
-.cartography-viewport .atlas-scroll{overflow:visible;max-height:none;width:calc(100% * var(--editor-zoom));min-width:680px}
+.cartography-viewport .atlas-scroll{overflow:visible;max-height:none;width:100%;min-width:680px}
 .cartography-viewport .atlas-map{min-width:0;width:100%;height:auto;aspect-ratio:1.5;touch-action:none}
 .map-edit-hit{fill:transparent;pointer-events:all;cursor:crosshair}
 .map-draft-path{fill:#f6de8d33;stroke:#fff0a3;stroke-width:2.5;stroke-dasharray:7 3;pointer-events:none;vector-effect:non-scaling-stroke}

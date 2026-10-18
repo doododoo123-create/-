@@ -72,8 +72,6 @@ body.game-skin{--bg:#161916;--panel:#1c201b;--line:#514735;--muted:#b0a58d;--gol
 .game-skin .icon-button:hover{background:#3a3825;color:#fff0bc}
 .game-skin .kit-icon{flex-shrink:0;overflow:visible}
 .game-skin .atlas-panel>.atlas-scroll,.game-skin .cartography-viewport .atlas-scroll{position:relative;isolation:isolate}
-.game-skin .atlas-panel>.atlas-scroll::after,.game-skin .cartography-viewport .atlas-scroll::after{content:'';position:absolute;inset:0;pointer-events:none;background:var(--ui-frame-map) center/100% 100% no-repeat;z-index:3}
-.game-skin .cartography-viewport:has(.map-edit-layer) .atlas-scroll::after{display:none}
 .game-skin .map-panel-actions{gap:10px}
 .game-skin .map-legend,.game-skin .atlas-map-note,.game-skin .map-panel-footer{background:#1c241b;border-color:#5b5036;color:#c0b497}
 .game-skin .map-legend>span,.game-skin .map-panel-footer>span{color:#c8bca0}

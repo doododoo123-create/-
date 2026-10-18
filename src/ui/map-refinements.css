@@ -44,3 +44,24 @@
 .march-routes .return{stroke:#a2e4d7}
 .march-label{font-size:12px;font-weight:800;fill:#fff0b9;stroke:#182c2d;stroke-width:4;paint-order:stroke;letter-spacing:.8px}
 @media(prefers-reduced-motion:reduce){.unit-marching{animation-duration:.01s}}
+
+/* Maps remain unobstructed; zoom changes the view only. */
+.game-skin .atlas-scroll::after{content:none!important;display:none!important}
+.map-camera-controls{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.map-camera-controls .button{padding:5px 9px;font-size:11px;min-width:29px}
+.map-camera-controls output{font-size:10px;min-width:38px;text-align:center;color:#d6cbae;font-variant-numeric:tabular-nums}
+.map-camera-controls [aria-pressed="true"]{outline:1px solid #e9c674;background:#604d2c}
+.atlas-scroll[data-map-camera]{touch-action:none}
+.atlas-scroll.camera-pan-mode,.atlas-scroll.camera-pan-mode *{cursor:grab!important}
+.atlas-scroll.camera-dragging,.atlas-scroll.camera-dragging *{cursor:grabbing!important;user-select:none}
+.map-panel-actions{flex-wrap:wrap}
+#map-generator{width:min(1320px,96vw);max-width:96vw;max-height:94dvh;padding:22px;overflow:auto;background:#17201c;color:#eadfc5;border:1px solid #867148}
+#map-generator::backdrop{background:#08100de0}
+.generator-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;border-bottom:1px solid #665638;padding-bottom:15px;margin-bottom:18px}
+.generator-head h2{font-size:24px;margin:5px 0 7px}.generator-head p{font-size:12px;color:#b4bba9;margin:0;line-height:1.6}
+.generator-layout{display:grid;grid-template-columns:245px minmax(0,1fr);gap:22px}.generator-settings{display:flex;flex-direction:column;gap:13px;min-width:0}.generator-settings>label{display:flex;flex-direction:column;gap:7px;font-size:12px;color:#d8d2bd}
+.generator-file{position:relative;cursor:pointer;text-align:center;align-items:center}.generator-file input{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}
+.generator-correction{padding:13px 0;border-block:1px solid #4a4937;display:flex;flex-direction:column;gap:11px}.generator-correction b{font-size:12px}.generator-correction label{display:flex;flex-direction:column;gap:5px;font-size:11px}.generator-correction input{padding:0;accent-color:#bca46a}.generator-correction small,.generator-apply-note{font-size:10px;color:#a9b29f;line-height:1.8;margin:0}.generator-brush-buttons{display:flex;gap:4px;flex-wrap:wrap}.generator-brush-buttons .button{font-size:10px;padding:7px}.generator-brush-buttons .active{outline:1px solid #d2b16e;background:#514c31}.generator-correction .button.subtle{font-size:10px;padding:5px}
+.generator-workspace{min-width:0}.generator-preview{position:relative;width:100%;aspect-ratio:1.5;background:#0d3540;overflow:hidden;border:1px solid #55513a}.generator-preview canvas{display:block;width:100%;height:100%;cursor:crosshair;touch-action:none}.generator-boundaries{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}.generator-boundaries path{fill:hsl(var(--region-hue) 65% 58% / .17);stroke:#fff0be;stroke-width:1.2;vector-effect:non-scaling-stroke}.generator-empty{position:absolute;left:15%;right:15%;top:45%;text-align:center;font-size:13px;line-height:1.8;color:#a7b9ad;pointer-events:none}.generator-empty[hidden]{display:none}.generator-legend{font-size:11px;color:#b0baa5;line-height:1.7}.generator-legend i{display:inline-block;width:10px;height:10px;background:#50e191;margin-right:5px}#generator-status{padding:11px 13px;border:1px solid #3b5746;background:#152a21;color:#c2ddc5;font-size:12px;line-height:1.8}#generator-status.error{border-color:#a46955;color:#f4beac;background:#3b241e}#map-generator[aria-busy="true"] .generator-preview{opacity:.65}
+@media(max-width:900px){#map-generator{padding:16px}.generator-layout{grid-template-columns:200px minmax(0,1fr);gap:14px}.generator-head h2{font-size:20px}}
+@media(max-width:650px){.generator-layout{display:flex;flex-direction:column-reverse}.generator-settings{display:grid;grid-template-columns:1fr 1fr;gap:12px}.generator-correction,.generator-apply-note{grid-column:1/-1}.generator-preview{min-height:200px}.generator-head p{font-size:10px}.map-camera-controls .button{padding:5px}.map-panel-actions{justify-content:flex-start;gap:5px}}

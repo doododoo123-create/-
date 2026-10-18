@@ -1,3 +1,5 @@
+import { MapGenerator } from './ui/map-generator.js';
+import { MapCamera, mapZoomControls } from './ui/map-camera.js';
 import { displayEventText } from './ui/display-names.js';
 import { createReferenceWorld, referenceLayout } from './data/reference-world.js';
 import { createDemoWorld } from './data/demo-world.js';
@@ -19,6 +21,8 @@ let initialError = '';
 let world;
 try { world = loadWorld(localStorage) || createReferenceWorld(); } catch (error) { world = createDemoWorld(); initialError = error.message + ' 시작 예제를 표시합니다. 기존 저장 데이터는 덮어쓰지 않았습니다.'; }
 const ui = { page: 'overview', selected: world.territories[0]?.id, paint: false, brush: world.countries[0]?.id || '', countryFilter: '', roleFilter: '', search: '', showNames: true, recording: false, mapFullscreen:false, seed: '20261017', speed: 1, mapStyle: 'atlas', editorView:'atlas', focusedCountry: null };
+const mapCamera=new MapCamera();
+const mapGenerator=new MapGenerator({getWorld:()=>world,apply:next=>{mapEditor.draft=null;mapEditor.mode='select';mapCamera.resetAll();mapEditor.save(next);},notify});
 const mapEditor=new MapEditor({getWorld:()=>world,getSelected:()=>ui.selected,setSelected:id=>{ui.selected=id;},commit:updateWorld,render,notify});
 let auto = false, nativeMapFullscreen=false;
 let run = null, timer = null, saveStatus = initialError ? '저장 복구 확인 필요' : '브라우저에 자동 저장', toastTimer;
@@ -51,7 +55,7 @@ function updateWorld(next) { world = validateWorld(next);if(!world.territories.s
 function stop() { if (timer) clearTimeout(timer); timer = null; auto = false; playback.pause(); }
 function navigate(page) { if (!Object.hasOwn(pages, page)) return; stop(); ui.page = page; ui.recording = false; render(); }
 function setNewWorld(next) {
-  stop(); playback.reset(); mapEditor.reset(); world = validateWorld(next); run = null; clearRun(localStorage); ui.selected = world.territories[0]?.id; ui.brush = world.countries[0]?.id || ''; ui.paint = false; ui.search = ''; ui.countryFilter = ''; ui.roleFilter = ''; ui.page = 'overview'; persist(); render();
+  stop(); playback.reset(); mapEditor.reset(); mapCamera.resetAll(); world = validateWorld(next); run = null; clearRun(localStorage); ui.selected = world.territories[0]?.id; ui.brush = world.countries[0]?.id || ''; ui.paint = false; ui.search = ''; ui.countryFilter = ''; ui.roleFilter = ''; ui.page = 'overview'; persist(); render();
 }
 function openMapFullscreen(){
   ui.page='simulation';ui.mapFullscreen=true;render();
@@ -68,11 +72,11 @@ function render() {
   document.title = `${world.name} · 사국쟁패 Studio`;
   document.body.classList.toggle('map-stage-open',ui.mapFullscreen);
   $('#app').className = ui.mapFullscreen?'map-fullscreen':ui.recording ? 'recording-mode' : '';
-  if(ui.mapFullscreen){$('#app').innerHTML=renderMapStage({world:playback.displayWorld||run?.world||previewWorld(world),run,playback,auto,speed:ui.speed,showNames:ui.showNames,focusedCountry:ui.focusedCountry});return;}
+  if(ui.mapFullscreen){$('#app').innerHTML=renderMapStage({world:playback.displayWorld||run?.world||previewWorld(world),run,playback,auto,speed:ui.speed,showNames:ui.showNames,focusedCountry:ui.focusedCountry});mapCamera.restore();return;}
   $('#app').innerHTML = `
     <aside class="sidebar">
       <a class="brand" href="#" data-page="overview" aria-label="사국쟁패 Studio 세계 개요"><span class="brand-symbol">${icon('compass', 29)}</span><span><strong>사국쟁패</strong><small>HISTORY STUDIO</small></span></a>
-      <div class="workspace-label">WORKSPACE <span>v0.4.0</span></div>
+      <div class="workspace-label">WORKSPACE <span>v0.5.0</span></div>
       <button class="world-switch" data-action="world-meta"><span class="world-icon">${icon('globe', 19)}</span><span><b>${esc(world.name)}</b><small>나의 세계 · 편집 가능</small></span>${icon('edit', 13)}</button>
       <div class="nav-label">세계 만들기</div>
       <nav aria-label="주요 메뉴">${Object.entries(pages).slice(0, 4).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}<div class="nav-label nav-second">역사 관찰하기</div>${Object.entries(pages).slice(4).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}</nav>
@@ -83,9 +87,10 @@ function render() {
       <main id="main-content" class="${ui.page === 'simulation' ? 'simulation-page' : ''} ${playback.state&&!playback.playing&&!playback.complete?'playback-paused':''}" tabindex="-1">
         ${pageHeading()}
         ${ui.page === 'overview' ? overview() : ui.page === 'countries' ? countriesPage() : ui.page === 'people' ? peoplePage() : ui.page === 'map' ? mapPage() : ui.page === 'simulation' ? simulationPage() : rulesPage()}
-        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.4.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
+        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.5.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
       </main>
     </div>`;
+  mapCamera.restore();
 }
 function navItem(key, glyph, label) { return `<button class="nav-item ${ui.page === key ? 'active' : ''}" data-page="${key}" ${ui.page === key ? 'aria-current="page"' : ''}>${icon(glyph, 19)}${label}${key === 'countries' || key === 'people' ? `<span class="nav-count">${key === 'countries' ? world.countries.length : world.people.length}</span>` : ''}</button>`; }
 function pageHeading() {
@@ -107,7 +112,7 @@ function mapPanel(data, editing = false, simulation = false) {
   if (!editing && (ui.mapStyle === 'atlas'||data.mapKind==='free')) {
     data=previewWorld(data);
     const presentation = simulation&&playback.state ? {...playback.state,speed:ui.speed,movementProgress:playback.movementProgress} : null;
-    return `<section class="panel map-panel atlas-panel"><div class="panel-head"><div><span class="eyebrow">ATLAS OF YOUR WORLD</span><h2>${esc(data.name)} <span class="tiny-badge">대륙 전도</span></h2></div><div class="map-panel-actions">${button('map-fullscreen','지도 전체화면','expand','outline', 'title="전체화면: Space 한 단계 · Enter 한 턴 · A 자동/정지 · S 턴 결과 · Esc 닫기"')}<label class="map-view-select">지도 표시<select id="map-style" aria-label="지도 표시 방식"><option value="atlas" selected>대륙형</option><option value="grid">격자형</option></select></label></div></div>${renderAtlas(data, {selected: ui.selected, observe: simulation, showNames: ui.showNames, presentation, focusedCountry: ui.focusedCountry})}<div class="atlas-map-note"><span>${icon('sword',14)} 국왕: 수도 예비병 · 장군: 개별 주둔군 · 화살표: 전투 경로</span><span>${data.mapKind==='free'?'직접 설정한 인접 관계':data.mapKind==='v11'?'원본 지도 인접 관계':'상하좌우 인접 관계'}</span></div><div class="map-legend">${data.countries.map(c => `<span>${dot(c.color)}${esc(c.name)}</span>`).join('')}</div>${!simulation ? `<div class="map-panel-footer"><span>영토를 선택해 정보를 확인하세요.</span><button class="text-button" data-page="map">지도 편집하기 ${icon('arrow', 15)}</button></div>` : ''}</section>`;
+    return `<section class="panel map-panel atlas-panel"><div class="panel-head"><div><span class="eyebrow">ATLAS OF YOUR WORLD</span><h2>${esc(data.name)} <span class="tiny-badge">대륙 전도</span></h2></div><div class="map-panel-actions">${mapZoomControls(simulation?'simulation':'overview')}${button('map-fullscreen','지도 전체화면','expand','outline', 'title="전체화면: Space 한 단계 · Enter 한 턴 · A 자동/정지 · S 턴 결과 · Esc 닫기"')}<label class="map-view-select">지도 표시<select id="map-style" aria-label="지도 표시 방식"><option value="atlas" selected>대륙형</option><option value="grid">격자형</option></select></label></div></div>${renderAtlas(data, {selected: ui.selected, observe: simulation, showNames: ui.showNames, presentation, focusedCountry: ui.focusedCountry})}<div class="atlas-map-note"><span>${icon('sword',14)} 국왕: 수도 예비병 · 장군: 개별 주둔군 · 화살표: 전투 경로</span><span>${data.mapKind==='free'?'직접 설정한 인접 관계':data.mapKind==='v11'?'원본 지도 인접 관계':'상하좌우 인접 관계'}</span></div><div class="map-legend">${data.countries.map(c => `<span>${dot(c.color)}${esc(c.name)}</span>`).join('')}</div>${!simulation ? `<div class="map-panel-footer"><span>영토를 선택해 정보를 확인하세요.</span><button class="text-button" data-page="map">지도 편집하기 ${icon('arrow', 15)}</button></div>` : ''}</section>`;
   }
 
   const last = simulation ? run?.history.at(-1) : null;
@@ -237,6 +242,7 @@ function newRunDialog() {
   dialogHandler = data => { const seed = data.get('seed').trim(); const next = createRun(world, seed); playback.reset(); run = next; saveRun(localStorage,run); ui.seed = seed; render(); notify('현재 편집한 세계로 새 실행을 준비했습니다.'); };
 }
 const actions = {
+  'map-generate': () => {stop();mapGenerator.open();},
   'save': () => { persist(true); render(); },
   'export': () => { downloadFile(`${fileName(world.name)}.world.json`, serializeWorld(world)); notify('세계 파일을 내보냈습니다. 국가·인물·지도·규칙이 모두 포함됩니다.'); },
   'import': () => { stop(); render(); $('#world-file').click(); },
@@ -269,7 +275,7 @@ document.addEventListener('click', event => {
   const page = event.target.closest('[data-page]');
   if (page) { event.preventDefault(); navigate(page.dataset.page); return; }
   const action = event.target.closest('[data-action]');
-  if (action) { if (action.disabled) return; try { if(!mapEditor.action(action.dataset.action))actions[action.dataset.action]?.(action.dataset.id); } catch (error) { notify(error.message, true); } return; }
+  if (action) { if (action.disabled) return; try { if(!mapCamera.action(action.dataset.action,action.dataset.camera)&&!mapEditor.action(action.dataset.action))actions[action.dataset.action]?.(action.dataset.id); } catch (error) { notify(error.message, true); } return; }
   try{if(ui.page==='map'&&ui.editorView==='atlas'&&mapEditor.click(event))return;}catch(error){notify(error.message,true);return;}
   const tile = event.target.closest('[data-territory]');
   if (tile) {
@@ -304,6 +310,7 @@ document.addEventListener('submit', event => {
 });
 document.addEventListener('change', async event => {
   const target = event.target;
+  if(target.id==='map-editor-zoom'){mapEditor.zoom=Number(target.value);mapCamera.zoom('editor',mapEditor.zoom);return;}
   if(target.id==='map-background-file'){const file=target.files?.[0];target.value='';try{await mapEditor.importBackground(file);}catch(error){notify(error.message,true);}return;}
   if(target.id==='map-editor-view'){if(!mapEditor.select())return;ui.editorView=target.value;render();return;}
   try{if(mapEditor.change(target))return;}catch(error){notify(error.message,true);return;}
@@ -341,10 +348,13 @@ document.addEventListener('input', event => {
     }
   }
 });
-document.addEventListener('pointerdown',event=>mapEditor.pointerDown(event));
-document.addEventListener('pointermove',event=>mapEditor.pointerMove(event));
-document.addEventListener('pointerup',()=>mapEditor.pointerUp());
-document.addEventListener('pointercancel',()=>mapEditor.pointerUp());
+document.addEventListener('pointerdown',event=>{if(mapCamera.down(event)){mapEditor.pointerUp();return;}mapEditor.pointerDown(event);});
+document.addEventListener('pointermove',event=>{if(!mapCamera.move(event))mapEditor.pointerMove(event);});
+document.addEventListener('pointerup',()=>{mapCamera.up();mapEditor.pointerUp();});
+document.addEventListener('pointercancel',()=>{mapCamera.up();mapEditor.pointerUp();});
+document.addEventListener('click',event=>mapCamera.consumeClick(event),true);
+document.addEventListener('wheel',event=>mapCamera.wheel(event),{passive:false});
+document.addEventListener('contextmenu',event=>{if(event.target.closest('.atlas-scroll'))event.preventDefault();});
 document.addEventListener('fullscreenchange',()=>{
   if(document.fullscreenElement===$('#app')){nativeMapFullscreen=true;if(!ui.mapFullscreen)document.exitFullscreen().catch(()=>{});}
   else if(nativeMapFullscreen){nativeMapFullscreen=false;if(ui.mapFullscreen){ui.mapFullscreen=false;render();}}
@@ -352,6 +362,7 @@ document.addEventListener('fullscreenchange',()=>{
 document.addEventListener('visibilitychange', () => { if (document.hidden && (auto || playback.playing)) { stop(); render(); } });
 document.addEventListener('keydown',event=>{
   const editing=event.target.closest('input,select,textarea,dialog');
+  if(!editing&&!event.ctrlKey&&!event.metaKey&&(ui.mapFullscreen||event.target.closest('.atlas-scroll'))&&['Equal','Minus','NumpadAdd','NumpadSubtract','Digit0','Numpad0'].includes(event.code)){event.preventDefault();const context=ui.mapFullscreen||ui.page==='simulation'?'simulation':ui.page==='map'?'editor':'overview';mapCamera.action(['Digit0','Numpad0'].includes(event.code)?'map-zoom-reset':['Minus','NumpadSubtract'].includes(event.code)?'map-zoom-out':'map-zoom-in',context);return;}
   if(ui.page==='map'&&ui.editorView==='atlas'&&!editing&&event.key==='Escape'&&mapEditor.draft){event.preventDefault();mapEditor.action('map-edit-cancel');return;}
   if(ui.mapFullscreen&&!editing){
     const shortcuts={Space:'scene-step',Enter:'step',KeyA:'auto',KeyS:'scene-skip'};
@@ -362,7 +373,7 @@ document.addEventListener('keydown',event=>{
   if(ui.page==='simulation'&&!event.target.closest('input,select,textarea,button,dialog')&&(event.code==='Space'||event.code==='Enter')){event.preventDefault();if(event.repeat)return;try{actions[event.code==='Space'?'scene-step':'step']();}catch(error){notify(error.message,true);}return;}
   if(event.key==='Escape'&&ui.recording){ui.recording=false;render();}
 });
-window.addEventListener('beforeunload', event => { if (playback.state&&!playback.complete||mapEditor.draft?.length) { event.preventDefault(); event.returnValue = ''; } });
+window.addEventListener('beforeunload', event => { if (playback.state&&!playback.complete||mapEditor.draft?.length||mapGenerator.dialog?.open&&mapGenerator.state?.mask) { event.preventDefault(); event.returnValue = ''; } });
 $('#editor-dialog').addEventListener('click', event => { if (event.target === $('#editor-dialog')) { $('#editor-dialog').close(); dialogHandler = null; } });
 try { const saved=loadRun(localStorage);if(saved&&saved.initialWorld.id===world.id){run=saved;ui.seed=saved.seed;} } catch(error){initialError ||= error.message;}
 if (!initialError) persist();

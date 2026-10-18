@@ -102,7 +102,7 @@ with sync_playwright() as p:
  expect(page.locator('.terrain-art')).to_have_count(1)
  passed('내 지도 이미지 압축·저장·안전한 형식 제한·색 진하기·파일 내보내기·새로고침 복구')
  page.locator('#map-editor-zoom').select_option('2')
- assert page.locator('.atlas-map').bounding_box()['width']>page.locator('.cartography-viewport').bounding_box()['width']*1.9
+ assert abs(float(page.locator('.atlas-map').get_attribute('viewBox').split()[2])-600)<.1
  page.locator('#map-editor-zoom').select_option('1')
  page.screenshot(path=str(OUT/'cartography-editor.png'),full_page=True)
  for width in [1024,390]:
