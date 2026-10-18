@@ -1,6 +1,7 @@
+import { prepareMapImage } from './map-image.js';
 import { GENERATOR_WIDTH, GENERATOR_HEIGHT, guessSeaColor, recognizeLand, prepareLand, partitionLand, vectorizePartition } from '../model/map-generation.js';
 import { generatedWorld } from '../model/free-map.js';
-import { polygonPath } from './cartography-geometry.js';
+import { polygonPath } from '../model/cartography-geometry.js';
 import { REFERENCE_ART } from '../data/reference-art.js';
 export class MapGenerator {
  constructor({getWorld,apply,notify}){Object.assign(this,{getWorld,apply,notify});this.session=0;this.dialog=null;this.state=null;}
@@ -20,8 +21,7 @@ export class MapGenerator {
  invalidate(){this.state.result=null;this.dialog.querySelector('[data-generate="apply"]').disabled=true;this.dialog.querySelector('.generator-boundaries').innerHTML='';}
  async load(source){
   const token=++this.session;this.setBusy(true);try{this.status('지도 그림을 읽고 있습니다.');const image=new Image();await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=()=>reject(new Error('지도 그림을 읽을 수 없습니다.'));image.src=source;});if(token!==this.session||!this.dialog.open)return;
-  const canvas=document.createElement('canvas');canvas.width=1200;canvas.height=800;const ctx=canvas.getContext('2d');ctx.fillStyle='#103e48';ctx.fillRect(0,0,1200,800);const scale=Math.min(1200/image.width,800/image.height),w=image.width*scale,h=image.height*scale;ctx.drawImage(image,(1200-w)/2,(800-h)/2,w,h);
-  let data=canvas.toDataURL('image/jpeg',.84);if(data.length>1400000)data=canvas.toDataURL('image/jpeg',.64);if(data.length>1400000)throw new Error('그림이 너무 큽니다. 더 작은 그림을 사용해 주세요.');
+  const {canvas,data}=prepareMapImage(image,source);
   const small=document.createElement('canvas');small.width=GENERATOR_WIDTH;small.height=GENERATOR_HEIGHT;const sx=small.getContext('2d',{willReadFrequently:true});sx.drawImage(canvas,0,0,small.width,small.height);this.state.source=data;this.state.image=canvas;this.state.rgba=sx.getImageData(0,0,small.width,small.height).data;this.state.sea=guessSeaColor(this.state.rgba,small.width,small.height);this.recognize();
   this.dialog.querySelector('.generator-empty').hidden=true;this.dialog.querySelector('[data-generate="generate"]').disabled=false;
   }finally{if(token===this.session)this.setBusy(false);}
@@ -29,7 +29,7 @@ export class MapGenerator {
  setBusy(busy){this.state.busy=busy;this.dialog.toggleAttribute('aria-busy',busy);if(busy)this.dialog.setAttribute('aria-busy','true');this.dialog.querySelectorAll('.generator-settings button,.generator-settings input,.generator-settings select').forEach(el=>el.disabled=busy);if(!busy){this.dialog.querySelector('[data-generate="current"]').disabled=!this.currentSource;this.dialog.querySelector('[data-generate="generate"]').disabled=!this.state.mask;this.dialog.querySelector('[data-generate="apply"]').disabled=!this.state.result;this.dialog.querySelector('[data-generate="undo"]').disabled=!this.state.history.length;}}
  recognize(){if(!this.state.rgba)return;this.invalidate();this.state.mask=recognizeLand(this.state.rgba,GENERATOR_WIDTH,GENERATOR_HEIGHT,this.state.sea,this.state.tolerance);this.state.history=[];this.draw();}
  draw(){
-  const state=this.state;if(!state.mask)return;const prepared=prepareLand(state.mask,GENERATOR_WIDTH,GENERATOR_HEIGHT,state.minimum),canvas=this.dialog.querySelector('#generator-canvas'),ctx=canvas.getContext('2d');ctx.clearRect(0,0,1200,800);ctx.drawImage(state.image,0,0);
+  const state=this.state;if(!state.mask)return;const prepared=prepareLand(state.mask,GENERATOR_WIDTH,GENERATOR_HEIGHT,state.minimum),canvas=this.dialog.querySelector('#generator-canvas'),ctx=canvas.getContext('2d');ctx.clearRect(0,0,1200,800);ctx.drawImage(state.image,0,0,1200,800);
   if(!state.result){const small=document.createElement('canvas');small.width=GENERATOR_WIDTH;small.height=GENERATOR_HEIGHT;const paint=small.getContext('2d'),data=paint.createImageData(small.width,small.height);for(let i=0;i<prepared.mask.length;i++)if(prepared.mask[i]){data.data[i*4]=80;data.data[i*4+1]=225;data.data[i*4+2]=145;data.data[i*4+3]=110;}paint.putImageData(data,0,0);ctx.imageSmoothingEnabled=false;ctx.drawImage(small,0,0,1200,800);ctx.imageSmoothingEnabled=true;}
   this.dialog.querySelector('[data-generate="undo"]').disabled=!state.history.length;
   if(!state.result)this.status(`육지 ${prepared.components.length}개 덩어리${prepared.excluded?` · 작은 섬 ${prepared.excluded}개 제외`:''}. 바다가 초록색이면 지우개나 바다색 찍기로 보정하세요.`);
@@ -53,7 +53,7 @@ export class MapGenerator {
   else if(action==='apply'&&this.state.result){if(this.getWorld().id!==this.state.worldId)throw new Error('세계가 바뀌었습니다. 현재 세계에서 다시 제작해 주세요.');const next=generatedWorld(this.getWorld(),this.state.result.shapes,this.state.result.links,this.state.source);this.apply(next);this.dialog.close();this.notify('자동 제작 지도를 적용했습니다. 소유국을 칠한 뒤 새 실행을 시작하세요.');}
  }catch(error){this.status(error.message,true);}}
  async change(event){const target=event.target;try{
-  if(target.id==='generator-file'){const file=target.files?.[0];target.value='';if(!file)return;if(!/^image\/(png|jpeg|webp)$/.test(file.type)||file.size>12*1024*1024)throw new Error('12MB 이하의 PNG·JPEG·WebP 파일을 선택해 주세요.');const url=URL.createObjectURL(file);try{await this.load(url);}finally{URL.revokeObjectURL(url);}}
+  if(target.id==='generator-file'){const file=target.files?.[0];target.value='';if(!file)return;if(!/^image\/(png|jpeg|webp)$/.test(file.type)||file.size>32*1024*1024)throw new Error('32MB 이하의 PNG·JPEG·WebP 파일을 선택해 주세요.');const url=URL.createObjectURL(file);try{await this.load(url);}finally{URL.revokeObjectURL(url);}}
   else if(target.id==='generator-islands'){this.state.minimum=Number(target.value);this.invalidate();this.draw();}
   else if(target.id==='generator-tolerance'){this.state.tolerance=Number(target.value);this.recognize();}
   else if(target.id==='generator-brush')this.state.brush=Number(target.value);

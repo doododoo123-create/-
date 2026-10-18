@@ -8,7 +8,7 @@ with sync_playwright() as p:
  page.on('pageerror',lambda e:errors.append(str(e)));page.on('requestfailed',lambda req:failed.append(req.url))
  page.goto('http://127.0.0.1:3000/dist/%EC%82%AC%EA%B5%AD%EC%9F%81%ED%8C%A8%20Studio.html',wait_until='networkidle');context.set_offline(True)
  expect(page.locator('.map-background-image')).to_have_count(1)
- assert page.locator('.map-background-image').evaluate('async el=>{const i=new Image();i.src=el.getAttribute("href");await i.decode();return i.naturalWidth===1200}')
+ assert page.locator('.map-background-image').evaluate('async el=>{const i=new Image();i.src=el.getAttribute("href");await i.decode();return i.naturalWidth===1536}')
  assert page.locator('img').evaluate_all('async imgs=>{await Promise.all(imgs.map(i=>i.decode()));return imgs.every(i=>i.src.startsWith("data:"))}')
  page.locator('nav [data-page="map"]').click();page.locator('#territory-form [name="name"]').fill('오프라인 해안');page.locator('#territory-form button[type="submit"]').click()
  assert page.evaluate("JSON.parse(localStorage.getItem('saguk-studio.world.v1')).world.mapKind")=='free'

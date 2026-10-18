@@ -27,7 +27,7 @@ export function validateCartography(input,territories){
   if(input===undefined)return undefined;
   if(!input||typeof input!=='object'||input.version!==1||!['illustrated','classic'].includes(input.style)||!Number.isFinite(input.opacity)||input.opacity<0||input.opacity>1)throw new Error('지도 디자인 설정이 올바르지 않습니다.');
   const background=input.background??null;
-  if(background!==null&&(typeof background!=='string'||background.length>1400000||!/^data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+/]+={0,2}$/.test(background)))throw new Error('지도 배경은 1MB 이하의 PNG·JPEG·WebP 이미지여야 합니다.');
+  if(background!==null&&(typeof background!=='string'||background.length>2400000||!/^data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+/]+={0,2}$/.test(background)))throw new Error('지도 배경은 저장 용량 2.4MB 이하의 PNG·JPEG·WebP 이미지여야 합니다.');
   const ids=new Set(territories.map(t=>t.id)),polygons={};
   if(!input.polygons||typeof input.polygons!=='object'||Array.isArray(input.polygons)||Object.keys(input.polygons).length>territories.length)throw new Error('영토 경계 목록이 올바르지 않습니다.');
   for(const [id,shape] of Object.entries(input.polygons)){

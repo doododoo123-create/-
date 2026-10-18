@@ -9,4 +9,4 @@ export function referenceLayout(world){
   next.territories.forEach((t,i)=>{delete t.row;delete t.col;Object.defineProperty(next.cartography.polygons,t.id,{value:clone(REFERENCE_CELLS[i]),enumerable:true,writable:true,configurable:true});});
   next.cartography.links=boundaryLinks(next);return validateWorld(next);
 }
-export function createReferenceWorld(){const world=referenceLayout(createDemoWorld());world.id='seven-realms-free-coast';world.description='참고 그림을 바탕으로 한 자유 대륙 · 큰 만과 반도, 80개 영토 · v11 판정 규칙';return world;}
+export function createReferenceWorld(){const world=referenceLayout(createDemoWorld());world.id='seven-realms-free-coast';world.rules.seaSupply=true;world.description='참고 그림을 바탕으로 한 자유 대륙 · 큰 만과 반도, 80개 영토 · v11 판정 규칙';return world;}

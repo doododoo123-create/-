@@ -1,6 +1,6 @@
 import { mapZoomControls } from './map-camera.js';
 import { esc } from './icons.js';
-import { polygonPath } from './cartography-geometry.js';
+import { polygonPath } from '../model/cartography-geometry.js';
 export function renderMapDraft(draft,mode){
   if(!['reshape','trace','create','move','center'].includes(mode))return '';
   const points=draft||[];

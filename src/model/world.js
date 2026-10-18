@@ -5,7 +5,7 @@ export const PERSONALITIES = { balanced:'균형형', peaceful:'내정형', aggre
 export const MINISTER_STYLES = { balanced:'균형형', recruiter:'모병형', producer:'충원형', supplier:'보급형' };
 export const ROLES = { king:'국왕', minister:'승상', general:'장군' };
 export const DEFAULT_RULES = Object.freeze({
-  mode:'v11', diceSides:10, domesticThresholds:{balanced:5,peaceful:7,aggressive:3},
+  mode:'v11', diceSides:10, seaSupply:true, domesticThresholds:{balanced:5,peaceful:7,aggressive:3},
   ministerWeights:{balanced:[3,3,4],recruiter:[5,2,3],producer:[2,3,5],supplier:[2,2,6]},
   successTarget:6,recruitGain:3,productionGain:3,supplyGain:5,baseCapacity:20,minimumReserve:5,
   territoryProduction:1,armyAdvantageBonus:1,lossRates:{win:.3,tie:.4,loss:.5},roundLimit:30,
@@ -74,8 +74,9 @@ export function validateWorld(source) {
   if(!territories.length)fail('영토는 최소 1개 필요합니다.');if(mapKind!=='free'&&territories.length!==rows*cols)fail('지도 크기와 영토 수가 일치하지 않습니다.');unique(territories.map(t=>t.id),'영토 ID');if(mapKind!=='free'){unique(territories.map(t=>`${t.row},${t.col}`),'영토 좌표');territories.sort((a,b)=>a.row-b.row||a.col-b.col);}
   for(const c of countries){if(c.capitalId!==null&&!territories.some(t=>t.id===c.capitalId))fail('수도가 존재하지 않는 영토를 가리킵니다.');if(!territories.some(t=>t.id===c.capitalId&&t.ownerId===c.id))c.capitalId=territories.find(t=>t.ownerId===c.id)?.id||null;}
   const r=object(input.rules,'규칙');if(r.diceSides!==10)fail('원본 v11 시스템은 D10 주사위를 사용합니다.');
+  if(r.seaSupply!==undefined&&typeof r.seaSupply!=='boolean')fail('해상 보급 설정은 켜기 또는 끄기여야 합니다.');
   const thresholds=object(r.domesticThresholds,'성향별 내정 구간'),losses=object(r.lossRates,'손실률'),weights=object(r.ministerWeights,'승상 행동 확률');
-  const rules={mode:'v11',diceSides:10,domesticThresholds:Object.fromEntries(Object.keys(PERSONALITIES).map(k=>[k,number(thresholds[k],`${PERSONALITIES[k]} 내정 구간`,0,10)])),ministerWeights:Object.fromEntries(Object.keys(MINISTER_STYLES).map(k=>{const a=array(weights[k],'승상 행동 구간',3).map(v=>number(v,'승상 행동 확률',0,10));if(a.length!==3||a.reduce((n,v)=>n+v,0)!==10)fail('각 승상 성향의 세 확률 눈금 합계는 10이어야 합니다.');return [k,a];})),lossRates:Object.fromEntries(['win','tie','loss'].map(k=>[k,number(losses[k],'손실률',0,1,false)]))};
+  const rules={mode:'v11',diceSides:10,seaSupply:r.seaSupply??true,domesticThresholds:Object.fromEntries(Object.keys(PERSONALITIES).map(k=>[k,number(thresholds[k],`${PERSONALITIES[k]} 내정 구간`,0,10)])),ministerWeights:Object.fromEntries(Object.keys(MINISTER_STYLES).map(k=>{const a=array(weights[k],'승상 행동 구간',3).map(v=>number(v,'승상 행동 확률',0,10));if(a.length!==3||a.reduce((n,v)=>n+v,0)!==10)fail('각 승상 성향의 세 확률 눈금 합계는 10이어야 합니다.');return [k,a];})),lossRates:Object.fromEntries(['win','tie','loss'].map(k=>[k,number(losses[k],'손실률',0,1,false)]))};
   for(const [key,label,min,max] of [['successTarget','내정 성공 기준',1,12],['recruitGain','모병 증가량',0,10000],['productionGain','충원 강화 증가량',0,10000],['supplyGain','보급 강화 증가량',0,10000],['baseCapacity','기본 지휘한도',1,10000],['minimumReserve','수도 최소 병력',0,10000],['territoryProduction','영토당 생산',0,10000],['armyAdvantageBonus','병력 우세 보정',0,10],['roundLimit','제한 라운드',1,100]])rules[key]=number(r[key],label,min,max);
   const cartography=validateCartography(input.cartography,territories);
   if(mapKind==='free'&&(!cartography||cartography.links===null||territories.some(t=>!Object.hasOwn(cartography.polygons,t.id))))fail('자유 지도에는 모든 영토의 경계와 인접 연결 목록이 필요합니다.');

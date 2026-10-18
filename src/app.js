@@ -76,7 +76,7 @@ function render() {
   $('#app').innerHTML = `
     <aside class="sidebar">
       <a class="brand" href="#" data-page="overview" aria-label="사국쟁패 Studio 세계 개요"><span class="brand-symbol">${icon('compass', 29)}</span><span><strong>사국쟁패</strong><small>HISTORY STUDIO</small></span></a>
-      <div class="workspace-label">WORKSPACE <span>v0.5.0</span></div>
+      <div class="workspace-label">WORKSPACE <span>v0.6.0</span></div>
       <button class="world-switch" data-action="world-meta"><span class="world-icon">${icon('globe', 19)}</span><span><b>${esc(world.name)}</b><small>나의 세계 · 편집 가능</small></span>${icon('edit', 13)}</button>
       <div class="nav-label">세계 만들기</div>
       <nav aria-label="주요 메뉴">${Object.entries(pages).slice(0, 4).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}<div class="nav-label nav-second">역사 관찰하기</div>${Object.entries(pages).slice(4).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}</nav>
@@ -87,7 +87,7 @@ function render() {
       <main id="main-content" class="${ui.page === 'simulation' ? 'simulation-page' : ''} ${playback.state&&!playback.playing&&!playback.complete?'playback-paused':''}" tabindex="-1">
         ${pageHeading()}
         ${ui.page === 'overview' ? overview() : ui.page === 'countries' ? countriesPage() : ui.page === 'people' ? peoplePage() : ui.page === 'map' ? mapPage() : ui.page === 'simulation' ? simulationPage() : rulesPage()}
-        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.5.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
+        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.6.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
       </main>
     </div>`;
   mapCamera.restore();
@@ -179,7 +179,7 @@ function simulationPage() {
 function rulesPage() {
   const r=world.rules;
   const field=(name,label,value,min,max,help='')=>`<label>${label}<input type="number" name="${name}" value="${value}" min="${min}" max="${max}" required><small>${help}</small></label>`;
-  return `${definitionNote()}<div class="notice">${icon('book',17)}원본 시스템 v11 · <span>기본값은 첨부 원본 v11과 같습니다. 변경한 값은 새 실행에 반영됩니다.</span></div><form id="rules-form"><div class="rules-grid"><section class="panel rules-section"><h2>국왕의 행동 · D10</h2><p>눈금 이하 내정, 초과 전쟁. 공격 가능한 국가가 없으면 다시 굴립니다.</p><div class="fields-three">${Object.entries(PERSONALITIES).map(([k,v])=>field(`threshold-${k}`,v,r.domesticThresholds[k],0,10)).join('')}</div>${field('successTarget','승상 실행 성공 기준',r.successTarget,1,12,'선택 주사위와 별도로 D10 + 승상 능력 판정')}</section><section class="panel rules-section"><h2>승상 행동 선택 · D10</h2><p>모병 / 충원 강화 / 보급 강화의 눈금 수입니다. 각 행의 합계는 10입니다.</p>${Object.entries(MINISTER_STYLES).map(([k,v])=>`<h3>${v}</h3><div class="fields-three">${['모병','충원','보급'].map((label,i)=>field(`weight-${k}-${i}`,label,r.ministerWeights[k][i],0,10)).join('')}</div>`).join('')}</section><section class="panel rules-section"><h2>병력 · 지휘한도</h2><div class="fields-two">${field('recruitGain','모병 성공: 수도 예비병 증가',r.recruitGain,0,10000)}${field('productionGain','충원 강화: 매 라운드 추가 생산',r.productionGain,0,10000)}${field('supplyGain','보급 강화: 모든 장군 한도 증가',r.supplyGain,0,10000)}${field('baseCapacity','장군 기본 지휘한도',r.baseCapacity,1,10000,'기본 + 국가 보정 + 개인 보정 + 보급 강화')}${field('minimumReserve','수도에 남길 예비병',r.minimumReserve,0,10000,'초과분을 연결된 장군에게 1만씩 무작위 배분')}${field('territoryProduction','영토당 라운드 생산',r.territoryProduction,0,10000)}${field('armyAdvantageBonus','부대 병력 우세 보정',r.armyAdvantageBonus,0,10)}</div><p>수도 단절 지역은 자체 영토 생산만 지역 장군에게 배분합니다. 남는 병력은 소멸합니다.</p></section><section class="panel rules-section"><h2>전투 · 종료</h2><p>연결된 장군들이 선택한 한 국가를 차례로 공격합니다. 승리 점수 차 1~3 / 4~6 / 7 이상에 따라 같은 방어 장군의 연결 영토를 최대 1 / 2 / 3개 점령합니다.</p><div class="fields-three">${['win','tie','loss'].map((k,i)=>field(`loss-${k}`,['승리 기본 손실률 %','무승부 %','패배 %'][i],Math.round(r.lossRates[k]*100),0,100)).join('')}</div><p>손실 = 내 부대 병력 × 기본률 × 상대 병력 × 2 ÷ 양측 부대 병력 합. 반올림, 최소 1만, 최대 자기 병력입니다. 방어 병력 0은 주사위·손실 없이 1개 점령합니다.</p><p>패배하여 0만이 된 장군만 D10 1~3 전사 판정을 합니다. 이후 자기 차례 3턴을 채운 뒤 다음 차례에 후임을 임명합니다.</p>${field('roundLimit','제한 라운드',r.roundLimit,1,100,'전국 통일 또는 제한 종료. 영토 → 총병력 순위, 동률 공동 승리.')}</section></div><div class="form-footer"><span>D10 · 장군당 최대 4개 영토 · 실제 부대 단위 전투</span>${button('reset-rules','원본 v11 기본값 복원','refresh','outline')}<button type="submit" class="button primary">규칙 저장</button></div></form>`;
+  return `${definitionNote()}<div class="notice">${icon('book',17)}원본 시스템 v11 · <span>전투·주사위는 원본 v11 기준이며 해상 보급은 별도 설정입니다. 변경한 값은 새 실행에 반영됩니다.</span></div><form id="rules-form"><div class="rules-grid"><section class="panel rules-section"><h2>국왕의 행동 · D10</h2><p>눈금 이하 내정, 초과 전쟁. 공격 가능한 국가가 없으면 다시 굴립니다.</p><div class="fields-three">${Object.entries(PERSONALITIES).map(([k,v])=>field(`threshold-${k}`,v,r.domesticThresholds[k],0,10)).join('')}</div>${field('successTarget','승상 실행 성공 기준',r.successTarget,1,12,'선택 주사위와 별도로 D10 + 승상 능력 판정')}</section><section class="panel rules-section"><h2>승상 행동 선택 · D10</h2><p>모병 / 충원 강화 / 보급 강화의 눈금 수입니다. 각 행의 합계는 10입니다.</p>${Object.entries(MINISTER_STYLES).map(([k,v])=>`<h3>${v}</h3><div class="fields-three">${['모병','충원','보급'].map((label,i)=>field(`weight-${k}-${i}`,label,r.ministerWeights[k][i],0,10)).join('')}</div>`).join('')}</section><section class="panel rules-section"><h2>병력 · 지휘한도</h2><div class="fields-two">${field('recruitGain','모병 성공: 수도 예비병 증가',r.recruitGain,0,10000)}${field('productionGain','충원 강화: 매 라운드 추가 생산',r.productionGain,0,10000)}${field('supplyGain','보급 강화: 모든 장군 한도 증가',r.supplyGain,0,10000)}${field('baseCapacity','장군 기본 지휘한도',r.baseCapacity,1,10000,'기본 + 국가 보정 + 개인 보정 + 보급 강화')}${field('minimumReserve','수도에 남길 예비병',r.minimumReserve,0,10000,'초과분을 연결된 장군에게 1만씩 무작위 배분')}${field('territoryProduction','영토당 라운드 생산',r.territoryProduction,0,10000)}${field('armyAdvantageBonus','부대 병력 우세 보정',r.armyAdvantageBonus,0,10)}</div><label class="sea-supply-setting"><input type="checkbox" name="seaSupply" ${r.seaSupply?'checked':''}> 바다를 통한 보급 연결</label><p>같은 바다와 자국 육지를 통해 수도로 이어지면 연결 상태입니다. 내륙에서 단절된 지역은 자체 생산만 배분하고 남는 병력은 소멸합니다. 해상 보급은 공격 범위를 넓히지 않습니다.</p></section><section class="panel rules-section"><h2>전투 · 종료</h2><p>연결된 장군들이 선택한 한 국가를 차례로 공격합니다. 승리 점수 차 1~3 / 4~6 / 7 이상에 따라 같은 방어 장군의 연결 영토를 최대 1 / 2 / 3개 점령합니다.</p><div class="fields-three">${['win','tie','loss'].map((k,i)=>field(`loss-${k}`,['승리 기본 손실률 %','무승부 %','패배 %'][i],Math.round(r.lossRates[k]*100),0,100)).join('')}</div><p>손실 = 내 부대 병력 × 기본률 × 상대 병력 × 2 ÷ 양측 부대 병력 합. 반올림, 최소 1만, 최대 자기 병력입니다. 방어 병력 0은 주사위·손실 없이 1개 점령합니다.</p><p>패배하여 0만이 된 장군만 D10 1~3 전사 판정을 합니다. 이후 자기 차례 3턴을 채운 뒤 다음 차례에 후임을 임명합니다.</p>${field('roundLimit','제한 라운드',r.roundLimit,1,100,'전국 통일 또는 제한 종료. 영토 → 총병력 순위, 동률 공동 승리.')}</section></div><div class="form-footer"><span>D10 · 장군당 최대 4개 영토 · 실제 부대 단위 전투</span>${button('reset-rules','원본 v11 기본값 복원','refresh','outline')}<button type="submit" class="button primary">규칙 저장</button></div></form>`;
 }
 function empty(glyph, title, description, action, label) { return `<div class="panel empty"><span class="empty-icon">${icon(glyph, 32)}</span><h2>${title}</h2><p>${description}</p>${button(action, label, 'plus', 'primary')}</div>`; }
 
@@ -265,7 +265,7 @@ const actions = {
   'focus-country': id => { ui.focusedCountry=id; render(); },
   'new-run': newRunDialog,
   'replay-run': () => {stop();if(!run)return;const next=createRun(run.initialWorld,run.seed);playback.reset();run=next;saveRun(localStorage,run);render();notify('같은 시작 세계와 시드로 처음부터 재생합니다.');},
-  'reset-rules': () => {if(confirm('규칙 설정을 첨부 원본 v11 기본값으로 복원할까요?'))updateWorld({...world,rules:clone(DEFAULT_RULES)});},
+  'reset-rules': () => {if(confirm('규칙 설정을 첨부 원본 v11 기본값으로 복원할까요?'))updateWorld({...world,rules:{...clone(DEFAULT_RULES),seaSupply:false}});},
   'map-fullscreen': openMapFullscreen,
   'map-fullscreen-close': closeMapFullscreen,
   'recording': () => { ui.recording = !ui.recording; render(); },
@@ -298,7 +298,7 @@ document.addEventListener('submit', event => {
     } else if (form.id === 'rules-form') {
       const next = clone(world), r = next.rules;
       for (const k of ['successTarget', 'recruitGain', 'productionGain', 'territoryProduction', 'armyAdvantageBonus', 'roundLimit', 'supplyGain', 'baseCapacity', 'minimumReserve']) r[k] = Number(data.get(k));
-      r.diceSides=10;for(const k of Object.keys(MINISTER_STYLES))r.ministerWeights[k]=[0,1,2].map(i=>Number(data.get(`weight-${k}-${i}`)));
+      r.seaSupply=data.has('seaSupply');r.diceSides=10;for(const k of Object.keys(MINISTER_STYLES))r.ministerWeights[k]=[0,1,2].map(i=>Number(data.get(`weight-${k}-${i}`)));
       for (const k of Object.keys(PERSONALITIES)) r.domesticThresholds[k] = Number(data.get(`threshold-${k}`));
       for (const k of ['win', 'tie', 'loss']) r.lossRates[k] = Number(data.get(`loss-${k}`)) / 100;
       updateWorld(next); notify('규칙을 저장했습니다. 새 실행부터 적용됩니다.');

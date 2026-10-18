@@ -82,7 +82,7 @@ with sync_playwright() as p:
  image=Image.new('RGB',(1600,900),(61,112,97));buffer=io.BytesIO();image.save(buffer,format='PNG')
  page.locator('#map-background-file').set_input_files({'name':'my-map.png','mimeType':'image/png','buffer':buffer.getvalue()})
  expect(page.locator('.map-background-image')).to_have_count(1)
- assert world(page)['cartography']['background'].startswith('data:image/jpeg;base64,')
+ assert world(page)['cartography']['background'].startswith('data:image/webp;base64,')
  page.locator('#map-background-file').set_input_files({'name':'unsafe.svg','mimeType':'image/svg+xml','buffer':b'<svg onload="alert(1)"></svg>'})
  expect(page.locator('#toast')).to_contain_text('PNG')
  expect(page.locator('.map-background-image')).to_have_count(1)

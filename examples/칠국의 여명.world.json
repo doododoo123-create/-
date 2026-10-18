@@ -1213,7 +1213,8 @@
       "minimumReserve": 5,
       "territoryProduction": 1,
       "armyAdvantageBonus": 1,
-      "roundLimit": 30
+      "roundLimit": 30,
+      "seaSupply": false
     }
   }
 }

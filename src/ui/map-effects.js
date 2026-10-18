@@ -1,4 +1,4 @@
-import { territoryCell } from './cartography-geometry.js';
+import { territoryCell } from '../model/cartography-geometry.js';
 import { displayEventText } from './display-names.js';
 import {esc} from './icons.js';
 // Exact changes between recorded frames. No game rules or randomness are evaluated here.

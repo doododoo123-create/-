@@ -13,7 +13,7 @@ with sync_playwright() as p:
  context=b.new_context(viewport={'width':1600,'height':1100},accept_downloads=True);page=context.new_page();page.on('pageerror',lambda e:errors.append(str(e)));page.on('dialog',lambda d:d.accept())
  page.goto(os.environ.get('STUDIO_TEST_URL','http://127.0.0.1:3000'),wait_until='networkidle')
  expect(page.locator('.map-background-image')).to_have_count(1)
- assert page.locator('.map-background-image').evaluate('async el=>{const i=new Image();i.src=el.getAttribute("href");await i.decode();return i.naturalWidth===1200}')
+ assert page.locator('.map-background-image').evaluate('async el=>{const i=new Image();i.src=el.getAttribute("href");await i.decode();return i.naturalWidth===1536}')
  page.locator('[data-action="map-fullscreen"]').click();expect(page.locator('.map-stage header,.map-stage footer,.visual-nations')).to_have_count(0)
  page.screenshot(path=str(ROOT/'docs/free-coast-preview.png'));Image.open(ROOT/'docs/free-coast-preview.png').resize((1200,825)).save('/tmp/free-coast-review.jpg')
  page.keyboard.press('Escape');page.locator('nav [data-page="map"]').click()

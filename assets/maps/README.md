@@ -2,7 +2,7 @@
 
 사용자가 보여준 판타지 대륙 그림의 해안·큰 만·반도·색조를 참고하여 이미지 생성 도구로 제작한 새 삽화입니다. 원본 그림의 정확한 복사본은 아닙니다.
 
-- reference-continent.jpg: 1200×800, JPEG. 내장 reference-art.js와 동일.
+- reference-continent.jpg: 1536×1024, JPEG 품질 96·원본 해안 좌표 유지. 내장 reference-art.js와 동일.
 - reference-ocean.jpg: 1200×800, JPEG. 내장 ocean-art.js와 동일.
 - reference-map.js: 삽화의 육지를 따라 나눈 80개 자유 다각형. 그림에서 문자를 고정하지 않고 이름·색·병력은 화면에서 합성합니다.
 

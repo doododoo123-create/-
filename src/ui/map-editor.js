@@ -1,7 +1,8 @@
+import { prepareMapImage } from './map-image.js';
 import { clone, neighbors } from '../model/world.js';
 import { defaultCartography, validatePolygon, polygonCenter, pointInPolygon, pointInShape, shapeAnchor, MAX_POLYGON_POINTS, setTerritoryLinks } from '../model/cartography.js';
 import { freeMapFrom, addFreeTerritory, removeFreeTerritory, moveFreeTerritory, boundaryLinks } from '../model/free-map.js';
-import { geometryFor, cellPoints } from './cartography-geometry.js';
+import { geometryFor, cellPoints } from '../model/cartography-geometry.js';
 import { renderMapDraft } from './map-editor-view.js';
 export class MapEditor {
   constructor({getWorld,getSelected,setSelected=()=>{},commit,render,notify}){Object.assign(this,{getWorld,getSelected,setSelected,commit,render,notify});this.mode='select';this.draft=null;this.history=[];this.zoom=1;this.drag=null;}
@@ -66,10 +67,10 @@ export class MapEditor {
   }
   async importBackground(file){
     if(!file)return;
-    if(!/^image\/(png|jpeg|webp)$/.test(file.type)||file.size>12*1024*1024)throw new Error('12MB 이하의 PNG·JPEG·WebP 이미지를 선택해 주세요.');
+    if(!/^image\/(png|jpeg|webp)$/.test(file.type)||file.size>32*1024*1024)throw new Error('32MB 이하의 PNG·JPEG·WebP 이미지를 선택해 주세요.');
     const worldId=this.getWorld().id,url=URL.createObjectURL(file),image=new Image();
     try{await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=()=>reject(new Error('이미지 파일을 읽을 수 없습니다.'));image.src=url;});if(this.getWorld().id!==worldId)throw new Error('세계가 바뀌었습니다. 현재 세계에서 이미지를 다시 선택해 주세요.');
-      const canvas=document.createElement('canvas');canvas.width=1200;canvas.height=800;const ctx=canvas.getContext('2d');ctx.fillStyle='#103e48';ctx.fillRect(0,0,1200,800);const scale=Math.min(1200/image.width,800/image.height),w=image.width*scale,h=image.height*scale;ctx.drawImage(image,(1200-w)/2,(800-h)/2,w,h);let data=canvas.toDataURL('image/jpeg',.86);if(data.length>1400000)data=canvas.toDataURL('image/jpeg',.65);if(data.length>1400000)throw new Error('그림이 너무 복잡합니다. 더 작은 이미지로 다시 선택해 주세요.');const next=this.designWorld();next.cartography.background=data;this.save(next);this.notify('배경 그림을 저장했습니다. 영토를 선택하고 경계 다시 그리기로 그림에 맞춰 주세요.');
+      const {data}=prepareMapImage(image);const next=this.designWorld();next.cartography.background=data;this.save(next);this.notify('배경 그림을 저장했습니다. 영토를 선택하고 경계 다시 그리기로 그림에 맞춰 주세요.');
     }finally{URL.revokeObjectURL(url);}
   }
 }

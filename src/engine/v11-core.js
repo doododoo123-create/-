@@ -49,6 +49,22 @@ function connectedLand(s,id,start){
  if(!Number.isInteger(start)||!s.cells[start]||s.cells[start].owner!==id)return [];
  const seen=new Set([start]),queue=[start];for(let i=0;i<queue.length;i++)for(const next of Atlas.cells[queue[i]].neighbors)if(s.cells[next].owner===id&&!seen.has(next)){seen.add(next);queue.push(next);}return queue;
 }
+// Supply may cross open water; combat, stations and campaign planning keep the land graph.
+const seaPorts=config.seaPorts||[],seaShores=new Map();
+if(V11_RULES.seaSupply)seaPorts.forEach((ports,id)=>ports.forEach(body=>{if(!seaShores.has(body))seaShores.set(body,[]);seaShores.get(body).push(id);}));
+function connectedSupply(s,id,start){
+ if(!V11_RULES.seaSupply)return connectedLand(s,id,start);
+ if(!Number.isInteger(start)||!s.cells[start]||s.cells[start].owner!==id)return [];
+ const seen=new Set([start]),queue=[start],sailed=new Set();
+ const add=next=>{if(s.cells[next].owner===id&&!seen.has(next)){seen.add(next);queue.push(next);}};
+ for(let i=0;i<queue.length;i++){for(const next of Atlas.cells[queue[i]].neighbors)add(next);for(const body of seaPorts[queue[i]]||[])if(!sailed.has(body)){sailed.add(body);for(const next of seaShores.get(body)||[])add(next);}}
+ return queue;
+}
+function supplyComponents(s,id){
+ if(!V11_RULES.seaSupply)return landComponents(s,id);
+ const left=new Set(s.cells.filter(c=>c.owner===id).map(c=>c.id)),parts=[];
+ while(left.size){const part=connectedSupply(s,id,left.values().next().value);part.forEach(v=>left.delete(v));parts.push(part);}return parts;
+}
 // Used once for new units and v10 migration; established stations never follow layout changes.
 function initialStations(s){
  const positions=new Map(),placed=[],capitals=s.countries.map(c=>capitalCell(s,c.id)).filter(v=>v!==null);
@@ -68,14 +84,14 @@ function ensureStations(s){
  }
 }
 const stationLand=(s,id,slot)=>connectedLand(s,id,stationCell(s,id,slot));
-const capitalConnected=(s,id,slot)=>stationLand(s,id,slot).includes(capitalCell(s,id));
+const capitalConnected=(s,id,slot)=>connectedSupply(s,id,stationCell(s,id,slot)).includes(capitalCell(s,id));
 function allocateLocal(s,id,cells,amount){
  const c=s.countries[id],area=new Set(cells),allocated=Array(c.generals.length).fill(0);let remaining=amount;
  while(remaining>0){const eligible=c.generals.filter(g=>g.active&&g.alive&&g.troops<capacity(c,g)&&area.has(stationCell(s,id,g.slot)));if(!eligible.length)break;const g=eligible[randomInt(s,eligible.length)];g.troops++;allocated[g.slot]++;remaining--;}
  syncArmy(c);return {allocated,discarded:remaining};
 }
 function produce(s,id){
- const c=s.countries[id],parts=landComponents(s,id),capital=capitalCell(s,id),main=parts.find(p=>p.includes(capital))||[],centralGain=main.length*V11_RULES.territoryProduction+c.extraRecruitment;
+ const c=s.countries[id],parts=supplyComponents(s,id),capital=capitalCell(s,id),main=parts.find(p=>p.includes(capital))||[],centralGain=main.length*V11_RULES.territoryProduction+c.extraRecruitment;
  c.reserve+=centralGain;const allocated=distribute(s,id),isolated=[];let discarded=0;
  for(const cells of parts){if(cells.includes(capital))continue;const local=allocateLocal(s,id,cells,cells.length*V11_RULES.territoryProduction);for(let k=0;k<allocated.length;k++)allocated[k]+=local.allocated[k];discarded+=local.discarded;isolated.push({cells,produced:cells.length*V11_RULES.territoryProduction,...local});}
  syncArmy(c);const rate=reinforcement(s,id);return {id,gain:rate-discarded,rate,centralGain,discarded,isolated,allocated,reserve:c.reserve,garrison:capitalGuard(c),pool:0};
@@ -167,11 +183,11 @@ function reconcile(s){
  s.mapVersion=Atlas.id;if(!s.capitals)s.capitals=CAPITAL_HOMES.slice();for(const c of s.countries)s.capitals[c.id]=capitalCell(s,c.id);const changes=[],retired=[];
  for(const c of s.countries){const n=slotCount(s,c.id);for(const g of c.generals){const active=g.slot<n;if(g.active&&!active){retired.push({id:c.id,station:g.station,troops:g.troops,name:g.name});g.troops=0;changes.push(c.short+' '+g.name+' 대기 전환');}if(!g.active&&active&&g.alive){changes.push(c.short+' '+g.name+(g.appointed?' 복귀':' 신설'));g.appointed=true;}g.active=active;}assignRegions(s,c.id);}
  ensureStations(s);
- for(const r of retired){const c=s.countries[r.id];if(!lands(s,r.id))continue;const area=connectedLand(s,r.id,r.station);if(area.includes(capitalCell(s,r.id)))c.reserve+=r.troops;else if(area.length){const local=allocateLocal(s,r.id,area,r.troops);if(local.discarded)changes.push(r.name+' 고립 잔여 '+local.discarded+'만명 해산');}}
+ for(const r of retired){const c=s.countries[r.id];if(!lands(s,r.id))continue;const area=connectedSupply(s,r.id,r.station);if(area.includes(capitalCell(s,r.id)))c.reserve+=r.troops;else if(area.length){const local=allocateLocal(s,r.id,area,r.troops);if(local.discarded)changes.push(r.name+' 고립 잔여 '+local.discarded+'만명 해산');}}
  for(const c of s.countries)syncArmy(c);return changes;
 }
 function distribute(s,id,balanced=false){
- const c=s.countries[id],given=Array(c.generals.length).fill(0),main=new Set(connectedLand(s,id,capitalCell(s,id)));
+ const c=s.countries[id],given=Array(c.generals.length).fill(0),main=new Set(connectedSupply(s,id,capitalCell(s,id)));
  while(c.reserve>V11_RULES.minimumReserve){
   const eligible=c.generals.filter(g=>g.active&&g.alive&&g.troops<capacity(c,g)&&main.has(stationCell(s,id,g.slot)));
   if(!eligible.length)break;
@@ -289,5 +305,5 @@ function prepareTurn(input,controls){
  if(s.result)emit('finish',s.result.winners.map(id=>s.countries[id].name).join(' · ')+(s.result.winners.length>1?' 공동 우승':' 우승'),s.result.reason==='conquest'?'천하 통일':s.roundLimit+'라운드 결산 · 영지 → 총병력',{result:s.result});
  record.after=stats(s);s.history.push(record);if(s.history.length>12)s.history.shift();if(!validState(s))throw Error('턴 처리 뒤 규칙 상태가 일치하지 않습니다');return {state:s,record};
 }
-return {NUM_NATIONS,ATLAS:Atlas,adjacent,CAPITAL_HOMES,capitalCell,landComponents,connectedLand,stationCell,stationLand,capitalConnected,ensureStations,produce,connectionPlan,attackOptions,campaignOptions,conquestLimit,BASE_CAPACITY,SUPPLY_GAIN,casualty,VERSION,ROWS,COLS,MAX_GENERALS,NATIONS,KINGS,MINISTERS,ACTIONS,GRADE_NAMES,ROSTERS,createGame,prepareTurn,lands,slotCount,reinforcement,capacity,capitalGuard,reservePool,totalArmy,aliveIds,currentActor,stats,validState,migrateSave,initialOptions,targets,warOpponents,attackable,reconcile,distribute,sign};
+return {NUM_NATIONS,ATLAS:Atlas,adjacent,CAPITAL_HOMES,capitalCell,landComponents,connectedLand,connectedSupply,supplyComponents,stationCell,stationLand,capitalConnected,ensureStations,produce,connectionPlan,attackOptions,campaignOptions,conquestLimit,BASE_CAPACITY,SUPPLY_GAIN,casualty,VERSION,ROWS,COLS,MAX_GENERALS,NATIONS,KINGS,MINISTERS,ACTIONS,GRADE_NAMES,ROSTERS,createGame,prepareTurn,lands,slotCount,reinforcement,capacity,capitalGuard,reservePool,totalArmy,aliveIds,currentActor,stats,validState,migrateSave,initialOptions,targets,warOpponents,attackable,reconcile,distribute,sign};
 }
