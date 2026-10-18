@@ -36,3 +36,9 @@ export function designedBorders(world,geometry){
 }
 
 export function territoryCell(world,geometry,territory){return geometry.cells[world.territories.findIndex(t=>t.id===territory?.id)];}
+
+export function mapAnchor(world,territoryId,kind='reference',provided=null){
+ const index=world.territories.findIndex(t=>t.id===territoryId);if(index<0)return null;
+ const anchors=world.cartography?.polygons?.[territoryId]?.anchors;
+ return anchors?.[kind]||anchors?.reference||(provided||geometryFor(world)).cells[index].center;
+}

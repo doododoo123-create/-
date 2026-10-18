@@ -3,9 +3,11 @@
 import { readFile, writeFile, mkdir, cp } from 'node:fs/promises';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { syncStudioArt } from './studio-art.mjs';
 import { syncKitIcons } from './ui-kit.mjs';
 import { syncGeneralPortraits } from './general-portraits.mjs';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+await syncStudioArt(root);
 await syncKitIcons(root);
 await syncGeneralPortraits(root);
 const visited = new Set(), chunks = [];
@@ -20,7 +22,7 @@ async function bundle(path) {
     await bundle(resolve(dirname(path), match[1]));
   }
   source = source.replace(/^import\s+\{[^}]*\}\s+from\s+['"][^'"]+['"];?\s*$/gm, '');
-  source = source.replace(/^export\s+(?=(?:const|let|function|class)\b)/gm, '');
+  source = source.replace(/^export\s+(?=(?:const|let|(?:async\s+)?function|class)\b)/gm, '');
   if (/^\s*(import|export)\s/m.test(source)) throw new Error(`Unsupported module syntax in ${path}`);
   chunks.push(`\n// ${path.slice(root.length + 1)}\n${source}`);
 }
@@ -30,6 +32,7 @@ const css = await readFile(resolve(root, 'src/ui/style.css'), 'utf8');
 const visuals = await readFile(resolve(root, 'src/ui/visuals.css'), 'utf8');
 const mapStage = await readFile(resolve(root, 'src/ui/map-stage.css'), 'utf8');
 const mapEditorCss = await readFile(resolve(root, 'src/ui/map-editor.css'), 'utf8');
+const studioCss = await readFile(resolve(root, 'src/ui/studio-v07.css'), 'utf8');
 const mapRefinementsCss = await readFile(resolve(root, 'src/ui/map-refinements.css'), 'utf8');
 // Keep each skin image in one CSS variable and inline local assets for offline delivery.
 let lacquerCss = await readFile(resolve(root, 'src/ui/lacquer-bronze.css'), 'utf8');
@@ -47,6 +50,7 @@ html = html.replace('<link rel="stylesheet" href="./src/ui/style.css">', `<style
   .replace('<link rel="stylesheet" href="./src/ui/map-editor.css">', `<style>${mapEditorCss}</style>`)
   .replace('<link rel="stylesheet" href="./src/ui/lacquer-bronze.css">', `<style>${lacquerCss}</style>`)
   .replace('<link rel="stylesheet" href="./src/ui/map-refinements.css">', `<style>${mapRefinementsCss}</style>`)
+  .replace('<link rel="stylesheet" href="./src/ui/studio-v07.css">', `<style>${studioCss}</style>`)
   .replace('href="./favicon.svg"', `href="data:image/svg+xml;base64,${favicon}"`)
   .replace('<script type="module" src="./src/app.js"></script>', `<script>${script}</script>`);
 const dist = resolve(root, 'dist');

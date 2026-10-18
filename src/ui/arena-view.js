@@ -1,3 +1,5 @@
+import { sideBonus, renderCombatBonuses } from './combat-view.js';
+import { vividWorld } from './palette.js';
 import { displayName, displayEventText } from './display-names.js';
 import { findCountry, countryPeople, landCount, ROLES, PERSONALITIES } from '../model/world.js';
 import { icon, esc, format } from './icons.js';
@@ -9,7 +11,7 @@ function character(person,country,role,compact=false) {
 }
 export function renderArena({world,run,playback,showControls=true}) {
   const state=playback?.state,record=state?.record,scene=playback?.scene,event=scene?.event;
-  const frame=scene?.worldBefore||world;
+  const frame=vividWorld(scene?.worldBefore||world);
   const actor=findCountry(frame,record?.actorId)||findCountry(frame,run?.schedule[run.scheduleIndex])||frame.countries.find(c=>landCount(frame,c.id)>0)||frame.countries[0];
   const nation=findCountry(frame,event?.nationId)||actor;
   const person=countryPeople(frame,nation?.id).find(p=>event?.role==='general'?p.role==='general'&&p.slot===event.slot:p.role===(event?.role||'king'));
@@ -23,10 +25,10 @@ export function renderArena({world,run,playback,showControls=true}) {
     const side=(c,p,s,isAttack)=>{
       const current=event?.type===(isAttack?'attack_roll':'defense_roll');
       const revealed=result||event?.type==='death_roll'||event?.type==='death'||event?.type==='survived'||(!isAttack?false:event?.type==='defense_roll');
-      return `<div class="duel-side ${isAttack?'attacker':'defender'}"><div class="duel-side-label">${isAttack?'공격 장군':'방어 장군'}<span>${format(s?.army||0)}만 명</span></div>${character(p||{name:s?.name},c,'general',true)}${b.automatic?'<div class="automatic-label">전투 주사위 없음</div>':renderDie(current||revealed?s.raw:null,10,current?phase:revealed?'locked':'waiting',isAttack?'공격 판정':'방어 판정',s.ability+s.armyBonus)}<div class="side-modifiers"><span>능력 ${signed(s?.ability)}</span><span>병력 우세 ${signed(s?.armyBonus)}</span></div></div>`;
+      return `<div class="duel-side ${isAttack?'attacker':'defender'}"><div class="duel-side-label">${isAttack?'공격 장군':'방어 장군'}<span>${format(s?.army||0)}만 명</span></div>${character(p||{name:s?.name},c,'general',true)}${b.automatic?'<div class="automatic-label">전투 주사위 없음</div>':renderDie(current||revealed?s.raw:null,b.sides||10,current?phase:revealed?'locked':'waiting',isAttack?'공격 판정':'방어 판정',sideBonus(s))}${renderCombatBonuses(s)}</div>`;
     };
     content=`<div class="battle-sequence">이번 원정 · ${b.index+1}번째 장군 / ${esc(b.territoryName)}</div><div class="visual-duel">${side(a,attack,b.attack,true)}<div class="duel-vs"><span>VS</span>${icon('sword',22)}</div>${side(d,defense,b.defense,false)}</div>`;
-    if(result)content+=b.automatic?'<div class="automatic-banner">방어 병력 없음 · 영토 1개 자동 점령 · 손실 없음</div>':`<div class="battle-losses">${['attack','defense'].map((key,i)=>`<div><small>${i?'방어':'공격'} 장군 손실</small><strong>−${b.losses[key].amount}<span>만</span></strong><p>${b[key].army} → ${b.after[key]}만 · 기본률 ${b.losses[key].base}%</p></div>`).join('')}</div><div class="automatic-banner">${esc(displayEventText(b.summary))} · 점령 ${b.takenCells.length}개</div>`;
+    if(result)content+=b.automatic?'<div class="automatic-banner">방어 병력 없음 · 영토 1개 자동 점령 · 손실 없음</div>':`<div class="battle-losses">${['attack','defense'].map((key,i)=>`<div><small>${i?'방어':'공격'} 장군 손실</small><strong>−${format(b.losses[key].amount)}<span>만</span></strong><p>${b[key].army} → ${b.after[key]}만 · ${b.losses[key].grade?({narrow:'근소승',clear:'승리',rout:'압승',draw:'무승부'}[b.losses[key].grade]):'원본 손실식'}</p></div>`).join('')}</div><div class="automatic-banner">${esc(displayEventText(b.summary))} · 점령 ${b.takenCells.length}개</div>`;
     if(event?.type==='death_roll')content+=`<div class="death-judgment">${esc(displayEventText(person?.name))} 전사 판정 ${renderDie(scene.value,10,phase,'1~3 전사 / 4~10 생존')}</div>`;
   } else if(scene?.kind==='roll'||!scene) {
     const role=event?.role||'king';

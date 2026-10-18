@@ -1,0 +1,43 @@
+/* V0.7: location pins, user-supplied dice and readable recording text. */
+.game-skin .atlas-name,.game-skin .march-label,.game-skin .mountain-markers text{fill:#fff!important;stroke:#000!important;stroke-width:3px;paint-order:stroke;stroke-linejoin:round}
+.game-skin .map-judgment,.game-skin .map-judgment h2,.game-skin .judgment-feature,.game-skin .judgment-feature>span,.game-skin .judgment-result,.game-skin .judgment-side-label,.game-skin .judgment-side-label small,.game-skin .judgment-person strong,.game-skin .judgment-person small,.game-skin .die-caption,.game-skin .map-event-announcement{color:#fff!important;text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000}
+.game-skin .map-unit-feedback text,.game-skin .map-territory-feedback text{fill:#fff!important;stroke:#000;stroke-width:2px;paint-order:stroke}
+.game-skin .map-unit-token{background:#101719!important;border:2px solid var(--nation);border-radius:7px 7px 3px 3px;box-shadow:none;clip-path:polygon(10% 0,90% 0,100% 7%,100% 100%,0 100%,0 7%);height:90px;padding:3px 2px}
+.game-skin .token-wrap{height:94px;overflow:visible}
+.game-skin .map-unit-token .token-portraits{border:0;width:44px;height:49px;flex-basis:49px;border-radius:2px}
+.game-skin .map-unit-token .token-portraits img[data-portrait-kind=leader]{width:180%;left:-40%;top:-42%}
+.game-skin .map-unit-token .token-copy b{display:flex;justify-content:center;align-items:center;gap:1px;color:#fff;width:46px;max-width:46px;text-shadow:0 1px 2px #000}
+.game-skin .map-unit-token .token-copy b>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.game-skin .map-unit-token .token-copy strong,.game-skin .map-unit-token .token-copy strong small{color:#fff;text-shadow:0 1px 2px #000}
+.unit-pin-tip{fill:#101719;stroke:var(--nation);stroke-width:2.3;stroke-linejoin:round;pointer-events:none}
+.veteran-stars{font-style:normal;font-size:7px;color:#fff;white-space:nowrap;letter-spacing:-1px;flex-shrink:0}
+.game-skin .station-leaders path{stroke:#fff;stroke-opacity:.8;stroke-width:1;fill:none}
+.game-skin .station-leaders circle{fill:#101719;stroke-width:1.8}
+.mountain-markers text{font-size:13px;font-weight:bold}
+.map-edit-anchors>g{cursor:move;touch-action:none}
+.map-edit-anchors circle{fill:none;stroke:var(--anchor-color);stroke-width:2;pointer-events:stroke}
+.map-edit-anchors path{stroke:var(--anchor-color);stroke-width:1;pointer-events:stroke}
+.map-edit-anchors text{fill:var(--anchor-color);stroke:#000;stroke-width:3;paint-order:stroke;font-size:12px;pointer-events:none}
+.game-skin .visual-die.attached-die{background:none!important;background-image:none!important;border:0!important;box-shadow:none!important;aspect-ratio:1;width:110px;height:110px;position:relative;overflow:visible;clip-path:none;isolation:isolate}
+.game-skin .visual-die.attached-die::before,.game-skin .visual-die.attached-die::after{content:none!important}
+.dice-art,.die-art-stack{position:absolute;inset:0;width:100%;height:100%}
+.dice-art text{fill:var(--die-ink);paint-order:stroke;stroke:#000;stroke-width:1.3px}
+.game-skin .attached-die .die-number{opacity:0}
+.game-skin .attached-die.custom-die-value .die-number{opacity:1;position:absolute;left:0;right:0;top:27%;font:700 42px/1.3 Georgia,serif;color:var(--die-ink);text-shadow:0 2px 2px #000}
+.dice-art.blank-face text{visibility:hidden}
+.game-skin .attached-die>small{position:absolute;left:0;right:0;bottom:15%;font-size:8px;color:#fff}
+.die-art-frame{position:absolute;inset:0;opacity:0;animation:attached-die-reel .7s steps(1,end) infinite;animation-delay:calc(var(--frame) * -.1s)}
+@keyframes attached-die-reel{0%{opacity:1}14.2857143%,100%{opacity:0}}
+.game-skin .map-judgment .attached-die{width:86px;height:86px}
+.game-skin .map-judgment .attached-die.custom-die-value .die-number{font-size:36px}
+.combat-breakdown{display:flex;gap:3px 9px;justify-content:center;flex-wrap:wrap;font-size:10px;color:#fff;line-height:1.6;margin-top:5px;text-shadow:0 1px 2px #000}
+.combat-breakdown span{white-space:nowrap}
+.history-entry[data-action]{cursor:pointer;transition:background .2s}
+.history-entry[data-action]:hover,.history-entry.replaying{background:#263746;outline:1px solid #92b8d0;outline-offset:-1px}
+.history-pagination{display:flex;justify-content:space-between;align-items:center;padding:10px 20px;gap:10px;font-size:11px}
+.replay-banner{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;border:1px solid #78accc;background:#172d3a;color:#fff;margin-bottom:14px;border-radius:6px}
+.rules-combat table{width:100%;border-collapse:collapse;font-size:11px;margin:12px 0}
+.rules-combat td,.rules-combat th{padding:4px;text-align:left;border-bottom:1px solid #3d493b}
+.rules-combat input{padding:5px 8px}
+@media(max-width:620px){.game-skin .map-judgment .attached-die{width:66px;height:66px}.game-skin .map-judgment .attached-die.custom-die-value .die-number{font-size:28px}.combat-breakdown{font-size:9px;gap:2px 5px}.replay-banner{flex-wrap:wrap}.game-skin .map-unit-token .token-copy b{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.die-art-frame{animation:none}.die-art-frame:first-child{opacity:1}}

@@ -32,7 +32,7 @@ with sync_playwright() as p:
  with page.expect_download() as d:page.locator('[data-action="export"]').click()
  out=ROOT/'.artifacts/generated-map.world.json';d.value.save_as(str(out));assert json.loads(out.read_text())['world']==generated
  page.locator('[data-action="map-edit-undo"]').click();assert world(page)==original
- page.locator('#world-file').set_input_files(str(out));assert world(page)==generated;page.reload(wait_until='networkidle');page.locator('nav [data-page="map"]').click();assert world(page)==generated
+ page.locator('#world-file').set_input_files(str(out));expect(page.locator('h1')).to_have_text('세계 개요');assert world(page)==generated;page.reload(wait_until='networkidle');page.locator('nav [data-page="map"]').click();assert world(page)==generated
  print('PASS: 사용자 PNG·육지/바다/색 보정·붓 되돌리기·섬 옵션·정확한 14영토·호수 제외·적용/되돌리기·파일/저장 복원',flush=True)
  before=world(page);page.locator('[data-action="map-zoom-in"]').click();assert box(page)[2]<1200
  page.locator('[data-action="map-zoom-out"]').click();assert abs(box(page)[2]-1200)<1
@@ -42,7 +42,7 @@ with sync_playwright() as p:
  page.mouse.move(x,y);page.mouse.wheel(0,-200);assert box(page)[2]<1200;assert world(page)==before
  page.locator('[data-action="map-zoom-reset"]').click();page.screenshot(path=str(ROOT/'docs/unframed-map-preview.png'))
  # Restore a playable world for observing zoom across simulation rerenders.
- page.evaluate('(w)=>{localStorage.setItem("saguk-studio.world.v1",JSON.stringify({kind:"saguk-studio-world",version:2,world:w}));localStorage.removeItem("saguk-studio.completed-run.v11");}',original);page.reload(wait_until='networkidle');page.clock.install(time=0);page.clock.pause_at(1000)
+ page.evaluate('(w)=>{localStorage.setItem("saguk-studio.world.v1",JSON.stringify({kind:"saguk-studio-world",version:2,world:w}));localStorage.removeItem("saguk-studio.completed-run.v11");}',original);page.reload(wait_until='networkidle');page.locator('nav [data-page="simulation"]').click();page.locator('#camera-follow').uncheck();page.clock.install(time=0);page.clock.pause_at(1000)
  page.locator('[data-action="map-fullscreen"]').click();page.keyboard.press('Enter');page.mouse.move(800,650);page.mouse.wheel(0,-160);zoomed=box(page);assert zoomed[2]<1200;page.clock.run_for(2500);assert box(page)==zoomed
  expect(page.locator('.map-stage .map-camera-controls,.map-stage header,.map-stage footer')).to_have_count(0);page.keyboard.press('0');assert box(page)==[0,0,1200,800];page.keyboard.press('+');assert box(page)[2]<1200;page.keyboard.press('s');page.keyboard.press('Escape')
  print('PASS: 버튼/휠 확대·축소·원위치·우클릭/이동모드 드래그·세계 데이터 보존·전체화면 연출 중 배율 유지·고정 패널 없음',flush=True)

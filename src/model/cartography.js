@@ -41,6 +41,7 @@ export function validateCartography(input,territories){
     }
     const center=shape.center??polygonCenter(points),result={points,center,...(cleanHoles.length?{holes:cleanHoles}:{})};
     if(!Array.isArray(center)||center.length!==2||!center.every(Number.isFinite)||!pointInShape(center,result))throw new Error('영토 이름·부대 위치는 해당 육지 경계 안에 놓아 주세요.');
+    if(shape.anchors!==undefined){if(!shape.anchors||typeof shape.anchors!=='object'||Array.isArray(shape.anchors))throw new Error('표시 위치 형식을 확인해 주세요.');result.anchors={};for(const key of ['reference','label','station','battle']){const p=shape.anchors[key];if(p===undefined)continue;if(!Array.isArray(p)||p.length!==2||!p.every(Number.isFinite)||!pointInShape(p,result))throw new Error('표시 위치는 해당 영토의 육지 안에 놓아 주세요.');result.anchors[key]=p.map(v=>Math.round(v*1000)/1000);}}
     Object.defineProperty(polygons,id,{value:{...result,center:[...center]},enumerable:true,writable:true,configurable:true});
   }
   let links=null;

@@ -32,4 +32,4 @@ const paths = {
 };
 export const icon = (name, size = 18) => kitAliases[name]?`<svg class="kit-icon" data-ui-icon="${kitAliases[name]}" width="${size}" height="${size}" viewBox="0 0 128 128" aria-hidden="true">${KIT_ICONS[kitAliases[name]]}</svg>`:`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name] || paths.globe}</svg>`;
 export const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-export const format = n => new Intl.NumberFormat('ko-KR').format(n);
+export const format = n => new Intl.NumberFormat('ko-KR',{maximumFractionDigits:4}).format(n);

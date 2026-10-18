@@ -1,3 +1,4 @@
+import { ADDITIVE_COMBAT_DEFAULTS, isModernCombat } from './combat-rules.js';
 import { V11_ATLAS, V11_NATIONS, V11_ROSTERS } from '../data/v11-preset.js';
 import { validateCartography } from './cartography.js';
 export const SCHEMA_VERSION = 2;
@@ -5,7 +6,7 @@ export const PERSONALITIES = { balanced:'균형형', peaceful:'내정형', aggre
 export const MINISTER_STYLES = { balanced:'균형형', recruiter:'모병형', producer:'충원형', supplier:'보급형' };
 export const ROLES = { king:'국왕', minister:'승상', general:'장군' };
 export const DEFAULT_RULES = Object.freeze({
-  mode:'v11', diceSides:10, seaSupply:true, domesticThresholds:{balanced:5,peaceful:7,aggressive:3},
+  mode:'v11', diceSides:10, seaSupply:true, ...structuredClone(ADDITIVE_COMBAT_DEFAULTS), domesticThresholds:{balanced:5,peaceful:7,aggressive:3},
   ministerWeights:{balanced:[3,3,4],recruiter:[5,2,3],producer:[2,3,5],supplier:[2,2,6]},
   successTarget:6,recruitGain:3,productionGain:3,supplyGain:5,baseCapacity:20,minimumReserve:5,
   territoryProduction:1,armyAdvantageBonus:1,lossRates:{win:.3,tie:.4,loss:.5},roundLimit:30,
@@ -61,8 +62,8 @@ export function validateWorld(source) {
   const counters=new Map();
   const people=array(input.people,'인물 목록',2000).map(p=>{
     object(p,'인물');if(!Object.hasOwn(ROLES,p.role)||!Object.hasOwn(PERSONALITIES,p.personality))fail('인물 직책 또는 성향이 올바르지 않습니다.');
-    if(![-2,0,2].includes(p.ability))fail('v11 능력 보정은 −2 / 0 / +2 중에서 선택해 주세요.');
-    if(p.portraitKey!==undefined&&p.portraitKey!==''&&(typeof p.portraitKey!=='string'||!/^(?:n[0-3]-(king|minister|general)|general-(?:00[1-9]|0[1-4][0-9]|050))$/.test(p.portraitKey)))fail('인물 초상화 선택이 올바르지 않습니다.');
+    if(p.role==='general'&&isModernCombat({...ADDITIVE_COMBAT_DEFAULTS,...input.rules})){number(p.ability,'장군 능력 보정',-4,4);}else if(![-2,0,2].includes(p.ability))fail('국왕·승상과 원본 v11 능력은 −2 / 0 / +2 중에서 선택해 주세요.');
+    if(p.portraitKey!==undefined&&p.portraitKey!==''&&(typeof p.portraitKey!=='string'||!/^(?:n[0-3]-(king|minister|general)|general-(?:00[1-9]|0[1-4][0-9]|050)|(king|minister)-(?:00[1-9]|010))$/.test(p.portraitKey)))fail('인물 초상화 선택이 올바르지 않습니다.');
     const result={id:text(p.id,'인물 ID',100),name:text(p.name,'인물명',40),countryId:owner(p.countryId,'인물 소속'),role:p.role,ability:p.ability,personality:p.personality,feature:optionalText(p.feature),...(p.portraitKey?{portraitKey:p.portraitKey}:{})};
     if(p.role==='minister'){const style=p.ministerStyle||'balanced';if(!Object.hasOwn(MINISTER_STYLES,style))fail('승상 성향이 올바르지 않습니다.');result.ministerStyle=style;}
     if(p.role==='general'){const slot=number(p.slot??counters.get(p.countryId)??0,'장군 자리 번호',0,Math.max(19,Math.ceil((mapKind==='free'?input.territories?.length||0:rows*cols)/4)-1));counters.set(p.countryId,Math.max(counters.get(p.countryId)||0,slot+1));result.slot=slot;result.commandBonus=number(p.commandBonus??0,'개인 지휘한도 보정',-1,1);}
@@ -70,7 +71,7 @@ export function validateWorld(source) {
   });
   unique(people.map(p=>p.id),'인물 ID');
   for(const c of countries){for(const role of ['king','minister'])if(people.filter(p=>p.countryId===c.id&&p.role===role).length>1)fail(`${c.name}의 ${ROLES[role]}은 1명만 둘 수 있습니다.`);unique(people.filter(p=>p.countryId===c.id&&p.role==='general').map(p=>p.slot),`${c.name} 장군 자리 번호`);}
-  const territories=array(input.territories,'영토 목록',480).map(t=>{object(t,'영토');return {id:text(t.id,'영토 ID',100),...(mapKind==='free'?{}:{row:number(t.row,'영토 행',0,rows-1),col:number(t.col,'영토 열',0,cols-1)}),name:text(t.name,'영토명',24),ownerId:owner(t.ownerId,'영토 소유국')};});
+  const territories=array(input.territories,'영토 목록',480).map(t=>{object(t,'영토');return {id:text(t.id,'영토 ID',100),...(mapKind==='free'?{}:{row:number(t.row,'영토 행',0,rows-1),col:number(t.col,'영토 열',0,cols-1)}),name:text(t.name,'영토명',24),ownerId:owner(t.ownerId,'영토 소유국'),...(t.terrain!==undefined?{terrain:['plain','mountain'].includes(t.terrain)?t.terrain:fail('지형은 평지 또는 산악이어야 합니다.')}:{})};});
   if(!territories.length)fail('영토는 최소 1개 필요합니다.');if(mapKind!=='free'&&territories.length!==rows*cols)fail('지도 크기와 영토 수가 일치하지 않습니다.');unique(territories.map(t=>t.id),'영토 ID');if(mapKind!=='free'){unique(territories.map(t=>`${t.row},${t.col}`),'영토 좌표');territories.sort((a,b)=>a.row-b.row||a.col-b.col);}
   for(const c of countries){if(c.capitalId!==null&&!territories.some(t=>t.id===c.capitalId))fail('수도가 존재하지 않는 영토를 가리킵니다.');if(!territories.some(t=>t.id===c.capitalId&&t.ownerId===c.id))c.capitalId=territories.find(t=>t.ownerId===c.id)?.id||null;}
   const r=object(input.rules,'규칙');if(r.diceSides!==10)fail('원본 v11 시스템은 D10 주사위를 사용합니다.');
@@ -78,6 +79,13 @@ export function validateWorld(source) {
   const thresholds=object(r.domesticThresholds,'성향별 내정 구간'),losses=object(r.lossRates,'손실률'),weights=object(r.ministerWeights,'승상 행동 확률');
   const rules={mode:'v11',diceSides:10,seaSupply:r.seaSupply??true,domesticThresholds:Object.fromEntries(Object.keys(PERSONALITIES).map(k=>[k,number(thresholds[k],`${PERSONALITIES[k]} 내정 구간`,0,10)])),ministerWeights:Object.fromEntries(Object.keys(MINISTER_STYLES).map(k=>{const a=array(weights[k],'승상 행동 구간',3).map(v=>number(v,'승상 행동 확률',0,10));if(a.length!==3||a.reduce((n,v)=>n+v,0)!==10)fail('각 승상 성향의 세 확률 눈금 합계는 10이어야 합니다.');return [k,a];})),lossRates:Object.fromEntries(['win','tie','loss'].map(k=>[k,number(losses[k],'손실률',0,1,false)]))};
   for(const [key,label,min,max] of [['successTarget','내정 성공 기준',1,12],['recruitGain','모병 증가량',0,10000],['productionGain','충원 강화 증가량',0,10000],['supplyGain','보급 강화 증가량',0,10000],['baseCapacity','기본 지휘한도',1,10000],['minimumReserve','수도 최소 병력',0,10000],['territoryProduction','영토당 생산',0,10000],['armyAdvantageBonus','병력 우세 보정',0,10],['roundLimit','제한 라운드',1,100]])rules[key]=number(r[key],label,min,max);
+  const combat={...clone(ADDITIVE_COMBAT_DEFAULTS),...r};
+  if(!['v11','additive30'].includes(combat.battleMode))fail('지원하지 않는 전투 방식입니다.');rules.battleMode=combat.battleMode;
+  for(const [key,label,min,max] of [['combatSides','전투 주사위',10,60],['experiencePerWin','승리당 보정',0,10],['experienceCap','전적 보정 상한',0,50],['mountainBonus','산악 보정',0,50]])rules[key]=number(combat[key],label,min,max);
+  rules.armyBands=array(combat.armyBands,'병력 보정 구간',16).map((pair,i)=>{if(!Array.isArray(pair)||pair.length!==2)fail('병력 보정은 배율·점수 쌍이어야 합니다.');const result=[number(pair[0],'병력 배율',1.001,1000,false),number(pair[1],'병력 보정',0,100)];if(i&&(pair[0]<=combat.armyBands[i-1][0]||pair[1]<combat.armyBands[i-1][1]))fail('병력 보정 배율과 점수는 증가 순서여야 합니다.');return result;});
+  if(!rules.armyBands.length)fail('병력 보정 구간을 1개 이상 입력해 주세요.');
+  rules.captureThresholds=array(combat.captureThresholds,'추가 점령 기준',2).map(v=>number(v,'점령 점수 차',1,200));if(rules.captureThresholds.length!==2||rules.captureThresholds[0]>=rules.captureThresholds[1])fail('추가 점령 기준은 작은 점수부터 2개 지정해 주세요.');
+  rules.combatLosses=Object.fromEntries(['narrow','clear','rout','draw'].map(key=>{const pair=array(combat.combatLosses?.[key],'전투 손실 기준',2).map(v=>number(v,'손실 비율',0,1,false));if(pair.length!==2)fail('양측 손실 기준을 입력해 주세요.');return [key,pair];}));
   const cartography=validateCartography(input.cartography,territories);
   if(mapKind==='free'&&(!cartography||cartography.links===null||territories.some(t=>!Object.hasOwn(cartography.polygons,t.id))))fail('자유 지도에는 모든 영토의 경계와 인접 연결 목록이 필요합니다.');
   return {schemaVersion:2,id:text(input.id,'세계 ID',100),name:text(input.name,'세계 이름'),description:optionalText(input.description,300),rows,cols,mapKind,countries,people,territories,rules,...(cartography?{cartography}:{})};

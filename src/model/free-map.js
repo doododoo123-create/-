@@ -4,7 +4,7 @@ export function freeMapFrom(world,cells){
   const next=clone(world);if(next.mapKind==='free')return next;
   next.cartography||=defaultCartography();
   next.cartography.links=world.territories.flatMap(t=>neighbors(world,t).filter(n=>t.id<n.id).map(n=>[t.id,n.id]));
-  next.territories.forEach((t,i)=>{Object.defineProperty(next.cartography.polygons,t.id,{value:{points:cells[i].points,center:cells[i].center,...(cells[i].holes?{holes:cells[i].holes}:{})},enumerable:true,writable:true,configurable:true});delete t.row;delete t.col;});
+  next.territories.forEach((t,i)=>{Object.defineProperty(next.cartography.polygons,t.id,{value:{...(next.cartography.polygons[t.id]?.anchors?{anchors:next.cartography.polygons[t.id].anchors}:{}),points:cells[i].points,center:cells[i].center,...(cells[i].holes?{holes:cells[i].holes}:{})},enumerable:true,writable:true,configurable:true});delete t.row;delete t.col;});
   next.mapKind='free';return next;
 }
 export function sharedBoundary(a,b){
@@ -28,7 +28,7 @@ export function removeFreeTerritory(world,id){
 }
 export function moveFreeTerritory(world,id,point){
   const next=clone(world),shape=next.cartography.polygons[id],dx=point[0]-shape.center[0],dy=point[1]-shape.center[1];
-  shape.points=validatePolygon(shape.points.map(p=>[p[0]+dx,p[1]+dy]));if(shape.holes)shape.holes=shape.holes.map(h=>validatePolygon(h.map(p=>[p[0]+dx,p[1]+dy])));shape.center=point;return validateWorld(next);
+  shape.points=validatePolygon(shape.points.map(p=>[p[0]+dx,p[1]+dy]));if(shape.holes)shape.holes=shape.holes.map(h=>validatePolygon(h.map(p=>[p[0]+dx,p[1]+dy])));shape.center=point;if(shape.anchors)for(const key of Object.keys(shape.anchors))shape.anchors[key]=shape.anchors[key].map((v,i)=>Math.round((v+(i?dy:dx))*1000)/1000);return validateWorld(next);
 }
 
 export function generatedWorld(world,shapes,links,background){

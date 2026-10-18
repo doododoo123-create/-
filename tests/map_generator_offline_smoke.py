@@ -15,7 +15,7 @@ with sync_playwright() as p:
   page.locator('#paint-owner').select_option(country)
   for i in range(start,end):page.locator('[data-territory="generated-'+str(i)+'"]').dispatch_event('click')
  page.locator('[data-action="map-edit-select"]').click();page.locator('[data-action="map-zoom-in"]').click();assert float(page.locator('.atlas-map').get_attribute('viewBox').split()[2])<1200
- page.locator('nav [data-page="simulation"]').click();page.locator('[data-action="map-fullscreen"]').click();page.mouse.move(800,650);page.mouse.wheel(0,-160);view=page.locator('.atlas-map').get_attribute('viewBox')
+ page.locator('nav [data-page="simulation"]').click();page.locator('#camera-follow').uncheck();page.locator('[data-action="map-fullscreen"]').click();page.mouse.move(800,650);page.mouse.wheel(0,-160);view=page.locator('.atlas-map').get_attribute('viewBox')
  for _ in range(2):page.keyboard.press('Enter');page.keyboard.press('s')
  assert page.locator('.atlas-map').get_attribute('viewBox')==view;page.keyboard.press('0');assert page.locator('.atlas-map').get_attribute('viewBox')=='0 0 1200 800';page.keyboard.press('Escape')
  saved=page.evaluate("JSON.parse(localStorage.getItem('saguk-studio.completed-run.v11'))");assert len(saved['engineState']['cells'])==18 and len(saved['history'])==2

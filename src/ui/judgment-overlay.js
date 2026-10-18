@@ -1,3 +1,5 @@
+import { sideBonus, renderCombatBonuses } from './combat-view.js';
+import { vividWorld } from './palette.js';
 import { displayName, displayEventText } from './display-names.js';
 import {countryPeople,findCountry,ROLES,PERSONALITIES,MINISTER_STYLES} from '../model/world.js';
 import {esc} from './icons.js';
@@ -31,8 +33,8 @@ export function renderJudgmentOverlay({world,playback}) {
       const person=judgmentPerson(frame,country,'general',attack?battle.slot:battle.defenseSlot);
       const current=event.type===(attack?'attack_roll':'defense_roll');
       const seen=result||attack&&event.type==='defense_roll';
-      const die=battle.automatic?'<span class="judgment-auto">전투 판정 없음</span>':renderDie(current||seen?info.raw:null,10,current?phase:seen?'locked':'waiting',attack?'공격':'수비',(info.ability||0)+(info.armyBonus||0));
-      return `<div class="judgment-side ${key}"><div class="judgment-side-label">${attack?'공격':'수비'} · ${esc(country?.name)} <small>${info.army}만</small></div><div class="judgment-roll">${judgmentPortrait(person||{name:info.name},country,'general')}${die}</div>${judgmentTraits(person,'general',country)}</div>`;
+      const die=battle.automatic?'<span class="judgment-auto">전투 판정 없음</span>':renderDie(current||seen?info.raw:null,battle.sides||10,current?phase:seen?'locked':'waiting',attack?'공격':'수비',sideBonus(info));
+      return `<div class="judgment-side ${key}"><div class="judgment-side-label">${attack?'공격':'수비'} · ${esc(country?.name)} <small>${info.army}만</small></div><div class="judgment-roll">${judgmentPortrait(person||{name:info.name},country,'general')}${die}</div>${judgmentTraits(person,'general',country)}${renderCombatBonuses(info)}</div>`;
     };
     body=`<div class="judgment-duel">${side('attack',true)}<span class="judgment-vs">VS</span>${side('defense',false)}</div>`;
     if(result)note=battle.automatic?'무방비 영토 · 1개 점령 · 병력 손실 없음':`공격 −${battle.losses.attack.amount}만 · 수비 −${battle.losses.defense.amount}만 · 영토 ${battle.takenCells.length}개 점령`;

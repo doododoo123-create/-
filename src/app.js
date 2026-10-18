@@ -1,3 +1,7 @@
+import { renderRulesEditor, rulesFromForm, armyBandRow } from './ui/rules-view.js';
+import { replayTurn } from './engine/replay.js';
+import { vividWorld, VIVID_COLORS } from './ui/palette.js';
+import { ADDITIVE_COMBAT_DEFAULTS } from './model/combat-rules.js';
 import { MapGenerator } from './ui/map-generator.js';
 import { MapCamera, mapZoomControls } from './ui/map-camera.js';
 import { displayEventText } from './ui/display-names.js';
@@ -19,16 +23,18 @@ import { mapEditorToolbar } from './ui/map-editor-view.js';
 const $ = selector => document.querySelector(selector);
 let initialError = '';
 let world;
-try { world = loadWorld(localStorage) || createReferenceWorld(); } catch (error) { world = createDemoWorld(); initialError = error.message + ' 시작 예제를 표시합니다. 기존 저장 데이터는 덮어쓰지 않았습니다.'; }
-const ui = { page: 'overview', selected: world.territories[0]?.id, paint: false, brush: world.countries[0]?.id || '', countryFilter: '', roleFilter: '', search: '', showNames: true, recording: false, mapFullscreen:false, seed: '20261017', speed: 1, mapStyle: 'atlas', editorView:'atlas', focusedCountry: null };
+try { world = vividWorld(loadWorld(localStorage) || createReferenceWorld()); } catch (error) { world = createDemoWorld(); initialError = error.message + ' 시작 예제를 표시합니다. 기존 저장 데이터는 덮어쓰지 않았습니다.'; }
+const ui = { page: 'overview', selected: world.territories[0]?.id, paint: false, brush: world.countries[0]?.id || '', countryFilter: '', roleFilter: '', search: '', showNames: true, recording: false, mapFullscreen:false, seed: '20261017', speed: 1, mapStyle: 'atlas', editorView:'atlas', focusedCountry: null, historyOffset:0, replayLoading:false };
 const mapCamera=new MapCamera();
 const mapGenerator=new MapGenerator({getWorld:()=>world,apply:next=>{mapEditor.draft=null;mapEditor.mode='select';mapCamera.resetAll();mapEditor.save(next);},notify});
 const mapEditor=new MapEditor({getWorld:()=>world,getSelected:()=>ui.selected,setSelected:id=>{ui.selected=id;},commit:updateWorld,render,notify});
 let auto = false, nativeMapFullscreen=false;
+let replaySession=null,replayToken=0;
 let run = null, timer = null, saveStatus = initialError ? '저장 복구 확인 필요' : '브라우저에 자동 저장', toastTimer;
 const playback = new TurnPlayback({
   onChange: () => { if (ui.page === 'simulation') render(); },
   onFinish: () => {
+    if(replaySession){auto=false;render();return;}
     try { if(run)saveRun(localStorage,run); } catch(error) { notify(error.message,true); }
     if (auto && !run?.result) timer = setTimeout(() => { timer = null; beginTurn(); }, 850 / ui.speed);
     else auto = false;
@@ -51,11 +57,11 @@ function persist(showMessage = false) {
   try { saveWorld(localStorage, world); saveStatus = '브라우저에 자동 저장'; if (showMessage) notify('현재 세계를 이 브라우저에 저장했습니다. 다른 기기로 옮길 때는 파일 내보내기를 사용하세요.'); }
   catch (error) { saveStatus = '저장 실패 · 파일로 내보내 주세요'; notify(error.message, true); }
 }
-function updateWorld(next) { world = validateWorld(next);if(!world.territories.some(t=>t.id===ui.selected))ui.selected=world.territories[0]?.id; if(!mapEditor.committing)mapEditor.history=[]; persist(); render(); }
+function updateWorld(next) { world = vividWorld(validateWorld(next));if(!world.territories.some(t=>t.id===ui.selected))ui.selected=world.territories[0]?.id; if(!mapEditor.committing)mapEditor.history=[]; persist(); render(); }
 function stop() { if (timer) clearTimeout(timer); timer = null; auto = false; playback.pause(); }
-function navigate(page) { if (!Object.hasOwn(pages, page)) return; stop(); ui.page = page; ui.recording = false; render(); }
+function navigate(page) { if (!Object.hasOwn(pages, page)) return;if(replaySession)returnFromReplay();stop(); ui.page = page; ui.recording = false; render(); }
 function setNewWorld(next) {
-  stop(); playback.reset(); mapEditor.reset(); mapCamera.resetAll(); world = validateWorld(next); run = null; clearRun(localStorage); ui.selected = world.territories[0]?.id; ui.brush = world.countries[0]?.id || ''; ui.paint = false; ui.search = ''; ui.countryFilter = ''; ui.roleFilter = ''; ui.page = 'overview'; persist(); render();
+  stop(); playback.reset(); mapEditor.reset(); mapCamera.resetAll(); world = vividWorld(validateWorld(next)); replaySession=null;replayToken++;ui.historyOffset=0;run = null; clearRun(localStorage); ui.selected = world.territories[0]?.id; ui.brush = world.countries[0]?.id || ''; ui.paint = false; ui.search = ''; ui.countryFilter = ''; ui.roleFilter = ''; ui.page = 'overview'; persist(); render();
 }
 function openMapFullscreen(){
   ui.page='simulation';ui.mapFullscreen=true;render();
@@ -72,11 +78,11 @@ function render() {
   document.title = `${world.name} · 사국쟁패 Studio`;
   document.body.classList.toggle('map-stage-open',ui.mapFullscreen);
   $('#app').className = ui.mapFullscreen?'map-fullscreen':ui.recording ? 'recording-mode' : '';
-  if(ui.mapFullscreen){$('#app').innerHTML=renderMapStage({world:playback.displayWorld||run?.world||previewWorld(world),run,playback,auto,speed:ui.speed,showNames:ui.showNames,focusedCountry:ui.focusedCountry});mapCamera.restore();return;}
+  if(ui.mapFullscreen){$('#app').innerHTML=renderMapStage({world:playback.displayWorld||run?.world||previewWorld(world),run,playback,auto,speed:ui.speed,showNames:ui.showNames,focusedCountry:ui.focusedCountry});mapCamera.restore();mapCamera.follow(playback);return;}
   $('#app').innerHTML = `
     <aside class="sidebar">
       <a class="brand" href="#" data-page="overview" aria-label="사국쟁패 Studio 세계 개요"><span class="brand-symbol">${icon('compass', 29)}</span><span><strong>사국쟁패</strong><small>HISTORY STUDIO</small></span></a>
-      <div class="workspace-label">WORKSPACE <span>v0.6.0</span></div>
+      <div class="workspace-label">WORKSPACE <span>v0.7.0</span></div>
       <button class="world-switch" data-action="world-meta"><span class="world-icon">${icon('globe', 19)}</span><span><b>${esc(world.name)}</b><small>나의 세계 · 편집 가능</small></span>${icon('edit', 13)}</button>
       <div class="nav-label">세계 만들기</div>
       <nav aria-label="주요 메뉴">${Object.entries(pages).slice(0, 4).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}<div class="nav-label nav-second">역사 관찰하기</div>${Object.entries(pages).slice(4).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}</nav>
@@ -87,16 +93,16 @@ function render() {
       <main id="main-content" class="${ui.page === 'simulation' ? 'simulation-page' : ''} ${playback.state&&!playback.playing&&!playback.complete?'playback-paused':''}" tabindex="-1">
         ${pageHeading()}
         ${ui.page === 'overview' ? overview() : ui.page === 'countries' ? countriesPage() : ui.page === 'people' ? peoplePage() : ui.page === 'map' ? mapPage() : ui.page === 'simulation' ? simulationPage() : rulesPage()}
-        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.6.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
+        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.7.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
       </main>
     </div>`;
-  mapCamera.restore();
+  mapCamera.restore();if(ui.page==='simulation')mapCamera.follow(playback);
 }
 function navItem(key, glyph, label) { return `<button class="nav-item ${ui.page === key ? 'active' : ''}" data-page="${key}" ${ui.page === key ? 'aria-current="page"' : ''}>${icon(glyph, 19)}${label}${key === 'countries' || key === 'people' ? `<span class="nav-count">${key === 'countries' ? world.countries.length : world.people.length}</span>` : ''}</button>`; }
 function pageHeading() {
-  const descriptions = { overview: '세계를 설계하고, 아직 쓰이지 않은 역사를 시작하세요.', countries: '서로 다른 국가들이 만들어 갈 역사의 출발점을 정하세요.', people: '나라를 다스릴 국왕과 승상, 전장을 이끌 장군을 구성하세요.', map: '지도 그림 위에서 영토의 경계·이름·소유 국가와 인접 관계를 편집하세요.', simulation: '주사위가 만드는 새로운 역사를 한 턴씩 관찰하세요.', rules: '첨부 룰북 v11과 HTML의 시스템을 기준으로 실행합니다.' };
+  const descriptions = { overview: '세계를 설계하고, 아직 쓰이지 않은 역사를 시작하세요.', countries: '서로 다른 국가들이 만들어 갈 역사의 출발점을 정하세요.', people: '나라를 다스릴 국왕과 승상, 전장을 이끌 장군을 구성하세요.', map: '지도 그림 위에서 영토의 경계·이름·소유 국가와 인접 관계를 편집하세요.', simulation: '주사위가 만드는 새로운 역사를 한 턴씩 관찰하세요.', rules: 'D30 전투 보정과 원본 v11 규칙을 선택하고 편집합니다.' };
   const actions = ui.page === 'overview' ? button('new-world', '새 세계 만들기', 'plus', 'outline') + button('go-simulation', '시뮬레이션 시작', 'play', 'primary') : ui.page === 'countries' ? button('add-country', '국가 추가', 'plus', 'primary') : ui.page === 'people' ? button('add-person', '인물 추가', 'plus', 'primary') : ui.page === 'map' ? `<label class="toggle-label"><input type="checkbox" id="show-names" ${ui.showNames ? 'checked' : ''}> 영토 이름 표시</label>` : ui.page === 'simulation' ? button('recording', ui.recording ? '편집 화면으로' : '관찰 화면', 'expand', 'outline') : '';
-  return `<div class="page-heading"><div><div class="eyebrow">${ui.page === 'simulation' ? 'OBSERVE YOUR HISTORY' : 'BUILD YOUR WORLD'}<span class="version-tag">SYSTEM v11</span></div><h1>${pages[ui.page][1]}</h1><p>${descriptions[ui.page]}</p></div><div class="heading-actions">${actions}</div></div>`;
+  return `<div class="page-heading"><div><div class="eyebrow">${ui.page === 'simulation' ? 'OBSERVE YOUR HISTORY' : 'BUILD YOUR WORLD'}<span class="version-tag">${world.rules.battleMode==='additive30'?'D30':'v11'}</span></div><h1>${pages[ui.page][1]}</h1><p>${descriptions[ui.page]}</p></div><div class="heading-actions">${actions}</div></div>`;
 }
 function statsBar(data = world, simulation = false) {
   return `<div class="stats-grid">${[
@@ -152,35 +158,32 @@ function mapPage() {
   const t = world.territories.find(x => x.id === ui.selected) || world.territories[0];
   const geographic=world.mapKind==='free'||ui.editorView==='atlas';
   const editorPanel=`<section class="panel map-panel cartography-panel" id="geographic-editor"><div class="panel-head"><div><span class="eyebrow">CARTOGRAPHY STUDIO</span><h2>대륙 지도 편집 <span class="tiny-badge">${world.territories.length}개 영토</span></h2></div></div>${mapEditorToolbar(mapEditor,world,{...ui,ownerOptions:countryOptions(ui.brush,'무주지')})}<div class="cartography-viewport" style="--editor-zoom:${mapEditor.zoom}">${renderAtlas(world,{selected:ui.selected,showNames:ui.showNames,editing:true,draft:mapEditor.draft,draftMode:mapEditor.mode,showUnits:false,linkedIds:mapEditor.mode==='links'?neighbors(world,t).map(n=>n.id):[]})}</div><div class="atlas-map-note">그림과 경계는 표시용입니다. 공격·수도 연결은 ‘인접 관계’의 연결 목록을 사용합니다.</div></section>`;
-  return `${definitionNote()}<div class="editor-view-switch"><label>편집 화면<select id="map-editor-view"><option value="atlas" ${geographic?'selected':''}>대륙 그림에서 편집</option><option value="grid" ${world.mapKind==='free'?'disabled':''} ${!geographic?'selected':''}>기존 격자에서 편집</option></select></label><span>산맥·숲 삽화 또는 내 지도 이미지 위에 영토를 그릴 수 있습니다.</span></div><div class="editor-layout cartography-layout">${geographic?editorPanel:mapPanel(world,true)}<aside class="panel territory-inspector"><div class="panel-head"><div><span class="eyebrow">TERRITORY EDITOR</span><h2>영토 정보</h2></div>${icon('map', 18)}</div><div class="inspector-preview" style="--nation:${findCountry(world, t?.ownerId)?.color || '#657066'}">${icon('flag', 34)}<strong>${esc(t?.name || '')}</strong><span>${t ? `${world.mapKind==='free'?'자유 배치 영토':`${String.fromCharCode(65 + t.col)}${t.row + 1} · ${t.row + 1}행 ${t.col + 1}열`}` : ''}</span></div><form id="territory-form"><label>영토 이름<input name="name" maxlength="24" required value="${esc(t?.name)}"></label><label>소유 국가<select name="ownerId">${countryOptions(t?.ownerId, '무주지')}</select></label><div class="field-help">인접 ${neighbors(world,t).length}개: ${neighbors(world,t).map(n=>esc(n.name)).join(' · ')||'없음'}<br>국가를 삭제하면 해당 영토는 무주지가 됩니다.</div><button type="submit" class="button primary full">${icon('check', 16)}영토 변경 적용</button></form><div class="map-inspector-actions">${button('map-edit-reset-shape','이 영토 경계 원상복구','reset','subtle')}${button('map-edit-reset-links','인접 관계 전체 원상복구','reset','subtle')}</div><div class="inspector-tip">${icon('info', 16)}<p>여러 영토를 빠르게 배정하려면 <b>소유권 칠하기</b>를 선택한 후 지도를 클릭하세요.</p></div></aside></div>`;
+  return `${definitionNote()}<div class="editor-view-switch"><label>편집 화면<select id="map-editor-view"><option value="atlas" ${geographic?'selected':''}>대륙 그림에서 편집</option><option value="grid" ${world.mapKind==='free'?'disabled':''} ${!geographic?'selected':''}>기존 격자에서 편집</option></select></label><span>산맥·숲 삽화 또는 내 지도 이미지 위에 영토를 그릴 수 있습니다.</span></div><div class="editor-layout cartography-layout">${geographic?editorPanel:mapPanel(world,true)}<aside class="panel territory-inspector"><div class="panel-head"><div><span class="eyebrow">TERRITORY EDITOR</span><h2>영토 정보</h2></div>${icon('map', 18)}</div><div class="inspector-preview" style="--nation:${findCountry(world, t?.ownerId)?.color || '#657066'}">${icon('flag', 34)}<strong>${esc(t?.name || '')}</strong><span>${t ? `${world.mapKind==='free'?'자유 배치 영토':`${String.fromCharCode(65 + t.col)}${t.row + 1} · ${t.row + 1}행 ${t.col + 1}열`}` : ''}</span></div><form id="territory-form"><label>영토 이름<input name="name" maxlength="24" required value="${esc(t?.name)}"></label><label>소유 국가<select name="ownerId">${countryOptions(t?.ownerId, '무주지')}</select></label><label>지형<select name="terrain"><option value="plain" ${t?.terrain!=='mountain'?'selected':''}>평지</option><option value="mountain" ${t?.terrain==='mountain'?'selected':''}>산악 · 방어 보정</option></select></label><div class="field-help">인접 ${neighbors(world,t).length}개: ${neighbors(world,t).map(n=>esc(n.name)).join(' · ')||'없음'}<br>국가를 삭제하면 해당 영토는 무주지가 됩니다.</div><button type="submit" class="button primary full">${icon('check', 16)}영토 변경 적용</button></form><div class="map-inspector-actions">${button('map-edit-reset-shape','이 영토 경계 원상복구','reset','subtle')}${button('map-edit-reset-links','인접 관계 전체 원상복구','reset','subtle')}</div><div class="inspector-tip">${icon('info', 16)}<p>여러 영토를 빠르게 배정하려면 <b>소유권 칠하기</b>를 선택한 후 지도를 클릭하세요.</p></div></aside></div>`;
 }
 function historyList() {
   const history = run?.history || [];
-  const pending = playback.state && !playback.complete ? playback.state.record.turn : null;
-  return `<section class="panel history-panel"><div class="panel-head"><div><span class="eyebrow">CHRONICLE</span><h2>역사 기록 <span class="count-badge">${history.length}턴</span></h2></div>${button('export-history', '기록 내보내기', 'download', 'subtle', !history.length || pending ? 'disabled' : '')}</div><div class="history-scroll">${history.length ? history.slice(-100).reverse().map(r => {
+  const pending = !replaySession&&playback.state && !playback.complete ? playback.state.record.turn : null;
+  const end=Math.max(0,history.length-ui.historyOffset),shown=history.slice(Math.max(0,end-100),end).reverse();
+  return `<section class="panel history-panel"><div class="panel-head"><div><span class="eyebrow">CHRONICLE</span><h2>역사 기록 <span class="count-badge">${history.length}턴</span></h2></div>${button('export-history', '기록 내보내기', 'download', 'subtle', !history.length || pending ? 'disabled' : '')}</div><div class="history-scroll">${history.length ? shown.map(r => {
     if(r.turn === pending) return `<article class="history-entry pending-entry"><div class="history-time"><b>${String(r.turn).padStart(3,'0')}</b><small>R${r.round}</small></div><span class="event-icon">${icon('dice',17)}</span><div class="history-content"><h3>${esc(r.actorName)}의 판정 진행 중</h3><p>눈금과 결과는 장면이 끝나면 기록됩니다.</p></div></article>`;
-    return `<article class="history-entry"><div class="history-time"><b>${String(r.turn).padStart(3, '0')}</b><small>R${r.round}</small></div><span class="event-icon ${r.type}">${icon(r.type === 'war' ? 'sword' : 'flag', 17)}</span><div class="history-content"><h3>${esc(displayEventText(r.title))}</h3><p>${esc(displayEventText(r.detail))}</p><div class="roll-pills">${r.rolls.map(d => `<span>${icon('dice', 12)}${esc(displayEventText(d.label))} <b>${d.value}</b><small>/D${d.sides}</small></span>`).join('')}</div>${r.production.length ? `<div class="production-note">라운드 ${r.round} 종료 · ${r.production.map(p => `${esc(p.name)} +${p.gain}만`).join(' / ')}</div>` : ''}</div></article>`;
-  }).join('') : '<div class="empty history-empty"><span class="empty-icon">' + icon('clock', 29) + '</span><h3>아직 쓰이지 않은 역사</h3><p>‘한 턴 진행’을 누르면 국가의 첫 행동이 기록됩니다.</p></div>'}</div>${history.length > 100 ? '<p class="history-limit">최근 100턴을 표시합니다. 전체 기록은 내보내기에 포함됩니다.</p>' : ''}</section>`;
+    return `<article class="history-entry ${replaySession?.turn===r.turn?'replaying':''}" data-action="replay-turn" data-id="${r.turn}" role="button" tabindex="0" aria-label="${r.turn}턴 다시 보기"><div class="history-time"><b>${String(r.turn).padStart(3, '0')}</b><small>R${r.round}</small></div><span class="event-icon ${r.type}">${icon(r.type === 'war' ? 'sword' : 'flag', 17)}</span><div class="history-content"><h3>${esc(displayEventText(r.title))}</h3><p>${esc(displayEventText(r.detail))}</p><div class="roll-pills">${r.rolls.map(d => `<span>${icon('dice', 12)}${esc(displayEventText(d.label))} <b>${d.value}</b><small>/D${d.sides}</small></span>`).join('')}</div>${r.production.length ? `<div class="production-note">라운드 ${r.round} 종료 · ${r.production.map(p => `${esc(p.name)} +${p.gain}만`).join(' / ')}</div>` : ''}</div></article>`;
+  }).join('') : '<div class="empty history-empty"><span class="empty-icon">' + icon('clock', 29) + '</span><h3>아직 쓰이지 않은 역사</h3><p>‘한 턴 진행’을 누르면 국가의 첫 행동이 기록됩니다.</p></div>'}</div>${history.length>100?`<div class="history-pagination">${button('history-older','이전 기록','','outline',end<=100?'disabled':'')}<span>${Math.max(1,end-99)}~${end} / ${history.length}턴</span>${button('history-newer','최근 기록','','outline',!ui.historyOffset?'disabled':'')}</div>`:''}</section>`;
 }
 function simulationPage() {
-  const active = playback.state && !playback.complete;
+  const active = playback.state && (!playback.complete||!!replaySession);
   const data = playback.displayWorld || run?.world || previewWorld(world);
   const actor = active ? findCountry(data,playback.state.record.actorId) : run ? currentActor(run) : null;
-  const shownResult = run?.result && (!playback.state || playback.complete);
+  const shownResult = !replaySession && run?.result && (!playback.state || playback.complete);
   const winners = shownResult ? run.result.winnerIds.map(id=>findCountry(data,id)?.name).join(' · ') : '';
   const focused = findCountry(data,ui.focusedCountry)?.id || actor?.id || data.countries[0]?.id;
   const running = auto || playback.playing;
-  return `<div class="notice simulation-notice">${icon('info',16)}원본 v11: 국왕 선택 → 승상의 내정 또는 장군별 원정 → 손실·점령 → 전사·재편. 각 부대의 병력을 따로 계산합니다.<button class="text-button" data-page="rules">규칙 보기 ${icon('arrow',13)}</button></div>
-  <section class="simulation-controls"><div class="round-display"><small>ROUND</small><strong>${String(active?playback.state.record.round:run?.round||1).padStart(2,'0')}</strong><span>/ ${data.rules.roundLimit}</span></div><div class="simulation-meta"><b>${shownResult?'역사 기록 완료':running?'역사를 기록하는 중':run?.turn?'일시정지':'새로운 역사를 시작할 준비'}</b><span>${active?`${esc(actor?.name)} 판정 중`:actor?`${esc(actor.name)} 행동 대기`:shownResult?`${run.turn}턴 진행`:'당신의 세계가 역사의 무대가 됩니다.'}</span></div><div class="simulation-buttons"><label class="speed-label">배속<select id="sim-speed" aria-label="자동 진행 배속">${[.5,1,2,4].map(v=>`<option value="${v}" ${ui.speed===v?'selected':''}>${v}×</option>`).join('')}</select></label>${button('step',active&&!playback.playing?'이어서 보기':'한 턴 진행','chevron','outline',running||shownResult?'disabled':'')}${button('auto',running?'일시정지':'자동 진행',running?'pause':'play','primary',shownResult?'disabled':'')}</div></section>
+  return `${replaySession?`<div class="replay-banner"><span>${replaySession.turn}턴 ${ui.replayLoading?'복원 중':'역사 재생 중'} · 현재 경기는 보존되어 있습니다.</span>${button('return-live','현재로 돌아가기','arrow','outline')}</div>`:''}<div class="notice simulation-notice">${icon('info',16)}${data.rules.battleMode==='additive30'?'D30 전투: 병력·장군·전적·지형 가산':'원본 v11'} · 국왕 선택 → 승상의 내정 또는 장군별 원정 → 손실·점령 → 전사·재편. 각 부대의 병력을 따로 계산합니다.<button class="text-button" data-page="rules">규칙 보기 ${icon('arrow',13)}</button></div>
+  <section class="simulation-controls"><div class="round-display"><small>ROUND</small><strong>${String(active?playback.state.record.round:run?.round||1).padStart(2,'0')}</strong><span>/ ${data.rules.roundLimit}</span></div><div class="simulation-meta"><b>${shownResult?'역사 기록 완료':running?'역사를 기록하는 중':run?.turn?'일시정지':'새로운 역사를 시작할 준비'}</b><span>${active?`${esc(actor?.name)} 판정 중`:actor?`${esc(actor.name)} 행동 대기`:shownResult?`${run.turn}턴 진행`:'당신의 세계가 역사의 무대가 됩니다.'}</span></div><div class="simulation-buttons"><label class="speed-label">배속<select id="sim-speed" aria-label="자동 진행 배속">${[.5,1,2,4].map(v=>`<option value="${v}" ${ui.speed===v?'selected':''}>${v}×</option>`).join('')}</select></label>${button('step',active&&!playback.playing?'이어서 보기':'한 턴 진행','chevron','outline',running||shownResult||replaySession?'disabled':'')}${button('auto',running?'일시정지':'자동 진행',running?'pause':'play','primary',shownResult||replaySession?'disabled':'')}</div></section>
   <div class="run-settings"><label>역사 시드 <input id="sim-seed" type="number" min="0" max="4294967295" value="${esc(ui.seed)}" aria-label="역사 시드" ${run?'disabled':''}></label><span>${run?`시드 ${esc(run.seed)} · 완료된 턴 자동 저장 · 새로고침 후 이어서 실행`:'같은 세계와 시드는 같은 역사를 만듭니다.'}</span>${button('new-run','새 실행','reset','subtle')}${button('replay-run','같은 역사 처음부터','play','subtle',!run?'disabled':'')}</div>
   ${shownResult?`<div class="result-banner">${icon('crown',27)}<div><h2>${esc(winners)} ${run.result.winnerIds.length>1?'공동 승리':'승리'}</h2><p>${run.result.reason==='unification'?'경쟁 국가의 모든 영토를 정복했습니다.':'제한 라운드 종료 · 영토 수, 총병력 순으로 승자를 정했습니다.'}</p></div></div>`:''}
   <div class="simulation-layout visual-layout"><div class="visual-map-column">${mapPanel(data,false,true)}${renderNationCards(data,focused)}${renderCommanders(data,focused)}</div>${renderArena({world:data,run,playback})}</div>${historyList()}`;
 }
-function rulesPage() {
-  const r=world.rules;
-  const field=(name,label,value,min,max,help='')=>`<label>${label}<input type="number" name="${name}" value="${value}" min="${min}" max="${max}" required><small>${help}</small></label>`;
-  return `${definitionNote()}<div class="notice">${icon('book',17)}원본 시스템 v11 · <span>전투·주사위는 원본 v11 기준이며 해상 보급은 별도 설정입니다. 변경한 값은 새 실행에 반영됩니다.</span></div><form id="rules-form"><div class="rules-grid"><section class="panel rules-section"><h2>국왕의 행동 · D10</h2><p>눈금 이하 내정, 초과 전쟁. 공격 가능한 국가가 없으면 다시 굴립니다.</p><div class="fields-three">${Object.entries(PERSONALITIES).map(([k,v])=>field(`threshold-${k}`,v,r.domesticThresholds[k],0,10)).join('')}</div>${field('successTarget','승상 실행 성공 기준',r.successTarget,1,12,'선택 주사위와 별도로 D10 + 승상 능력 판정')}</section><section class="panel rules-section"><h2>승상 행동 선택 · D10</h2><p>모병 / 충원 강화 / 보급 강화의 눈금 수입니다. 각 행의 합계는 10입니다.</p>${Object.entries(MINISTER_STYLES).map(([k,v])=>`<h3>${v}</h3><div class="fields-three">${['모병','충원','보급'].map((label,i)=>field(`weight-${k}-${i}`,label,r.ministerWeights[k][i],0,10)).join('')}</div>`).join('')}</section><section class="panel rules-section"><h2>병력 · 지휘한도</h2><div class="fields-two">${field('recruitGain','모병 성공: 수도 예비병 증가',r.recruitGain,0,10000)}${field('productionGain','충원 강화: 매 라운드 추가 생산',r.productionGain,0,10000)}${field('supplyGain','보급 강화: 모든 장군 한도 증가',r.supplyGain,0,10000)}${field('baseCapacity','장군 기본 지휘한도',r.baseCapacity,1,10000,'기본 + 국가 보정 + 개인 보정 + 보급 강화')}${field('minimumReserve','수도에 남길 예비병',r.minimumReserve,0,10000,'초과분을 연결된 장군에게 1만씩 무작위 배분')}${field('territoryProduction','영토당 라운드 생산',r.territoryProduction,0,10000)}${field('armyAdvantageBonus','부대 병력 우세 보정',r.armyAdvantageBonus,0,10)}</div><label class="sea-supply-setting"><input type="checkbox" name="seaSupply" ${r.seaSupply?'checked':''}> 바다를 통한 보급 연결</label><p>같은 바다와 자국 육지를 통해 수도로 이어지면 연결 상태입니다. 내륙에서 단절된 지역은 자체 생산만 배분하고 남는 병력은 소멸합니다. 해상 보급은 공격 범위를 넓히지 않습니다.</p></section><section class="panel rules-section"><h2>전투 · 종료</h2><p>연결된 장군들이 선택한 한 국가를 차례로 공격합니다. 승리 점수 차 1~3 / 4~6 / 7 이상에 따라 같은 방어 장군의 연결 영토를 최대 1 / 2 / 3개 점령합니다.</p><div class="fields-three">${['win','tie','loss'].map((k,i)=>field(`loss-${k}`,['승리 기본 손실률 %','무승부 %','패배 %'][i],Math.round(r.lossRates[k]*100),0,100)).join('')}</div><p>손실 = 내 부대 병력 × 기본률 × 상대 병력 × 2 ÷ 양측 부대 병력 합. 반올림, 최소 1만, 최대 자기 병력입니다. 방어 병력 0은 주사위·손실 없이 1개 점령합니다.</p><p>패배하여 0만이 된 장군만 D10 1~3 전사 판정을 합니다. 이후 자기 차례 3턴을 채운 뒤 다음 차례에 후임을 임명합니다.</p>${field('roundLimit','제한 라운드',r.roundLimit,1,100,'전국 통일 또는 제한 종료. 영토 → 총병력 순위, 동률 공동 승리.')}</section></div><div class="form-footer"><span>D10 · 장군당 최대 4개 영토 · 실제 부대 단위 전투</span>${button('reset-rules','원본 v11 기본값 복원','refresh','outline')}<button type="submit" class="button primary">규칙 저장</button></div></form>`;
-}
+function rulesPage(){return definitionNote()+renderRulesEditor(world.rules);}
 function empty(glyph, title, description, action, label) { return `<div class="panel empty"><span class="empty-icon">${icon(glyph, 32)}</span><h2>${title}</h2><p>${description}</p>${button(action, label, 'plus', 'primary')}</div>`; }
 
 function openDialog(title, subtitle, form, submit = '변경 저장') {
@@ -191,7 +194,7 @@ function openDialog(title, subtitle, form, submit = '변경 저장') {
 let dialogHandler = null,editingPersonId=null;
 function countryDialog(id) {
   stop(); render();
-  const original = world.countries.find(c => c.id === id), c = original || { name: '', color: ['#8caa88', '#cb9b65', '#a896c8', '#78a9b2'][world.countries.length % 4], troops: 10, recruitment: 0, personality: 'balanced', commandBonus:0, capitalId:null, feature:'' };
+  const original = world.countries.find(c => c.id === id), c = original || { name: '', color: VIVID_COLORS[world.countries.length % VIVID_COLORS.length], troops: 10, recruitment: 0, personality: 'balanced', commandBonus:0, capitalId:null, feature:'' };
   openDialog(original ? '국가 수정' : '새 국가 추가', '초기 병력과 성향을 정하세요. 영토는 지도에서 배정합니다.', `<label>국가 이름<input name="name" maxlength="40" required placeholder="예: 청람국" value="${esc(c.name)}"></label><div class="fields-two"><label>국가 색상<div class="color-field"><input type="color" name="color" value="${c.color}" aria-label="국가 색상"><span>${c.color.toUpperCase()}</span></div></label><label>기본 성향<select name="personality">${traitOptions(c.personality)}</select></label></div><div class="fields-two"><label>초기 병력 (만 명)<input type="number" name="troops" min="0" max="1000000" required value="${c.troops}"></label><label>추가 충원 / 라운드 (만 명)<input type="number" name="recruitment" min="0" max="10000" required value="${c.recruitment}"></label></div><div class="field-help">국왕이 있으면 국왕의 성향이 우선합니다. 총 생산량 = 보유 영토 × 영토당 생산 + 추가 충원입니다.</div>`, original ? '변경 저장' : '국가 추가');
   $('#editor-dialog .dialog-fields').insertAdjacentHTML('beforeend',`<div class="fields-two"><label>국가 지휘한도 보정<select name="commandBonus">${[-1,0,1].map(v=>`<option value="${v}" ${c.commandBonus===v?'selected':''}>${v>0?'+':''}${v}</option>`).join('')}</select></label><label>수도 영토<select name="capitalId"><option value="">첫 보유 영토에 배치</option>${world.territories.filter(t=>t.ownerId===c.id).map(t=>`<option value="${esc(t.id)}" ${c.capitalId===t.id?'selected':''}>${esc(t.name)}</option>`).join('')}</select></label></div><label>특성 설명<input name="feature" value="${esc(c.feature||'')}" maxlength="150"></label>`);
   dialogHandler = data => {
@@ -204,10 +207,10 @@ function countryDialog(id) {
 function personDialog(id) {
   stop(); render();editingPersonId=id||null;
   const original = world.people.find(p => p.id === id), p = original || { name: '', countryId: world.countries[0]?.id || null, role: 'general', ability: 0, personality: 'balanced' };
-  openDialog(original ? '인물 수정' : '새 인물 추가', '인물의 소속과 역할, 판정에 더할 능력치를 정하세요.', `<label>인물 이름<input name="name" maxlength="40" required placeholder="예: 진우" value="${esc(p.name)}"></label><div class="fields-two"><label>소속 국가<select name="countryId">${countryOptions(p.countryId)}</select></label><label>직책<select name="role">${Object.entries(ROLES).map(([k, v]) => `<option value="${k}" ${p.role === k ? 'selected' : ''}>${v}</option>`).join('')}</select></label><label>능력 보정<select name="ability">${[-2,0,2].map(v=>`<option value="${v}" ${p.ability===v?'selected':''}>${v>0?'+':''}${v}</option>`).join('')}</select></label><label>성향<select name="personality">${traitOptions(p.personality)}</select></label></div><div class="field-help">국왕·승상은 국가당 각 1명, 장군은 여러 명을 둘 수 있습니다. 국왕 성향은 행동 선택에, 승상 능력은 내정에, 각 장군이 자신의 주둔군으로 전투합니다. 장군 자리 번호가 행동 순서를 정합니다. 영토 수에 따라 필요한 장군만 활성화됩니다.</div>`);
+  openDialog(original ? '인물 수정' : '새 인물 추가', '인물의 소속과 역할, 판정에 더할 능력치를 정하세요.', `<label>인물 이름<input name="name" maxlength="40" required placeholder="예: 진우" value="${esc(p.name)}"></label><div class="fields-two"><label>소속 국가<select name="countryId">${countryOptions(p.countryId)}</select></label><label>직책<select name="role">${Object.entries(ROLES).map(([k, v]) => `<option value="${k}" ${p.role === k ? 'selected' : ''}>${v}</option>`).join('')}</select></label><label>능력 보정<select name="ability">${(p.role==='general'&&world.rules.battleMode==='additive30'?[-4,-3,-2,-1,0,1,2,3,4]:[-2,0,2]).map(v=>`<option value="${v}" ${p.ability===v?'selected':''}>${v>0?'+':''}${v}</option>`).join('')}</select></label><label>성향<select name="personality">${traitOptions(p.personality)}</select></label></div><div class="field-help">국왕·승상은 국가당 각 1명, 장군은 여러 명을 둘 수 있습니다. 국왕 성향은 행동 선택에, 승상 능력은 내정에, 각 장군이 자신의 주둔군으로 전투합니다. 장군 자리 번호가 행동 순서를 정합니다. 영토 수에 따라 필요한 장군만 활성화됩니다.</div>`);
   const nextSlot=original?.slot??Math.max(-1,...world.people.filter(g=>g.countryId===p.countryId&&g.role==='general').map(g=>g.slot))+1;
   $('#editor-dialog .dialog-fields').insertAdjacentHTML('beforeend',`<div class="fields-two"><label>승상 행동 성향<select name="ministerStyle">${Object.entries(MINISTER_STYLES).map(([k,v])=>`<option value="${k}" ${p.ministerStyle===k?'selected':''}>${v}</option>`).join('')}</select><small>승상에게 적용</small></label><label>장군 자리 번호<input type="number" name="slot" min="1" max="${Math.max(20,Math.ceil(world.territories.length/4))}" value="${nextSlot+1}"><small>장군에게 적용 · 같은 나라에서 중복 불가</small></label><label>개인 지휘한도 보정<select name="commandBonus">${[-1,0,1].map(v=>`<option value="${v}" ${(p.commandBonus||0)===v?'selected':''}>${v>0?'+':''}${v}</option>`).join('')}</select></label><label>특성 설명<input name="feature" maxlength="150" value="${esc(p.feature||'')}"></label></div>`);
-  $('#editor-dialog .dialog-fields').insertAdjacentHTML('beforeend', `<fieldset class="portrait-picker"><legend>인물 초상화</legend><label class="auto-portrait"><input type="radio" name="portraitKey" value="" ${!p.portraitKey?'checked':''}> 인물별 자동 배정 · 같은 인물은 같은 얼굴을 유지</label><div class="portrait-options">${portraitChoices().map(key=>`<label title="${esc(portraitLabel(key))}"><input type="radio" name="portraitKey" value="${key}" ${p.portraitKey===key?'checked':''}><img src="${portraitSource({portraitKey:key},null)}" alt="${esc(portraitLabel(key))} 초상화" width="60" height="78"></label>`).join('')}</div></fieldset>`);
+  $('#editor-dialog .dialog-fields').insertAdjacentHTML('beforeend', `<fieldset class="portrait-picker"><legend>인물 초상화</legend><label class="auto-portrait"><input type="radio" name="portraitKey" value="" ${!p.portraitKey||!portraitChoices().includes(p.portraitKey)?'checked':''}> 인물별 자동 배정 · 같은 인물은 같은 얼굴을 유지</label><div class="portrait-options">${portraitChoices().map(key=>`<label title="${esc(portraitLabel(key))}"><input type="radio" name="portraitKey" value="${key}" ${p.portraitKey===key?'checked':''}><img src="${portraitSource({portraitKey:key},null)}" alt="${esc(portraitLabel(key))} 초상화" width="60" height="78"></label>`).join('')}</div></fieldset>`);
   dialogHandler = data => {
     const updated = { ...p, feature:data.get('feature'), slot:Number(data.get('slot'))-1, commandBonus:Number(data.get('commandBonus')), ministerStyle:data.get('ministerStyle'), id: original?.id || newId('person'), name: data.get('name'), countryId: data.get('countryId') || null, role: data.get('role'), ability: Number(data.get('ability')), personality: data.get('personality') };
     if (data.get('portraitKey')) updated.portraitKey = data.get('portraitKey');else delete updated.portraitKey;
@@ -228,6 +231,7 @@ function metaDialog() {
 }
 function ensureRun() { if (!run) run = createRun(world, ui.seed.trim() || '20261017'); }
 function beginTurn(play=true) {
+  if(replaySession){if(!playback.complete&&play)playback.resume();return;}
   ensureRun();
   if(!playback.complete) { if(play) playback.resume(); return; }
   if(run.result) return;
@@ -235,13 +239,29 @@ function beginTurn(play=true) {
   ui.focusedCountry=record.actorId;playback.load(record,before,run.world,play);
 }
 function step() { stop();beginTurn(); }
-function startAuto() { ensureRun();auto=true;beginTurn();render(); }
+function startAuto() { if(replaySession)return;ensureRun();auto=true;beginTurn();render(); }
 function newRunDialog() {
-  stop(); render();
+  if(replaySession)returnFromReplay();stop(); render();
   openDialog('새 역사 실행', '진행 중인 역사는 교체됩니다. 필요하면 먼저 기록을 내보내 주세요.', `<label>역사 시드<input name="seed" required type="number" min="0" max="4294967295" value="${esc(ui.seed)}"></label><div class="field-help">같은 세계와 설정, 같은 시드로 실행하면 같은 결과가 나옵니다. 다른 역사를 만들려면 시드를 바꿔 주세요.</div>`, '새 실행 준비');
-  dialogHandler = data => { const seed = data.get('seed').trim(); const next = createRun(world, seed); playback.reset(); run = next; saveRun(localStorage,run); ui.seed = seed; render(); notify('현재 편집한 세계로 새 실행을 준비했습니다.'); };
+  dialogHandler = data => { const seed = data.get('seed').trim(); const next = createRun(world, seed); playback.reset();mapCamera.followKey=null;ui.historyOffset=0;run = next;saveRun(localStorage,run);ui.seed = seed; render(); notify('현재 편집한 세계로 새 실행을 준비했습니다.'); };
+}
+function editArmyBands(remove=null){const rows=[...document.querySelectorAll('#army-bands tr')].map(row=>[Number(row.querySelector('[name^="army-ratio"]').value),Number(row.querySelector('[name^="army-score"]').value)]);if(remove!==null){if(rows.length<=1)return;rows.splice(Number(remove),1);}else{if(rows.length>=16)return;const last=rows.at(-1);rows.push([Math.min(1000,last[0]*2),Math.min(100,last[1]+1)]);}$('#army-bands').innerHTML=rows.map(armyBandRow).join('');}
+function returnFromReplay(){replayToken++;ui.replayLoading=false;if(!replaySession)return;playback.pause();playback.reset();Object.assign(playback,replaySession.presentation);if(playback.state)playback.state.playing=false;mapCamera.cancelMotion();mapCamera.views.set('simulation',{...replaySession.camera});mapCamera.followKey=playback.state?`${playback.state.record.turn}:${playback.scene?.event?.index}:${playback.scene?.kind==='movement'?'move':'event'}`:null;replaySession=null;render();}
+async function showHistoryTurn(id){
+ if(ui.replayLoading||!run)return;const turn=Number(id);if(!Number.isInteger(turn))return;
+ stop();const token=++replayToken;ui.replayLoading=true;
+ if(!replaySession)replaySession={turn,presentation:{state:playback.state,remaining:playback.remaining,groupEnd:playback.groupEnd,groupDone:playback.groupDone},camera:{...mapCamera.view('simulation')}};
+ replaySession.turn=turn;render();notify(`${turn}턴의 지도와 판정을 복원하고 있습니다.`);
+ try{const result=await replayTurn(run,turn,{cancelled:()=>token!==replayToken});if(token!==replayToken)return;ui.replayLoading=false;mapCamera.followKey=null;playback.load(result.record,result.before,result.after,true);}catch(error){if(token===replayToken){returnFromReplay();notify(error.message,true);}}
 }
 const actions = {
+  'replay-turn':showHistoryTurn,
+  'return-live':returnFromReplay,
+  'history-older':()=>{ui.historyOffset=Math.min(Math.max(0,(run?.history.length||0)-1),ui.historyOffset+100);render();},
+  'history-newer':()=>{ui.historyOffset=Math.max(0,ui.historyOffset-100);render();},
+  'add-army-band':()=>editArmyBands(),
+  'remove-army-band':id=>editArmyBands(id),
+  'modern-rules':()=>{const next=clone(world);if(next.rules.battleMode==='v11')next.people.forEach(p=>{if(p.role==='general')p.ability*=2;});next.rules={...next.rules,...clone(ADDITIVE_COMBAT_DEFAULTS)};updateWorld(next);notify('새 D30 규칙을 적용했습니다. 새 실행부터 사용합니다.');},
   'map-generate': () => {stop();mapGenerator.open();},
   'save': () => { persist(true); render(); },
   'export': () => { downloadFile(`${fileName(world.name)}.world.json`, serializeWorld(world)); notify('세계 파일을 내보냈습니다. 국가·인물·지도·규칙이 모두 포함됩니다.'); },
@@ -264,12 +284,12 @@ const actions = {
   'scene-skip': () => { stop(); playback.finish(); render(); },
   'focus-country': id => { ui.focusedCountry=id; render(); },
   'new-run': newRunDialog,
-  'replay-run': () => {stop();if(!run)return;const next=createRun(run.initialWorld,run.seed);playback.reset();run=next;saveRun(localStorage,run);render();notify('같은 시작 세계와 시드로 처음부터 재생합니다.');},
-  'reset-rules': () => {if(confirm('규칙 설정을 첨부 원본 v11 기본값으로 복원할까요?'))updateWorld({...world,rules:{...clone(DEFAULT_RULES),seaSupply:false}});},
+  'replay-run': () => {if(replaySession)returnFromReplay();stop();if(!run)return;const next=createRun(run.initialWorld,run.seed);playback.reset();mapCamera.followKey=null;ui.historyOffset=0;run=next;saveRun(localStorage,run);render();notify('같은 시작 세계와 시드로 처음부터 재생합니다.');},
+  'reset-rules': () => {if(confirm('규칙 설정을 첨부 원본 v11 기본값으로 복원할까요?')){const next=clone(world);next.rules={...clone(DEFAULT_RULES),seaSupply:false,battleMode:'v11'};next.people.forEach(p=>{if(p.role==='general')p.ability=Math.sign(p.ability)*2;});updateWorld(next);}},
   'map-fullscreen': openMapFullscreen,
   'map-fullscreen-close': closeMapFullscreen,
   'recording': () => { ui.recording = !ui.recording; render(); },
-  'export-history': () => { if (run?.history.length) { downloadFile(`${fileName(run.initialWorld.name)}-${fileName(run.seed)}.history.json`, JSON.stringify({ kind: 'saguk-studio-history', engineVersion: ENGINE_VERSION, seed: run.seed, world: run.initialWorld, history: run.history, result: run.result, finalWorld: run.world }, null, 2)); notify('전체 역사와 시작 세계, 시드, 최종 상태를 내보냈습니다. 기록 가져오기와 재생은 후속 버전에서 지원합니다.'); } },
+  'export-history': () => { if (run?.history.length) { downloadFile(`${fileName(run.initialWorld.name)}-${fileName(run.seed)}.history.json`, JSON.stringify({ kind: 'saguk-studio-history', engineVersion: ENGINE_VERSION, seed: run.seed, world: run.initialWorld, history: run.history, result: run.result, finalWorld: run.world }, null, 2)); notify('전체 역사와 시작 세계, 시드, 최종 상태를 내보냈습니다. 화면의 역사 기록을 클릭하면 해당 턴을 다시 볼 수 있습니다. 역사 파일 가져오기는 후속 버전에서 지원합니다.'); } },
 };
 document.addEventListener('click', event => {
   const page = event.target.closest('[data-page]');
@@ -294,13 +314,9 @@ document.addEventListener('submit', event => {
     else if (form.id === 'territory-form') {
       const next = clone(world), t = next.territories.find(t => t.id === ui.selected);
       if (!t) throw new Error('수정할 영토를 선택해 주세요.');
-      t.name = data.get('name'); t.ownerId = data.get('ownerId') || null; if(ui.editorView==='atlas')mapEditor.save(next);else updateWorld(next); notify('영토 정보를 저장했습니다.');
+      t.name = data.get('name'); t.ownerId = data.get('ownerId') || null;t.terrain=data.get('terrain')||'plain'; if(ui.editorView==='atlas')mapEditor.save(next);else updateWorld(next); notify('영토 정보를 저장했습니다.');
     } else if (form.id === 'rules-form') {
-      const next = clone(world), r = next.rules;
-      for (const k of ['successTarget', 'recruitGain', 'productionGain', 'territoryProduction', 'armyAdvantageBonus', 'roundLimit', 'supplyGain', 'baseCapacity', 'minimumReserve']) r[k] = Number(data.get(k));
-      r.seaSupply=data.has('seaSupply');r.diceSides=10;for(const k of Object.keys(MINISTER_STYLES))r.ministerWeights[k]=[0,1,2].map(i=>Number(data.get(`weight-${k}-${i}`)));
-      for (const k of Object.keys(PERSONALITIES)) r.domesticThresholds[k] = Number(data.get(`threshold-${k}`));
-      for (const k of ['win', 'tie', 'loss']) r.lossRates[k] = Number(data.get(`loss-${k}`)) / 100;
+      const next=clone(world);next.rules=rulesFromForm(data,next.rules);if(next.rules.battleMode==='v11')next.people.forEach(p=>{if(p.role==='general')p.ability=Math.sign(p.ability)*2;});
       updateWorld(next); notify('규칙을 저장했습니다. 새 실행부터 적용됩니다.');
     }
   } catch (error) {
@@ -311,6 +327,8 @@ document.addEventListener('submit', event => {
 document.addEventListener('change', async event => {
   const target = event.target;
   if(target.id==='map-editor-zoom'){mapEditor.zoom=Number(target.value);mapCamera.zoom('editor',mapEditor.zoom);return;}
+  if(target.id==='camera-follow'){mapCamera.autoFollow=target.checked;mapCamera.cancelMotion();if(target.checked){mapCamera.followKey=null;mapCamera.follow(playback);}return;}
+  if(target.name==='role'&&target.closest('#editor-dialog')){const field=$('#editor-dialog [name="ability"]'),values=target.value==='general'&&world.rules.battleMode==='additive30'?[-4,-3,-2,-1,0,1,2,3,4]:[-2,0,2],previous=Number(field.value);field.innerHTML=values.map(v=>`<option value="${v}" ${v===previous?'selected':''}>${v>0?'+':''}${v}</option>`).join('');if(!values.includes(previous))field.value='0';}
   if(target.id==='map-background-file'){const file=target.files?.[0];target.value='';try{await mapEditor.importBackground(file);}catch(error){notify(error.message,true);}return;}
   if(target.id==='map-editor-view'){if(!mapEditor.select())return;ui.editorView=target.value;render();return;}
   try{if(mapEditor.change(target))return;}catch(error){notify(error.message,true);return;}
@@ -362,6 +380,8 @@ document.addEventListener('fullscreenchange',()=>{
 document.addEventListener('visibilitychange', () => { if (document.hidden && (auto || playback.playing)) { stop(); render(); } });
 document.addEventListener('keydown',event=>{
   const editing=event.target.closest('input,select,textarea,dialog');
+  if(!editing&&!event.ctrlKey&&!event.metaKey&&['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(event.key)&&document.querySelector('.atlas-scroll')){event.preventDefault();mapCamera.keyboard(event,ui.mapFullscreen||ui.page==='simulation'?'simulation':ui.page==='map'?'editor':'overview');return;}
+  if(!editing&&(event.key==='Enter'||event.key===' ')&&event.target.matches('.history-entry[data-action]')){event.preventDefault();showHistoryTurn(event.target.dataset.id);return;}
   if(!editing&&!event.ctrlKey&&!event.metaKey&&(ui.mapFullscreen||event.target.closest('.atlas-scroll'))&&['Equal','Minus','NumpadAdd','NumpadSubtract','Digit0','Numpad0'].includes(event.code)){event.preventDefault();const context=ui.mapFullscreen||ui.page==='simulation'?'simulation':ui.page==='map'?'editor':'overview';mapCamera.action(['Digit0','Numpad0'].includes(event.code)?'map-zoom-reset':['Minus','NumpadSubtract'].includes(event.code)?'map-zoom-out':'map-zoom-in',context);return;}
   if(ui.page==='map'&&ui.editorView==='atlas'&&!editing&&event.key==='Escape'&&mapEditor.draft){event.preventDefault();mapEditor.action('map-edit-cancel');return;}
   if(ui.mapFullscreen&&!editing){

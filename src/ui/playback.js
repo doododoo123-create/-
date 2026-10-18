@@ -15,7 +15,7 @@ export function makeTurnScenes(record,before) {
       title:attempt<attempts.length-1?'전쟁 대상 없음 · 국왕 주사위 다시 굴림':event.type==='king'?'국왕의 행동 선택':event.type==='minister'?'승상의 내정 선택':event.type==='war_target'?'공격 국가 선택':event.title,
       lockedTitle:attempt<attempts.length-1?'공격 가능한 국가가 없어 재판정':event.title,
       detail:event.detail,worldBefore:frame.before,worldAfter:frame.before,
-      bonus:event.side?event.side.ability+event.side.armyBonus:event.type==='domestic_roll'?event.ability:0,
+      bonus:event.side?(event.side.bonus??event.side.ability+event.side.armyBonus):event.type==='domestic_roll'?event.ability:0,
     }));
     else scenes.push({id:`${event.type}-${event.index}`,kind:event.type==='resolve'?'result':'focus',role:event.role,event,battleIndex:event.battleIndex,title:event.title,detail:event.detail,worldBefore:frame.before,worldAfter:frame.before});
     if(event.type==='resolve'||frame.after!==frame.before)scenes.push({id:`apply-${event.index}`,kind:'apply',event,battleIndex:event.battleIndex,title:'병력과 영토에 결과 반영',detail:event.detail,worldBefore:frame.before,worldAfter:frame.after});

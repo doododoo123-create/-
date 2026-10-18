@@ -145,7 +145,7 @@ with sync_playwright() as p:
  const {createDemoWorld}=await import('/src/data/demo-world.js');const {createRun,nextTurn}=await import('/src/engine/simulation.js');
  const {TurnPlayback}=await import('/src/ui/playback.js');const {renderArena}=await import('/src/ui/arena-view.js');
  const initial=createRun(createDemoWorld(),123456),run=nextTurn(initial,{rolls:{king:10,'attack:0':10,'attack:1':10,'attack:2':10,'attack:3':10,'attack:4':10},targetId:1}),snapshot=JSON.stringify(run.engineState),player=new TurnPlayback();player.load(run.history[0],initial.world,run.world,false);
- const host=document.createElement('div');document.body.append(host);const result=[];
+ const host=document.createElement('div');host.style='position:fixed;inset:0;z-index:99999';document.body.append(host);const result=[];
  for(let value=1;value<=10;value++){
    player.scene.value=value;player.state.phase='locked';host.innerHTML=renderArena({world:initial.world,run,playback:player});
    result.push(getComputedStyle(host.querySelector('.die-number')).color);
@@ -156,8 +156,8 @@ with sync_playwright() as p:
  player.state.phase='locked';host.innerHTML=renderArena({world:player.displayWorld,run,playback:player});
  const total={value:host.querySelector('.visual-die').dataset.dieValue,color:getComputedStyle(host.querySelector('.die-number')).color,scoreColor:getComputedStyle(host.querySelector('.die-equation>strong')).color};
  player.state.phase='rolling';host.innerHTML=renderArena({world:player.displayWorld,run,playback:player});
- const reel=host.querySelector('.rolling-number');const frames=[];
- for(let i=0;i<7;i++){await new Promise(resolve=>setTimeout(resolve,90));const style=getComputedStyle(reel,'::after');frames.push({value:style.content,color:style.color});}
+ const frames=[];
+ for(let i=0;i<7;i++){await new Promise(resolve=>setTimeout(resolve,90));const visible=[...host.querySelectorAll('.die-art-frame')].find(e=>Number(getComputedStyle(e).opacity)>.5);const text=visible.querySelector('text');frames.push({value:text.textContent,color:getComputedStyle(text).fill});}
  host.remove();return {result,raw,total,frames,unchanged:snapshot===JSON.stringify(run.engineState)};
  }''')
  channels=lambda c:[int(v.strip()) for v in c.removeprefix('rgb(').removesuffix(')').split(',')]

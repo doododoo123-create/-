@@ -63,7 +63,8 @@ with sync_playwright() as p:
  expect(page.locator('.map-vertex')).to_have_count(4)
  page.locator('[data-action="map-edit-cancel"]').click()
  page.locator('[data-action="map-edit-center"]').click();click_at(page,150,150)
- assert all(abs(n-150)<1.5 for n in world(page)['cartography']['polygons']['tile-0']['center'])
+ assert all(abs(n-150)<1.5 for n in world(page)['cartography']['polygons']['tile-0']['anchors']['reference'])
+ assert world(page)['cartography']['polygons']['tile-0']['center']==before['cartography']['polygons']['tile-0']['center']
  passed('자유형 경계 그리기·잘못된 경계 보호·이름/부대 기준 위치 이동·되돌리기')
  page.locator('[data-action="map-edit-links"]').click()
  page.locator('[data-territory="tile-79"]').click()

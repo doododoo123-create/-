@@ -1214,7 +1214,8 @@
       "territoryProduction": 1,
       "armyAdvantageBonus": 1,
       "roundLimit": 30,
-      "seaSupply": false
+      "seaSupply": false,
+      "battleMode": "v11"
     }
   }
 }
