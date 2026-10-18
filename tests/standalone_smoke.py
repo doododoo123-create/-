@@ -2,7 +2,8 @@
 The managed cloud browser blocks file:// URLs; desktop file opening is not verified here.
 """
 from pathlib import Path
-import os
+import os, io
+from PIL import Image
 from playwright.sync_api import sync_playwright, expect
 root = Path(__file__).resolve().parents[1]
 with sync_playwright() as p:
@@ -16,6 +17,19 @@ with sync_playwright() as p:
     context.set_offline(True)
     expect(page.locator('h1')).to_have_text('세계 개요')
     expect(page.locator('.territory')).to_have_count(80)
+    page.locator('nav [data-page="map"]').click()
+    expect(page.locator('.terrain-art')).to_have_count(1)
+    assert page.evaluate("async()=>{const i=new Image();i.src=document.querySelector('.terrain-art').getAttribute('href');await i.decode();return i.naturalWidth>1000}")
+    page.locator('[data-action="map-edit-trace"]').click()
+    for x,y in [(100,100),(220,100),(220,200),(100,200)]:
+        point=page.locator('#geographic-editor .atlas-map').evaluate('(svg,p)=>{const q=new DOMPoint(...p).matrixTransform(svg.getScreenCTM());return {x:q.x,y:q.y}}',[x,y])
+        page.mouse.click(point['x'],point['y'])
+    page.locator('[data-action="map-edit-apply"]').click()
+    expect(page.locator('.map-edit-layer')).to_have_count(0)
+    assert len(page.evaluate("JSON.parse(localStorage.getItem('saguk-studio.world.v1')).world.cartography.polygons['tile-0'].points"))==4
+    buffer=io.BytesIO();Image.new('RGB',(200,100),(80,120,90)).save(buffer,format='PNG')
+    page.locator('#map-background-file').set_input_files({'name':'offline-map.png','mimeType':'image/png','buffer':buffer.getvalue()})
+    expect(page.locator('.map-background-image')).to_have_count(1)
     page.locator('nav [data-page="countries"]').click()
     page.locator('[data-action="add-country"]').first.click()
     page.locator('#editor-dialog [name="name"]').fill('오프라인 국가')
@@ -28,6 +42,8 @@ with sync_playwright() as p:
     context.set_offline(False)
     page.reload(wait_until='networkidle')
     context.set_offline(True)
+    assert page.evaluate("JSON.parse(localStorage.getItem('saguk-studio.world.v1')).world.cartography.background.startsWith('data:image/jpeg;base64,')")
+    expect(page.locator('.map-background-image')).to_have_count(1)
     page.locator('nav [data-page="countries"]').click()
     expect(page.locator('.country-card')).to_have_count(8)
     page.locator('nav [data-page="simulation"]').click()
@@ -50,6 +66,6 @@ with sync_playwright() as p:
     expect(page.locator('.history-entry')).to_have_count(2)
     assert page.locator('img').evaluate_all('(imgs)=>imgs.every(i=>i.complete&&i.naturalWidth>0)')
     assert not errors, errors
-    print('PASS: 단일 HTML을 HTTP로 연 뒤 오프라인 동작·국가 추가·파일 내보내기·새로고침 복구·실제 타이머·초상화·턴 연출·지도 단독 전체화면/중앙 판정/주사위 색; JavaScript 예외 0건')
+    print('PASS: 단일 HTML을 HTTP로 연 뒤 오프라인 동작·삽화/배경 이미지·경계 편집/복구·국가 추가·파일 내보내기·새로고침 복구·실제 타이머·초상화·턴 연출·지도 단독 전체화면/중앙 판정/주사위 색; JavaScript 예외 0건')
     context.close()
     browser.close()

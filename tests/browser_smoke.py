@@ -72,6 +72,7 @@ with sync_playwright() as p:
     passed('인물 추가·수정·검색·필터 및 중복 국왕 입력 방지')
 
     page.locator('nav [data-page="map"]').click()
+    page.locator('#map-editor-view').select_option('grid')
     page.locator('[data-territory="tile-0"]').click()
     page.locator('#territory-form [name="name"]').fill('새 수도')
     page.locator('#territory-form [name="ownerId"]').select_option(nation_id)
@@ -119,6 +120,7 @@ with sync_playwright() as p:
 
     # Original v11 requires assigned land; country deletion deliberately leaves it empty.
     page.locator('nav [data-page="map"]').click()
+    page.locator('#map-editor-view').select_option('grid')
     for tile in ['tile-0', 'tile-1']:
         page.locator(f'[data-territory="{tile}"]').click()
         page.locator('#territory-form [name="ownerId"]').select_option('nation-0')

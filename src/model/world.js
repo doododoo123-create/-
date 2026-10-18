@@ -1,4 +1,5 @@
 import { V11_ATLAS, V11_NATIONS, V11_ROSTERS } from '../data/v11-preset.js';
+import { validateCartography } from './cartography.js';
 export const SCHEMA_VERSION = 2;
 export const PERSONALITIES = { balanced:'균형형', peaceful:'내정형', aggressive:'호전형' };
 export const MINISTER_STYLES = { balanced:'균형형', recruiter:'모병형', producer:'충원형', supplier:'보급형' };
@@ -17,6 +18,7 @@ export const countryPeople = (world,id) => world.people.filter(p=>p.countryId===
 export const totalTroops = world => world.countries.reduce((n,c)=>n+c.troops,0);
 export const production = (world,c) => landCount(world,c.id)*world.rules.territoryProduction+c.recruitment;
 export function neighbors(world,t) {
+  if(world.cartography?.links!==null&&world.cartography?.links!==undefined){const ids=new Set(world.cartography.links.filter(pair=>pair.includes(t.id)).flat());ids.delete(t.id);return world.territories.filter(n=>ids.has(n.id));}
   if(world.mapKind==='v11')return V11_ATLAS.cells[t.row*world.cols+t.col].neighbors.map(i=>world.territories[i]);
   return world.territories.filter(n=>Math.abs(n.row-t.row)+Math.abs(n.col-t.col)===1);
 }
@@ -73,6 +75,7 @@ export function validateWorld(source) {
   const thresholds=object(r.domesticThresholds,'성향별 내정 구간'),losses=object(r.lossRates,'손실률'),weights=object(r.ministerWeights,'승상 행동 확률');
   const rules={mode:'v11',diceSides:10,domesticThresholds:Object.fromEntries(Object.keys(PERSONALITIES).map(k=>[k,number(thresholds[k],`${PERSONALITIES[k]} 내정 구간`,0,10)])),ministerWeights:Object.fromEntries(Object.keys(MINISTER_STYLES).map(k=>{const a=array(weights[k],'승상 행동 구간',3).map(v=>number(v,'승상 행동 확률',0,10));if(a.length!==3||a.reduce((n,v)=>n+v,0)!==10)fail('각 승상 성향의 세 확률 눈금 합계는 10이어야 합니다.');return [k,a];})),lossRates:Object.fromEntries(['win','tie','loss'].map(k=>[k,number(losses[k],'손실률',0,1,false)]))};
   for(const [key,label,min,max] of [['successTarget','내정 성공 기준',1,12],['recruitGain','모병 증가량',0,10000],['productionGain','충원 강화 증가량',0,10000],['supplyGain','보급 강화 증가량',0,10000],['baseCapacity','기본 지휘한도',1,10000],['minimumReserve','수도 최소 병력',0,10000],['territoryProduction','영토당 생산',0,10000],['armyAdvantageBonus','병력 우세 보정',0,10],['roundLimit','제한 라운드',1,100]])rules[key]=number(r[key],label,min,max);
-  return {schemaVersion:2,id:text(input.id,'세계 ID',100),name:text(input.name,'세계 이름'),description:optionalText(input.description,300),rows,cols,mapKind,countries,people,territories,rules};
+  const cartography=validateCartography(input.cartography,territories);
+  return {schemaVersion:2,id:text(input.id,'세계 ID',100),name:text(input.name,'세계 이름'),description:optionalText(input.description,300),rows,cols,mapKind,countries,people,territories,rules,...(cartography?{cartography}:{})};
 }
 export function removeCountry(world,id){const next=clone(world);next.countries=next.countries.filter(c=>c.id!==id);next.people.forEach(p=>{if(p.countryId===id)p.countryId=null;});next.territories.forEach(t=>{if(t.ownerId===id)t.ownerId=null;});return validateWorld(next);}

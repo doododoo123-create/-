@@ -9,7 +9,7 @@ export function engineFor(definition){
   if(engineCache.has(definition))return engineCache.get(definition);
   const ids=definition.countries.map(c=>c.id),territoryIndex=new Map(definition.territories.map((t,i)=>[t.id,i]));
   const atlas=definition.mapKind==='v11'?clone(V11_ATLAS):{id:`studio-grid-${definition.rows}-${definition.cols}`,width:1200,height:800,cells:definition.territories.map((t,i)=>({id:i,row:t.row,col:t.col,center:[80+(t.col+.5)*1040/definition.cols,80+(t.row+.5)*640/definition.rows],neighbors:neighbors(definition,t).map(n=>territoryIndex.get(n.id))})),capitals:[],edges:[]};
-  atlas.cells=atlas.cells.map((t,i)=>({...t,owner:ids.indexOf(definition.territories[i].ownerId),name:definition.territories[i].name}));
+  atlas.cells=atlas.cells.map((t,i)=>({...t,owner:ids.indexOf(definition.territories[i].ownerId),name:definition.territories[i].name,...(definition.cartography?.links!==null&&definition.cartography?.links!==undefined?{neighbors:neighbors(definition,definition.territories[i]).map(n=>territoryIndex.get(n.id))}:{})}));
   atlas.capitals=definition.countries.map(c=>territoryIndex.get(c.capitalId)??definition.territories.findIndex(t=>t.ownerId===c.id)).map(i=>i<0?0:i);
   const nations=definition.countries.map((c,id)=>{
     const match=definition.mapKind==='v11'?/^nation-([0-6])$/.exec(c.id):null,base=match?clone(V11_NATIONS[Number(match[1])]):{};
