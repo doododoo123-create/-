@@ -1,3 +1,4 @@
+import { displayName, displayEventText } from './display-names.js';
 import {countryPeople,findCountry,ROLES,PERSONALITIES,MINISTER_STYLES} from '../model/world.js';
 import {esc} from './icons.js';
 import {portraitImage} from './portraits.js';
@@ -8,7 +9,7 @@ export function judgmentVisible(playback){
   return !!(playback.state&&!playback.complete&&!(playback.groupDone&&!playback.playing)&&scene&& !['apply','summary'].includes(scene.kind)&&scene.event?.type!=='territory');
 }
 function judgmentPerson(world,country,role,slot){return countryPeople(world,country?.id).find(p=>p.role===role&&(role!=='general'||p.slot===slot));}
-function judgmentPortrait(person,country,role){return `<figure class="judgment-person" style="--nation:${country?.color||'#c0b698'}"><div class="framed-portrait">${portraitImage(person,country,role)}</div><figcaption><strong>${esc(person?.name||ROLES[role])}</strong><small>${esc(country?.name||'')} · ${ROLES[role]}</small></figcaption></figure>`;}
+function judgmentPortrait(person,country,role){return `<figure class="judgment-person" style="--nation:${country?.color||'#c0b698'}"><div class="framed-portrait">${portraitImage(person,country,role)}</div><figcaption><strong>${esc(displayName(person,ROLES[role]))}</strong><small>${esc(country?.name||'')} · ${ROLES[role]}</small></figcaption></figure>`;}
 function judgmentTraits(person,role,country){
   const trait=role==='king'?PERSONALITIES[person?.personality||country?.personality]:role==='minister'?MINISTER_STYLES[person?.ministerStyle||'balanced']:`능력 ${judgmentSign(person?.ability)}`;
   return `<p class="judgment-feature">${esc(person?.feature||trait||'')}<span>${role==='minister'?`${esc(trait)} · 능력 ${judgmentSign(person?.ability)}`:role==='king'?esc(trait||''):`능력 ${judgmentSign(person?.ability)}`}</span></p>`;
@@ -48,5 +49,5 @@ export function renderJudgmentOverlay({world,playback}) {
     else if(event.type==='death_roll')note='1~3 전사 · 4~10 생존';
     else if(!showDie)note=event.detail;
   }
-  return `<aside class="map-judgment ${duel?'is-duel':''}" data-event="${esc(event.type||'')}" data-phase="${state.phase}" aria-label="지도 중앙 판정" aria-live="polite"><h2>${esc(title)}</h2>${body}${note?`<p class="judgment-result">${esc(note)}</p>`:''}</aside>`;
+  return `<aside class="map-judgment ${duel?'is-duel':''}" data-event="${esc(event.type||'')}" data-phase="${state.phase}" aria-label="지도 중앙 판정" aria-live="polite"><h2>${esc(displayEventText(title))}</h2>${body}${note?`<p class="judgment-result">${esc(displayEventText(note))}</p>`:''}</aside>`;
 }

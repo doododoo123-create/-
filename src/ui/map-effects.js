@@ -1,3 +1,4 @@
+import { displayEventText } from './display-names.js';
 import {esc} from './icons.js';
 // Exact changes between recorded frames. No game rules or randomness are evaluated here.
 const effectKey=p=>`${p.countryId}:${p.slot}`;
@@ -35,7 +36,7 @@ export function mapEffects(scene) {
   }
   if(event.type==='resolve'&&!output.units.length&&!output.territories.length&&!event.success)add(event.nationId,'king',null,'unchanged',0,'+0만 · 변화 없음','neutral');
   if(event.type==='elimination')add(event.targetId,'king',null,'elimination',0,'멸망','negative');
-  output.announcement=event.type==='round_end'?'라운드 병력 생산':event.type==='roster'?'지휘 구역 재편':event.title||'';
+  output.announcement=event.type==='round_end'?'라운드 병력 생산':event.type==='roster'?'지휘 구역 재편':displayEventText(event.title||'');
   return output;
 }
 
@@ -48,7 +49,7 @@ export function renderMapEffects(effects,geometry,world,currentMarkers,beforeMar
     const key=`${e.countryId}:${e.role}:${e.slot}`,row=stacks.get(key)||0;stacks.set(key,row+1);
     const width=Math.min(300,Math.max(74,textWidth(e.label,17)));
     const x=Math.min(1200-width/2-4,Math.max(width/2+4,marker.point[0]));
-    const y=Math.max(28,marker.point[1]-38-row*26);
+    const y=Math.max(28,marker.point[1]-55-row*26);
     occupied.push({x:x-width/2,y:y-22,w:width,h:26});
     return `<g class="map-unit-feedback ${e.tone}" data-effect="${e.type}" data-country="${esc(e.countryId)}" data-role="${e.role}" data-slot="${e.slot??''}" data-delta="${e.delta}" transform="translate(${x},${y})"><path d="M0 4V12"/><rect x="${-width/2}" y="-22" width="${width}" height="26" rx="5"/><text text-anchor="middle" y="-4">${esc(e.label)}</text></g>`;
   }).join('');

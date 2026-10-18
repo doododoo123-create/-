@@ -60,7 +60,7 @@ export function validateWorld(source) {
   const people=array(input.people,'인물 목록',2000).map(p=>{
     object(p,'인물');if(!Object.hasOwn(ROLES,p.role)||!Object.hasOwn(PERSONALITIES,p.personality))fail('인물 직책 또는 성향이 올바르지 않습니다.');
     if(![-2,0,2].includes(p.ability))fail('v11 능력 보정은 −2 / 0 / +2 중에서 선택해 주세요.');
-    if(p.portraitKey!==undefined&&p.portraitKey!==''&&(typeof p.portraitKey!=='string'||!/^n[0-3]-(king|minister|general)$/.test(p.portraitKey)))fail('인물 초상화 선택이 올바르지 않습니다.');
+    if(p.portraitKey!==undefined&&p.portraitKey!==''&&(typeof p.portraitKey!=='string'||!/^(?:n[0-3]-(king|minister|general)|general-(?:00[1-9]|0[1-4][0-9]|050))$/.test(p.portraitKey)))fail('인물 초상화 선택이 올바르지 않습니다.');
     const result={id:text(p.id,'인물 ID',100),name:text(p.name,'인물명',40),countryId:owner(p.countryId,'인물 소속'),role:p.role,ability:p.ability,personality:p.personality,feature:optionalText(p.feature),...(p.portraitKey?{portraitKey:p.portraitKey}:{})};
     if(p.role==='minister'){const style=p.ministerStyle||'balanced';if(!Object.hasOwn(MINISTER_STYLES,style))fail('승상 성향이 올바르지 않습니다.');result.ministerStyle=style;}
     if(p.role==='general'){const slot=number(p.slot??counters.get(p.countryId)??0,'장군 자리 번호',0,Math.max(19,Math.ceil(rows*cols/4)-1));counters.set(p.countryId,Math.max(counters.get(p.countryId)||0,slot+1));result.slot=slot;result.commandBonus=number(p.commandBonus??0,'개인 지휘한도 보정',-1,1);}

@@ -1,0 +1,37 @@
+/* Compact garrison cards and battle/ocean presentation. Simulation state is unchanged. */
+.game-skin .map-unit-token{width:52px;height:90px;display:flex;flex-direction:column;align-items:center;gap:1px;padding:3px 2px 2px;border:1px solid color-mix(in srgb,var(--nation) 75%,#c2ac72);border-top:2px solid var(--nation);border-radius:3px;background:#17241df5;box-shadow:0 2px 6px #0008;text-align:center;overflow:hidden}
+.game-skin .map-unit-token[data-role=king]{background:#322c1df7}
+.game-skin .token-wrap{height:94px}
+.game-skin .map-unit-token .token-portraits{width:44px;height:48px;flex:0 0 48px;position:relative;overflow:hidden;border:1px solid #a58c5d;border-radius:1px;background:#4b4436;display:block}
+.game-skin .map-unit-token .token-portraits::after{content:none}
+.game-skin .map-unit-token .token-portraits img{position:absolute;inset:auto;left:-40%;top:-35%;width:180%;height:auto;max-width:none;margin:0;border:0;border-radius:0;object-fit:initial;object-position:initial;display:block}
+.game-skin .map-unit-token .token-portraits img[data-portrait-kind=leader]{width:260%;left:-80%;top:-25%}
+.game-skin .map-unit-token .token-portraits img[data-portrait-key=general-026]{width:160%;left:-30%;top:-5%}
+.game-skin .map-unit-token .token-copy{display:flex;flex-direction:column;align-items:center;gap:0;width:100%;min-width:0}
+.game-skin .map-unit-token .token-copy b{max-width:46px;width:100%;font-family:'Malgun Gothic',sans-serif;font-size:10px;line-height:14px;letter-spacing:0;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;color:#f6e7c3}
+.game-skin .map-unit-token .token-copy strong{display:block;font:600 13px/16px Georgia,'Malgun Gothic',serif;color:#fff0c8;letter-spacing:0;margin:0;white-space:nowrap}
+.game-skin .map-unit-token .token-copy strong small{display:inline;font:normal 7px/1 sans-serif;color:#c0af86;margin:0 1px 0 0}
+.game-skin .map-unit-token .token-copy strong>span{font:normal 9px/1 'Malgun Gothic',sans-serif;margin-left:1px}
+.game-skin .station-leaders path{fill:none;stroke:#efe2b3;stroke-opacity:.48;stroke-width:1.2}
+.game-skin .station-leaders circle{fill:#ebd69f;stroke:#1a302b;stroke-width:.8}
+.game-skin .campaign-route-shadow{fill:none;stroke:#092430;stroke-opacity:.85;stroke-width:6.5;stroke-linecap:round}
+.game-skin .campaign-route{stroke-width:3.1;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;animation:none;filter:none}
+.game-skin .campaign-route.attack{stroke:#ef8c62}
+.game-skin .campaign-route.defense{stroke:#9acbe1;stroke-width:2.7;stroke-dasharray:7 5;animation:route-flow 2.4s linear infinite}
+.game-skin .battle-emblem .target-ring{fill:#e2c27c0a;stroke:#ebd39b;stroke-width:1.4;stroke-dasharray:3 4}
+.game-skin .battle-emblem-face{fill:#19271ff5;stroke:#b99a5e;stroke-width:1.3}
+.game-skin .battle-swords{stroke:#f1dfba;stroke-width:1.6}
+.game-skin .battle-location-leader{fill:none;stroke:#e7d49c;stroke-width:1;stroke-opacity:.7;stroke-dasharray:2 3}
+.game-skin .illustrated-atlas .sea-decor{display:none}
+.game-skin .illustrated-atlas .sea-label{fill:#bdd0c9;opacity:.36;text-shadow:0 1px 3px #06313a}
+.game-skin .atlas-scroll[data-ocean]{position:relative;isolation:isolate;background:#123f4c}
+.game-skin .atlas-scroll[data-ocean]>.ocean-texture{position:absolute;inset:0;width:100%;height:100%;max-width:none;min-width:0;object-fit:cover;z-index:0;pointer-events:none}
+.game-skin .atlas-scroll[data-ocean] .illustrated-atlas{position:relative;z-index:1;background:transparent}
+.game-skin .map-event-announcement{z-index:5}
+.game-skin .judgment-single,.game-skin .judgment-roll{align-items:flex-start}
+.game-skin .judgment-single .visual-die-block{align-self:flex-start;margin-top:-5px}
+.game-skin .judgment-side .visual-die-block{align-self:flex-start;margin-top:-14px}
+.game-skin .portrait-options{max-height:290px;overflow:auto;padding:3px;scrollbar-color:#9d8250 #1c241b}
+@media(max-width:620px){.game-skin .judgment-side .judgment-roll{flex-wrap:nowrap;gap:5px}.game-skin .judgment-side .judgment-person{width:54px;flex-basis:54px}.game-skin .judgment-side .visual-die-block{width:70px;flex:0 0 70px;margin-top:-8px}.game-skin .judgment-single .visual-die-block{margin-top:-2px}.game-skin .portrait-options{max-height:240px}}
+@media(max-width:360px){.game-skin .judgment-side .judgment-person{width:46px;flex-basis:46px}.game-skin .judgment-side .visual-die-block{width:60px;flex-basis:60px}.game-skin .map-judgment .visual-die{width:64px;height:64px}}
+@media(prefers-reduced-motion:reduce){.game-skin .campaign-route.defense{animation:none}}
