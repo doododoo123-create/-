@@ -6,7 +6,7 @@ import {renderDie} from './die-view.js';
 const judgmentSign=n=>n>0?`+${n}`:String(n||0);
 export function judgmentVisible(playback){
   const scene=playback.scene;
-  return !!(playback.state&&!playback.complete&&!(playback.groupDone&&!playback.playing)&&scene&& !['apply','summary'].includes(scene.kind)&&scene.event?.type!=='territory');
+  return !!(playback.state&&!playback.complete&&!(playback.groupDone&&!playback.playing)&&scene&& !['apply','summary','movement'].includes(scene.kind)&&scene.event?.type!=='territory');
 }
 function judgmentPerson(world,country,role,slot){return countryPeople(world,country?.id).find(p=>p.role===role&&(role!=='general'||p.slot===slot));}
 function judgmentPortrait(person,country,role){return `<figure class="judgment-person" style="--nation:${country?.color||'#c0b698'}"><div class="framed-portrait">${portraitImage(person,country,role)}</div><figcaption><strong>${esc(displayName(person,ROLES[role]))}</strong><small>${esc(country?.name||'')} · ${ROLES[role]}</small></figcaption></figure>`;}

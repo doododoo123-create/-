@@ -1,3 +1,4 @@
+import { planCommandMovements, validCamps } from './command-movement.js';
 import { clone,validateWorld,landCount,countryPeople,neighbors } from '../model/world.js';
 import { V11_ATLAS,V11_NATIONS } from '../data/v11-preset.js';
 import { createV11Engine } from './v11-core.js';
@@ -8,7 +9,8 @@ export function numericSeed(seed){const text=String(seed??123456).trim();if(!/^\
 export function engineFor(definition){
   if(engineCache.has(definition))return engineCache.get(definition);
   const ids=definition.countries.map(c=>c.id),territoryIndex=new Map(definition.territories.map((t,i)=>[t.id,i]));
-  const atlas=definition.mapKind==='v11'?clone(V11_ATLAS):{id:`studio-grid-${definition.rows}-${definition.cols}`,width:1200,height:800,cells:definition.territories.map((t,i)=>({id:i,row:t.row,col:t.col,center:[80+(t.col+.5)*1040/definition.cols,80+(t.row+.5)*640/definition.rows],neighbors:neighbors(definition,t).map(n=>territoryIndex.get(n.id))})),capitals:[],edges:[]};
+  const free=definition.mapKind==='free';
+  const atlas=definition.mapKind==='v11'?clone(V11_ATLAS):{id:free?`studio-free-${definition.id}`:`studio-grid-${definition.rows}-${definition.cols}`,width:1200,height:800,cells:definition.territories.map((t,i)=>({id:i,row:free?Math.round(definition.cartography.polygons[t.id].center[1]*1000):t.row,col:free?Math.round(definition.cartography.polygons[t.id].center[0]*1000):t.col,center:free?definition.cartography.polygons[t.id].center:[80+(t.col+.5)*1040/definition.cols,80+(t.row+.5)*640/definition.rows],neighbors:neighbors(definition,t).map(n=>territoryIndex.get(n.id))})),capitals:[],edges:[]};
   atlas.cells=atlas.cells.map((t,i)=>({...t,owner:ids.indexOf(definition.territories[i].ownerId),name:definition.territories[i].name,...(definition.cartography?.links!==null&&definition.cartography?.links!==undefined?{neighbors:neighbors(definition,definition.territories[i]).map(n=>territoryIndex.get(n.id))}:{})}));
   atlas.capitals=definition.countries.map(c=>territoryIndex.get(c.capitalId)??definition.territories.findIndex(t=>t.ownerId===c.id)).map(i=>i<0?0:i);
   const nations=definition.countries.map((c,id)=>{
@@ -20,7 +22,7 @@ export function engineFor(definition){
     const generals=countryPeople(definition,c.id).filter(p=>p.role==='general');const last=Math.max(4,...generals.map(g=>g.slot));
     return Array.from({length:last+1},(_,slot)=>{const g=generals.find(p=>p.slot===slot);return g?[g.name,g.ability,g.commandBonus,g.feature]:[`${c.name.slice(0,1)}${slot+1}군`,0,0,'새 지역 지휘관'];});
   });
-  const engine=createV11Engine(atlas,{rows:definition.rows,cols:definition.cols,nations,rosters,initials:definition.countries.map(c=>({troops:c.troops,recruitment:c.recruitment})),maxGenerals:Math.max(20,Math.ceil(definition.territories.length/4)),rules:definition.rules});
+  const engine=createV11Engine(atlas,{freeform:free,rows:free?800001:definition.rows,cols:free?1200001:definition.cols,nations,rosters,initials:definition.countries.map(c=>({troops:c.troops,recruitment:c.recruitment})),maxGenerals:Math.max(20,Math.ceil(definition.territories.length/4)),rules:definition.rules});
   const result={engine,ids,territoryIds:definition.territories.map(t=>t.id)};engineCache.set(definition,result);return result;
 }
 export function projectWorld(definition,state,providedEngine=null){
@@ -63,6 +65,7 @@ export function nextTurn(input,controls){
   if(ctl?.targetCells)ctl.targetCells=Object.fromEntries(Object.entries(ctl.targetCells).map(([slot,id])=>[slot,typeof id==='string'?context.territoryIds.indexOf(id):id]));
   const prepared=context.engine.prepareTurn(input.engineState,ctl),state={...prepared.state,history:[]};
   const world=projectWorld(input.initialWorld,state,context),record=normalizeRecord(prepared.record,input.world,world,input.initialWorld,state,context);
+  world.visualCamps=planCommandMovements(record,input.world,world,input.world.visualCamps);
   return {...input,rng:state.rng,world,engineState:state,round:state.round,turn:state.turns,schedule:state.schedule.map(i=>context.ids[i]),scheduleIndex:state.scheduleIndex,history:[...input.history.map(r=>({...r})),record],result:resultFor(state,context.ids),referenceRecord:prepared.record};
 }
 export function casualty(own,enemy,rate){const base=rate*100;if(!own||!enemy||!base)return 0;const n=own*base*enemy*2,d=(own+enemy)*100;return Math.min(own,Math.max(1,Math.floor((n*2+d)/(d*2))));}
@@ -74,5 +77,6 @@ export function restoreRun(data){
   if(!Array.isArray(data.history)||data.history.length!==state.turns||data.history.length>10000)throw new Error('저장된 턴 기록이 경기와 일치하지 않습니다.');
   for(let i=0;i<data.history.length;i++){const r=data.history[i];if(r.turn!==i+1||!context.ids.includes(r.actorId)||!Array.isArray(r.rolls)||!Array.isArray(r.battles)||!Array.isArray(r.events)||!r.rolls.every(d=>Number.isInteger(d.value)&&Number.isInteger(d.sides)&&d.value>=1&&d.value<=d.sides))throw new Error('저장된 판정 기록이 올바르지 않습니다.');}
   state.history=[];
-  return {engineVersion:ENGINE_VERSION,seed:String(state.seed),rng:state.rng,initialWorld:definition,world:projectWorld(definition,state,context),engineState:state,round:state.round,turn:state.turns,schedule:state.schedule.map(i=>context.ids[i]),scheduleIndex:state.scheduleIndex,history:clone(data.history),result:resultFor(state,context.ids),referenceRecord:null};
+  const restoredWorld=projectWorld(definition,state,context);restoredWorld.visualCamps=validCamps(restoredWorld,data.history.at(-1)?.campsAfter);
+  return {engineVersion:ENGINE_VERSION,seed:String(state.seed),rng:state.rng,initialWorld:definition,world:restoredWorld,engineState:state,round:state.round,turn:state.turns,schedule:state.schedule.map(i=>context.ids[i]),scheduleIndex:state.scheduleIndex,history:clone(data.history),result:resultFor(state,context.ids),referenceRecord:null};
 }

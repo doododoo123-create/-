@@ -35,3 +35,12 @@
 @media(max-width:620px){.game-skin .judgment-side .judgment-roll{flex-wrap:nowrap;gap:5px}.game-skin .judgment-side .judgment-person{width:54px;flex-basis:54px}.game-skin .judgment-side .visual-die-block{width:70px;flex:0 0 70px;margin-top:-8px}.game-skin .judgment-single .visual-die-block{margin-top:-2px}.game-skin .portrait-options{max-height:240px}}
 @media(max-width:360px){.game-skin .judgment-side .judgment-person{width:46px;flex-basis:46px}.game-skin .judgment-side .visual-die-block{width:60px;flex-basis:60px}.game-skin .map-judgment .visual-die{width:64px;height:64px}}
 @media(prefers-reduced-motion:reduce){.game-skin .campaign-route.defense{animation:none}}
+
+/* Free maps and recorded, purely visual forward camps. */
+.unit-marching{offset-distance:100%;offset-rotate:0deg;animation:commander-march var(--march-time,1.6s) var(--march-delay,0s) linear both;transform-box:view-box}
+@keyframes commander-march{from{offset-distance:0%}to{offset-distance:100%}}
+.playback-paused .unit-marching{animation-play-state:paused}
+.march-routes path{fill:none;stroke:#efc87d;stroke-width:3;stroke-dasharray:6 6;opacity:.9;filter:drop-shadow(0 1px 2px #111)}
+.march-routes .return{stroke:#a2e4d7}
+.march-label{font-size:12px;font-weight:800;fill:#fff0b9;stroke:#182c2d;stroke-width:4;paint-order:stroke;letter-spacing:.8px}
+@media(prefers-reduced-motion:reduce){.unit-marching{animation-duration:.01s}}

@@ -1,4 +1,5 @@
 import { displayEventText } from './ui/display-names.js';
+import { createReferenceWorld, referenceLayout } from './data/reference-world.js';
 import { createDemoWorld } from './data/demo-world.js';
 import { clone, blankWorld, newId, validateWorld, removeCountry, PERSONALITIES, MINISTER_STYLES, DEFAULT_RULES, neighbors, ROLES, landCount, countryPeople, findCountry, totalTroops, production } from './model/world.js';
 import { createRun, nextTurn, currentActor, livingCountries, ENGINE_VERSION } from './engine/simulation.js';
@@ -16,9 +17,9 @@ import { mapEditorToolbar } from './ui/map-editor-view.js';
 const $ = selector => document.querySelector(selector);
 let initialError = '';
 let world;
-try { world = loadWorld(localStorage) || createDemoWorld(); } catch (error) { world = createDemoWorld(); initialError = error.message + ' 시작 예제를 표시합니다. 기존 저장 데이터는 덮어쓰지 않았습니다.'; }
+try { world = loadWorld(localStorage) || createReferenceWorld(); } catch (error) { world = createDemoWorld(); initialError = error.message + ' 시작 예제를 표시합니다. 기존 저장 데이터는 덮어쓰지 않았습니다.'; }
 const ui = { page: 'overview', selected: world.territories[0]?.id, paint: false, brush: world.countries[0]?.id || '', countryFilter: '', roleFilter: '', search: '', showNames: true, recording: false, mapFullscreen:false, seed: '20261017', speed: 1, mapStyle: 'atlas', editorView:'atlas', focusedCountry: null };
-const mapEditor=new MapEditor({getWorld:()=>world,getSelected:()=>ui.selected,commit:updateWorld,render,notify});
+const mapEditor=new MapEditor({getWorld:()=>world,getSelected:()=>ui.selected,setSelected:id=>{ui.selected=id;},commit:updateWorld,render,notify});
 let auto = false, nativeMapFullscreen=false;
 let run = null, timer = null, saveStatus = initialError ? '저장 복구 확인 필요' : '브라우저에 자동 저장', toastTimer;
 const playback = new TurnPlayback({
@@ -46,7 +47,7 @@ function persist(showMessage = false) {
   try { saveWorld(localStorage, world); saveStatus = '브라우저에 자동 저장'; if (showMessage) notify('현재 세계를 이 브라우저에 저장했습니다. 다른 기기로 옮길 때는 파일 내보내기를 사용하세요.'); }
   catch (error) { saveStatus = '저장 실패 · 파일로 내보내 주세요'; notify(error.message, true); }
 }
-function updateWorld(next) { world = validateWorld(next); if(!mapEditor.committing)mapEditor.history=[]; persist(); render(); }
+function updateWorld(next) { world = validateWorld(next);if(!world.territories.some(t=>t.id===ui.selected))ui.selected=world.territories[0]?.id; if(!mapEditor.committing)mapEditor.history=[]; persist(); render(); }
 function stop() { if (timer) clearTimeout(timer); timer = null; auto = false; playback.pause(); }
 function navigate(page) { if (!Object.hasOwn(pages, page)) return; stop(); ui.page = page; ui.recording = false; render(); }
 function setNewWorld(next) {
@@ -71,7 +72,7 @@ function render() {
   $('#app').innerHTML = `
     <aside class="sidebar">
       <a class="brand" href="#" data-page="overview" aria-label="사국쟁패 Studio 세계 개요"><span class="brand-symbol">${icon('compass', 29)}</span><span><strong>사국쟁패</strong><small>HISTORY STUDIO</small></span></a>
-      <div class="workspace-label">WORKSPACE <span>v0.3.2</span></div>
+      <div class="workspace-label">WORKSPACE <span>v0.4.0</span></div>
       <button class="world-switch" data-action="world-meta"><span class="world-icon">${icon('globe', 19)}</span><span><b>${esc(world.name)}</b><small>나의 세계 · 편집 가능</small></span>${icon('edit', 13)}</button>
       <div class="nav-label">세계 만들기</div>
       <nav aria-label="주요 메뉴">${Object.entries(pages).slice(0, 4).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}<div class="nav-label nav-second">역사 관찰하기</div>${Object.entries(pages).slice(4).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}</nav>
@@ -82,7 +83,7 @@ function render() {
       <main id="main-content" class="${ui.page === 'simulation' ? 'simulation-page' : ''} ${playback.state&&!playback.playing&&!playback.complete?'playback-paused':''}" tabindex="-1">
         ${pageHeading()}
         ${ui.page === 'overview' ? overview() : ui.page === 'countries' ? countriesPage() : ui.page === 'people' ? peoplePage() : ui.page === 'map' ? mapPage() : ui.page === 'simulation' ? simulationPage() : rulesPage()}
-        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.3.2</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
+        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.4.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
       </main>
     </div>`;
 }
@@ -96,17 +97,17 @@ function statsBar(data = world, simulation = false) {
   return `<div class="stats-grid">${[
     ['flag', '국가', `${simulation ? livingCountries(data).length : data.countries.length}`, '개국', simulation ? '생존 국가' : '자유롭게 추가하고 편집하세요'],
     ['people', '등장인물', format(data.people.length), '명', '국왕 · 승상 · 장군'],
-    ['map', '전체 영토', format(data.territories.length), '개', `${data.mapKind==='v11'?'원본 v11 대륙 지도':`${data.cols} × ${data.rows} 격자 지도`}`],
+    ['map', '전체 영토', format(data.territories.length), '개', `${data.mapKind==='free'?'자유 배치 대륙 지도':data.mapKind==='v11'?'원본 v11 대륙 지도':`${data.cols} × ${data.rows} 격자 지도`}`],
     ['sword', '총병력', format(totalTroops(data)), '만', simulation ? `현재 ${run.round}라운드 · ${run.turn}턴 진행` : '국가별 초기 병력 합계'],
   ].map(([glyph, label, value, unit, sub]) => `<section class="stat-card"><div><span>${label}</span><span class="stat-icon">${icon(glyph, 19)}</span></div><strong>${value}<small>${unit}</small></strong><p>${sub}</p></section>`).join('')}</div>`;
 }
 const previews=new WeakMap();
 function previewWorld(data){if(data!==world)return data;if(!previews.has(data)){try{previews.set(data,createRun(data,123456).world);}catch{previews.set(data,data);}}return previews.get(data);}
 function mapPanel(data, editing = false, simulation = false) {
-  if (!editing && ui.mapStyle === 'atlas') {
+  if (!editing && (ui.mapStyle === 'atlas'||data.mapKind==='free')) {
     data=previewWorld(data);
-    const presentation = simulation ? playback.state : null;
-    return `<section class="panel map-panel atlas-panel"><div class="panel-head"><div><span class="eyebrow">ATLAS OF YOUR WORLD</span><h2>${esc(data.name)} <span class="tiny-badge">대륙 전도</span></h2></div><div class="map-panel-actions">${button('map-fullscreen','지도 전체화면','expand','outline', 'title="전체화면: Space 한 단계 · Enter 한 턴 · A 자동/정지 · S 턴 결과 · Esc 닫기"')}<label class="map-view-select">지도 표시<select id="map-style" aria-label="지도 표시 방식"><option value="atlas" selected>대륙형</option><option value="grid">격자형</option></select></label></div></div>${renderAtlas(data, {selected: ui.selected, observe: simulation, showNames: ui.showNames, presentation, focusedCountry: ui.focusedCountry})}<div class="atlas-map-note"><span>${icon('sword',14)} 국왕: 수도 예비병 · 장군: 개별 주둔군 · 화살표: 전투 경로</span><span>${data.mapKind==='v11'?'원본 지도 인접 관계':'상하좌우 인접 관계'}</span></div><div class="map-legend">${data.countries.map(c => `<span>${dot(c.color)}${esc(c.name)}</span>`).join('')}</div>${!simulation ? `<div class="map-panel-footer"><span>영토를 선택해 정보를 확인하세요.</span><button class="text-button" data-page="map">지도 편집하기 ${icon('arrow', 15)}</button></div>` : ''}</section>`;
+    const presentation = simulation&&playback.state ? {...playback.state,speed:ui.speed,movementProgress:playback.movementProgress} : null;
+    return `<section class="panel map-panel atlas-panel"><div class="panel-head"><div><span class="eyebrow">ATLAS OF YOUR WORLD</span><h2>${esc(data.name)} <span class="tiny-badge">대륙 전도</span></h2></div><div class="map-panel-actions">${button('map-fullscreen','지도 전체화면','expand','outline', 'title="전체화면: Space 한 단계 · Enter 한 턴 · A 자동/정지 · S 턴 결과 · Esc 닫기"')}<label class="map-view-select">지도 표시<select id="map-style" aria-label="지도 표시 방식"><option value="atlas" selected>대륙형</option><option value="grid">격자형</option></select></label></div></div>${renderAtlas(data, {selected: ui.selected, observe: simulation, showNames: ui.showNames, presentation, focusedCountry: ui.focusedCountry})}<div class="atlas-map-note"><span>${icon('sword',14)} 국왕: 수도 예비병 · 장군: 개별 주둔군 · 화살표: 전투 경로</span><span>${data.mapKind==='free'?'직접 설정한 인접 관계':data.mapKind==='v11'?'원본 지도 인접 관계':'상하좌우 인접 관계'}</span></div><div class="map-legend">${data.countries.map(c => `<span>${dot(c.color)}${esc(c.name)}</span>`).join('')}</div>${!simulation ? `<div class="map-panel-footer"><span>영토를 선택해 정보를 확인하세요.</span><button class="text-button" data-page="map">지도 편집하기 ${icon('arrow', 15)}</button></div>` : ''}</section>`;
   }
 
   const last = simulation ? run?.history.at(-1) : null;
@@ -132,7 +133,7 @@ function nationStandings(data, full = false) {
 }
 function overview() {
   const selected = world.territories.find(t => t.id === ui.selected), country = findCountry(world, selected?.ownerId);
-  return `${statsBar()}<div class="overview-layout">${mapPanel(world)}${nationStandings(world)}</div><div class="overview-bottom"><section class="panel world-note"><div class="note-art">${icon('compass', 46)}</div><div><div class="eyebrow">YOUR WORLD, YOUR STORY</div><h2>세계의 다음 장은 아직 비어 있습니다.</h2><p>${esc(world.description || '국가와 인물, 영토를 직접 구성한 다음 새로운 역사를 시작하세요.')}</p></div><button class="text-button" data-action="world-meta">세계 정보 수정 ${icon('arrow', 15)}</button></section><section class="panel selected-summary"><span class="eyebrow">SELECTED TERRITORY</span><h3>${esc(selected?.name || '선택한 영토 없음')}</h3><p>${dot(country?.color || '#657066')}${esc(country?.name || '무주지')}<span>${selected ? `${String.fromCharCode(65 + selected.col)}${selected.row + 1}` : ''}</span></p><button class="text-button" data-page="map">이 영토 편집하기 ${icon('arrow', 15)}</button></section></div>`;
+  return `${statsBar()}<div class="overview-layout">${mapPanel(world)}${nationStandings(world)}</div><div class="overview-bottom"><section class="panel world-note"><div class="note-art">${icon('compass', 46)}</div><div><div class="eyebrow">YOUR WORLD, YOUR STORY</div><h2>세계의 다음 장은 아직 비어 있습니다.</h2><p>${esc(world.description || '국가와 인물, 영토를 직접 구성한 다음 새로운 역사를 시작하세요.')}</p></div><button class="text-button" data-action="world-meta">세계 정보 수정 ${icon('arrow', 15)}</button></section><section class="panel selected-summary"><span class="eyebrow">SELECTED TERRITORY</span><h3>${esc(selected?.name || '선택한 영토 없음')}</h3><p>${dot(country?.color || '#657066')}${esc(country?.name || '무주지')}<span>${selected&&world.mapKind!=='free' ? `${String.fromCharCode(65 + selected.col)}${selected.row + 1}` : ''}</span></p><button class="text-button" data-page="map">이 영토 편집하기 ${icon('arrow', 15)}</button></section></div>`;
 }
 function definitionNote() { return run ? `<div class="notice">${icon('info', 16)} 지금 수정하는 것은 시작 세계입니다. 진행 중인 시뮬레이션에는 영향을 주지 않으며, ‘새 실행’부터 반영됩니다.</div>` : ''; }
 function countriesPage() {
@@ -144,9 +145,9 @@ function peoplePage() {
 }
 function mapPage() {
   const t = world.territories.find(x => x.id === ui.selected) || world.territories[0];
-  const geographic=ui.editorView==='atlas';
+  const geographic=world.mapKind==='free'||ui.editorView==='atlas';
   const editorPanel=`<section class="panel map-panel cartography-panel" id="geographic-editor"><div class="panel-head"><div><span class="eyebrow">CARTOGRAPHY STUDIO</span><h2>대륙 지도 편집 <span class="tiny-badge">${world.territories.length}개 영토</span></h2></div></div>${mapEditorToolbar(mapEditor,world,{...ui,ownerOptions:countryOptions(ui.brush,'무주지')})}<div class="cartography-viewport" style="--editor-zoom:${mapEditor.zoom}">${renderAtlas(world,{selected:ui.selected,showNames:ui.showNames,editing:true,draft:mapEditor.draft,draftMode:mapEditor.mode,showUnits:false,linkedIds:mapEditor.mode==='links'?neighbors(world,t).map(n=>n.id):[]})}</div><div class="atlas-map-note">그림과 경계는 표시용입니다. 공격·수도 연결은 ‘인접 관계’의 연결 목록을 사용합니다.</div></section>`;
-  return `${definitionNote()}<div class="editor-view-switch"><label>편집 화면<select id="map-editor-view"><option value="atlas" ${geographic?'selected':''}>대륙 그림에서 편집</option><option value="grid" ${!geographic?'selected':''}>기존 격자에서 편집</option></select></label><span>산맥·숲 삽화 또는 내 지도 이미지 위에 영토를 그릴 수 있습니다.</span></div><div class="editor-layout cartography-layout">${geographic?editorPanel:mapPanel(world,true)}<aside class="panel territory-inspector"><div class="panel-head"><div><span class="eyebrow">TERRITORY EDITOR</span><h2>영토 정보</h2></div>${icon('map', 18)}</div><div class="inspector-preview" style="--nation:${findCountry(world, t?.ownerId)?.color || '#657066'}">${icon('flag', 34)}<strong>${esc(t?.name || '')}</strong><span>${t ? `${String.fromCharCode(65 + t.col)}${t.row + 1} · ${t.row + 1}행 ${t.col + 1}열` : ''}</span></div><form id="territory-form"><label>영토 이름<input name="name" maxlength="24" required value="${esc(t?.name)}"></label><label>소유 국가<select name="ownerId">${countryOptions(t?.ownerId, '무주지')}</select></label><div class="field-help">인접 ${neighbors(world,t).length}개: ${neighbors(world,t).map(n=>esc(n.name)).join(' · ')||'없음'}<br>국가를 삭제하면 해당 영토는 무주지가 됩니다.</div><button type="submit" class="button primary full">${icon('check', 16)}영토 변경 적용</button></form><div class="map-inspector-actions">${button('map-edit-reset-shape','이 영토 경계 원상복구','reset','subtle')}${button('map-edit-reset-links','인접 관계 전체 원상복구','reset','subtle')}</div><div class="inspector-tip">${icon('info', 16)}<p>여러 영토를 빠르게 배정하려면 <b>소유권 칠하기</b>를 선택한 후 지도를 클릭하세요.</p></div></aside></div>`;
+  return `${definitionNote()}<div class="editor-view-switch"><label>편집 화면<select id="map-editor-view"><option value="atlas" ${geographic?'selected':''}>대륙 그림에서 편집</option><option value="grid" ${world.mapKind==='free'?'disabled':''} ${!geographic?'selected':''}>기존 격자에서 편집</option></select></label><span>산맥·숲 삽화 또는 내 지도 이미지 위에 영토를 그릴 수 있습니다.</span></div><div class="editor-layout cartography-layout">${geographic?editorPanel:mapPanel(world,true)}<aside class="panel territory-inspector"><div class="panel-head"><div><span class="eyebrow">TERRITORY EDITOR</span><h2>영토 정보</h2></div>${icon('map', 18)}</div><div class="inspector-preview" style="--nation:${findCountry(world, t?.ownerId)?.color || '#657066'}">${icon('flag', 34)}<strong>${esc(t?.name || '')}</strong><span>${t ? `${world.mapKind==='free'?'자유 배치 영토':`${String.fromCharCode(65 + t.col)}${t.row + 1} · ${t.row + 1}행 ${t.col + 1}열`}` : ''}</span></div><form id="territory-form"><label>영토 이름<input name="name" maxlength="24" required value="${esc(t?.name)}"></label><label>소유 국가<select name="ownerId">${countryOptions(t?.ownerId, '무주지')}</select></label><div class="field-help">인접 ${neighbors(world,t).length}개: ${neighbors(world,t).map(n=>esc(n.name)).join(' · ')||'없음'}<br>국가를 삭제하면 해당 영토는 무주지가 됩니다.</div><button type="submit" class="button primary full">${icon('check', 16)}영토 변경 적용</button></form><div class="map-inspector-actions">${button('map-edit-reset-shape','이 영토 경계 원상복구','reset','subtle')}${button('map-edit-reset-links','인접 관계 전체 원상복구','reset','subtle')}</div><div class="inspector-tip">${icon('info', 16)}<p>여러 영토를 빠르게 배정하려면 <b>소유권 칠하기</b>를 선택한 후 지도를 클릭하세요.</p></div></aside></div>`;
 }
 function historyList() {
   const history = run?.history || [];
@@ -212,8 +213,8 @@ function personDialog(id) {
 }
 function newWorldDialog() {
   stop();
-  openDialog('새 세계 만들기', '현재 세계는 먼저 파일로 내보내 보관해 주세요. 빈 격자에서 직접 시작합니다.', `<label>세계 이름<input name="name" maxlength="80" required placeholder="예: 삼국의 시대"></label><div class="fields-two"><label>가로 영토 수<input type="number" name="cols" min="2" max="24" value="10" required></label><label>세로 영토 수<input type="number" name="rows" min="2" max="20" value="8" required></label></div><div class="notice">현재 작업 공간의 세계와 실행 기록이 새 세계로 교체됩니다. 파일로 내보낸 세계는 다시 불러올 수 있습니다.</div>`, '새 세계 만들기');
-  dialogHandler = data => { setNewWorld(blankWorld({ name: data.get('name'), cols: Number(data.get('cols')), rows: Number(data.get('rows')) })); notify('빈 세계를 만들었습니다. 국가를 추가하고 영토를 배정해 보세요.'); };
+  openDialog('새 세계 만들기', '현재 세계는 먼저 파일로 내보내 보관해 주세요. 지도 종류를 선택해 시작합니다. 자유 지도는 영토 수·위치가 격자에 묶이지 않습니다.', `<label>지도 종류<select name="mapTemplate"><option value="reference">참고 그림의 자유 대륙 · 칠국 예제</option><option value="free">빈 자유 지도 · 영토 1개로 시작</option><option value="grid">기존 격자 지도</option><option value="original">원본 v11 칠국 지도</option></select></label><label>세계 이름<input name="name" maxlength="80" required placeholder="예: 삼국의 시대"></label><div class="fields-two" id="grid-dimensions" style="display:none"><label>가로 영토 수<input disabled type="number" name="cols" min="2" max="24" value="10" required></label><label>세로 영토 수<input disabled type="number" name="rows" min="2" max="20" value="8" required></label></div><div class="notice">현재 작업 공간의 세계와 실행 기록이 새 세계로 교체됩니다. 파일로 내보낸 세계는 다시 불러올 수 있습니다.</div>`, '새 세계 만들기');
+  dialogHandler = data => { const type=data.get('mapTemplate');let next=type==='reference'?createReferenceWorld():type==='original'?createDemoWorld():blankWorld({name:data.get('name'),cols:Number(data.get('cols')||10),rows:Number(data.get('rows')||8)});if(type==='free'){next.mapKind='free';next.territories=[{id:'tile-0',name:'첫 영토',ownerId:null}];next.cartography={version:1,style:'illustrated',opacity:.3,background:null,polygons:{'tile-0':{points:[[500,300],[700,300],[700,500],[500,500]],center:[600,400]}},links:[]};}next.name=data.get('name');setNewWorld(next); notify('새 세계를 만들었습니다. 지도 편집에서 영토·인접 관계를 바꿀 수 있습니다.'); };
 }
 function metaDialog() {
   stop(); render();
@@ -240,6 +241,7 @@ const actions = {
   'export': () => { downloadFile(`${fileName(world.name)}.world.json`, serializeWorld(world)); notify('세계 파일을 내보냈습니다. 국가·인물·지도·규칙이 모두 포함됩니다.'); },
   'import': () => { stop(); render(); $('#world-file').click(); },
   'new-world': newWorldDialog, 'world-meta': metaDialog,
+  'map-edit-reference': () => {if(confirm('참고 그림의 해안·바다·영토 배치와 실제 인접 연결을 적용할까요? 국가·인물·영토 이름은 유지합니다. 기존 지도는 편집 되돌리기로 복구할 수 있습니다.')){const next=referenceLayout(world);mapEditor.draft=null;mapEditor.mode='select';mapEditor.save(next);}},
   'go-simulation': () => navigate('simulation'),
   'add-country': () => countryDialog(), 'edit-country': id => countryDialog(id),
   'add-person': () => personDialog(), 'edit-person': id => { if(id&&!world.people.some(p=>p.id===id)) { notify('이 인물은 현재 편집 세계에 없습니다. 새 실행에서 확인해 주세요.',true); return; } personDialog(id); },
@@ -318,6 +320,7 @@ document.addEventListener('change', async event => {
   else if (target.id === 'paint-owner') ui.brush = target.value;
   else if (target.id === 'person-country-filter') { ui.countryFilter = target.value; render(); }
   else if (target.id === 'person-role-filter') { ui.roleFilter = target.value; render(); }
+  else if(target.name==='mapTemplate'){const grid=target.value==='grid';$('#grid-dimensions').style.display=grid?'grid':'none';document.querySelectorAll('#grid-dimensions input').forEach(input=>input.disabled=!grid);}
   else if (target.id === 'map-style') { ui.mapStyle=target.value; render(); }
   else if (target.id === 'sim-speed') { const wasAuto=auto, wasPlaying=playback.playing; stop(); ui.speed=Number(target.value); if(wasAuto)startAuto();else if(wasPlaying)playback.resume();else render(); }
   else if (target.id === 'sim-seed') ui.seed = target.value;

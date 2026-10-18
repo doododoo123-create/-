@@ -1,9 +1,12 @@
 // Presentation reads committed engine events. Its clock never consumes game randomness.
 export const leadGeneral = (world,id) => world.people.find(p=>p.countryId===id&&p.role==='general'&&p.active&&p.alive)||null;
 export function makeTurnScenes(record,before) {
-  const scenes=[];
+  const scenes=[];let camps=record.campsBefore||before.visualCamps||{};
   for(const event of record.events) {
     const frame=record.frames?.[event.index]||{before,after:before};
+    const motion=record.movements?.find(m=>m.eventIndex===event.index);
+    if(motion){scenes.push({id:`move-${event.index}`,kind:'movement',event,battleIndex:event.battleIndex,title:'지휘관 출정·복귀',worldBefore:frame.before,worldAfter:frame.before,campsBefore:camps,camps:motion.camps,moves:motion.moves});camps=motion.camps;}
+    const start=scenes.length;
     const roll=record.rolls[event.rollIndex];
     const attempts=event.type==='king'?(roll?.attempts||[]):roll?[roll.value]:[];
     if(attempts.length) attempts.forEach((value,attempt)=>scenes.push({
@@ -16,8 +19,9 @@ export function makeTurnScenes(record,before) {
     }));
     else scenes.push({id:`${event.type}-${event.index}`,kind:event.type==='resolve'?'result':'focus',role:event.role,event,battleIndex:event.battleIndex,title:event.title,detail:event.detail,worldBefore:frame.before,worldAfter:frame.before});
     if(event.type==='resolve'||frame.after!==frame.before)scenes.push({id:`apply-${event.index}`,kind:'apply',event,battleIndex:event.battleIndex,title:'병력과 영토에 결과 반영',detail:event.detail,worldBefore:frame.before,worldAfter:frame.after});
+    for(let i=start;i<scenes.length;i++)scenes[i].camps=camps;
   }
-  scenes.push({id:'result',kind:'summary',title:record.title,detail:record.detail,worldBefore:record.finalWorld||before,worldAfter:record.finalWorld||before});
+  scenes.push({id:'result',kind:'summary',title:record.title,detail:record.detail,camps:record.campsAfter||camps,worldBefore:record.finalWorld||before,worldAfter:record.finalWorld||before});
   return scenes;
 }
 export class TurnPlayback {
@@ -30,7 +34,8 @@ export class TurnPlayback {
   get complete(){return !this.state||this.state.finished;}
   get showingResult(){return this.scene?.kind==='summary';}
   get displayWorld(){return this.state?.finished?this.state.after:this.scene?.worldAfter;}
-  duration(){return this.state.phase==='departing'?(this.reducedMotion()?80:240):this.scene.kind==='apply'?1800:this.state.phase==='rolling'?(this.reducedMotion()?80:900):this.state.phase==='raw'?500:this.state.phase==='merging'?500:this.scene.kind==='summary'?1200:this.scene.kind==='result'?1400:700;}
+  get movementProgress(){if(this.scene?.kind!=='movement')return 0;const left=this.playing&&this.handle!==null?Math.max(0,(this.deadline-this.now())*this.scheduledSpeed):this.remaining;return Math.max(0,Math.min(1,1-left/this.duration()));}
+  duration(){return this.state.phase==='departing'?(this.reducedMotion()?80:240):this.scene.kind==='movement'?(this.reducedMotion()?100:1600):this.scene.kind==='apply'?1800:this.state.phase==='rolling'?(this.reducedMotion()?80:900):this.state.phase==='raw'?500:this.state.phase==='merging'?500:this.scene.kind==='summary'?1200:this.scene.kind==='result'?1400:700;}
   clearTimer(){if(this.handle!==null)this.cancel(this.handle);this.handle=null;}
   load(record,before,after,play=true){
     this.clearTimer();this.groupEnd=null;this.groupDone=false;const scenes=makeTurnScenes(record,before);scenes.at(-1).worldAfter=after;

@@ -22,6 +22,8 @@ with sync_playwright() as p:
  browser=p.chromium.launch(executable_path=os.environ.get('CHROMIUM_EXECUTABLE','/usr/bin/chromium'),headless=True,args=['--no-sandbox'])
  context=browser.new_context(viewport={'width':1600,'height':1100},accept_downloads=True)
  page=context.new_page(); page.on('pageerror',lambda e:errors.append(str(e)));page.on('dialog',lambda d:d.accept())
+ seed=json.dumps(json.loads((ROOT/'examples/칠국의 여명.world.json').read_text()))
+ page.add_init_script("if(!localStorage.getItem('saguk-studio.world.v1'))localStorage.setItem('saguk-studio.world.v1',"+json.dumps(seed)+");")
  page.goto(os.environ.get('STUDIO_TEST_URL','http://127.0.0.1:3000'),wait_until='networkidle')
  expect(page.locator('.illustrated-atlas')).to_have_count(1)
  assert page.locator('.terrain-art').get_attribute('href').startswith('data:image/jpeg;base64,')

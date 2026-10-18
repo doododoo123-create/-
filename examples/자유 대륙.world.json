@@ -1,0 +1,10006 @@
+{
+  "kind": "saguk-studio-world",
+  "version": 2,
+  "world": {
+    "schemaVersion": 2,
+    "id": "seven-realms-free-coast",
+    "name": "칠국의 여명",
+    "description": "참고 그림을 바탕으로 한 자유 대륙 · 큰 만과 반도, 80개 영토 · v11 판정 규칙",
+    "rows": 8,
+    "cols": 10,
+    "mapKind": "free",
+    "countries": [
+      {
+        "id": "nation-0",
+        "name": "청람국",
+        "color": "#6da9ff",
+        "troops": 10,
+        "recruitment": 0,
+        "personality": "balanced",
+        "commandBonus": 0,
+        "feature": "정연한 관료국가",
+        "capitalId": "tile-12"
+      },
+      {
+        "id": "nation-1",
+        "name": "적연국",
+        "color": "#ef8179",
+        "troops": 10,
+        "recruitment": 0,
+        "personality": "aggressive",
+        "commandBonus": -1,
+        "feature": "기동전 중심 소부대 편제",
+        "capitalId": "tile-37"
+      },
+      {
+        "id": "nation-2",
+        "name": "금휘국",
+        "color": "#eac66b",
+        "troops": 10,
+        "recruitment": 0,
+        "personality": "peaceful",
+        "commandBonus": 1,
+        "feature": "대부대 편제",
+        "capitalId": "tile-67"
+      },
+      {
+        "id": "nation-3",
+        "name": "백록국",
+        "color": "#6bceb4",
+        "troops": 10,
+        "recruitment": 0,
+        "personality": "balanced",
+        "commandBonus": 0,
+        "feature": "유연한 지방군 체계",
+        "capitalId": "tile-61"
+      },
+      {
+        "id": "nation-4",
+        "name": "자운국",
+        "color": "#be9aeb",
+        "troops": 10,
+        "recruitment": 0,
+        "personality": "peaceful",
+        "commandBonus": 1,
+        "feature": "산지의 신중한 편제",
+        "capitalId": "tile-65"
+      },
+      {
+        "id": "nation-5",
+        "name": "현해국",
+        "color": "#6fd4e6",
+        "troops": 10,
+        "recruitment": 0,
+        "personality": "balanced",
+        "commandBonus": 0,
+        "feature": "보급을 중시하는 해안국",
+        "capitalId": "tile-39"
+      },
+      {
+        "id": "nation-6",
+        "name": "황사국",
+        "color": "#e9a65e",
+        "troops": 10,
+        "recruitment": 0,
+        "personality": "aggressive",
+        "commandBonus": -1,
+        "feature": "소수 정예의 변경국",
+        "capitalId": "tile-5"
+      }
+    ],
+    "people": [
+      {
+        "id": "king-0",
+        "name": "서윤",
+        "countryId": "nation-0",
+        "role": "king",
+        "ability": 0,
+        "personality": "balanced",
+        "feature": "내치와 전쟁을 신중하게 병행"
+      },
+      {
+        "id": "minister-0",
+        "name": "한제",
+        "countryId": "nation-0",
+        "role": "minister",
+        "ability": 2,
+        "personality": "balanced",
+        "feature": "장기 병력 생산을 중시",
+        "ministerStyle": "producer"
+      },
+      {
+        "id": "general-0-0",
+        "name": "진우",
+        "countryId": "nation-0",
+        "role": "general",
+        "ability": 0,
+        "personality": "balanced",
+        "feature": "안정적인 균형형",
+        "slot": 0,
+        "commandBonus": 0
+      },
+      {
+        "id": "general-0-1",
+        "name": "문석",
+        "countryId": "nation-0",
+        "role": "general",
+        "ability": 0,
+        "personality": "balanced",
+        "feature": "병사 통솔에 능한 편제형",
+        "slot": 1,
+        "commandBonus": 1
+      },
+      {
+        "id": "general-0-2",
+        "name": "류건",
+        "countryId": "nation-0",
+        "role": "general",
+        "ability": 2,
+        "personality": "balanced",
+        "feature": "소수 정예 명장",
+        "slot": 2,
+        "commandBonus": -1
+      },
+      {
+        "id": "general-0-3",
+        "name": "정하",
+        "countryId": "nation-0",
+        "role": "general",
+        "ability": 0,
+        "personality": "balanced",
+        "feature": "실전과 통솔이 무난",
+        "slot": 3,
+        "commandBonus": 0
+      },
+      {
+        "id": "general-0-4",
+        "name": "손범",
+        "countryId": "nation-0",
+        "role": "general",
+        "ability": -2,
+        "personality": "balanced",
+        "feature": "통솔은 좋지만 전술에 약함",
+        "slot": 4,
+        "commandBonus": 1
+      },
+      {
+        "id": "king-1",
+        "name": "강혁",
+        "countryId": "nation-1",
+        "role": "king",
+        "ability": 0,
+        "personality": "aggressive",
+        "feature": "장군들을 자주 출전시킴"
+      },
+      {
+        "id": "minister-1",
+        "name": "위탁",
+        "countryId": "nation-1",
+        "role": "minister",
+        "ability": -2,
+        "personality": "balanced",
+        "feature": "동원에 집착하지만 집행이 서툼",
+        "ministerStyle": "recruiter"
+      },
+      {
+        "id": "general-1-0",
+        "name": "강무",
+        "countryId": "nation-1",
+        "role": "general",
+        "ability": 2,
+        "personality": "balanced",
+        "feature": "소수로 승부하는 돌격 명장",
+        "slot": 0,
+        "commandBonus": -1
+      },
+      {
+        "id": "general-1-1",
+        "name": "염수",
+        "countryId": "nation-1",
+        "role": "general",
+        "ability": 0,
+        "personality": "balanced",
+        "feature": "다수 병력 야전형",
+        "slot": 1,
+        "commandBonus": 1
+      },
+      {
+        "id": "general-1-2",
+        "name": "도찬",
+        "countryId": "nation-1",
+        "role": "general",
+        "ability": 2,
+        "personality": "balanced",
+        "feature": "노련한 전투 지휘",
+        "slot": 2,
+        "commandBonus": 0
+      },
+      {
+        "id": "general-1-3",
+        "name": "허량",
+        "countryId": "nation-1",
+        "role": "general",
+        "ability": -2,
+        "personality": "balanced",
+        "feature": "과감하지만 전술이 거침",
+        "slot": 3,
+        "commandBonus": 1
+      },
+      {
+        "id": "general-1-4",
+        "name": "장호",
+        "countryId": "nation-1",
+        "role": "general",
+        "ability": 0,
+        "personality": "balanced",
+        "feature": "기본에 충실한 기동 지휘",
+        "slot": 4,
+        "commandBonus": 0
+      },
+      {
+        "id": "king-2",
+        "name": "유온",
+        "countryId": "nation-2",
+        "role": "king",
+        "ability": 0,
+        "personality": "peaceful",
+        "feature": "군비와 기반을 축적"
+      },
+      {
+        "id": "minister-2",
+        "name": "배문",
+        "countryId": "nation-2",
+        "role": "minister",
+        "ability": 0,
+        "personality": "balanced",
+        "feature": "장군의 지휘 규모 확대",
+        "ministerStyle": "supplier"
+      },
+      {
+        "id": "general-2-0",
+        "name": "배준",
+        "countryId": "nation-2",
+        "role": "general",
+        "ability": -2,
+        "personality": "balanced",
+        "feature": "대부대 운용·전술에 약함",
+        "slot": 0,
+        "commandBonus": 1
+      },
+      {
+        "id": "general-2-1",
+        "name": "금서",
+        "countryId": "nation-2",
+        "role": "general",
+        "ability": 0,
+        "personality": "balanced",
+        "feature": "소부대의 안정적 통솔",
+        "slot": 1,
+        "commandBonus": -1
+      },
+      {
+        "id": "general-2-2",
+        "name": "서항",
+        "countryId": "nation-2",
+        "role": "general",
+        "ability": 2,
+        "personality": "balanced",
+        "feature": "대부대 운용 명장",
+        "slot": 2,
+        "commandBonus": 1
+      },
+      {
+        "id": "general-2-3",
+        "name": "나원",
+        "countryId": "nation-2",
+        "role": "general",
+        "ability": 0,
+        "personality": "balanced",
+        "feature": "병참에 익숙한 실무형",
+        "slot": 3,
+        "commandBonus": 0
+      },
+      {
+        "id": "general-2-4",
+        "name": "조평",
+        "countryId": "nation-2",
+        "role": "general",
+        "ability": -2,
+        "personality": "balanced",
+        "feature": "큰 대열·임기응변에 약함",
+        "slot": 4,
+        "commandBonus": 1
+      },
+      {
+        "id": "king-3",
+        "name": "백린",
+        "countryId": "nation-3",
+        "role": "king",
+        "ability": 0,
+        "personality": "balanced",
+        "feature": "상황에 맞춰 공세와 내정 선택"
+      },
+      {
+        "id": "minister-3",
+        "name": "도겸",
+        "countryId": "nation-3",
+        "role": "minister",
+        "ability": 0,
+        "personality": "balanced",
+        "feature": "세 내정 행동을 고르게 추진",
+        "ministerStyle": "balanced"
+      },
+      {
+        "id": "general-3-0",
+        "name": "백진",
+        "countryId": "nation-3",
+        "role": "general",
+        "ability": 2,
+        "personality": "balanced",
+        "feature": "넓은 시야의 명장",
+        "slot": 0,
+        "commandBonus": 1
+      },
+      {
+        "id": "general-3-1",
+        "name": "임하",
+        "countryId": "nation-3",
+        "role": "general",
+        "ability": 0,
+        "personality": "balanced",
+        "feature": "소부대 신중형",
+        "slot": 1,
+        "commandBonus": -1
+      },
+      {
+        "id": "general-3-2",
+        "name": "도윤",
+        "countryId": "nation-3",
+        "role": "general",
+        "ability": 0,
+        "personality": "balanced",
+        "feature": "대부대 실무형",
+        "slot": 2,
+        "commandBonus": 1
+      },
+      {
+        "id": "general-3-3",
+        "name": "설목",
+        "countryId": "nation-3",
+        "role": "general",
+        "ability": -2,
+        "personality": "balanced",
+        "feature": "경험 부족 소부대 지휘",
+        "slot": 3,
+        "commandBonus": -1
+      },
+      {
+        "id": "general-3-4",
+        "name": "한솔",
+        "countryId": "nation-3",
+        "role": "general",
+        "ability": 2,
+        "personality": "balanced",
+        "feature": "빠른 상황 판단의 명장",
+        "slot": 4,
+        "commandBonus": 0
+      },
+      {
+        "id": "king-4",
+        "name": "영소",
+        "countryId": "nation-4",
+        "role": "king",
+        "ability": 0,
+        "personality": "peaceful",
+        "feature": "내정을 먼저 다져 기회를 기다림"
+      },
+      {
+        "id": "minister-4",
+        "name": "묵현",
+        "countryId": "nation-4",
+        "role": "minister",
+        "ability": 0,
+        "personality": "balanced",
+        "feature": "지속적인 충원 기반을 마련",
+        "ministerStyle": "producer"
+      },
+      {
+        "id": "general-4-0",
+        "name": "영준",
+        "countryId": "nation-4",
+        "role": "general",
+        "ability": 2,
+        "personality": "balanced",
+        "feature": "산악전에 익숙한 명장",
+        "slot": 0,
+        "commandBonus": 0
+      },
+      {
+        "id": "general-4-1",
+        "name": "묵진",
+        "countryId": "nation-4",
+        "role": "general",
+        "ability": 0,
+        "personality": "balanced",
+        "feature": "보급과 통솔에 능함",
+        "slot": 1,
+        "commandBonus": 1
+      },
+      {
+        "id": "general-4-2",
+        "name": "유경",
+        "countryId": "nation-4",
+        "role": "general",
+        "ability": 0,
+        "personality": "balanced",
+        "feature": "침착한 지역 지휘",
+        "slot": 2,
+        "commandBonus": 0
+      },
+      {
+        "id": "general-4-3",
+        "name": "송겸",
+        "countryId": "nation-4",
+        "role": "general",
+        "ability": -2,
+        "personality": "balanced",
+        "feature": "편제는 좋지만 전술에 약함",
+        "slot": 3,
+        "commandBonus": 1
+      },
+      {
+        "id": "general-4-4",
+        "name": "하연",
+        "countryId": "nation-4",
+        "role": "general",
+        "ability": 0,
+        "personality": "balanced",
+        "feature": "기본에 충실한 수비형",
+        "slot": 4,
+        "commandBonus": 0
+      },
+      {
+        "id": "king-5",
+        "name": "현도",
+        "countryId": "nation-5",
+        "role": "king",
+        "ability": 0,
+        "personality": "balanced",
+        "feature": "작은 영토를 바탕으로 기회를 탐색"
+      },
+      {
+        "id": "minister-5",
+        "name": "해명",
+        "countryId": "nation-5",
+        "role": "minister",
+        "ability": 2,
+        "personality": "balanced",
+        "feature": "보급 효율과 지휘 규모 확대에 능함",
+        "ministerStyle": "supplier"
+      },
+      {
+        "id": "general-5-0",
+        "name": "현우",
+        "countryId": "nation-5",
+        "role": "general",
+        "ability": 2,
+        "personality": "balanced",
+        "feature": "해안 방어의 명장",
+        "slot": 0,
+        "commandBonus": 1
+      },
+      {
+        "id": "general-5-1",
+        "name": "해준",
+        "countryId": "nation-5",
+        "role": "general",
+        "ability": 0,
+        "personality": "balanced",
+        "feature": "보급에 익숙한 지휘",
+        "slot": 1,
+        "commandBonus": 0
+      },
+      {
+        "id": "general-5-2",
+        "name": "임겸",
+        "countryId": "nation-5",
+        "role": "general",
+        "ability": 0,
+        "personality": "balanced",
+        "feature": "대부대 운용형",
+        "slot": 2,
+        "commandBonus": 1
+      },
+      {
+        "id": "general-5-3",
+        "name": "명호",
+        "countryId": "nation-5",
+        "role": "general",
+        "ability": -2,
+        "personality": "balanced",
+        "feature": "야전 경험이 부족",
+        "slot": 3,
+        "commandBonus": 0
+      },
+      {
+        "id": "general-5-4",
+        "name": "진해",
+        "countryId": "nation-5",
+        "role": "general",
+        "ability": 0,
+        "personality": "balanced",
+        "feature": "차분한 균형형",
+        "slot": 4,
+        "commandBonus": 0
+      },
+      {
+        "id": "king-6",
+        "name": "사혁",
+        "countryId": "nation-6",
+        "role": "king",
+        "ability": 0,
+        "personality": "aggressive",
+        "feature": "작은 나라여도 먼저 승부를 거는 호전형"
+      },
+      {
+        "id": "minister-6",
+        "name": "담윤",
+        "countryId": "nation-6",
+        "role": "minister",
+        "ability": 0,
+        "personality": "balanced",
+        "feature": "부족한 병력을 신속히 모집",
+        "ministerStyle": "recruiter"
+      },
+      {
+        "id": "general-6-0",
+        "name": "사준",
+        "countryId": "nation-6",
+        "role": "general",
+        "ability": 2,
+        "personality": "balanced",
+        "feature": "소수 정예를 이끄는 명장",
+        "slot": 0,
+        "commandBonus": 1
+      },
+      {
+        "id": "general-6-1",
+        "name": "담호",
+        "countryId": "nation-6",
+        "role": "general",
+        "ability": 0,
+        "personality": "balanced",
+        "feature": "과감한 돌격형",
+        "slot": 1,
+        "commandBonus": 0
+      },
+      {
+        "id": "general-6-2",
+        "name": "황건",
+        "countryId": "nation-6",
+        "role": "general",
+        "ability": 0,
+        "personality": "balanced",
+        "feature": "병사 통솔형",
+        "slot": 2,
+        "commandBonus": 1
+      },
+      {
+        "id": "general-6-3",
+        "name": "마연",
+        "countryId": "nation-6",
+        "role": "general",
+        "ability": -2,
+        "personality": "balanced",
+        "feature": "과감하지만 미숙함",
+        "slot": 3,
+        "commandBonus": 0
+      },
+      {
+        "id": "general-6-4",
+        "name": "석진",
+        "countryId": "nation-6",
+        "role": "general",
+        "ability": 2,
+        "personality": "balanced",
+        "feature": "날렵한 정예 지휘",
+        "slot": 4,
+        "commandBonus": -1
+      }
+    ],
+    "territories": [
+      {
+        "id": "tile-0",
+        "name": "서원",
+        "ownerId": "nation-0"
+      },
+      {
+        "id": "tile-1",
+        "name": "운원",
+        "ownerId": "nation-0"
+      },
+      {
+        "id": "tile-2",
+        "name": "청원",
+        "ownerId": "nation-0"
+      },
+      {
+        "id": "tile-3",
+        "name": "해원",
+        "ownerId": "nation-0"
+      },
+      {
+        "id": "tile-4",
+        "name": "송원",
+        "ownerId": "nation-6"
+      },
+      {
+        "id": "tile-5",
+        "name": "백원",
+        "ownerId": "nation-6"
+      },
+      {
+        "id": "tile-6",
+        "name": "진원",
+        "ownerId": "nation-6"
+      },
+      {
+        "id": "tile-7",
+        "name": "금원",
+        "ownerId": "nation-6"
+      },
+      {
+        "id": "tile-8",
+        "name": "연원",
+        "ownerId": "nation-5"
+      },
+      {
+        "id": "tile-9",
+        "name": "평원",
+        "ownerId": "nation-5"
+      },
+      {
+        "id": "tile-10",
+        "name": "남원",
+        "ownerId": "nation-0"
+      },
+      {
+        "id": "tile-11",
+        "name": "북원",
+        "ownerId": "nation-0"
+      },
+      {
+        "id": "tile-12",
+        "name": "월원",
+        "ownerId": "nation-0"
+      },
+      {
+        "id": "tile-13",
+        "name": "덕원",
+        "ownerId": "nation-0"
+      },
+      {
+        "id": "tile-14",
+        "name": "안원",
+        "ownerId": "nation-0"
+      },
+      {
+        "id": "tile-15",
+        "name": "한원",
+        "ownerId": "nation-0"
+      },
+      {
+        "id": "tile-16",
+        "name": "영원",
+        "ownerId": "nation-1"
+      },
+      {
+        "id": "tile-17",
+        "name": "현원",
+        "ownerId": "nation-1"
+      },
+      {
+        "id": "tile-18",
+        "name": "양원",
+        "ownerId": "nation-1"
+      },
+      {
+        "id": "tile-19",
+        "name": "장원",
+        "ownerId": "nation-5"
+      },
+      {
+        "id": "tile-20",
+        "name": "서릉",
+        "ownerId": "nation-0"
+      },
+      {
+        "id": "tile-21",
+        "name": "운릉",
+        "ownerId": "nation-0"
+      },
+      {
+        "id": "tile-22",
+        "name": "청릉",
+        "ownerId": "nation-0"
+      },
+      {
+        "id": "tile-23",
+        "name": "해릉",
+        "ownerId": "nation-0"
+      },
+      {
+        "id": "tile-24",
+        "name": "송릉",
+        "ownerId": "nation-0"
+      },
+      {
+        "id": "tile-25",
+        "name": "백릉",
+        "ownerId": "nation-1"
+      },
+      {
+        "id": "tile-26",
+        "name": "진릉",
+        "ownerId": "nation-1"
+      },
+      {
+        "id": "tile-27",
+        "name": "금릉",
+        "ownerId": "nation-1"
+      },
+      {
+        "id": "tile-28",
+        "name": "연릉",
+        "ownerId": "nation-1"
+      },
+      {
+        "id": "tile-29",
+        "name": "평릉",
+        "ownerId": "nation-5"
+      },
+      {
+        "id": "tile-30",
+        "name": "남릉",
+        "ownerId": "nation-3"
+      },
+      {
+        "id": "tile-31",
+        "name": "북릉",
+        "ownerId": "nation-0"
+      },
+      {
+        "id": "tile-32",
+        "name": "월릉",
+        "ownerId": "nation-0"
+      },
+      {
+        "id": "tile-33",
+        "name": "덕릉",
+        "ownerId": "nation-0"
+      },
+      {
+        "id": "tile-34",
+        "name": "안릉",
+        "ownerId": "nation-0"
+      },
+      {
+        "id": "tile-35",
+        "name": "한릉",
+        "ownerId": "nation-1"
+      },
+      {
+        "id": "tile-36",
+        "name": "영릉",
+        "ownerId": "nation-1"
+      },
+      {
+        "id": "tile-37",
+        "name": "현릉",
+        "ownerId": "nation-1"
+      },
+      {
+        "id": "tile-38",
+        "name": "양릉",
+        "ownerId": "nation-1"
+      },
+      {
+        "id": "tile-39",
+        "name": "장릉",
+        "ownerId": "nation-5"
+      },
+      {
+        "id": "tile-40",
+        "name": "서곡",
+        "ownerId": "nation-3"
+      },
+      {
+        "id": "tile-41",
+        "name": "운곡",
+        "ownerId": "nation-0"
+      },
+      {
+        "id": "tile-42",
+        "name": "청곡",
+        "ownerId": "nation-4"
+      },
+      {
+        "id": "tile-43",
+        "name": "해곡",
+        "ownerId": "nation-4"
+      },
+      {
+        "id": "tile-44",
+        "name": "송곡",
+        "ownerId": "nation-4"
+      },
+      {
+        "id": "tile-45",
+        "name": "백곡",
+        "ownerId": "nation-1"
+      },
+      {
+        "id": "tile-46",
+        "name": "진곡",
+        "ownerId": "nation-1"
+      },
+      {
+        "id": "tile-47",
+        "name": "금곡",
+        "ownerId": "nation-1"
+      },
+      {
+        "id": "tile-48",
+        "name": "연곡",
+        "ownerId": "nation-1"
+      },
+      {
+        "id": "tile-49",
+        "name": "평곡",
+        "ownerId": "nation-5"
+      },
+      {
+        "id": "tile-50",
+        "name": "남곡",
+        "ownerId": "nation-3"
+      },
+      {
+        "id": "tile-51",
+        "name": "북곡",
+        "ownerId": "nation-3"
+      },
+      {
+        "id": "tile-52",
+        "name": "월곡",
+        "ownerId": "nation-3"
+      },
+      {
+        "id": "tile-53",
+        "name": "덕곡",
+        "ownerId": "nation-2"
+      },
+      {
+        "id": "tile-54",
+        "name": "안곡",
+        "ownerId": "nation-4"
+      },
+      {
+        "id": "tile-55",
+        "name": "한곡",
+        "ownerId": "nation-4"
+      },
+      {
+        "id": "tile-56",
+        "name": "영곡",
+        "ownerId": "nation-1"
+      },
+      {
+        "id": "tile-57",
+        "name": "현곡",
+        "ownerId": "nation-4"
+      },
+      {
+        "id": "tile-58",
+        "name": "양곡",
+        "ownerId": "nation-4"
+      },
+      {
+        "id": "tile-59",
+        "name": "장곡",
+        "ownerId": "nation-5"
+      },
+      {
+        "id": "tile-60",
+        "name": "서주",
+        "ownerId": "nation-3"
+      },
+      {
+        "id": "tile-61",
+        "name": "운주",
+        "ownerId": "nation-3"
+      },
+      {
+        "id": "tile-62",
+        "name": "청주",
+        "ownerId": "nation-3"
+      },
+      {
+        "id": "tile-63",
+        "name": "해주",
+        "ownerId": "nation-2"
+      },
+      {
+        "id": "tile-64",
+        "name": "송주",
+        "ownerId": "nation-2"
+      },
+      {
+        "id": "tile-65",
+        "name": "백주",
+        "ownerId": "nation-4"
+      },
+      {
+        "id": "tile-66",
+        "name": "진주",
+        "ownerId": "nation-4"
+      },
+      {
+        "id": "tile-67",
+        "name": "금주",
+        "ownerId": "nation-2"
+      },
+      {
+        "id": "tile-68",
+        "name": "연주",
+        "ownerId": "nation-2"
+      },
+      {
+        "id": "tile-69",
+        "name": "평주",
+        "ownerId": "nation-2"
+      },
+      {
+        "id": "tile-70",
+        "name": "남주",
+        "ownerId": "nation-3"
+      },
+      {
+        "id": "tile-71",
+        "name": "북주",
+        "ownerId": "nation-3"
+      },
+      {
+        "id": "tile-72",
+        "name": "월주",
+        "ownerId": "nation-3"
+      },
+      {
+        "id": "tile-73",
+        "name": "덕주",
+        "ownerId": "nation-2"
+      },
+      {
+        "id": "tile-74",
+        "name": "안주",
+        "ownerId": "nation-2"
+      },
+      {
+        "id": "tile-75",
+        "name": "한주",
+        "ownerId": "nation-2"
+      },
+      {
+        "id": "tile-76",
+        "name": "영주",
+        "ownerId": "nation-2"
+      },
+      {
+        "id": "tile-77",
+        "name": "현주",
+        "ownerId": "nation-2"
+      },
+      {
+        "id": "tile-78",
+        "name": "양주",
+        "ownerId": "nation-2"
+      },
+      {
+        "id": "tile-79",
+        "name": "장주",
+        "ownerId": "nation-2"
+      }
+    ],
+    "rules": {
+      "mode": "v11",
+      "diceSides": 10,
+      "domesticThresholds": {
+        "balanced": 5,
+        "peaceful": 7,
+        "aggressive": 3
+      },
+      "ministerWeights": {
+        "balanced": [
+          3,
+          3,
+          4
+        ],
+        "recruiter": [
+          5,
+          2,
+          3
+        ],
+        "producer": [
+          2,
+          3,
+          5
+        ],
+        "supplier": [
+          2,
+          2,
+          6
+        ]
+      },
+      "lossRates": {
+        "win": 0.3,
+        "tie": 0.4,
+        "loss": 0.5
+      },
+      "successTarget": 6,
+      "recruitGain": 3,
+      "productionGain": 3,
+      "supplyGain": 5,
+      "baseCapacity": 20,
+      "minimumReserve": 5,
+      "territoryProduction": 1,
+      "armyAdvantageBonus": 1,
+      "roundLimit": 30
+    },
+    "cartography": {
+      "version": 1,
+      "style": "illustrated",
+      "opacity": 0.17,
+      "background": null,
+      "polygons": {
+        "tile-0": {
+          "points": [
+            [
+              329,
+              48.5
+            ],
+            [
+              322,
+              54.5
+            ],
+            [
+              316,
+              52.5
+            ],
+            [
+              310,
+              59.5
+            ],
+            [
+              307.5,
+              57
+            ],
+            [
+              306.5,
+              48
+            ],
+            [
+              309,
+              45.5
+            ],
+            [
+              311,
+              46.5
+            ],
+            [
+              313,
+              42.5
+            ],
+            [
+              316,
+              45.5
+            ],
+            [
+              320.5,
+              37
+            ],
+            [
+              315,
+              30.5
+            ],
+            [
+              311,
+              31.5
+            ],
+            [
+              305,
+              37.5
+            ],
+            [
+              297,
+              32.5
+            ],
+            [
+              289,
+              40.5
+            ],
+            [
+              283,
+              34.5
+            ],
+            [
+              272,
+              46.5
+            ],
+            [
+              267,
+              41.5
+            ],
+            [
+              264.5,
+              48
+            ],
+            [
+              256,
+              53.5
+            ],
+            [
+              249.5,
+              48
+            ],
+            [
+              252,
+              45.5
+            ],
+            [
+              256.5,
+              47
+            ],
+            [
+              251.5,
+              43
+            ],
+            [
+              255.5,
+              39
+            ],
+            [
+              253,
+              36.5
+            ],
+            [
+              248,
+              38.5
+            ],
+            [
+              245,
+              32.5
+            ],
+            [
+              240,
+              32.5
+            ],
+            [
+              235.5,
+              39
+            ],
+            [
+              246.5,
+              44
+            ],
+            [
+              244.5,
+              48
+            ],
+            [
+              249.5,
+              52
+            ],
+            [
+              247,
+              54.5
+            ],
+            [
+              240,
+              47.5
+            ],
+            [
+              233,
+              51.5
+            ],
+            [
+              227,
+              43.5
+            ],
+            [
+              222.5,
+              46
+            ],
+            [
+              228.5,
+              53
+            ],
+            [
+              224,
+              57.5
+            ],
+            [
+              218,
+              57.5
+            ],
+            [
+              215,
+              54.5
+            ],
+            [
+              209.5,
+              62
+            ],
+            [
+              209.5,
+              66
+            ],
+            [
+              212,
+              67.5
+            ],
+            [
+              216,
+              67.5
+            ],
+            [
+              219,
+              64.5
+            ],
+            [
+              221.5,
+              67
+            ],
+            [
+              219.5,
+              74
+            ],
+            [
+              224,
+              76.5
+            ],
+            [
+              233,
+              67.5
+            ],
+            [
+              241,
+              67.5
+            ],
+            [
+              243.5,
+              70
+            ],
+            [
+              242.5,
+              75
+            ],
+            [
+              236.5,
+              79
+            ],
+            [
+              242.5,
+              86
+            ],
+            [
+              232.634,
+              97.327
+            ],
+            [
+              241.452,
+              108.586
+            ],
+            [
+              330.065,
+              49.565
+            ]
+          ],
+          "center": [
+            265.992,
+            63.957
+          ]
+        },
+        "tile-1": {
+          "points": [
+            [
+              465,
+              50.5
+            ],
+            [
+              460,
+              45.5
+            ],
+            [
+              456,
+              45.5
+            ],
+            [
+              453.5,
+              43
+            ],
+            [
+              453.5,
+              39
+            ],
+            [
+              458.5,
+              36
+            ],
+            [
+              455,
+              31.5
+            ],
+            [
+              450,
+              30.5
+            ],
+            [
+              446,
+              35.5
+            ],
+            [
+              443,
+              32.5
+            ],
+            [
+              438,
+              34.5
+            ],
+            [
+              433,
+              26.5
+            ],
+            [
+              430,
+              27.5
+            ],
+            [
+              426,
+              24.5
+            ],
+            [
+              423,
+              26.5
+            ],
+            [
+              413,
+              18.5
+            ],
+            [
+              407,
+              21.5
+            ],
+            [
+              398,
+              15.5
+            ],
+            [
+              391.5,
+              21
+            ],
+            [
+              391.5,
+              24
+            ],
+            [
+              402.5,
+              30
+            ],
+            [
+              398,
+              35.5
+            ],
+            [
+              393,
+              37.5
+            ],
+            [
+              384,
+              32.5
+            ],
+            [
+              380.5,
+              35
+            ],
+            [
+              382.5,
+              41
+            ],
+            [
+              380,
+              43.5
+            ],
+            [
+              371,
+              41.5
+            ],
+            [
+              370.5,
+              45
+            ],
+            [
+              366,
+              48.5
+            ],
+            [
+              362,
+              48.5
+            ],
+            [
+              356,
+              43.5
+            ],
+            [
+              353,
+              43.5
+            ],
+            [
+              348.5,
+              48
+            ],
+            [
+              351.5,
+              56
+            ],
+            [
+              343,
+              62.5
+            ],
+            [
+              338,
+              59.5
+            ],
+            [
+              336.883,
+              60.059
+            ],
+            [
+              353.008,
+              103.116
+            ],
+            [
+              412.038,
+              122.481
+            ],
+            [
+              470.666,
+              52.429
+            ],
+            [
+              470.842,
+              49.77
+            ]
+          ],
+          "center": [
+            402.137,
+            69.478
+          ]
+        },
+        "tile-2": {
+          "points": [
+            [
+              604,
+              51.5
+            ],
+            [
+              600,
+              53.5
+            ],
+            [
+              593,
+              47.5
+            ],
+            [
+              586,
+              54.5
+            ],
+            [
+              578,
+              54.5
+            ],
+            [
+              572.5,
+              45
+            ],
+            [
+              567,
+              45.5
+            ],
+            [
+              558,
+              32.5
+            ],
+            [
+              544,
+              49.5
+            ],
+            [
+              541,
+              48.5
+            ],
+            [
+              539,
+              50.5
+            ],
+            [
+              536.5,
+              48
+            ],
+            [
+              538.5,
+              44
+            ],
+            [
+              530.5,
+              38
+            ],
+            [
+              528,
+              33.5
+            ],
+            [
+              518,
+              38.5
+            ],
+            [
+              502,
+              27.5
+            ],
+            [
+              488,
+              42.5
+            ],
+            [
+              482,
+              43.5
+            ],
+            [
+              479,
+              41.5
+            ],
+            [
+              473,
+              49.5
+            ],
+            [
+              470.842,
+              49.77
+            ],
+            [
+              470.666,
+              52.429
+            ],
+            [
+              531.45,
+              140.655
+            ],
+            [
+              548.159,
+              141.939
+            ],
+            [
+              596.856,
+              69.356
+            ],
+            [
+              596.5,
+              69
+            ],
+            [
+              599,
+              63.5
+            ],
+            [
+              600.949,
+              63.256
+            ],
+            [
+              606.726,
+              54.645
+            ]
+          ],
+          "center": [
+            536.644,
+            78.647
+          ]
+        },
+        "tile-3": {
+          "points": [
+            [
+              749,
+              101.5
+            ],
+            [
+              747,
+              99.5
+            ],
+            [
+              744,
+              101.5
+            ],
+            [
+              741.5,
+              99
+            ],
+            [
+              746.5,
+              93
+            ],
+            [
+              745.5,
+              91
+            ],
+            [
+              741,
+              86.5
+            ],
+            [
+              736,
+              86.5
+            ],
+            [
+              730.5,
+              94
+            ],
+            [
+              730.5,
+              97
+            ],
+            [
+              734.5,
+              101
+            ],
+            [
+              731,
+              107.5
+            ],
+            [
+              728,
+              103.5
+            ],
+            [
+              721,
+              106.5
+            ],
+            [
+              715.5,
+              102
+            ],
+            [
+              719.5,
+              97
+            ],
+            [
+              719.5,
+              90
+            ],
+            [
+              717,
+              87.5
+            ],
+            [
+              712,
+              88.5
+            ],
+            [
+              703.5,
+              79
+            ],
+            [
+              706,
+              75.5
+            ],
+            [
+              713.5,
+              75
+            ],
+            [
+              714.5,
+              72
+            ],
+            [
+              710.5,
+              67
+            ],
+            [
+              708,
+              65.5
+            ],
+            [
+              705,
+              68.5
+            ],
+            [
+              700,
+              63.5
+            ],
+            [
+              697,
+              65.5
+            ],
+            [
+              690,
+              56.5
+            ],
+            [
+              681,
+              66.5
+            ],
+            [
+              671,
+              69.5
+            ],
+            [
+              671.5,
+              72
+            ],
+            [
+              667,
+              76.5
+            ],
+            [
+              662,
+              78.5
+            ],
+            [
+              657,
+              78.5
+            ],
+            [
+              654,
+              75.5
+            ],
+            [
+              649,
+              80.5
+            ],
+            [
+              646.561,
+              80.988
+            ],
+            [
+              664.797,
+              152.532
+            ],
+            [
+              745.772,
+              131.725
+            ],
+            [
+              750.067,
+              101.5
+            ]
+          ],
+          "center": [
+            694.598,
+            108.15
+          ]
+        },
+        "tile-4": {
+          "points": [
+            [
+              107,
+              594.5
+            ],
+            [
+              116.127,
+              605.215
+            ],
+            [
+              156.704,
+              617.775
+            ],
+            [
+              208.163,
+              580.789
+            ],
+            [
+              154.211,
+              525.383
+            ],
+            [
+              138.391,
+              529.109
+            ],
+            [
+              138,
+              529.5
+            ],
+            [
+              130,
+              531.5
+            ],
+            [
+              126.5,
+              538
+            ],
+            [
+              128,
+              542.5
+            ],
+            [
+              134,
+              542.5
+            ],
+            [
+              139.5,
+              548
+            ],
+            [
+              139.5,
+              551
+            ],
+            [
+              131.5,
+              557
+            ],
+            [
+              131.5,
+              560
+            ],
+            [
+              127,
+              564.5
+            ],
+            [
+              116,
+              565.5
+            ],
+            [
+              108,
+              561.5
+            ],
+            [
+              101,
+              568.5
+            ],
+            [
+              97,
+              569.5
+            ],
+            [
+              94.5,
+              572
+            ],
+            [
+              94.5,
+              577
+            ],
+            [
+              97.5,
+              581
+            ],
+            [
+              90.5,
+              585
+            ],
+            [
+              84.5,
+              595
+            ],
+            [
+              85.115,
+              595.615
+            ],
+            [
+              97.773,
+              599.533
+            ]
+          ],
+          "center": [
+            148.294,
+            576.138
+          ]
+        },
+        "tile-5": {
+          "points": [
+            [
+              271.5,
+              597
+            ],
+            [
+              268.5,
+              602
+            ],
+            [
+              268.5,
+              608
+            ],
+            [
+              271,
+              610.5
+            ],
+            [
+              277,
+              611.5
+            ],
+            [
+              281,
+              607.5
+            ],
+            [
+              284,
+              610.5
+            ],
+            [
+              290,
+              608.5
+            ],
+            [
+              294.5,
+              613
+            ],
+            [
+              297.5,
+              621
+            ],
+            [
+              290.5,
+              629
+            ],
+            [
+              289.5,
+              635
+            ],
+            [
+              292,
+              638.5
+            ],
+            [
+              297,
+              636.5
+            ],
+            [
+              303,
+              641.5
+            ],
+            [
+              311,
+              631.5
+            ],
+            [
+              313,
+              631.5
+            ],
+            [
+              322.5,
+              641
+            ],
+            [
+              321.5,
+              646
+            ],
+            [
+              326.5,
+              652
+            ],
+            [
+              333,
+              652.5
+            ],
+            [
+              343.5,
+              643
+            ],
+            [
+              343.5,
+              640
+            ],
+            [
+              336.5,
+              631
+            ],
+            [
+              340,
+              626.5
+            ],
+            [
+              345,
+              625.5
+            ],
+            [
+              350,
+              627.5
+            ],
+            [
+              353,
+              625.5
+            ],
+            [
+              356,
+              632.5
+            ],
+            [
+              370,
+              632.5
+            ],
+            [
+              373.5,
+              625
+            ],
+            [
+              368.5,
+              618
+            ],
+            [
+              371,
+              615.5
+            ],
+            [
+              379,
+              614.5
+            ],
+            [
+              380.5,
+              608
+            ],
+            [
+              374.5,
+              594
+            ],
+            [
+              372,
+              591.5
+            ],
+            [
+              366,
+              591.5
+            ],
+            [
+              362.5,
+              588
+            ],
+            [
+              362.5,
+              575
+            ],
+            [
+              366,
+              571.5
+            ],
+            [
+              373,
+              572.5
+            ],
+            [
+              377,
+              566.5
+            ],
+            [
+              378.332,
+              567.261
+            ],
+            [
+              372.434,
+              554.856
+            ],
+            [
+              270.89,
+              593.342
+            ]
+          ],
+          "center": [
+            330.407,
+            603.544
+          ]
+        },
+        "tile-6": {
+          "points": [
+            [
+              171,
+              690.5
+            ],
+            [
+              173.5,
+              693
+            ],
+            [
+              173,
+              700.5
+            ],
+            [
+              178,
+              700.5
+            ],
+            [
+              183,
+              697.5
+            ],
+            [
+              187,
+              703.5
+            ],
+            [
+              192,
+              703.5
+            ],
+            [
+              195,
+              706.5
+            ],
+            [
+              197.5,
+              705
+            ],
+            [
+              198.5,
+              694
+            ],
+            [
+              194.5,
+              686
+            ],
+            [
+              186.5,
+              681
+            ],
+            [
+              186.5,
+              674
+            ],
+            [
+              195.5,
+              668
+            ],
+            [
+              196.5,
+              664
+            ],
+            [
+              188.5,
+              650
+            ],
+            [
+              199,
+              642.5
+            ],
+            [
+              208,
+              647.5
+            ],
+            [
+              216,
+              646.5
+            ],
+            [
+              218.5,
+              644
+            ],
+            [
+              218.5,
+              639
+            ],
+            [
+              215.5,
+              635
+            ],
+            [
+              218,
+              632.5
+            ],
+            [
+              228,
+              632.5
+            ],
+            [
+              231.5,
+              628
+            ],
+            [
+              226.5,
+              616
+            ],
+            [
+              220.5,
+              610
+            ],
+            [
+              220.5,
+              606
+            ],
+            [
+              228.5,
+              601
+            ],
+            [
+              226.5,
+              594
+            ],
+            [
+              238.847,
+              585.604
+            ],
+            [
+              208.163,
+              580.789
+            ],
+            [
+              156.704,
+              617.775
+            ],
+            [
+              166.349,
+              693.291
+            ]
+          ],
+          "center": [
+            191.113,
+            634.804
+          ]
+        },
+        "tile-7": {
+          "points": [
+            [
+              118.5,
+              608
+            ],
+            [
+              111.5,
+              616
+            ],
+            [
+              113.5,
+              625
+            ],
+            [
+              106,
+              632.5
+            ],
+            [
+              103,
+              633.5
+            ],
+            [
+              99,
+              630.5
+            ],
+            [
+              92.5,
+              635
+            ],
+            [
+              91.5,
+              638
+            ],
+            [
+              93.5,
+              642
+            ],
+            [
+              84.5,
+              651
+            ],
+            [
+              85,
+              657.5
+            ],
+            [
+              91,
+              660.5
+            ],
+            [
+              97,
+              660.5
+            ],
+            [
+              102,
+              655.5
+            ],
+            [
+              106,
+              663.5
+            ],
+            [
+              112,
+              663.5
+            ],
+            [
+              118.5,
+              658
+            ],
+            [
+              117.5,
+              653
+            ],
+            [
+              121,
+              649.5
+            ],
+            [
+              128,
+              653.5
+            ],
+            [
+              136,
+              650.5
+            ],
+            [
+              138.5,
+              653
+            ],
+            [
+              137.5,
+              657
+            ],
+            [
+              141,
+              657.5
+            ],
+            [
+              143.5,
+              661
+            ],
+            [
+              135.5,
+              671
+            ],
+            [
+              136,
+              676.5
+            ],
+            [
+              145,
+              680.5
+            ],
+            [
+              155,
+              678.5
+            ],
+            [
+              157.5,
+              681
+            ],
+            [
+              155.5,
+              689
+            ],
+            [
+              157,
+              692.5
+            ],
+            [
+              166,
+              693.5
+            ],
+            [
+              166.349,
+              693.291
+            ],
+            [
+              156.704,
+              617.775
+            ],
+            [
+              116.127,
+              605.215
+            ]
+          ],
+          "center": [
+            131.758,
+            644.149
+          ]
+        },
+        "tile-8": {
+          "points": [
+            [
+              917.5,
+              565
+            ],
+            [
+              907.5,
+              558
+            ],
+            [
+              910,
+              555.5
+            ],
+            [
+              922.218,
+              562.831
+            ],
+            [
+              932.19,
+              557.817
+            ],
+            [
+              932.455,
+              555.544
+            ],
+            [
+              877.713,
+              487.867
+            ],
+            [
+              808.396,
+              544.825
+            ],
+            [
+              810.708,
+              570.063
+            ],
+            [
+              843.938,
+              602.19
+            ],
+            [
+              917.564,
+              565.171
+            ]
+          ],
+          "center": [
+            865.439,
+            548.529
+          ]
+        },
+        "tile-9": {
+          "points": [
+            [
+              766.098,
+              512.197
+            ],
+            [
+              693.042,
+              520.483
+            ],
+            [
+              725.883,
+              608.925
+            ],
+            [
+              741.938,
+              618.358
+            ],
+            [
+              810.708,
+              570.063
+            ],
+            [
+              808.396,
+              544.825
+            ]
+          ],
+          "center": [
+            751.841,
+            558.53
+          ]
+        },
+        "tile-10": {
+          "points": [
+            [
+              336,
+              60.5
+            ],
+            [
+              332.5,
+              57
+            ],
+            [
+              333.5,
+              53
+            ],
+            [
+              330.065,
+              49.565
+            ],
+            [
+              241.452,
+              108.586
+            ],
+            [
+              244.972,
+              140.901
+            ],
+            [
+              311.327,
+              162.611
+            ],
+            [
+              353.008,
+              103.116
+            ],
+            [
+              336.883,
+              60.059
+            ]
+          ],
+          "center": [
+            299.746,
+            110.496
+          ]
+        },
+        "tile-11": {
+          "points": [
+            [
+              160,
+              72.5
+            ],
+            [
+              157,
+              70.5
+            ],
+            [
+              155,
+              71.5
+            ],
+            [
+              151,
+              67.5
+            ],
+            [
+              145,
+              73.5
+            ],
+            [
+              140,
+              73.5
+            ],
+            [
+              137,
+              78.5
+            ],
+            [
+              133,
+              77.5
+            ],
+            [
+              129,
+              85.5
+            ],
+            [
+              122,
+              80.5
+            ],
+            [
+              116,
+              86.5
+            ],
+            [
+              108,
+              85.5
+            ],
+            [
+              102.5,
+              92
+            ],
+            [
+              106.5,
+              97
+            ],
+            [
+              104,
+              99.5
+            ],
+            [
+              98,
+              98.5
+            ],
+            [
+              91.5,
+              106
+            ],
+            [
+              96,
+              112.5
+            ],
+            [
+              101,
+              110.5
+            ],
+            [
+              106.5,
+              114
+            ],
+            [
+              102.5,
+              121
+            ],
+            [
+              99,
+              124.5
+            ],
+            [
+              96,
+              123.5
+            ],
+            [
+              92.5,
+              129
+            ],
+            [
+              98,
+              132.5
+            ],
+            [
+              102,
+              132.5
+            ],
+            [
+              106,
+              126.5
+            ],
+            [
+              110,
+              127.5
+            ],
+            [
+              114,
+              123.5
+            ],
+            [
+              125,
+              124.5
+            ],
+            [
+              127.5,
+              128
+            ],
+            [
+              123.5,
+              132
+            ],
+            [
+              122.5,
+              136
+            ],
+            [
+              124.5,
+              139
+            ],
+            [
+              117.5,
+              144
+            ],
+            [
+              117.5,
+              147
+            ],
+            [
+              124.5,
+              156
+            ],
+            [
+              119.693,
+              159.289
+            ],
+            [
+              122.546,
+              161.713
+            ],
+            [
+              155.206,
+              147.636
+            ],
+            [
+              164.976,
+              69.183
+            ]
+          ],
+          "center": [
+            133.754,
+            111.885
+          ]
+        },
+        "tile-12": {
+          "points": [
+            [
+              229,
+              101.5
+            ],
+            [
+              222,
+              101.5
+            ],
+            [
+              214,
+              94.5
+            ],
+            [
+              207.5,
+              98
+            ],
+            [
+              208.5,
+              102
+            ],
+            [
+              206,
+              104.5
+            ],
+            [
+              203,
+              104.5
+            ],
+            [
+              195,
+              98.5
+            ],
+            [
+              191,
+              98.5
+            ],
+            [
+              184.5,
+              86
+            ],
+            [
+              190,
+              83.5
+            ],
+            [
+              193.5,
+              78
+            ],
+            [
+              189.5,
+              73
+            ],
+            [
+              190.5,
+              70
+            ],
+            [
+              184,
+              66.5
+            ],
+            [
+              179.5,
+              70
+            ],
+            [
+              180.5,
+              72
+            ],
+            [
+              178,
+              74.5
+            ],
+            [
+              173,
+              75.5
+            ],
+            [
+              166,
+              68.5
+            ],
+            [
+              164.976,
+              69.183
+            ],
+            [
+              155.206,
+              147.636
+            ],
+            [
+              215.269,
+              168.814
+            ],
+            [
+              244.972,
+              140.901
+            ],
+            [
+              241.452,
+              108.586
+            ],
+            [
+              232.634,
+              97.327
+            ]
+          ],
+          "center": [
+            197.371,
+            123.684
+          ]
+        },
+        "tile-13": {
+          "points": [
+            [
+              804,
+              44.5
+            ],
+            [
+              799,
+              46.5
+            ],
+            [
+              793,
+              53.5
+            ],
+            [
+              784,
+              43.5
+            ],
+            [
+              777,
+              45.5
+            ],
+            [
+              771.5,
+              52
+            ],
+            [
+              771.5,
+              55
+            ],
+            [
+              779.5,
+              61
+            ],
+            [
+              780.5,
+              66
+            ],
+            [
+              774,
+              70.5
+            ],
+            [
+              765,
+              65.5
+            ],
+            [
+              760.5,
+              68
+            ],
+            [
+              756.5,
+              74
+            ],
+            [
+              756.5,
+              78
+            ],
+            [
+              765.5,
+              85
+            ],
+            [
+              766.5,
+              88
+            ],
+            [
+              761,
+              93.5
+            ],
+            [
+              755.5,
+              94
+            ],
+            [
+              757.5,
+              99
+            ],
+            [
+              755,
+              101.5
+            ],
+            [
+              750.067,
+              101.5
+            ],
+            [
+              745.772,
+              131.725
+            ],
+            [
+              783.893,
+              183.76
+            ],
+            [
+              828.256,
+              173.307
+            ],
+            [
+              852.805,
+              114.547
+            ],
+            [
+              805.503,
+              46.003
+            ]
+          ],
+          "center": [
+            797.549,
+            116.782
+          ]
+        },
+        "tile-14": {
+          "points": [
+            [
+              433.696,
+              182.366
+            ],
+            [
+              465.536,
+              189.373
+            ],
+            [
+              531.45,
+              140.655
+            ],
+            [
+              470.666,
+              52.429
+            ],
+            [
+              412.038,
+              122.481
+            ]
+          ],
+          "center": [
+            467.419,
+            128.525
+          ]
+        },
+        "tile-15": {
+          "points": [
+            [
+              644,
+              81.5
+            ],
+            [
+              637.5,
+              76
+            ],
+            [
+              637.5,
+              70
+            ],
+            [
+              632,
+              66.5
+            ],
+            [
+              625.5,
+              71
+            ],
+            [
+              628.5,
+              79
+            ],
+            [
+              625,
+              82.5
+            ],
+            [
+              620,
+              81.5
+            ],
+            [
+              616,
+              83.5
+            ],
+            [
+              612,
+              77.5
+            ],
+            [
+              606,
+              78.5
+            ],
+            [
+              603.5,
+              76
+            ],
+            [
+              604,
+              72.5
+            ],
+            [
+              600,
+              72.5
+            ],
+            [
+              596.856,
+              69.356
+            ],
+            [
+              548.159,
+              141.939
+            ],
+            [
+              581.493,
+              177.137
+            ],
+            [
+              655.737,
+              170.362
+            ],
+            [
+              664.797,
+              152.532
+            ],
+            [
+              646.561,
+              80.988
+            ]
+          ],
+          "center": [
+            610.913,
+            128.765
+          ]
+        },
+        "tile-16": {
+          "points": [
+            [
+              702.981,
+              331.037
+            ],
+            [
+              768.734,
+              321.829
+            ],
+            [
+              791.959,
+              290.818
+            ],
+            [
+              764.369,
+              221.961
+            ],
+            [
+              683.125,
+              231.409
+            ],
+            [
+              671.017,
+              255.925
+            ]
+          ],
+          "center": [
+            731.466,
+            275.094
+          ]
+        },
+        "tile-17": {
+          "points": [
+            [
+              594,
+              327.5
+            ],
+            [
+              606,
+              329.5
+            ],
+            [
+              608.5,
+              332
+            ],
+            [
+              609.5,
+              339
+            ],
+            [
+              618,
+              343.5
+            ],
+            [
+              621.5,
+              336
+            ],
+            [
+              633.5,
+              325
+            ],
+            [
+              636,
+              319.5
+            ],
+            [
+              638.5,
+              324
+            ],
+            [
+              627.5,
+              337
+            ],
+            [
+              624.5,
+              346
+            ],
+            [
+              626.335,
+              351.504
+            ],
+            [
+              702.299,
+              332.016
+            ],
+            [
+              702.981,
+              331.037
+            ],
+            [
+              671.017,
+              255.925
+            ],
+            [
+              585.943,
+              278.571
+            ],
+            [
+              593.683,
+              327.817
+            ]
+          ],
+          "center": [
+            642.912,
+            304.268
+          ]
+        },
+        "tile-18": {
+          "points": [
+            [
+              729,
+              417.5
+            ],
+            [
+              735,
+              414.5
+            ],
+            [
+              740,
+              416.5
+            ],
+            [
+              747,
+              413.5
+            ],
+            [
+              749.5,
+              416
+            ],
+            [
+              747,
+              418.5
+            ],
+            [
+              742,
+              419.5
+            ],
+            [
+              740,
+              417.5
+            ],
+            [
+              733.076,
+              421.457
+            ],
+            [
+              787.761,
+              423.998
+            ],
+            [
+              803.091,
+              413.867
+            ],
+            [
+              768.734,
+              321.829
+            ],
+            [
+              702.981,
+              331.037
+            ],
+            [
+              702.299,
+              332.016
+            ],
+            [
+              702.476,
+              358.659
+            ],
+            [
+              705,
+              359.5
+            ],
+            [
+              711,
+              355.5
+            ],
+            [
+              714.5,
+              359
+            ],
+            [
+              712,
+              361.5
+            ],
+            [
+              709,
+              360.5
+            ],
+            [
+              702.507,
+              363.283
+            ],
+            [
+              702.885,
+              420.054
+            ],
+            [
+              726.746,
+              421.163
+            ]
+          ],
+          "center": [
+            746.68,
+            376.815
+          ]
+        },
+        "tile-19": {
+          "points": [
+            [
+              854,
+              632.5
+            ],
+            [
+              864,
+              633.5
+            ],
+            [
+              866.5,
+              636
+            ],
+            [
+              864.5,
+              643
+            ],
+            [
+              869,
+              646.5
+            ],
+            [
+              873,
+              646.5
+            ],
+            [
+              878.5,
+              641
+            ],
+            [
+              876.5,
+              636
+            ],
+            [
+              879,
+              633.5
+            ],
+            [
+              888,
+              631.5
+            ],
+            [
+              891,
+              628.5
+            ],
+            [
+              896,
+              637.5
+            ],
+            [
+              905,
+              632.5
+            ],
+            [
+              907.5,
+              635
+            ],
+            [
+              906.5,
+              643
+            ],
+            [
+              910,
+              645.5
+            ],
+            [
+              914.5,
+              644
+            ],
+            [
+              917,
+              638.5
+            ],
+            [
+              923,
+              642.5
+            ],
+            [
+              927.5,
+              640
+            ],
+            [
+              930.5,
+              636
+            ],
+            [
+              930.5,
+              630
+            ],
+            [
+              925.5,
+              626
+            ],
+            [
+              924.5,
+              619
+            ],
+            [
+              933.5,
+              613
+            ],
+            [
+              933.5,
+              606
+            ],
+            [
+              939.5,
+              602
+            ],
+            [
+              939.5,
+              587
+            ],
+            [
+              935,
+              580.5
+            ],
+            [
+              920.5,
+              573
+            ],
+            [
+              917.564,
+              565.171
+            ],
+            [
+              843.938,
+              602.19
+            ],
+            [
+              849.647,
+              634.241
+            ]
+          ],
+          "center": [
+            894.865,
+            607.883
+          ]
+        },
+        "tile-20": {
+          "points": [
+            [
+              327.977,
+              210.128
+            ],
+            [
+              383.591,
+              222.322
+            ],
+            [
+              433.696,
+              182.366
+            ],
+            [
+              412.038,
+              122.481
+            ],
+            [
+              353.008,
+              103.116
+            ],
+            [
+              311.327,
+              162.611
+            ]
+          ],
+          "center": [
+            371.304,
+            165.305
+          ]
+        },
+        "tile-21": {
+          "points": [
+            [
+              655.737,
+              170.362
+            ],
+            [
+              683.125,
+              231.409
+            ],
+            [
+              764.369,
+              221.961
+            ],
+            [
+              783.893,
+              183.76
+            ],
+            [
+              745.772,
+              131.725
+            ],
+            [
+              664.797,
+              152.532
+            ]
+          ],
+          "center": [
+            719.428,
+            183.418
+          ]
+        },
+        "tile-22": {
+          "points": [
+            [
+              283.801,
+              257.148
+            ],
+            [
+              327.977,
+              210.128
+            ],
+            [
+              311.327,
+              162.611
+            ],
+            [
+              244.972,
+              140.901
+            ],
+            [
+              215.269,
+              168.814
+            ],
+            [
+              212.181,
+              234.722
+            ]
+          ],
+          "center": [
+            265.817,
+            199.234
+          ]
+        },
+        "tile-23": {
+          "points": [
+            [
+              505.633,
+              268.615
+            ],
+            [
+              566.22,
+              263.165
+            ],
+            [
+              581.493,
+              177.137
+            ],
+            [
+              548.159,
+              141.939
+            ],
+            [
+              531.45,
+              140.655
+            ],
+            [
+              465.536,
+              189.373
+            ]
+          ],
+          "center": [
+            529.116,
+            206.149
+          ]
+        },
+        "tile-24": {
+          "points": [
+            [
+              566.22,
+              263.165
+            ],
+            [
+              585.943,
+              278.571
+            ],
+            [
+              671.017,
+              255.925
+            ],
+            [
+              683.125,
+              231.409
+            ],
+            [
+              655.737,
+              170.362
+            ],
+            [
+              581.493,
+              177.137
+            ]
+          ],
+          "center": [
+            621.632,
+            223.526
+          ]
+        },
+        "tile-25": {
+          "points": [
+            [
+              627,
+              353.5
+            ],
+            [
+              631,
+              354.5
+            ],
+            [
+              637,
+              352.5
+            ],
+            [
+              644.5,
+              359
+            ],
+            [
+              647.5,
+              366
+            ],
+            [
+              639.5,
+              377
+            ],
+            [
+              641,
+              380.5
+            ],
+            [
+              650.5,
+              386
+            ],
+            [
+              647.5,
+              390
+            ],
+            [
+              649.5,
+              397
+            ],
+            [
+              645,
+              401.5
+            ],
+            [
+              642,
+              401.5
+            ],
+            [
+              638.5,
+              407
+            ],
+            [
+              642.5,
+              413
+            ],
+            [
+              642,
+              418.5
+            ],
+            [
+              649,
+              419.5
+            ],
+            [
+              656.5,
+              414
+            ],
+            [
+              661,
+              406.5
+            ],
+            [
+              670,
+              404.5
+            ],
+            [
+              672.5,
+              402
+            ],
+            [
+              671.5,
+              393
+            ],
+            [
+              667.5,
+              389
+            ],
+            [
+              674.5,
+              384
+            ],
+            [
+              674.5,
+              379
+            ],
+            [
+              683,
+              367.5
+            ],
+            [
+              695.5,
+              365
+            ],
+            [
+              695.5,
+              354
+            ],
+            [
+              687.5,
+              345
+            ],
+            [
+              690,
+              342.5
+            ],
+            [
+              701.5,
+              351
+            ],
+            [
+              700.5,
+              357
+            ],
+            [
+              702,
+              358.5
+            ],
+            [
+              702.476,
+              358.659
+            ],
+            [
+              702.299,
+              332.016
+            ],
+            [
+              626.335,
+              351.504
+            ]
+          ],
+          "center": [
+            665.236,
+            369.431
+          ]
+        },
+        "tile-26": {
+          "points": [
+            [
+              517,
+              386.5
+            ],
+            [
+              511,
+              388.5
+            ],
+            [
+              507,
+              387.5
+            ],
+            [
+              498.5,
+              379
+            ],
+            [
+              501,
+              376.5
+            ],
+            [
+              509,
+              382.5
+            ],
+            [
+              511.028,
+              381.892
+            ],
+            [
+              491.406,
+              370.176
+            ],
+            [
+              419.033,
+              419.917
+            ],
+            [
+              468.771,
+              481.394
+            ],
+            [
+              496.29,
+              475.421
+            ],
+            [
+              521.356,
+              389.767
+            ]
+          ],
+          "center": [
+            475.49,
+            425.611
+          ]
+        },
+        "tile-27": {
+          "points": [
+            [
+              517.5,
+              484
+            ],
+            [
+              522.5,
+              478
+            ],
+            [
+              518.5,
+              471
+            ],
+            [
+              519.5,
+              469
+            ],
+            [
+              523,
+              465.5
+            ],
+            [
+              532,
+              468.5
+            ],
+            [
+              536,
+              463.5
+            ],
+            [
+              551,
+              471.5
+            ],
+            [
+              556.5,
+              466
+            ],
+            [
+              550.5,
+              457
+            ],
+            [
+              553,
+              453.5
+            ],
+            [
+              557,
+              454.5
+            ],
+            [
+              561,
+              449.5
+            ],
+            [
+              565,
+              449.5
+            ],
+            [
+              570,
+              453.5
+            ],
+            [
+              576,
+              450.5
+            ],
+            [
+              578.5,
+              454
+            ],
+            [
+              574.5,
+              458
+            ],
+            [
+              576,
+              459.5
+            ],
+            [
+              581,
+              454.5
+            ],
+            [
+              586,
+              461.5
+            ],
+            [
+              587.5,
+              459
+            ],
+            [
+              584.5,
+              455
+            ],
+            [
+              587.5,
+              452
+            ],
+            [
+              581,
+              441.5
+            ],
+            [
+              575,
+              442.5
+            ],
+            [
+              565.5,
+              433
+            ],
+            [
+              573.5,
+              427
+            ],
+            [
+              568,
+              419.5
+            ],
+            [
+              565,
+              418.5
+            ],
+            [
+              561,
+              421.5
+            ],
+            [
+              556,
+              416.5
+            ],
+            [
+              551,
+              417.5
+            ],
+            [
+              545,
+              412.5
+            ],
+            [
+              541,
+              415.5
+            ],
+            [
+              534,
+              413.5
+            ],
+            [
+              525.5,
+              407
+            ],
+            [
+              529.5,
+              402
+            ],
+            [
+              525,
+              392.5
+            ],
+            [
+              521.356,
+              389.767
+            ],
+            [
+              496.29,
+              475.421
+            ],
+            [
+              525.819,
+              492.319
+            ]
+          ],
+          "center": [
+            534.612,
+            442.448
+          ]
+        },
+        "tile-28": {
+          "points": [
+            [
+              354.5,
+              508
+            ],
+            [
+              355.5,
+              501
+            ],
+            [
+              362,
+              496.5
+            ],
+            [
+              369.5,
+              498
+            ],
+            [
+              369.5,
+              493
+            ],
+            [
+              373.5,
+              488
+            ],
+            [
+              369.5,
+              484
+            ],
+            [
+              372,
+              480.5
+            ],
+            [
+              375.078,
+              484.017
+            ],
+            [
+              395.861,
+              418.54
+            ],
+            [
+              372.803,
+              396.965
+            ],
+            [
+              298.794,
+              420.127
+            ],
+            [
+              291.718,
+              485.798
+            ],
+            [
+              359.483,
+              512.153
+            ]
+          ],
+          "center": [
+            342.43,
+            451.449
+          ]
+        },
+        "tile-29": {
+          "points": [
+            [
+              757,
+              682.5
+            ],
+            [
+              762,
+              680.5
+            ],
+            [
+              767,
+              682.5
+            ],
+            [
+              770.5,
+              687
+            ],
+            [
+              770.5,
+              693
+            ],
+            [
+              781,
+              697.5
+            ],
+            [
+              788.5,
+              693
+            ],
+            [
+              788.5,
+              687
+            ],
+            [
+              781.5,
+              678
+            ],
+            [
+              785,
+              672.5
+            ],
+            [
+              789.5,
+              671
+            ],
+            [
+              788.5,
+              666
+            ],
+            [
+              791,
+              663.5
+            ],
+            [
+              796,
+              665.5
+            ],
+            [
+              803,
+              664.5
+            ],
+            [
+              802.5,
+              657
+            ],
+            [
+              800.5,
+              655
+            ],
+            [
+              801.5,
+              651
+            ],
+            [
+              807,
+              645.5
+            ],
+            [
+              813,
+              647.5
+            ],
+            [
+              817,
+              646.5
+            ],
+            [
+              821,
+              639.5
+            ],
+            [
+              830,
+              639.5
+            ],
+            [
+              834,
+              645.5
+            ],
+            [
+              841,
+              647.5
+            ],
+            [
+              845.5,
+              645
+            ],
+            [
+              846.5,
+              637
+            ],
+            [
+              849,
+              634.5
+            ],
+            [
+              849.647,
+              634.241
+            ],
+            [
+              843.938,
+              602.19
+            ],
+            [
+              810.708,
+              570.063
+            ],
+            [
+              741.938,
+              618.358
+            ],
+            [
+              756.551,
+              681.871
+            ]
+          ],
+          "center": [
+            793.236,
+            628.397
+          ]
+        },
+        "tile-30": {
+          "points": [
+            [
+              115,
+              162.5
+            ],
+            [
+              112,
+              162.5
+            ],
+            [
+              107,
+              157.5
+            ],
+            [
+              104,
+              157.5
+            ],
+            [
+              99,
+              162.5
+            ],
+            [
+              95,
+              161.5
+            ],
+            [
+              89.5,
+              157
+            ],
+            [
+              89.5,
+              154
+            ],
+            [
+              93.5,
+              150
+            ],
+            [
+              88.5,
+              142
+            ],
+            [
+              84,
+              140.5
+            ],
+            [
+              80,
+              144.5
+            ],
+            [
+              76,
+              143.5
+            ],
+            [
+              72.5,
+              137
+            ],
+            [
+              74.5,
+              134
+            ],
+            [
+              73.5,
+              128
+            ],
+            [
+              64,
+              125.5
+            ],
+            [
+              57.5,
+              132
+            ],
+            [
+              59.5,
+              137
+            ],
+            [
+              57,
+              139.5
+            ],
+            [
+              52,
+              136.5
+            ],
+            [
+              47,
+              141.5
+            ],
+            [
+              44,
+              139.5
+            ],
+            [
+              36.5,
+              149
+            ],
+            [
+              38,
+              152.5
+            ],
+            [
+              45.5,
+              157
+            ],
+            [
+              43.5,
+              164
+            ],
+            [
+              39,
+              167.5
+            ],
+            [
+              33,
+              164.5
+            ],
+            [
+              30,
+              165.5
+            ],
+            [
+              27.5,
+              168
+            ],
+            [
+              27.5,
+              173
+            ],
+            [
+              20.5,
+              179
+            ],
+            [
+              22,
+              182.5
+            ],
+            [
+              27,
+              184.5
+            ],
+            [
+              39,
+              179.5
+            ],
+            [
+              44.5,
+              182
+            ],
+            [
+              44.5,
+              187
+            ],
+            [
+              36.5,
+              196
+            ],
+            [
+              36.5,
+              199
+            ],
+            [
+              43,
+              203.5
+            ],
+            [
+              50,
+              202.5
+            ],
+            [
+              54,
+              194.5
+            ],
+            [
+              59,
+              197.5
+            ],
+            [
+              62,
+              193.5
+            ],
+            [
+              77.5,
+              206
+            ],
+            [
+              71.5,
+              219
+            ],
+            [
+              80.5,
+              226
+            ],
+            [
+              78.5,
+              228
+            ],
+            [
+              78.5,
+              228.867
+            ],
+            [
+              113.191,
+              213.421
+            ],
+            [
+              122.546,
+              161.713
+            ],
+            [
+              119.693,
+              159.289
+            ]
+          ],
+          "center": [
+            76.457,
+            177.362
+          ]
+        },
+        "tile-31": {
+          "points": [
+            [
+              402.843,
+              301.964
+            ],
+            [
+              472.721,
+              310.714
+            ],
+            [
+              505.633,
+              268.615
+            ],
+            [
+              465.536,
+              189.373
+            ],
+            [
+              433.696,
+              182.366
+            ],
+            [
+              383.591,
+              222.322
+            ]
+          ],
+          "center": [
+            442.517,
+            250.079
+          ]
+        },
+        "tile-32": {
+          "points": [
+            [
+              294.278,
+              309.48
+            ],
+            [
+              369.16,
+              333.015
+            ],
+            [
+              402.843,
+              301.964
+            ],
+            [
+              383.591,
+              222.322
+            ],
+            [
+              327.977,
+              210.128
+            ],
+            [
+              283.801,
+              257.148
+            ]
+          ],
+          "center": [
+            344.43,
+            272.112
+          ]
+        },
+        "tile-33": {
+          "points": [
+            [
+              591.5,
+              330
+            ],
+            [
+              593.683,
+              327.817
+            ],
+            [
+              585.943,
+              278.571
+            ],
+            [
+              566.22,
+              263.165
+            ],
+            [
+              505.633,
+              268.615
+            ],
+            [
+              472.721,
+              310.714
+            ],
+            [
+              491.406,
+              370.176
+            ],
+            [
+              511.028,
+              381.892
+            ],
+            [
+              519,
+              379.5
+            ],
+            [
+              529.592,
+              388.523
+            ],
+            [
+              552.95,
+              389.153
+            ],
+            [
+              552.5,
+              386
+            ],
+            [
+              569,
+              377.5
+            ],
+            [
+              573.5,
+              381
+            ],
+            [
+              572.5,
+              389
+            ],
+            [
+              581,
+              387.5
+            ],
+            [
+              585.204,
+              390.022
+            ],
+            [
+              585.209,
+              390.022
+            ],
+            [
+              598.527,
+              358.637
+            ],
+            [
+              594.355,
+              332.094
+            ]
+          ],
+          "center": [
+            539.167,
+            326.653
+          ]
+        },
+        "tile-34": {
+          "points": [
+            [
+              369.16,
+              333.015
+            ],
+            [
+              372.803,
+              396.965
+            ],
+            [
+              395.861,
+              418.54
+            ],
+            [
+              419.033,
+              419.917
+            ],
+            [
+              491.406,
+              370.176
+            ],
+            [
+              472.721,
+              310.714
+            ],
+            [
+              402.843,
+              301.964
+            ]
+          ],
+          "center": [
+            424.693,
+            358.205
+          ]
+        },
+        "tile-35": {
+          "points": [
+            [
+              733,
+              421.5
+            ],
+            [
+              724,
+              437.5
+            ],
+            [
+              714,
+              443.5
+            ],
+            [
+              707,
+              444.5
+            ],
+            [
+              700,
+              454.5
+            ],
+            [
+              697,
+              453.5
+            ],
+            [
+              693.5,
+              458
+            ],
+            [
+              699,
+              461.5
+            ],
+            [
+              704,
+              459.5
+            ],
+            [
+              706.5,
+              462
+            ],
+            [
+              701.5,
+              469
+            ],
+            [
+              703,
+              474.5
+            ],
+            [
+              706,
+              473.5
+            ],
+            [
+              710,
+              475.5
+            ],
+            [
+              718,
+              467.5
+            ],
+            [
+              726,
+              468.5
+            ],
+            [
+              731,
+              465.5
+            ],
+            [
+              738.5,
+              469
+            ],
+            [
+              738,
+              474.5
+            ],
+            [
+              742,
+              474.5
+            ],
+            [
+              750,
+              473.5
+            ],
+            [
+              754.5,
+              470
+            ],
+            [
+              754.5,
+              462
+            ],
+            [
+              762,
+              453.5
+            ],
+            [
+              764.5,
+              457
+            ],
+            [
+              760.5,
+              461
+            ],
+            [
+              758.5,
+              475
+            ],
+            [
+              751,
+              480.5
+            ],
+            [
+              743,
+              480.5
+            ],
+            [
+              740.5,
+              483
+            ],
+            [
+              742.5,
+              489
+            ],
+            [
+              735,
+              494.5
+            ],
+            [
+              723,
+              492.5
+            ],
+            [
+              722.5,
+              498
+            ],
+            [
+              719,
+              502.5
+            ],
+            [
+              710,
+              503.5
+            ],
+            [
+              705,
+              500.5
+            ],
+            [
+              695,
+              505.5
+            ],
+            [
+              691,
+              502.5
+            ],
+            [
+              686,
+              503.5
+            ],
+            [
+              683,
+              500.5
+            ],
+            [
+              673.5,
+              508
+            ],
+            [
+              676.525,
+              512.537
+            ],
+            [
+              693.042,
+              520.483
+            ],
+            [
+              766.098,
+              512.197
+            ],
+            [
+              787.761,
+              423.998
+            ],
+            [
+              733.076,
+              421.457
+            ]
+          ],
+          "center": [
+            741.034,
+            469.518
+          ]
+        },
+        "tile-36": {
+          "points": [
+            [
+              379,
+              488.5
+            ],
+            [
+              387,
+              488.5
+            ],
+            [
+              389.5,
+              486
+            ],
+            [
+              387.5,
+              482
+            ],
+            [
+              390,
+              479.5
+            ],
+            [
+              393,
+              482.5
+            ],
+            [
+              396,
+              480.5
+            ],
+            [
+              399,
+              483.5
+            ],
+            [
+              403,
+              482.5
+            ],
+            [
+              405.5,
+              485
+            ],
+            [
+              401,
+              490.5
+            ],
+            [
+              396,
+              488.5
+            ],
+            [
+              391.5,
+              493
+            ],
+            [
+              401.5,
+              498
+            ],
+            [
+              397.5,
+              502
+            ],
+            [
+              397.5,
+              505
+            ],
+            [
+              404.5,
+              511
+            ],
+            [
+              402.5,
+              523
+            ],
+            [
+              413,
+              517.5
+            ],
+            [
+              415.339,
+              520.507
+            ],
+            [
+              451.099,
+              511.624
+            ],
+            [
+              468.771,
+              481.394
+            ],
+            [
+              419.033,
+              419.917
+            ],
+            [
+              395.861,
+              418.54
+            ],
+            [
+              375.078,
+              484.017
+            ]
+          ],
+          "center": [
+            420.212,
+            472.031
+          ]
+        },
+        "tile-37": {
+          "points": [
+            [
+              526,
+              492.5
+            ],
+            [
+              525.819,
+              492.319
+            ],
+            [
+              496.29,
+              475.421
+            ],
+            [
+              468.771,
+              481.394
+            ],
+            [
+              451.099,
+              511.624
+            ],
+            [
+              483.549,
+              566.295
+            ],
+            [
+              486.5,
+              564
+            ],
+            [
+              484.5,
+              558
+            ],
+            [
+              487,
+              555.5
+            ],
+            [
+              497,
+              553.5
+            ],
+            [
+              501,
+              557.5
+            ],
+            [
+              506,
+              557.5
+            ],
+            [
+              511,
+              561.5
+            ],
+            [
+              510.5,
+              558
+            ],
+            [
+              514.5,
+              553
+            ],
+            [
+              511.5,
+              548
+            ],
+            [
+              514,
+              545.5
+            ],
+            [
+              517,
+              548.5
+            ],
+            [
+              521,
+              548.5
+            ],
+            [
+              526,
+              553.5
+            ],
+            [
+              529,
+              552.5
+            ],
+            [
+              533,
+              557.5
+            ],
+            [
+              531.5,
+              552
+            ],
+            [
+              534.5,
+              543
+            ],
+            [
+              525.5,
+              533
+            ],
+            [
+              533.5,
+              527
+            ],
+            [
+              537,
+              519.5
+            ],
+            [
+              542,
+              517.5
+            ],
+            [
+              553,
+              522.5
+            ],
+            [
+              555.5,
+              520
+            ],
+            [
+              552.5,
+              516
+            ],
+            [
+              556.5,
+              511
+            ],
+            [
+              556.5,
+              509.877
+            ],
+            [
+              526.066,
+              492.46
+            ]
+          ],
+          "center": [
+            498.644,
+            517.071
+          ]
+        },
+        "tile-38": {
+          "points": [
+            [
+              416.5,
+              522
+            ],
+            [
+              411.5,
+              531
+            ],
+            [
+              414,
+              534.5
+            ],
+            [
+              418,
+              534.5
+            ],
+            [
+              420.5,
+              537
+            ],
+            [
+              420.5,
+              540
+            ],
+            [
+              424.5,
+              544
+            ],
+            [
+              419,
+              550.5
+            ],
+            [
+              412.5,
+              552
+            ],
+            [
+              410.5,
+              558
+            ],
+            [
+              413.5,
+              563
+            ],
+            [
+              410.5,
+              566
+            ],
+            [
+              408.5,
+              574
+            ],
+            [
+              415,
+              579.5
+            ],
+            [
+              418,
+              579.5
+            ],
+            [
+              425,
+              573.5
+            ],
+            [
+              427.5,
+              576
+            ],
+            [
+              425.5,
+              583
+            ],
+            [
+              429,
+              584.5
+            ],
+            [
+              431,
+              580.5
+            ],
+            [
+              433.5,
+              583
+            ],
+            [
+              432.5,
+              589
+            ],
+            [
+              441,
+              592.5
+            ],
+            [
+              445,
+              596.5
+            ],
+            [
+              449,
+              595.5
+            ],
+            [
+              453.5,
+              590
+            ],
+            [
+              446.5,
+              578
+            ],
+            [
+              450,
+              574.5
+            ],
+            [
+              459,
+              576.5
+            ],
+            [
+              462.5,
+              574
+            ],
+            [
+              462.5,
+              566
+            ],
+            [
+              459.5,
+              563
+            ],
+            [
+              462,
+              560.5
+            ],
+            [
+              469,
+              563.5
+            ],
+            [
+              473,
+              560.5
+            ],
+            [
+              482,
+              567.5
+            ],
+            [
+              483.549,
+              566.295
+            ],
+            [
+              451.099,
+              511.624
+            ],
+            [
+              415.339,
+              520.507
+            ]
+          ],
+          "center": [
+            441.114,
+            551.436
+          ]
+        },
+        "tile-39": {
+          "points": [
+            [
+              999.5,
+              617
+            ],
+            [
+              1000,
+              623.5
+            ],
+            [
+              1005,
+              625.5
+            ],
+            [
+              1010,
+              619.5
+            ],
+            [
+              1015.5,
+              624
+            ],
+            [
+              1012.5,
+              627
+            ],
+            [
+              1014,
+              628.5
+            ],
+            [
+              1018,
+              626.5
+            ],
+            [
+              1021.5,
+              630
+            ],
+            [
+              1019.5,
+              632
+            ],
+            [
+              1019.5,
+              637
+            ],
+            [
+              1021.5,
+              640
+            ],
+            [
+              1010.5,
+              650
+            ],
+            [
+              1017.5,
+              659
+            ],
+            [
+              1011.5,
+              668
+            ],
+            [
+              1015,
+              673.5
+            ],
+            [
+              1023,
+              674.5
+            ],
+            [
+              1028,
+              667.5
+            ],
+            [
+              1036,
+              670.5
+            ],
+            [
+              1042,
+              658.5
+            ],
+            [
+              1046.5,
+              661
+            ],
+            [
+              1049,
+              668.5
+            ],
+            [
+              1053.5,
+              666
+            ],
+            [
+              1057,
+              658.5
+            ],
+            [
+              1063.569,
+              659.23
+            ],
+            [
+              1069.601,
+              645.088
+            ],
+            [
+              1027.456,
+              596.869
+            ],
+            [
+              996.055,
+              613.555
+            ]
+          ],
+          "center": [
+            1033.414,
+            636.952
+          ]
+        },
+        "tile-40": {
+          "points": [
+            [
+              113.191,
+              213.421
+            ],
+            [
+              179.455,
+              256.849
+            ],
+            [
+              212.181,
+              234.722
+            ],
+            [
+              215.269,
+              168.814
+            ],
+            [
+              155.206,
+              147.636
+            ],
+            [
+              122.546,
+              161.713
+            ]
+          ],
+          "center": [
+            167.357,
+            199.058
+          ]
+        },
+        "tile-41": {
+          "points": [
+            [
+              251.146,
+              378.893
+            ],
+            [
+              298.794,
+              420.127
+            ],
+            [
+              372.803,
+              396.965
+            ],
+            [
+              369.16,
+              333.015
+            ],
+            [
+              294.278,
+              309.48
+            ],
+            [
+              247.67,
+              361.417
+            ]
+          ],
+          "center": [
+            313.925,
+            365.425
+          ]
+        },
+        "tile-42": {
+          "points": [
+            [
+              1122.5,
+              380
+            ],
+            [
+              1126,
+              373.5
+            ],
+            [
+              1130,
+              376.5
+            ],
+            [
+              1134.5,
+              374
+            ],
+            [
+              1135.5,
+              367
+            ],
+            [
+              1130,
+              362.5
+            ],
+            [
+              1124,
+              365.5
+            ],
+            [
+              1121.5,
+              362
+            ],
+            [
+              1125.5,
+              356
+            ],
+            [
+              1118,
+              354.5
+            ],
+            [
+              1114.5,
+              351
+            ],
+            [
+              1114.5,
+              347
+            ],
+            [
+              1115.948,
+              346.034
+            ],
+            [
+              1085.804,
+              327.953
+            ],
+            [
+              1037.794,
+              350.027
+            ],
+            [
+              1032.568,
+              398.556
+            ],
+            [
+              1080.847,
+              433.253
+            ],
+            [
+              1130.583,
+              388.083
+            ]
+          ],
+          "center": [
+            1080.142,
+            378.15
+          ]
+        },
+        "tile-43": {
+          "points": [
+            [
+              878.44,
+              478.387
+            ],
+            [
+              960.326,
+              430.149
+            ],
+            [
+              919.333,
+              349.392
+            ],
+            [
+              896.007,
+              343.746
+            ],
+            [
+              827.86,
+              416.287
+            ]
+          ],
+          "center": [
+            895.051,
+            411.976
+          ]
+        },
+        "tile-44": {
+          "points": [
+            [
+              1112.5,
+              468
+            ],
+            [
+              1108.5,
+              463
+            ],
+            [
+              1116,
+              457.5
+            ],
+            [
+              1119,
+              461.5
+            ],
+            [
+              1125,
+              459.5
+            ],
+            [
+              1129.5,
+              463
+            ],
+            [
+              1127.5,
+              468
+            ],
+            [
+              1129,
+              473.5
+            ],
+            [
+              1135,
+              471.5
+            ],
+            [
+              1139,
+              476.5
+            ],
+            [
+              1144,
+              476.5
+            ],
+            [
+              1149.5,
+              469
+            ],
+            [
+              1138.5,
+              459
+            ],
+            [
+              1142.5,
+              455
+            ],
+            [
+              1141.5,
+              449
+            ],
+            [
+              1144,
+              446.5
+            ],
+            [
+              1151,
+              448.5
+            ],
+            [
+              1156,
+              444.5
+            ],
+            [
+              1161,
+              455.5
+            ],
+            [
+              1171,
+              452.5
+            ],
+            [
+              1174,
+              457.5
+            ],
+            [
+              1178,
+              457.5
+            ],
+            [
+              1185.5,
+              447
+            ],
+            [
+              1180,
+              436.5
+            ],
+            [
+              1176,
+              437.5
+            ],
+            [
+              1170.5,
+              432
+            ],
+            [
+              1169.5,
+              428
+            ],
+            [
+              1173.5,
+              424
+            ],
+            [
+              1173.5,
+              421
+            ],
+            [
+              1169.5,
+              414
+            ],
+            [
+              1167,
+              412.5
+            ],
+            [
+              1161,
+              417.5
+            ],
+            [
+              1151.5,
+              409
+            ],
+            [
+              1154,
+              404.5
+            ],
+            [
+              1157.5,
+              403
+            ],
+            [
+              1153.5,
+              393
+            ],
+            [
+              1149,
+              394.5
+            ],
+            [
+              1146.5,
+              392
+            ],
+            [
+              1146.5,
+              387
+            ],
+            [
+              1143,
+              383.5
+            ],
+            [
+              1138,
+              388.5
+            ],
+            [
+              1136,
+              389.5
+            ],
+            [
+              1134,
+              387.5
+            ],
+            [
+              1132,
+              389.5
+            ],
+            [
+              1130.583,
+              388.083
+            ],
+            [
+              1080.847,
+              433.253
+            ],
+            [
+              1084.562,
+              452.258
+            ],
+            [
+              1112.303,
+              470.169
+            ]
+          ],
+          "center": [
+            1130.967,
+            432.036
+          ]
+        },
+        "tile-45": {
+          "points": [
+            [
+              677.5,
+              514
+            ],
+            [
+              674.5,
+              521
+            ],
+            [
+              678,
+              524.5
+            ],
+            [
+              689,
+              523.5
+            ],
+            [
+              692.5,
+              527
+            ],
+            [
+              694.5,
+              533
+            ],
+            [
+              689.5,
+              540
+            ],
+            [
+              691,
+              542.5
+            ],
+            [
+              696,
+              543.5
+            ],
+            [
+              699.5,
+              549
+            ],
+            [
+              692,
+              559.5
+            ],
+            [
+              684,
+              557.5
+            ],
+            [
+              675,
+              566.5
+            ],
+            [
+              670,
+              566.5
+            ],
+            [
+              664,
+              559.5
+            ],
+            [
+              659,
+              559.5
+            ],
+            [
+              651.5,
+              569
+            ],
+            [
+              651.5,
+              573
+            ],
+            [
+              653,
+              574.5
+            ],
+            [
+              657,
+              573.5
+            ],
+            [
+              660.5,
+              579
+            ],
+            [
+              657.5,
+              582
+            ],
+            [
+              658.5,
+              586
+            ],
+            [
+              651,
+              592.5
+            ],
+            [
+              644,
+              589.5
+            ],
+            [
+              637,
+              595.5
+            ],
+            [
+              635,
+              596.5
+            ],
+            [
+              632,
+              594.5
+            ],
+            [
+              629,
+              597.5
+            ],
+            [
+              623,
+              590.5
+            ],
+            [
+              621.982,
+              590.5
+            ],
+            [
+              655.581,
+              631.851
+            ],
+            [
+              725.883,
+              608.925
+            ],
+            [
+              693.042,
+              520.483
+            ],
+            [
+              676.525,
+              512.537
+            ]
+          ],
+          "center": [
+            680.684,
+            589.844
+          ]
+        },
+        "tile-46": {
+          "points": [
+            [
+              597,
+              681.5
+            ],
+            [
+              602,
+              679.5
+            ],
+            [
+              608,
+              688.5
+            ],
+            [
+              616,
+              689.5
+            ],
+            [
+              621.5,
+              683
+            ],
+            [
+              619.5,
+              677
+            ],
+            [
+              622,
+              674.5
+            ],
+            [
+              631,
+              673.5
+            ],
+            [
+              636,
+              669.5
+            ],
+            [
+              643,
+              670.5
+            ],
+            [
+              645.5,
+              673
+            ],
+            [
+              643.5,
+              678
+            ],
+            [
+              646,
+              680.5
+            ],
+            [
+              652.386,
+              678.758
+            ],
+            [
+              655.581,
+              631.851
+            ],
+            [
+              621.982,
+              590.5
+            ],
+            [
+              616,
+              590.5
+            ],
+            [
+              603.5,
+              603
+            ],
+            [
+              606,
+              606.5
+            ],
+            [
+              610,
+              606.5
+            ],
+            [
+              612.5,
+              609
+            ],
+            [
+              610.5,
+              613
+            ],
+            [
+              611.5,
+              617
+            ],
+            [
+              607,
+              621.5
+            ],
+            [
+              600,
+              623.5
+            ],
+            [
+              595,
+              620.5
+            ],
+            [
+              591.5,
+              623
+            ],
+            [
+              593.5,
+              627
+            ],
+            [
+              588,
+              631.5
+            ],
+            [
+              576,
+              633.5
+            ],
+            [
+              568,
+              638.5
+            ],
+            [
+              558.112,
+              638.5
+            ],
+            [
+              564.986,
+              657.178
+            ],
+            [
+              590.63,
+              680.084
+            ]
+          ],
+          "center": [
+            613.861,
+            644.829
+          ]
+        },
+        "tile-47": {
+          "points": [
+            [
+              506,
+              720.5
+            ],
+            [
+              511,
+              713.5
+            ],
+            [
+              518,
+              722.5
+            ],
+            [
+              518.092,
+              722.531
+            ],
+            [
+              564.986,
+              657.178
+            ],
+            [
+              558.112,
+              638.5
+            ],
+            [
+              558,
+              638.5
+            ],
+            [
+              550,
+              634.5
+            ],
+            [
+              540.5,
+              642
+            ],
+            [
+              542.5,
+              647
+            ],
+            [
+              537,
+              653.5
+            ],
+            [
+              528,
+              653.5
+            ],
+            [
+              524,
+              657.5
+            ],
+            [
+              522,
+              655.5
+            ],
+            [
+              520,
+              657.5
+            ],
+            [
+              514,
+              652.5
+            ],
+            [
+              510,
+              652.5
+            ],
+            [
+              499,
+              660.5
+            ],
+            [
+              494,
+              660.5
+            ],
+            [
+              488.5,
+              666
+            ],
+            [
+              489,
+              668.5
+            ],
+            [
+              495,
+              668.5
+            ],
+            [
+              497.5,
+              671
+            ],
+            [
+              494,
+              678.5
+            ],
+            [
+              492,
+              677.5
+            ],
+            [
+              484,
+              681.5
+            ],
+            [
+              483.632,
+              681.5
+            ],
+            [
+              504.439,
+              721.404
+            ]
+          ],
+          "center": [
+            523.341,
+            677.954
+          ]
+        },
+        "tile-48": {
+          "points": [
+            [
+              524,
+              724.5
+            ],
+            [
+              527,
+              724.5
+            ],
+            [
+              529.5,
+              722
+            ],
+            [
+              529.5,
+              718
+            ],
+            [
+              536,
+              714.5
+            ],
+            [
+              540.5,
+              718
+            ],
+            [
+              540.5,
+              723
+            ],
+            [
+              543,
+              725.5
+            ],
+            [
+              546,
+              726.5
+            ],
+            [
+              552,
+              723.5
+            ],
+            [
+              554.5,
+              726
+            ],
+            [
+              549.5,
+              736
+            ],
+            [
+              551,
+              738.5
+            ],
+            [
+              566,
+              744.5
+            ],
+            [
+              573.5,
+              738
+            ],
+            [
+              573.5,
+              733
+            ],
+            [
+              568.5,
+              727
+            ],
+            [
+              571,
+              724.5
+            ],
+            [
+              579,
+              724.5
+            ],
+            [
+              585.5,
+              720
+            ],
+            [
+              580.5,
+              710
+            ],
+            [
+              575,
+              709.5
+            ],
+            [
+              570.5,
+              704
+            ],
+            [
+              579,
+              695.5
+            ],
+            [
+              588.5,
+              694
+            ],
+            [
+              588.5,
+              688
+            ],
+            [
+              584.5,
+              683
+            ],
+            [
+              588,
+              679.5
+            ],
+            [
+              590.63,
+              680.084
+            ],
+            [
+              564.986,
+              657.178
+            ],
+            [
+              518.092,
+              722.531
+            ]
+          ],
+          "center": [
+            559.817,
+            701.933
+          ]
+        },
+        "tile-49": {
+          "points": [
+            [
+              657,
+              677.5
+            ],
+            [
+              662.5,
+              683
+            ],
+            [
+              659.5,
+              690
+            ],
+            [
+              666,
+              694.5
+            ],
+            [
+              672,
+              694.5
+            ],
+            [
+              677.5,
+              688
+            ],
+            [
+              676.5,
+              683
+            ],
+            [
+              679,
+              680.5
+            ],
+            [
+              683,
+              683.5
+            ],
+            [
+              687,
+              683.5
+            ],
+            [
+              688.5,
+              679
+            ],
+            [
+              698,
+              670.5
+            ],
+            [
+              706,
+              670.5
+            ],
+            [
+              709.5,
+              678
+            ],
+            [
+              713,
+              679.5
+            ],
+            [
+              719,
+              671.5
+            ],
+            [
+              726,
+              672.5
+            ],
+            [
+              734,
+              668.5
+            ],
+            [
+              738.5,
+              672
+            ],
+            [
+              741,
+              678.5
+            ],
+            [
+              752,
+              675.5
+            ],
+            [
+              756.551,
+              681.871
+            ],
+            [
+              741.938,
+              618.358
+            ],
+            [
+              725.883,
+              608.925
+            ],
+            [
+              655.581,
+              631.851
+            ],
+            [
+              652.386,
+              678.758
+            ]
+          ],
+          "center": [
+            701.578,
+            649.764
+          ]
+        },
+        "tile-50": {
+          "points": [
+            [
+              111.5,
+              318
+            ],
+            [
+              108.5,
+              315
+            ],
+            [
+              111,
+              311.5
+            ],
+            [
+              118,
+              311.5
+            ],
+            [
+              126,
+              305.5
+            ],
+            [
+              135,
+              305.5
+            ],
+            [
+              137.5,
+              308
+            ],
+            [
+              135,
+              311.5
+            ],
+            [
+              144,
+              312.5
+            ],
+            [
+              146.906,
+              316.181
+            ],
+            [
+              166.811,
+              312.755
+            ],
+            [
+              179.455,
+              256.849
+            ],
+            [
+              113.191,
+              213.421
+            ],
+            [
+              78.5,
+              228.867
+            ],
+            [
+              78.5,
+              233
+            ],
+            [
+              71,
+              238.5
+            ],
+            [
+              69,
+              236.5
+            ],
+            [
+              67,
+              237.5
+            ],
+            [
+              64.57,
+              235.07
+            ],
+            [
+              55.306,
+              239.194
+            ],
+            [
+              53,
+              241.5
+            ],
+            [
+              49.172,
+              241.925
+            ],
+            [
+              41.776,
+              245.218
+            ],
+            [
+              39.5,
+              248
+            ],
+            [
+              39.5,
+              252
+            ],
+            [
+              43.5,
+              256
+            ],
+            [
+              38.5,
+              261
+            ],
+            [
+              37.5,
+              267
+            ],
+            [
+              43,
+              271.5
+            ],
+            [
+              51,
+              270.5
+            ],
+            [
+              54.5,
+              274
+            ],
+            [
+              54.5,
+              277
+            ],
+            [
+              44.5,
+              288
+            ],
+            [
+              44.5,
+              293
+            ],
+            [
+              51.5,
+              298
+            ],
+            [
+              50.5,
+              300
+            ],
+            [
+              53,
+              303.5
+            ],
+            [
+              59,
+              304.5
+            ],
+            [
+              63.5,
+              302
+            ],
+            [
+              62.5,
+              292
+            ],
+            [
+              65,
+              289.5
+            ],
+            [
+              75,
+              295.5
+            ],
+            [
+              82,
+              293.5
+            ],
+            [
+              87.5,
+              301
+            ],
+            [
+              79.5,
+              309
+            ],
+            [
+              77.5,
+              314
+            ],
+            [
+              85,
+              319.5
+            ],
+            [
+              93,
+              315.5
+            ],
+            [
+              95.5,
+              318
+            ],
+            [
+              93.5,
+              323
+            ],
+            [
+              96.033,
+              324.937
+            ],
+            [
+              112.193,
+              322.156
+            ]
+          ],
+          "center": [
+            110.521,
+            269.612
+          ]
+        },
+        "tile-51": {
+          "points": [
+            [
+              183,
+              328.5
+            ],
+            [
+              203,
+              307.5
+            ],
+            [
+              206,
+              309.5
+            ],
+            [
+              208,
+              307.5
+            ],
+            [
+              211.5,
+              311
+            ],
+            [
+              209,
+              313.5
+            ],
+            [
+              205,
+              310.5
+            ],
+            [
+              195.5,
+              319
+            ],
+            [
+              193.5,
+              325
+            ],
+            [
+              186,
+              332.5
+            ],
+            [
+              185.041,
+              332.587
+            ],
+            [
+              247.67,
+              361.417
+            ],
+            [
+              294.278,
+              309.48
+            ],
+            [
+              283.801,
+              257.148
+            ],
+            [
+              212.181,
+              234.722
+            ],
+            [
+              179.455,
+              256.849
+            ],
+            [
+              166.811,
+              312.755
+            ],
+            [
+              178.76,
+              328.5
+            ]
+          ],
+          "center": [
+            230.978,
+            295.216
+          ]
+        },
+        "tile-52": {
+          "points": [
+            [
+              175,
+              333.5
+            ],
+            [
+              173,
+              331.5
+            ],
+            [
+              170,
+              334.5
+            ],
+            [
+              166,
+              333.5
+            ],
+            [
+              157,
+              342.5
+            ],
+            [
+              143,
+              344.5
+            ],
+            [
+              141.5,
+              348
+            ],
+            [
+              144.5,
+              353
+            ],
+            [
+              141,
+              356.5
+            ],
+            [
+              128,
+              358.5
+            ],
+            [
+              123,
+              352.5
+            ],
+            [
+              119,
+              351.5
+            ],
+            [
+              113.5,
+              356
+            ],
+            [
+              113.5,
+              360
+            ],
+            [
+              110,
+              363.5
+            ],
+            [
+              103,
+              357.5
+            ],
+            [
+              94.5,
+              365
+            ],
+            [
+              97.5,
+              372
+            ],
+            [
+              92.5,
+              378
+            ],
+            [
+              96,
+              382.5
+            ],
+            [
+              101,
+              382.5
+            ],
+            [
+              108,
+              377.5
+            ],
+            [
+              111,
+              377.5
+            ],
+            [
+              114.5,
+              381
+            ],
+            [
+              114.5,
+              384
+            ],
+            [
+              106.5,
+              394
+            ],
+            [
+              108,
+              397.5
+            ],
+            [
+              113,
+              398.5
+            ],
+            [
+              117,
+              402.5
+            ],
+            [
+              121,
+              402.5
+            ],
+            [
+              129,
+              393.5
+            ],
+            [
+              133,
+              399.5
+            ],
+            [
+              138,
+              395.5
+            ],
+            [
+              140.5,
+              398
+            ],
+            [
+              139.5,
+              400
+            ],
+            [
+              147.5,
+              411
+            ],
+            [
+              137.5,
+              419
+            ],
+            [
+              138.5,
+              423
+            ],
+            [
+              136,
+              425.5
+            ],
+            [
+              128,
+              425.5
+            ],
+            [
+              123,
+              419.5
+            ],
+            [
+              117,
+              419.5
+            ],
+            [
+              113.5,
+              423
+            ],
+            [
+              113.647,
+              424.172
+            ],
+            [
+              114.471,
+              424.8
+            ],
+            [
+              143.499,
+              426.592
+            ],
+            [
+              179.093,
+              333.128
+            ]
+          ],
+          "center": [
+            137.615,
+            373.997
+          ]
+        },
+        "tile-53": {
+          "points": [
+            [
+              919,
+              49.5
+            ],
+            [
+              915.5,
+              45
+            ],
+            [
+              919.5,
+              40
+            ],
+            [
+              912,
+              31.5
+            ],
+            [
+              907,
+              35.5
+            ],
+            [
+              903,
+              33.5
+            ],
+            [
+              897,
+              38.5
+            ],
+            [
+              892.5,
+              34
+            ],
+            [
+              892.5,
+              30
+            ],
+            [
+              889,
+              25.5
+            ],
+            [
+              881,
+              29.5
+            ],
+            [
+              878,
+              26.5
+            ],
+            [
+              870,
+              24.5
+            ],
+            [
+              867,
+              27.5
+            ],
+            [
+              858,
+              27.5
+            ],
+            [
+              855.5,
+              30
+            ],
+            [
+              856.5,
+              33
+            ],
+            [
+              853,
+              36.5
+            ],
+            [
+              847,
+              34.5
+            ],
+            [
+              842.5,
+              44
+            ],
+            [
+              850,
+              46.5
+            ],
+            [
+              853,
+              43.5
+            ],
+            [
+              862.5,
+              53
+            ],
+            [
+              860.5,
+              56
+            ],
+            [
+              863.5,
+              59
+            ],
+            [
+              857,
+              64.5
+            ],
+            [
+              852,
+              63.5
+            ],
+            [
+              848,
+              59.5
+            ],
+            [
+              844,
+              60.5
+            ],
+            [
+              841.5,
+              66
+            ],
+            [
+              845.5,
+              71
+            ],
+            [
+              842,
+              74.5
+            ],
+            [
+              839,
+              73.5
+            ],
+            [
+              837,
+              75.5
+            ],
+            [
+              834.5,
+              73
+            ],
+            [
+              836.5,
+              68
+            ],
+            [
+              833,
+              60.5
+            ],
+            [
+              831,
+              59.5
+            ],
+            [
+              826,
+              64.5
+            ],
+            [
+              820.5,
+              62
+            ],
+            [
+              822.5,
+              54
+            ],
+            [
+              820,
+              50.5
+            ],
+            [
+              815,
+              49.5
+            ],
+            [
+              811,
+              51.5
+            ],
+            [
+              805.503,
+              46.003
+            ],
+            [
+              852.805,
+              114.547
+            ],
+            [
+              903.674,
+              107.775
+            ],
+            [
+              921.028,
+              49.5
+            ]
+          ],
+          "center": [
+            875.078,
+            70.29
+          ]
+        },
+        "tile-54": {
+          "points": [
+            [
+              1025.5,
+              508
+            ],
+            [
+              1025.5,
+              504
+            ],
+            [
+              1035,
+              495.5
+            ],
+            [
+              1043.926,
+              497.56
+            ],
+            [
+              1084.562,
+              452.258
+            ],
+            [
+              1080.847,
+              433.253
+            ],
+            [
+              1032.568,
+              398.556
+            ],
+            [
+              969.701,
+              433.326
+            ],
+            [
+              1002.458,
+              507.318
+            ],
+            [
+              1027.676,
+              515.675
+            ],
+            [
+              1030.277,
+              512.777
+            ]
+          ],
+          "center": [
+            1026.899,
+            453.317
+          ]
+        },
+        "tile-55": {
+          "points": [
+            [
+              808.396,
+              544.825
+            ],
+            [
+              877.713,
+              487.867
+            ],
+            [
+              878.44,
+              478.387
+            ],
+            [
+              827.86,
+              416.287
+            ],
+            [
+              803.091,
+              413.867
+            ],
+            [
+              787.761,
+              423.998
+            ],
+            [
+              766.098,
+              512.197
+            ]
+          ],
+          "center": [
+            817.423,
+            478.038
+          ]
+        },
+        "tile-56": {
+          "points": [
+            [
+              479,
+              681.5
+            ],
+            [
+              474,
+              678.5
+            ],
+            [
+              470,
+              685.5
+            ],
+            [
+              462,
+              685.5
+            ],
+            [
+              460,
+              687.5
+            ],
+            [
+              456,
+              682.5
+            ],
+            [
+              454,
+              683.5
+            ],
+            [
+              452,
+              681.5
+            ],
+            [
+              442.5,
+              690
+            ],
+            [
+              443.5,
+              696
+            ],
+            [
+              436,
+              701.5
+            ],
+            [
+              432.5,
+              699
+            ],
+            [
+              434.5,
+              696
+            ],
+            [
+              433,
+              693.5
+            ],
+            [
+              427,
+              692.5
+            ],
+            [
+              422.5,
+              696
+            ],
+            [
+              423.5,
+              699
+            ],
+            [
+              421.5,
+              704
+            ],
+            [
+              417,
+              708.5
+            ],
+            [
+              408,
+              708.5
+            ],
+            [
+              397.5,
+              718
+            ],
+            [
+              396.5,
+              723
+            ],
+            [
+              398,
+              724.5
+            ],
+            [
+              407,
+              726.5
+            ],
+            [
+              416,
+              721.5
+            ],
+            [
+              420.5,
+              726
+            ],
+            [
+              418.5,
+              733
+            ],
+            [
+              428,
+              736.5
+            ],
+            [
+              432.5,
+              732
+            ],
+            [
+              432.5,
+              728
+            ],
+            [
+              429.5,
+              725
+            ],
+            [
+              432,
+              721.5
+            ],
+            [
+              445,
+              730.5
+            ],
+            [
+              447.5,
+              727
+            ],
+            [
+              446.5,
+              725
+            ],
+            [
+              450,
+              721.5
+            ],
+            [
+              458,
+              718.5
+            ],
+            [
+              464.5,
+              723
+            ],
+            [
+              463.5,
+              732
+            ],
+            [
+              465,
+              733.5
+            ],
+            [
+              472,
+              734.5
+            ],
+            [
+              480,
+              731.5
+            ],
+            [
+              482.5,
+              734
+            ],
+            [
+              481.5,
+              741
+            ],
+            [
+              483,
+              742.5
+            ],
+            [
+              494,
+              744.5
+            ],
+            [
+              501.5,
+              738
+            ],
+            [
+              500.5,
+              732
+            ],
+            [
+              496.5,
+              726
+            ],
+            [
+              504.439,
+              721.404
+            ],
+            [
+              483.632,
+              681.5
+            ]
+          ],
+          "center": [
+            458.482,
+            711.583
+          ]
+        },
+        "tile-57": {
+          "points": [
+            [
+              932.455,
+              555.544
+            ],
+            [
+              1002.458,
+              507.318
+            ],
+            [
+              969.701,
+              433.326
+            ],
+            [
+              960.326,
+              430.149
+            ],
+            [
+              878.44,
+              478.387
+            ],
+            [
+              877.713,
+              487.867
+            ]
+          ],
+          "center": [
+            942.202,
+            491.697
+          ]
+        },
+        "tile-58": {
+          "points": [
+            [
+              1048,
+              498.5
+            ],
+            [
+              1052.5,
+              502
+            ],
+            [
+              1049.5,
+              512
+            ],
+            [
+              1054,
+              516.5
+            ],
+            [
+              1069,
+              516.5
+            ],
+            [
+              1071.5,
+              519
+            ],
+            [
+              1068.5,
+              529
+            ],
+            [
+              1078,
+              537.5
+            ],
+            [
+              1086,
+              535.5
+            ],
+            [
+              1092,
+              538.5
+            ],
+            [
+              1095.5,
+              534
+            ],
+            [
+              1094.5,
+              528
+            ],
+            [
+              1098,
+              525.5
+            ],
+            [
+              1105,
+              529.5
+            ],
+            [
+              1110,
+              528.5
+            ],
+            [
+              1112.5,
+              531
+            ],
+            [
+              1111.5,
+              537
+            ],
+            [
+              1123,
+              543.5
+            ],
+            [
+              1124.5,
+              537
+            ],
+            [
+              1122.5,
+              533
+            ],
+            [
+              1129.5,
+              527
+            ],
+            [
+              1125,
+              519.5
+            ],
+            [
+              1118,
+              517.5
+            ],
+            [
+              1111.5,
+              509
+            ],
+            [
+              1119.5,
+              503
+            ],
+            [
+              1114.5,
+              495
+            ],
+            [
+              1112,
+              492.5
+            ],
+            [
+              1104,
+              494.5
+            ],
+            [
+              1095.5,
+              487
+            ],
+            [
+              1098.5,
+              483
+            ],
+            [
+              1098.5,
+              479
+            ],
+            [
+              1094.5,
+              475
+            ],
+            [
+              1103,
+              469.5
+            ],
+            [
+              1109,
+              474.5
+            ],
+            [
+              1112,
+              473.5
+            ],
+            [
+              1112.303,
+              470.169
+            ],
+            [
+              1084.562,
+              452.258
+            ],
+            [
+              1043.926,
+              497.56
+            ]
+          ],
+          "center": [
+            1086.266,
+            500.67
+          ]
+        },
+        "tile-59": {
+          "points": [
+            [
+              1066,
+              659.5
+            ],
+            [
+              1075.5,
+              668
+            ],
+            [
+              1076.5,
+              672
+            ],
+            [
+              1074.5,
+              677
+            ],
+            [
+              1076,
+              679.5
+            ],
+            [
+              1084,
+              682.5
+            ],
+            [
+              1090,
+              678.5
+            ],
+            [
+              1098.5,
+              685
+            ],
+            [
+              1096.5,
+              690
+            ],
+            [
+              1098,
+              694.5
+            ],
+            [
+              1103,
+              695.5
+            ],
+            [
+              1110,
+              701.5
+            ],
+            [
+              1119.5,
+              699
+            ],
+            [
+              1119.5,
+              691
+            ],
+            [
+              1113.5,
+              683
+            ],
+            [
+              1116,
+              680.5
+            ],
+            [
+              1122,
+              680.5
+            ],
+            [
+              1124.5,
+              676
+            ],
+            [
+              1115.5,
+              665
+            ],
+            [
+              1117.5,
+              662
+            ],
+            [
+              1115.5,
+              659
+            ],
+            [
+              1116.5,
+              657
+            ],
+            [
+              1105.5,
+              651
+            ],
+            [
+              1105.5,
+              646
+            ],
+            [
+              1108.5,
+              641
+            ],
+            [
+              1105.5,
+              636
+            ],
+            [
+              1108,
+              633.5
+            ],
+            [
+              1115,
+              635.5
+            ],
+            [
+              1119.5,
+              632
+            ],
+            [
+              1119.5,
+              627
+            ],
+            [
+              1116.804,
+              623.106
+            ],
+            [
+              1069.601,
+              645.088
+            ],
+            [
+              1063.569,
+              659.23
+            ]
+          ],
+          "center": [
+            1096.732,
+            662.598
+          ]
+        },
+        "tile-60": {
+          "points": [
+            [
+              179.093,
+              333.128
+            ],
+            [
+              143.499,
+              426.592
+            ],
+            [
+              186.864,
+              458.415
+            ],
+            [
+              251.146,
+              378.893
+            ],
+            [
+              247.67,
+              361.417
+            ],
+            [
+              185.041,
+              332.587
+            ]
+          ],
+          "center": [
+            194.876,
+            392.59
+          ]
+        },
+        "tile-61": {
+          "points": [
+            [
+              187.472,
+              460.54
+            ],
+            [
+              264.458,
+              501.266
+            ],
+            [
+              291.718,
+              485.798
+            ],
+            [
+              298.794,
+              420.127
+            ],
+            [
+              251.146,
+              378.893
+            ],
+            [
+              186.864,
+              458.415
+            ]
+          ],
+          "center": [
+            251.6,
+            444.62
+          ]
+        },
+        "tile-62": {
+          "points": [
+            [
+              108,
+              435.5
+            ],
+            [
+              103,
+              435.5
+            ],
+            [
+              97,
+              430.5
+            ],
+            [
+              90,
+              433.5
+            ],
+            [
+              85,
+              432.5
+            ],
+            [
+              81.5,
+              429
+            ],
+            [
+              80,
+              420.5
+            ],
+            [
+              69,
+              420.5
+            ],
+            [
+              65,
+              416.5
+            ],
+            [
+              58,
+              415.5
+            ],
+            [
+              48.5,
+              428
+            ],
+            [
+              53,
+              435.5
+            ],
+            [
+              58,
+              435.5
+            ],
+            [
+              60.5,
+              438
+            ],
+            [
+              56.5,
+              443
+            ],
+            [
+              57.5,
+              448
+            ],
+            [
+              46,
+              458.5
+            ],
+            [
+              43,
+              459.5
+            ],
+            [
+              35,
+              455.5
+            ],
+            [
+              31,
+              458.5
+            ],
+            [
+              28.5,
+              462
+            ],
+            [
+              28.5,
+              468
+            ],
+            [
+              18.5,
+              478
+            ],
+            [
+              18.5,
+              482
+            ],
+            [
+              22,
+              484.5
+            ],
+            [
+              28,
+              485.5
+            ],
+            [
+              35,
+              483.5
+            ],
+            [
+              38.5,
+              487
+            ],
+            [
+              36.5,
+              495
+            ],
+            [
+              40,
+              497.5
+            ],
+            [
+              48,
+              496.5
+            ],
+            [
+              54,
+              485.5
+            ],
+            [
+              61,
+              485.5
+            ],
+            [
+              65,
+              480.5
+            ],
+            [
+              68,
+              484.5
+            ],
+            [
+              73,
+              485.5
+            ],
+            [
+              84.466,
+              497.883
+            ],
+            [
+              110.904,
+              433.49
+            ]
+          ],
+          "center": [
+            67.096,
+            459.19
+          ]
+        },
+        "tile-63": {
+          "points": [
+            [
+              1004,
+              65.5
+            ],
+            [
+              998,
+              61.5
+            ],
+            [
+              988,
+              69.5
+            ],
+            [
+              983,
+              60.5
+            ],
+            [
+              979,
+              60.5
+            ],
+            [
+              976.5,
+              62
+            ],
+            [
+              975.5,
+              66
+            ],
+            [
+              978.5,
+              69
+            ],
+            [
+              976,
+              71.5
+            ],
+            [
+              966,
+              70.5
+            ],
+            [
+              963.5,
+              68
+            ],
+            [
+              963.5,
+              61
+            ],
+            [
+              958,
+              61.5
+            ],
+            [
+              952,
+              53.5
+            ],
+            [
+              945,
+              56.5
+            ],
+            [
+              939,
+              47.5
+            ],
+            [
+              933,
+              49.5
+            ],
+            [
+              928,
+              46.5
+            ],
+            [
+              925,
+              49.5
+            ],
+            [
+              921.028,
+              49.5
+            ],
+            [
+              903.674,
+              107.775
+            ],
+            [
+              935.634,
+              137.632
+            ],
+            [
+              981.978,
+              127.427
+            ],
+            [
+              1008.907,
+              63.864
+            ]
+          ],
+          "center": [
+            951.619,
+            93.104
+          ]
+        },
+        "tile-64": {
+          "points": [
+            [
+              1074.5,
+              143
+            ],
+            [
+              1073.5,
+              140
+            ],
+            [
+              1076,
+              136.5
+            ],
+            [
+              1079,
+              137.5
+            ],
+            [
+              1080.5,
+              135
+            ],
+            [
+              1076.5,
+              127
+            ],
+            [
+              1075,
+              125.5
+            ],
+            [
+              1071,
+              127.5
+            ],
+            [
+              1068,
+              125.5
+            ],
+            [
+              1064,
+              126.5
+            ],
+            [
+              1058.5,
+              120
+            ],
+            [
+              1061.5,
+              116
+            ],
+            [
+              1059.5,
+              110
+            ],
+            [
+              1062,
+              107.5
+            ],
+            [
+              1067,
+              108.5
+            ],
+            [
+              1070.5,
+              105
+            ],
+            [
+              1068.5,
+              102
+            ],
+            [
+              1070.5,
+              97
+            ],
+            [
+              1064,
+              86.5
+            ],
+            [
+              1058,
+              86.5
+            ],
+            [
+              1052,
+              94.5
+            ],
+            [
+              1043,
+              91.5
+            ],
+            [
+              1034,
+              100.5
+            ],
+            [
+              1030,
+              99.5
+            ],
+            [
+              1027,
+              101.5
+            ],
+            [
+              1023.5,
+              96
+            ],
+            [
+              1024.5,
+              89
+            ],
+            [
+              1022,
+              85.5
+            ],
+            [
+              1019,
+              84.5
+            ],
+            [
+              1014,
+              89.5
+            ],
+            [
+              1009,
+              89.5
+            ],
+            [
+              1005.5,
+              86
+            ],
+            [
+              1004.5,
+              80
+            ],
+            [
+              1007,
+              77.5
+            ],
+            [
+              1011,
+              78.5
+            ],
+            [
+              1014.5,
+              75
+            ],
+            [
+              1010,
+              63.5
+            ],
+            [
+              1008.907,
+              63.864
+            ],
+            [
+              981.978,
+              127.427
+            ],
+            [
+              1021.053,
+              173.639
+            ],
+            [
+              1065.205,
+              163.629
+            ],
+            [
+              1076.954,
+              144.799
+            ]
+          ],
+          "center": [
+            1030.674,
+            127.376
+          ]
+        },
+        "tile-65": {
+          "points": [
+            [
+              1033,
+              526.5
+            ],
+            [
+              1026.5,
+              520
+            ],
+            [
+              1028.757,
+              517.292
+            ],
+            [
+              1027.676,
+              515.675
+            ],
+            [
+              1002.458,
+              507.318
+            ],
+            [
+              932.455,
+              555.544
+            ],
+            [
+              932.19,
+              557.817
+            ],
+            [
+              961.434,
+              622.387
+            ],
+            [
+              962,
+              622.5
+            ],
+            [
+              967.5,
+              626
+            ],
+            [
+              965.642,
+              629.716
+            ],
+            [
+              995.3,
+              613.956
+            ],
+            [
+              996,
+              613.5
+            ],
+            [
+              996.055,
+              613.555
+            ],
+            [
+              1027.456,
+              596.869
+            ],
+            [
+              1051.768,
+              551.708
+            ],
+            [
+              1047.955,
+              546.005
+            ],
+            [
+              1038.5,
+              541
+            ],
+            [
+              1042.423,
+              537.731
+            ],
+            [
+              1035.116,
+              526.802
+            ]
+          ],
+          "center": [
+            992.088,
+            565.622
+          ]
+        },
+        "tile-66": {
+          "points": [
+            [
+              1115,
+              620.5
+            ],
+            [
+              1110,
+              617.5
+            ],
+            [
+              1107,
+              618.5
+            ],
+            [
+              1102.5,
+              614
+            ],
+            [
+              1104.5,
+              605
+            ],
+            [
+              1099,
+              598.5
+            ],
+            [
+              1091,
+              598.5
+            ],
+            [
+              1084,
+              590.5
+            ],
+            [
+              1081,
+              590.5
+            ],
+            [
+              1077.5,
+              587
+            ],
+            [
+              1075.5,
+              582
+            ],
+            [
+              1078,
+              579.5
+            ],
+            [
+              1085,
+              581.5
+            ],
+            [
+              1087.5,
+              579
+            ],
+            [
+              1087.5,
+              575
+            ],
+            [
+              1081.5,
+              569
+            ],
+            [
+              1081.5,
+              566
+            ],
+            [
+              1076,
+              562.5
+            ],
+            [
+              1066,
+              567.5
+            ],
+            [
+              1060,
+              565.5
+            ],
+            [
+              1054.5,
+              560
+            ],
+            [
+              1057.5,
+              556
+            ],
+            [
+              1056.339,
+              552.516
+            ],
+            [
+              1051.768,
+              551.708
+            ],
+            [
+              1027.456,
+              596.869
+            ],
+            [
+              1069.601,
+              645.088
+            ],
+            [
+              1116.804,
+              623.106
+            ]
+          ],
+          "center": [
+            1067.95,
+            601.937
+          ]
+        },
+        "tile-67": {
+          "points": [
+            [
+              893.811,
+              223.017
+            ],
+            [
+              915.609,
+              215.818
+            ],
+            [
+              935.634,
+              137.632
+            ],
+            [
+              903.674,
+              107.775
+            ],
+            [
+              852.805,
+              114.547
+            ],
+            [
+              828.256,
+              173.307
+            ]
+          ],
+          "center": [
+            885.356,
+            161.222
+          ]
+        },
+        "tile-68": {
+          "points": [
+            [
+              1112.5,
+              230
+            ],
+            [
+              1116,
+              222.5
+            ],
+            [
+              1123,
+              224.5
+            ],
+            [
+              1125.5,
+              222
+            ],
+            [
+              1124.5,
+              215
+            ],
+            [
+              1117.5,
+              210
+            ],
+            [
+              1117.5,
+              207
+            ],
+            [
+              1120,
+              204.5
+            ],
+            [
+              1122,
+              205.5
+            ],
+            [
+              1129,
+              202.5
+            ],
+            [
+              1127.5,
+              198
+            ],
+            [
+              1130,
+              195.5
+            ],
+            [
+              1139,
+              198.5
+            ],
+            [
+              1144,
+              194.5
+            ],
+            [
+              1146.5,
+              197
+            ],
+            [
+              1146.5,
+              205
+            ],
+            [
+              1153,
+              207.5
+            ],
+            [
+              1159.5,
+              202
+            ],
+            [
+              1159.5,
+              198
+            ],
+            [
+              1154.5,
+              190
+            ],
+            [
+              1157,
+              187.5
+            ],
+            [
+              1163.5,
+              188
+            ],
+            [
+              1163.5,
+              180
+            ],
+            [
+              1159,
+              172.5
+            ],
+            [
+              1145,
+              176.5
+            ],
+            [
+              1141.5,
+              173
+            ],
+            [
+              1141.5,
+              167
+            ],
+            [
+              1147.5,
+              155
+            ],
+            [
+              1140,
+              143.5
+            ],
+            [
+              1137,
+              143.5
+            ],
+            [
+              1132,
+              149.5
+            ],
+            [
+              1128,
+              148.5
+            ],
+            [
+              1121.5,
+              144
+            ],
+            [
+              1120,
+              136.5
+            ],
+            [
+              1115,
+              136.5
+            ],
+            [
+              1108,
+              130.5
+            ],
+            [
+              1101.5,
+              134
+            ],
+            [
+              1100.5,
+              138
+            ],
+            [
+              1102.5,
+              142
+            ],
+            [
+              1098,
+              146.5
+            ],
+            [
+              1089,
+              142.5
+            ],
+            [
+              1082,
+              148.5
+            ],
+            [
+              1076.954,
+              144.799
+            ],
+            [
+              1065.205,
+              163.629
+            ],
+            [
+              1112.609,
+              240.387
+            ],
+            [
+              1117.229,
+              239.821
+            ]
+          ],
+          "center": [
+            1112.692,
+            177.939
+          ]
+        },
+        "tile-69": {
+          "points": [
+            [
+              989.016,
+              244.135
+            ],
+            [
+              1021.053,
+              173.639
+            ],
+            [
+              981.978,
+              127.427
+            ],
+            [
+              935.634,
+              137.632
+            ],
+            [
+              915.609,
+              215.818
+            ]
+          ],
+          "center": [
+            967.694,
+            184.501
+          ]
+        },
+        "tile-70": {
+          "points": [
+            [
+              79,
+              519.5
+            ],
+            [
+              83,
+              518.5
+            ],
+            [
+              85,
+              520.5
+            ],
+            [
+              89,
+              518.5
+            ],
+            [
+              96,
+              508.5
+            ],
+            [
+              110,
+              503.5
+            ],
+            [
+              114.5,
+              506
+            ],
+            [
+              112.5,
+              511
+            ],
+            [
+              119,
+              514.5
+            ],
+            [
+              123.5,
+              512
+            ],
+            [
+              127,
+              506.5
+            ],
+            [
+              133,
+              511.5
+            ],
+            [
+              137,
+              508.5
+            ],
+            [
+              142.5,
+              511
+            ],
+            [
+              137.5,
+              520
+            ],
+            [
+              143.5,
+              524
+            ],
+            [
+              138.391,
+              529.109
+            ],
+            [
+              154.211,
+              525.383
+            ],
+            [
+              187.472,
+              460.54
+            ],
+            [
+              186.864,
+              458.415
+            ],
+            [
+              143.499,
+              426.592
+            ],
+            [
+              114.471,
+              424.8
+            ],
+            [
+              113.899,
+              426.194
+            ],
+            [
+              114.5,
+              431
+            ],
+            [
+              110.904,
+              433.49
+            ],
+            [
+              84.466,
+              497.883
+            ],
+            [
+              85.5,
+              499
+            ],
+            [
+              82.298,
+              503.162
+            ],
+            [
+              76.583,
+              517.083
+            ]
+          ],
+          "center": [
+            134.154,
+            474.869
+          ]
+        },
+        "tile-71": {
+          "points": [
+            [
+              239,
+              585.5
+            ],
+            [
+              239.431,
+              585.696
+            ],
+            [
+              245.637,
+              586.67
+            ],
+            [
+              264.458,
+              501.266
+            ],
+            [
+              187.472,
+              460.54
+            ],
+            [
+              154.211,
+              525.383
+            ],
+            [
+              208.163,
+              580.789
+            ],
+            [
+              238.847,
+              585.604
+            ]
+          ],
+          "center": [
+            212.291,
+            524.87
+          ]
+        },
+        "tile-72": {
+          "points": [
+            [
+              369,
+              529.5
+            ],
+            [
+              365,
+              529.5
+            ],
+            [
+              360,
+              527.5
+            ],
+            [
+              356.5,
+              523
+            ],
+            [
+              360.5,
+              513
+            ],
+            [
+              359.483,
+              512.153
+            ],
+            [
+              291.718,
+              485.798
+            ],
+            [
+              264.458,
+              501.266
+            ],
+            [
+              245.637,
+              586.67
+            ],
+            [
+              247.994,
+              589.588
+            ],
+            [
+              250,
+              590.5
+            ],
+            [
+              255,
+              583.5
+            ],
+            [
+              258,
+              582.5
+            ],
+            [
+              265,
+              584.5
+            ],
+            [
+              270.5,
+              591
+            ],
+            [
+              270.89,
+              593.342
+            ],
+            [
+              372.434,
+              554.856
+            ],
+            [
+              374.659,
+              530.612
+            ],
+            [
+              372.195,
+              526.305
+            ]
+          ],
+          "center": [
+            305.085,
+            539.664
+          ]
+        },
+        "tile-73": {
+          "points": [
+            [
+              991.685,
+              249.086
+            ],
+            [
+              1092.407,
+              258.375
+            ],
+            [
+              1112.609,
+              240.387
+            ],
+            [
+              1065.205,
+              163.629
+            ],
+            [
+              1021.053,
+              173.639
+            ],
+            [
+              989.016,
+              244.135
+            ]
+          ],
+          "center": [
+            1050.268,
+            217.512
+          ]
+        },
+        "tile-74": {
+          "points": [
+            [
+              764.369,
+              221.961
+            ],
+            [
+              791.959,
+              290.818
+            ],
+            [
+              862.758,
+              291.774
+            ],
+            [
+              893.811,
+              223.017
+            ],
+            [
+              828.256,
+              173.307
+            ],
+            [
+              783.893,
+              183.76
+            ]
+          ],
+          "center": [
+            826.005,
+            235.41
+          ]
+        },
+        "tile-75": {
+          "points": [
+            [
+              896.007,
+              343.746
+            ],
+            [
+              919.333,
+              349.392
+            ],
+            [
+              985.027,
+              307.575
+            ],
+            [
+              991.685,
+              249.086
+            ],
+            [
+              989.016,
+              244.135
+            ],
+            [
+              915.609,
+              215.818
+            ],
+            [
+              893.811,
+              223.017
+            ],
+            [
+              862.758,
+              291.774
+            ]
+          ],
+          "center": [
+            927.643,
+            281.039
+          ]
+        },
+        "tile-76": {
+          "points": [
+            [
+              985.027,
+              307.575
+            ],
+            [
+              1037.794,
+              350.027
+            ],
+            [
+              1085.804,
+              327.953
+            ],
+            [
+              1092.407,
+              258.375
+            ],
+            [
+              991.685,
+              249.086
+            ]
+          ],
+          "center": [
+            1039.38,
+            294.37
+          ]
+        },
+        "tile-77": {
+          "points": [
+            [
+              1123.5,
+              341
+            ],
+            [
+              1120.5,
+              337
+            ],
+            [
+              1124,
+              333.5
+            ],
+            [
+              1132,
+              334.5
+            ],
+            [
+              1136,
+              332.5
+            ],
+            [
+              1138.5,
+              335
+            ],
+            [
+              1138.5,
+              345
+            ],
+            [
+              1141,
+              346.5
+            ],
+            [
+              1147,
+              346.5
+            ],
+            [
+              1149.5,
+              344
+            ],
+            [
+              1147.5,
+              340
+            ],
+            [
+              1151,
+              336.5
+            ],
+            [
+              1154,
+              336.5
+            ],
+            [
+              1159,
+              340.5
+            ],
+            [
+              1164,
+              338.5
+            ],
+            [
+              1170,
+              342.5
+            ],
+            [
+              1174,
+              341.5
+            ],
+            [
+              1176.5,
+              344
+            ],
+            [
+              1170.5,
+              350
+            ],
+            [
+              1175,
+              353.5
+            ],
+            [
+              1180.5,
+              351
+            ],
+            [
+              1179.5,
+              344
+            ],
+            [
+              1175.5,
+              341
+            ],
+            [
+              1179.5,
+              335
+            ],
+            [
+              1179.5,
+              330
+            ],
+            [
+              1174,
+              321.5
+            ],
+            [
+              1170,
+              323.5
+            ],
+            [
+              1166.5,
+              320
+            ],
+            [
+              1165.5,
+              315
+            ],
+            [
+              1168,
+              310.5
+            ],
+            [
+              1172,
+              314.5
+            ],
+            [
+              1175,
+              314.5
+            ],
+            [
+              1177.5,
+              312
+            ],
+            [
+              1177.5,
+              307
+            ],
+            [
+              1169,
+              295.5
+            ],
+            [
+              1164,
+              299.5
+            ],
+            [
+              1157.5,
+              296
+            ],
+            [
+              1158.5,
+              290
+            ],
+            [
+              1155.5,
+              287
+            ],
+            [
+              1158,
+              284.5
+            ],
+            [
+              1162,
+              285.5
+            ],
+            [
+              1163.5,
+              284
+            ],
+            [
+              1160.5,
+              274
+            ],
+            [
+              1153,
+              271.5
+            ],
+            [
+              1150.5,
+              274
+            ],
+            [
+              1151.5,
+              280
+            ],
+            [
+              1149,
+              282.5
+            ],
+            [
+              1146,
+              284.5
+            ],
+            [
+              1137,
+              283.5
+            ],
+            [
+              1134.5,
+              281
+            ],
+            [
+              1135.5,
+              273
+            ],
+            [
+              1133,
+              270.5
+            ],
+            [
+              1126,
+              271.5
+            ],
+            [
+              1122.5,
+              268
+            ],
+            [
+              1124.5,
+              262
+            ],
+            [
+              1121.5,
+              258
+            ],
+            [
+              1124,
+              255.5
+            ],
+            [
+              1133,
+              256.5
+            ],
+            [
+              1135.5,
+              252
+            ],
+            [
+              1128,
+              241.5
+            ],
+            [
+              1119,
+              243.5
+            ],
+            [
+              1117.229,
+              239.821
+            ],
+            [
+              1112.609,
+              240.387
+            ],
+            [
+              1092.407,
+              258.375
+            ],
+            [
+              1085.804,
+              327.953
+            ],
+            [
+              1115.948,
+              346.034
+            ]
+          ],
+          "center": [
+            1127.135,
+            301.337
+          ]
+        },
+        "tile-78": {
+          "points": [
+            [
+              768.734,
+              321.829
+            ],
+            [
+              803.091,
+              413.867
+            ],
+            [
+              827.86,
+              416.287
+            ],
+            [
+              896.007,
+              343.746
+            ],
+            [
+              862.758,
+              291.774
+            ],
+            [
+              791.959,
+              290.818
+            ]
+          ],
+          "center": [
+            828.457,
+            345.206
+          ]
+        },
+        "tile-79": {
+          "points": [
+            [
+              960.326,
+              430.149
+            ],
+            [
+              969.701,
+              433.326
+            ],
+            [
+              1032.568,
+              398.556
+            ],
+            [
+              1037.794,
+              350.027
+            ],
+            [
+              985.027,
+              307.575
+            ],
+            [
+              919.333,
+              349.392
+            ]
+          ],
+          "center": [
+            982.001,
+            369.668
+          ]
+        }
+      },
+      "links": [
+        [
+          "tile-0",
+          "tile-10"
+        ],
+        [
+          "tile-0",
+          "tile-12"
+        ],
+        [
+          "tile-1",
+          "tile-2"
+        ],
+        [
+          "tile-1",
+          "tile-10"
+        ],
+        [
+          "tile-1",
+          "tile-14"
+        ],
+        [
+          "tile-1",
+          "tile-20"
+        ],
+        [
+          "tile-14",
+          "tile-2"
+        ],
+        [
+          "tile-15",
+          "tile-2"
+        ],
+        [
+          "tile-2",
+          "tile-23"
+        ],
+        [
+          "tile-13",
+          "tile-3"
+        ],
+        [
+          "tile-15",
+          "tile-3"
+        ],
+        [
+          "tile-21",
+          "tile-3"
+        ],
+        [
+          "tile-4",
+          "tile-6"
+        ],
+        [
+          "tile-4",
+          "tile-7"
+        ],
+        [
+          "tile-4",
+          "tile-70"
+        ],
+        [
+          "tile-4",
+          "tile-71"
+        ],
+        [
+          "tile-5",
+          "tile-72"
+        ],
+        [
+          "tile-6",
+          "tile-7"
+        ],
+        [
+          "tile-6",
+          "tile-71"
+        ],
+        [
+          "tile-8",
+          "tile-9"
+        ],
+        [
+          "tile-19",
+          "tile-8"
+        ],
+        [
+          "tile-29",
+          "tile-8"
+        ],
+        [
+          "tile-55",
+          "tile-8"
+        ],
+        [
+          "tile-57",
+          "tile-8"
+        ],
+        [
+          "tile-65",
+          "tile-8"
+        ],
+        [
+          "tile-29",
+          "tile-9"
+        ],
+        [
+          "tile-35",
+          "tile-9"
+        ],
+        [
+          "tile-45",
+          "tile-9"
+        ],
+        [
+          "tile-49",
+          "tile-9"
+        ],
+        [
+          "tile-55",
+          "tile-9"
+        ],
+        [
+          "tile-10",
+          "tile-12"
+        ],
+        [
+          "tile-10",
+          "tile-20"
+        ],
+        [
+          "tile-10",
+          "tile-22"
+        ],
+        [
+          "tile-11",
+          "tile-12"
+        ],
+        [
+          "tile-11",
+          "tile-30"
+        ],
+        [
+          "tile-11",
+          "tile-40"
+        ],
+        [
+          "tile-12",
+          "tile-22"
+        ],
+        [
+          "tile-12",
+          "tile-40"
+        ],
+        [
+          "tile-13",
+          "tile-21"
+        ],
+        [
+          "tile-13",
+          "tile-53"
+        ],
+        [
+          "tile-13",
+          "tile-67"
+        ],
+        [
+          "tile-13",
+          "tile-74"
+        ],
+        [
+          "tile-14",
+          "tile-20"
+        ],
+        [
+          "tile-14",
+          "tile-23"
+        ],
+        [
+          "tile-14",
+          "tile-31"
+        ],
+        [
+          "tile-15",
+          "tile-21"
+        ],
+        [
+          "tile-15",
+          "tile-23"
+        ],
+        [
+          "tile-15",
+          "tile-24"
+        ],
+        [
+          "tile-16",
+          "tile-17"
+        ],
+        [
+          "tile-16",
+          "tile-18"
+        ],
+        [
+          "tile-16",
+          "tile-21"
+        ],
+        [
+          "tile-16",
+          "tile-24"
+        ],
+        [
+          "tile-16",
+          "tile-74"
+        ],
+        [
+          "tile-16",
+          "tile-78"
+        ],
+        [
+          "tile-17",
+          "tile-18"
+        ],
+        [
+          "tile-17",
+          "tile-24"
+        ],
+        [
+          "tile-17",
+          "tile-25"
+        ],
+        [
+          "tile-17",
+          "tile-33"
+        ],
+        [
+          "tile-18",
+          "tile-25"
+        ],
+        [
+          "tile-18",
+          "tile-35"
+        ],
+        [
+          "tile-18",
+          "tile-55"
+        ],
+        [
+          "tile-18",
+          "tile-78"
+        ],
+        [
+          "tile-19",
+          "tile-29"
+        ],
+        [
+          "tile-20",
+          "tile-22"
+        ],
+        [
+          "tile-20",
+          "tile-31"
+        ],
+        [
+          "tile-20",
+          "tile-32"
+        ],
+        [
+          "tile-21",
+          "tile-24"
+        ],
+        [
+          "tile-21",
+          "tile-74"
+        ],
+        [
+          "tile-22",
+          "tile-32"
+        ],
+        [
+          "tile-22",
+          "tile-40"
+        ],
+        [
+          "tile-22",
+          "tile-51"
+        ],
+        [
+          "tile-23",
+          "tile-24"
+        ],
+        [
+          "tile-23",
+          "tile-31"
+        ],
+        [
+          "tile-23",
+          "tile-33"
+        ],
+        [
+          "tile-24",
+          "tile-33"
+        ],
+        [
+          "tile-26",
+          "tile-27"
+        ],
+        [
+          "tile-26",
+          "tile-33"
+        ],
+        [
+          "tile-26",
+          "tile-34"
+        ],
+        [
+          "tile-26",
+          "tile-36"
+        ],
+        [
+          "tile-26",
+          "tile-37"
+        ],
+        [
+          "tile-27",
+          "tile-37"
+        ],
+        [
+          "tile-28",
+          "tile-34"
+        ],
+        [
+          "tile-28",
+          "tile-36"
+        ],
+        [
+          "tile-28",
+          "tile-41"
+        ],
+        [
+          "tile-28",
+          "tile-61"
+        ],
+        [
+          "tile-28",
+          "tile-72"
+        ],
+        [
+          "tile-29",
+          "tile-49"
+        ],
+        [
+          "tile-30",
+          "tile-40"
+        ],
+        [
+          "tile-30",
+          "tile-50"
+        ],
+        [
+          "tile-31",
+          "tile-32"
+        ],
+        [
+          "tile-31",
+          "tile-33"
+        ],
+        [
+          "tile-31",
+          "tile-34"
+        ],
+        [
+          "tile-32",
+          "tile-34"
+        ],
+        [
+          "tile-32",
+          "tile-41"
+        ],
+        [
+          "tile-32",
+          "tile-51"
+        ],
+        [
+          "tile-33",
+          "tile-34"
+        ],
+        [
+          "tile-34",
+          "tile-36"
+        ],
+        [
+          "tile-34",
+          "tile-41"
+        ],
+        [
+          "tile-35",
+          "tile-45"
+        ],
+        [
+          "tile-35",
+          "tile-55"
+        ],
+        [
+          "tile-36",
+          "tile-37"
+        ],
+        [
+          "tile-36",
+          "tile-38"
+        ],
+        [
+          "tile-37",
+          "tile-38"
+        ],
+        [
+          "tile-39",
+          "tile-59"
+        ],
+        [
+          "tile-39",
+          "tile-65"
+        ],
+        [
+          "tile-39",
+          "tile-66"
+        ],
+        [
+          "tile-40",
+          "tile-50"
+        ],
+        [
+          "tile-40",
+          "tile-51"
+        ],
+        [
+          "tile-41",
+          "tile-51"
+        ],
+        [
+          "tile-41",
+          "tile-60"
+        ],
+        [
+          "tile-41",
+          "tile-61"
+        ],
+        [
+          "tile-42",
+          "tile-44"
+        ],
+        [
+          "tile-42",
+          "tile-54"
+        ],
+        [
+          "tile-42",
+          "tile-76"
+        ],
+        [
+          "tile-42",
+          "tile-77"
+        ],
+        [
+          "tile-42",
+          "tile-79"
+        ],
+        [
+          "tile-43",
+          "tile-55"
+        ],
+        [
+          "tile-43",
+          "tile-57"
+        ],
+        [
+          "tile-43",
+          "tile-75"
+        ],
+        [
+          "tile-43",
+          "tile-78"
+        ],
+        [
+          "tile-43",
+          "tile-79"
+        ],
+        [
+          "tile-44",
+          "tile-54"
+        ],
+        [
+          "tile-44",
+          "tile-58"
+        ],
+        [
+          "tile-45",
+          "tile-46"
+        ],
+        [
+          "tile-45",
+          "tile-49"
+        ],
+        [
+          "tile-46",
+          "tile-47"
+        ],
+        [
+          "tile-46",
+          "tile-48"
+        ],
+        [
+          "tile-46",
+          "tile-49"
+        ],
+        [
+          "tile-47",
+          "tile-48"
+        ],
+        [
+          "tile-47",
+          "tile-56"
+        ],
+        [
+          "tile-50",
+          "tile-51"
+        ],
+        [
+          "tile-51",
+          "tile-60"
+        ],
+        [
+          "tile-52",
+          "tile-60"
+        ],
+        [
+          "tile-52",
+          "tile-70"
+        ],
+        [
+          "tile-53",
+          "tile-63"
+        ],
+        [
+          "tile-53",
+          "tile-67"
+        ],
+        [
+          "tile-54",
+          "tile-57"
+        ],
+        [
+          "tile-54",
+          "tile-58"
+        ],
+        [
+          "tile-54",
+          "tile-65"
+        ],
+        [
+          "tile-54",
+          "tile-79"
+        ],
+        [
+          "tile-55",
+          "tile-57"
+        ],
+        [
+          "tile-55",
+          "tile-78"
+        ],
+        [
+          "tile-57",
+          "tile-65"
+        ],
+        [
+          "tile-57",
+          "tile-79"
+        ],
+        [
+          "tile-59",
+          "tile-66"
+        ],
+        [
+          "tile-60",
+          "tile-61"
+        ],
+        [
+          "tile-60",
+          "tile-70"
+        ],
+        [
+          "tile-61",
+          "tile-70"
+        ],
+        [
+          "tile-61",
+          "tile-71"
+        ],
+        [
+          "tile-61",
+          "tile-72"
+        ],
+        [
+          "tile-62",
+          "tile-70"
+        ],
+        [
+          "tile-63",
+          "tile-64"
+        ],
+        [
+          "tile-63",
+          "tile-67"
+        ],
+        [
+          "tile-63",
+          "tile-69"
+        ],
+        [
+          "tile-64",
+          "tile-68"
+        ],
+        [
+          "tile-64",
+          "tile-69"
+        ],
+        [
+          "tile-64",
+          "tile-73"
+        ],
+        [
+          "tile-65",
+          "tile-66"
+        ],
+        [
+          "tile-67",
+          "tile-69"
+        ],
+        [
+          "tile-67",
+          "tile-74"
+        ],
+        [
+          "tile-67",
+          "tile-75"
+        ],
+        [
+          "tile-68",
+          "tile-73"
+        ],
+        [
+          "tile-68",
+          "tile-77"
+        ],
+        [
+          "tile-69",
+          "tile-73"
+        ],
+        [
+          "tile-69",
+          "tile-75"
+        ],
+        [
+          "tile-70",
+          "tile-71"
+        ],
+        [
+          "tile-71",
+          "tile-72"
+        ],
+        [
+          "tile-73",
+          "tile-75"
+        ],
+        [
+          "tile-73",
+          "tile-76"
+        ],
+        [
+          "tile-73",
+          "tile-77"
+        ],
+        [
+          "tile-74",
+          "tile-75"
+        ],
+        [
+          "tile-74",
+          "tile-78"
+        ],
+        [
+          "tile-75",
+          "tile-76"
+        ],
+        [
+          "tile-75",
+          "tile-78"
+        ],
+        [
+          "tile-75",
+          "tile-79"
+        ],
+        [
+          "tile-76",
+          "tile-77"
+        ],
+        [
+          "tile-76",
+          "tile-79"
+        ]
+      ],
+      "plate": "reference"
+    }
+  }
+}

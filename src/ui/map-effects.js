@@ -1,3 +1,4 @@
+import { territoryCell } from './cartography-geometry.js';
 import { displayEventText } from './display-names.js';
 import {esc} from './icons.js';
 // Exact changes between recorded frames. No game rules or randomness are evaluated here.
@@ -55,7 +56,7 @@ export function renderMapEffects(effects,geometry,world,currentMarkers,beforeMar
   }).join('');
   const territories=effects.territories.map(e=>{
     const t=world.territories.find(t=>t.id===e.territoryId);if(!t)return '';
-    const point=geometry.cells[t.row*world.cols+t.col].center,label=e.label.length>17?e.label.slice(0,14)+'… 점령':e.label,width=Math.max(90,textWidth(label,13));
+    const point=territoryCell(world,geometry,t).center,label=e.label.length>17?e.label.slice(0,14)+'… 점령':e.label,width=Math.max(90,textWidth(label,13));
     const spots=[[0,24],[0,-34],[0,52],[0,-58],[70,24],[-70,24],[0,80],[100,50],[-100,50]];
     let chosen;
     for(const [dx,dy] of spots){const box={x:Math.min(1196-width,Math.max(4,point[0]+dx-width/2)),y:Math.min(770,Math.max(4,point[1]+dy-14)),w:width,h:21};if(!occupied.some(o=>box.x<o.x+o.w+4&&box.x+box.w+4>o.x&&box.y<o.y+o.h+4&&box.y+box.h+4>o.y)){chosen=box;break;}}

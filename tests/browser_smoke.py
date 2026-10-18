@@ -22,6 +22,8 @@ with sync_playwright() as p:
     page = context.new_page()
     page.on('pageerror', lambda error: errors.append(str(error)))
     page.on('dialog', lambda dialog: dialog.accept())
+    seed=json.dumps(json.loads((ROOT/'examples/칠국의 여명.world.json').read_text()))
+    page.add_init_script("if(!localStorage.getItem('saguk-studio.world.v1'))localStorage.setItem('saguk-studio.world.v1',"+json.dumps(seed)+");")
     page.goto(os.environ.get('STUDIO_TEST_URL', 'http://127.0.0.1:3000'), wait_until='networkidle')
     expect(page.locator('h1')).to_have_text('세계 개요')
     assert page.locator('.territory').count() == 80
@@ -184,6 +186,7 @@ with sync_playwright() as p:
     page.locator('nav [data-page="overview"]').click()
     page.locator('[data-action="new-world"]').click()
     dialog.locator('[name="name"]').fill('완전히 새로운 대륙')
+    dialog.locator('[name="mapTemplate"]').select_option('grid')
     dialog.locator('[name="rows"]').fill('3')
     dialog.locator('[name="cols"]').fill('4')
     dialog.locator('button[type="submit"]').click()

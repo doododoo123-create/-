@@ -2,10 +2,11 @@
 The managed cloud browser blocks file:// URLs; desktop file opening is not verified here.
 """
 from pathlib import Path
-import os, io
+import os, io, json
 from PIL import Image
 from playwright.sync_api import sync_playwright, expect
 root = Path(__file__).resolve().parents[1]
+ROOT = root
 with sync_playwright() as p:
     browser = p.chromium.launch(executable_path=os.environ.get('CHROMIUM_EXECUTABLE', '/usr/bin/chromium'), headless=True, args=['--no-sandbox'])
     context = browser.new_context(viewport={'width': 1440, 'height': 900}, accept_downloads=True)
@@ -13,6 +14,8 @@ with sync_playwright() as p:
     errors = []
     page.on('pageerror', lambda e: errors.append(str(e)))
     page.on('dialog', lambda d: d.accept())
+    seed=json.dumps(json.loads((ROOT/'examples/칠국의 여명.world.json').read_text()))
+    page.add_init_script("if(!localStorage.getItem('saguk-studio.world.v1'))localStorage.setItem('saguk-studio.world.v1',"+json.dumps(seed)+");")
     page.goto('http://127.0.0.1:3000/dist/' + '사국쟁패%20Studio.html', wait_until='networkidle')
     context.set_offline(True)
     expect(page.locator('h1')).to_have_text('세계 개요')
