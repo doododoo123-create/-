@@ -42,7 +42,7 @@ test('recorded forward camps and returns use friendly connected land without mod
    const p=frame.before.people.find(p=>p.id===m.personId);assert(p);assert(m.path.every(id=>frame.before.territories.some(t=>t.id===id&&t.ownerId===p.countryId)));
    for(let j=1;j<m.path.length;j++)assert(neighbors(frame.before,frame.before.territories.find(t=>t.id===m.path[j-1])).some(t=>t.id===m.path[j]));
    assert.equal(m.path[0],m.fromId);assert.equal(m.path.at(-1),m.toId);
-   if(m.kind==='return'){returns++;assert.equal(m.toId,p.stationId);}else{outbound++;const target=record.battles[batch.battleIndex].territoryId;assert(neighbors(frame.before,frame.before.territories.find(t=>t.id===target)).some(t=>t.id===m.toId));}
+   if(m.kind==='return'){returns++;assert.equal(m.toId,p.stationId);}else if(m.kind==='relief'){const b=record.battles[batch.battleIndex],home=frame.before.people.find(g=>g.role==='general'&&g.countryId===b.defenderId&&g.slot===b.regionSlot);assert.equal(m.toId,home.stationId);assert(m.path.length-1<=before.initialWorld.rules.reliefRadius);}else{outbound++;const target=record.battles[batch.battleIndex].territoryId;assert(neighbors(frame.before,frame.before.territories.find(t=>t.id===target)).some(t=>t.id===m.toId));}
   }}
   assert.deepEqual(scenes.at(-1).camps,r.world.visualCamps);
  }

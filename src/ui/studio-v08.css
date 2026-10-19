@@ -1,0 +1,14 @@
+/* The entire base map, including open water, is transformed by the same SVG camera. */
+.game-skin .atlas-map>.ocean-texture,.game-skin .unified-map-background .ocean-texture{pointer-events:none}
+.king-gold-outline{fill:none;stroke:#ffda55;stroke-width:2.8;stroke-linejoin:round;filter:drop-shadow(0 0 2px #ba8200);pointer-events:none}
+.map-unit-position[data-ghost]{pointer-events:none}
+.unit-outcome{animation-duration:var(--outcome-time,1.8s);animation-delay:var(--outcome-delay,0s);animation-timing-function:linear;animation-fill-mode:both;transform-box:fill-box;transform-origin:center}
+.unit-victory{animation-name:commander-victory}
+.unit-defeat{animation-name:commander-defeat}
+.unit-death{animation-name:commander-death}
+@keyframes commander-victory{0%,25%,50%,75%{filter:brightness(1.65) drop-shadow(0 0 9px #fff5ae)}12.5%,37.5%,62.5%,87.5%,100%{filter:brightness(1)}}
+@keyframes commander-defeat{0%,25%,50%,75%,100%{filter:grayscale(1) brightness(.62);opacity:.7}12.5%,37.5%,62.5%,87.5%{filter:grayscale(.65) brightness(.85);opacity:.95}}
+@keyframes commander-death{0%,25%,50%,75%{filter:sepia(1) saturate(9) hue-rotate(310deg) brightness(1.45) drop-shadow(0 0 7px #ff1616);opacity:1}12.5%,37.5%,62.5%{filter:brightness(.65);opacity:.8}85%{filter:sepia(1) saturate(9) hue-rotate(310deg);opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.9)}}
+.playback-paused .unit-outcome{animation-play-state:paused}
+.march-routes path.relief{stroke:#81e3b4;stroke-dasharray:7 4}
+@media(prefers-reduced-motion:reduce){.unit-outcome{animation:none}.unit-victory{filter:brightness(1.2) drop-shadow(0 0 4px #fff5ae)}.unit-defeat{filter:grayscale(1);opacity:.75}.unit-death{filter:sepia(1) saturate(7) hue-rotate(310deg);opacity:.5}}

@@ -6,5 +6,5 @@ export function sceneFocus(scene,record){
  if(scene.event.type==='round_end')return [600,400];
  const id=scene.event.nationId||record.actorId,country=world.countries.find(c=>c.id===id);if(!country)return null;
  const person=scene.event.role==='general'?world.people.find(p=>p.countryId===id&&p.role==='general'&&p.slot===scene.event.slot):null;
- return mapAnchor(world,person?.stationId||country.capitalId,'station');
+ return mapAnchor(world,person?.positionId||person?.stationId||country.capitalId,'station');
 }

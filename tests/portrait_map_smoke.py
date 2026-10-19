@@ -31,9 +31,9 @@ with sync_playwright() as p:
   expect(token.locator('em')).to_have_count(0)
   assert token.locator('img').evaluate('(img)=>img.getBoundingClientRect().width>img.parentElement.getBoundingClientRect().width*1.5')
  expect(page.locator('.ocean-texture')).to_have_count(1)
- assert page.locator('.ocean-texture').get_attribute('src').startswith('data:image/jpeg;base64,')
- assert page.locator('.ocean-texture').evaluate('(img)=>img.complete&&img.naturalWidth>=1000')
- assert page.locator('.ocean-texture').bounding_box()==page.locator('.atlas-scroll').bounding_box()
+ assert page.locator('.ocean-texture').get_attribute('href').startswith('data:image/jpeg;base64,')
+ assert page.locator('.ocean-texture').evaluate('async e=>{const i=new Image();i.src=e.getAttribute("href");await i.decode();return i.naturalWidth>=1000}')
+ assert page.locator('.ocean-texture').evaluate('e=>e.ownerSVGElement.classList.contains("atlas-map")')
  assert page.locator('.atlas-map').evaluate('(el)=>getComputedStyle(el).backgroundColor')=='rgba(0, 0, 0, 0)'
  page.screenshot(path=str(ROOT/'docs/compact-map-preview.png'))
  page.keyboard.press('Escape')

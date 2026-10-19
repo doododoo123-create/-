@@ -12,7 +12,7 @@ export function makeTurnScenes(record,before) {
     if(attempts.length) attempts.forEach((value,attempt)=>scenes.push({
       id:`${event.type}-${event.index}-${attempt}`,kind:'roll',role:event.role,event,
       battleIndex:event.battleIndex,diceIndices:[event.rollIndex],value,faces:roll.sides,
-      title:attempt<attempts.length-1?'전쟁 대상 없음 · 국왕 주사위 다시 굴림':event.type==='king'?'국왕의 행동 선택':event.type==='minister'?'승상의 내정 선택':event.type==='war_target'?'공격 국가 선택':event.title,
+      title:attempt<attempts.length-1?'전쟁 대상 없음 · 국왕 주사위 다시 굴림':event.type==='king'?'국왕의 행동 선택':event.type==='minister'?'승상의 내정 선택':event.type==='war_target'?'공격 국가 선택':event.type==='expedition_roll'?'지휘관의 출전 판정':event.title,
       lockedTitle:attempt<attempts.length-1?'공격 가능한 국가가 없어 재판정':event.title,
       detail:event.detail,worldBefore:frame.before,worldAfter:frame.before,
       bonus:event.side?(event.side.bonus??event.side.ability+event.side.armyBonus):event.type==='domestic_roll'?event.ability:0,
@@ -35,6 +35,7 @@ export class TurnPlayback {
   get showingResult(){return this.scene?.kind==='summary';}
   get displayWorld(){return this.state?.finished?this.state.after:this.scene?.worldAfter;}
   get movementProgress(){if(this.scene?.kind!=='movement')return 0;const left=this.playing&&this.handle!==null?Math.max(0,(this.deadline-this.now())*this.scheduledSpeed):this.remaining;return Math.max(0,Math.min(1,1-left/this.duration()));}
+  get sceneProgress(){if(!this.scene)return 0;const left=this.playing&&this.handle!==null?Math.max(0,(this.deadline-this.now())*this.scheduledSpeed):this.remaining;return Math.max(0,Math.min(1,1-left/this.duration()));}
   duration(){return this.state.phase==='departing'?(this.reducedMotion()?80:240):this.scene.kind==='movement'?(this.reducedMotion()?100:1600):this.scene.kind==='apply'?1800:this.state.phase==='rolling'?(this.reducedMotion()?80:900):this.state.phase==='raw'?500:this.state.phase==='merging'?500:this.scene.kind==='summary'?1200:this.scene.kind==='result'?1400:700;}
   clearTimer(){if(this.handle!==null)this.cancel(this.handle);this.handle=null;}
   load(record,before,after,play=true){

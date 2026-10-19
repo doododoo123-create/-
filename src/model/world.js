@@ -81,6 +81,10 @@ export function validateWorld(source) {
   for(const [key,label,min,max] of [['successTarget','내정 성공 기준',1,12],['recruitGain','모병 증가량',0,10000],['productionGain','충원 강화 증가량',0,10000],['supplyGain','보급 강화 증가량',0,10000],['baseCapacity','기본 지휘한도',1,10000],['minimumReserve','수도 최소 병력',0,10000],['territoryProduction','영토당 생산',0,10000],['armyAdvantageBonus','병력 우세 보정',0,10],['roundLimit','제한 라운드',1,100]])rules[key]=number(r[key],label,min,max);
   const combat={...clone(ADDITIVE_COMBAT_DEFAULTS),...r};
   if(!['v11','additive30'].includes(combat.battleMode))fail('지원하지 않는 전투 방식입니다.');rules.battleMode=combat.battleMode;
+  if(typeof combat.fieldCommand!=='boolean')fail('실제 출정·복귀 설정을 확인해 주세요.');rules.fieldCommand=combat.fieldCommand;
+  if(!['soldier','ten-thousand'].includes(combat.troopRounding))fail('병력 반올림 단위를 확인해 주세요.');rules.troopRounding=combat.troopRounding;
+  rules.reliefRadius=number(combat.reliefRadius,'구원 범위',0,20);
+  rules.expeditionChances=array(combat.expeditionChances,'거리별 출전 확률',6).map(v=>number(v,'출전 확률',0,100));if(rules.expeditionChances.length!==6||rules.expeditionChances.some((v,i)=>i&&v>rules.expeditionChances[i-1]))fail('거리별 출전 확률 6개를 감소 순서로 입력해 주세요.');
   for(const [key,label,min,max] of [['combatSides','전투 주사위',10,60],['experiencePerWin','승리당 보정',0,10],['experienceCap','전적 보정 상한',0,50],['mountainBonus','산악 보정',0,50]])rules[key]=number(combat[key],label,min,max);
   rules.armyBands=array(combat.armyBands,'병력 보정 구간',16).map((pair,i)=>{if(!Array.isArray(pair)||pair.length!==2)fail('병력 보정은 배율·점수 쌍이어야 합니다.');const result=[number(pair[0],'병력 배율',1.001,1000,false),number(pair[1],'병력 보정',0,100)];if(i&&(pair[0]<=combat.armyBands[i-1][0]||pair[1]<combat.armyBands[i-1][1]))fail('병력 보정 배율과 점수는 증가 순서여야 합니다.');return result;});
   if(!rules.armyBands.length)fail('병력 보정 구간을 1개 이상 입력해 주세요.');

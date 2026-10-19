@@ -34,10 +34,10 @@ export function renderJudgmentOverlay({world,playback}) {
       const current=event.type===(attack?'attack_roll':'defense_roll');
       const seen=result||attack&&event.type==='defense_roll';
       const die=battle.automatic?'<span class="judgment-auto">전투 판정 없음</span>':renderDie(current||seen?info.raw:null,battle.sides||10,current?phase:seen?'locked':'waiting',attack?'공격':'수비',sideBonus(info));
-      return `<div class="judgment-side ${key}"><div class="judgment-side-label">${attack?'공격':'수비'} · ${esc(country?.name)} <small>${info.army}만</small></div><div class="judgment-roll">${judgmentPortrait(person||{name:info.name},country,'general')}${die}</div>${judgmentTraits(person,'general',country)}${renderCombatBonuses(info)}</div>`;
+      return `<div class="judgment-side ${key}"><div class="judgment-side-label">${attack?'공격':battle.relief?'구원 수비':'수비'} · ${esc(country?.name)} <small>${info.army}만</small></div><div class="judgment-roll">${judgmentPortrait(person||{name:info.name},country,'general')}${die}</div>${judgmentTraits(person,'general',country)}${renderCombatBonuses(info)}</div>`;
     };
     body=`<div class="judgment-duel">${side('attack',true)}<span class="judgment-vs">VS</span>${side('defense',false)}</div>`;
-    if(result)note=battle.automatic?'무방비 영토 · 1개 점령 · 병력 손실 없음':`공격 −${battle.losses.attack.amount}만 · 수비 −${battle.losses.defense.amount}만 · 영토 ${battle.takenCells.length}개 점령`;
+    if(result)note=battle.automatic?(battle.returnBlocked?'복귀 차단 · 구원군 없음 · 영토 1개 점령':'무방비 영토 · 1개 점령 · 병력 손실 없음'):`공격 −${battle.losses.attack.amount}만 · 수비 −${battle.losses.defense.amount}만 · 영토 ${battle.takenCells.length}개 점령`;
   }else if(['round_end','roster','waiting','finish','elimination'].includes(event.type)){
     note=event.type==='round_end'?'각 지역에서 병력을 생산합니다.':event.detail;
   }else{
@@ -45,11 +45,11 @@ export function renderJudgmentOverlay({world,playback}) {
     const person=judgmentPerson(frame,nation,role,event.slot);
     const score=record.domesticScore;
     const showDie=scene.kind==='roll'||result&&record.type==='domestic';
-    const die=showDie?renderDie(scene.kind==='roll'?scene.value:score?.raw,scene.faces||10,scene.kind==='roll'?phase:'locked',event.type==='death_roll'?'전사 판정':event.type==='minister'?'내정 선택':event.type==='war_target'?'공격 국가':'D10 판정',scene.kind==='roll'?scene.bonus||0:score?.ability||0):'';
+    const die=showDie?renderDie(scene.kind==='roll'?scene.value:score?.raw,scene.faces||10,scene.kind==='roll'?phase:'locked',event.type==='death_roll'?'전사 판정':event.type==='minister'?'내정 선택':event.type==='war_target'?'공격 국가':event.type==='expedition_roll'?'출전 판정':'D10 판정',scene.kind==='roll'?scene.bonus||0:score?.ability||0):'';
     body=`<div class="judgment-single">${judgmentPortrait(person,nation,role)}${die}</div>${judgmentTraits(person,role,nation)}`;
     if(result)note=event.success?'내정 성공':'내정 실패 · 변화 없음';
     else if(event.type==='death_roll')note='1~3 전사 · 4~10 생존';
-    else if(!showDie)note=event.detail;
+    else if(event.type==='expedition_roll'||!showDie)note=event.detail;
   }
   return `<aside class="map-judgment ${duel?'is-duel':''}" data-event="${esc(event.type||'')}" data-phase="${state.phase}" aria-label="지도 중앙 판정" aria-live="polite"><h2>${esc(displayEventText(title))}</h2>${body}${note?`<p class="judgment-result">${esc(displayEventText(note))}</p>`:''}</aside>`;
 }

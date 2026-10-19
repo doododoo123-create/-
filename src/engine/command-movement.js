@@ -1,5 +1,21 @@
 import { neighbors } from '../model/world.js';
-// Presentation state only. This module never writes commander stations or consumes RNG.
+export function fieldCamps(world){
+ const camps={};for(const p of world.people)if(p.role==='general'&&p.active&&p.alive&&p.positionId&&p.positionId!==p.stationId)Object.defineProperty(camps,p.id,{value:{territoryId:p.positionId,homeId:p.stationId},enumerable:true,writable:true,configurable:true});return validCamps(world,camps);
+}
+function recordedFieldMovements(record,before,after){
+ record.campsBefore=fieldCamps(before);record.movements=[];
+ for(const event of record.events){
+  if(event.type!=='territory'||!Number.isInteger(event.battleIndex))continue;
+  const battle=record.battles[event.battleIndex],frame=record.frames[event.index];
+  const moves=(battle.moves||[]).map(m=>{
+   const countryId=before.countries[m.nation].id,person=frame.before.people.find(p=>p.role==='general'&&p.countryId===countryId&&p.slot===m.slot&&p.generation===m.generation);
+   return person?{personId:person.id,countryId,slot:m.slot,kind:m.kind,fromId:before.territories[m.from].id,toId:before.territories[m.to].id,path:m.path.map(i=>before.territories[i].id)}:null;
+  }).filter(Boolean);
+  if(moves.length)record.movements.push({eventIndex:event.index,battleIndex:event.battleIndex,moves,camps:fieldCamps(frame.after)});
+ }
+ record.campsAfter=fieldCamps(after);return record.campsAfter;
+}
+// The legacy branch plans visual camps; the field branch reads authoritative recorded moves. Neither consumes RNG.
 export function validCamps(world,camps={}){
   const result={};if(!camps||typeof camps!=='object')return result;for(const p of world.people){const camp=Object.hasOwn(camps,p.id)?camps[p.id]:null;if(p.role==='general'&&p.active&&p.alive&&camp&&world.territories.some(t=>t.id===camp.territoryId&&t.ownerId===p.countryId))Object.defineProperty(result,p.id,{value:{territoryId:camp.territoryId,homeId:p.stationId},enumerable:true,writable:true,configurable:true});}return result;
 }
@@ -8,6 +24,7 @@ export function friendlyPaths(world,countryId,start){
   paths.set(start,[start]);const queue=[first];for(let i=0;i<queue.length;i++)for(const n of neighbors(world,queue[i]))if(n.ownerId===countryId&&!paths.has(n.id)){paths.set(n.id,[...paths.get(queue[i].id),n.id]);queue.push(n);}return paths;
 }
 export function planCommandMovements(record,before,after,initial={}){
+  if(before.rules.battleMode==='additive30'&&before.rules.fieldCommand)return recordedFieldMovements(record,before,after);
   let camps=validCamps(before,initial);record.campsBefore=structuredClone(camps);record.movements=[];
   for(const event of record.events){
     const frame=record.frames?.[event.index],world=frame?.before||before;

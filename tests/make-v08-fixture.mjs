@@ -1,0 +1,20 @@
+import { mkdir,writeFile } from 'node:fs/promises';
+import { blankWorld,validateWorld } from '../src/model/world.js';
+import { createRun,nextTurn } from '../src/engine/simulation.js';
+import { saveRun } from '../src/storage/run-store.js';
+import { serializeWorld } from '../src/storage/world-store.js';
+const w=blankWorld({rows:3,cols:4});w.rules.baseCapacity=100;w.rules.expeditionChances=[100,100,100,100,100,100];
+w.countries=['a','b'].map((id,i)=>({id,name:i?'수비국':'공격국',color:i?'#006BFF':'#EF2028',troops:i?7:35,recruitment:0,personality:'balanced'}));
+w.people=w.countries.flatMap(c=>[{id:'king-'+c.id,name:c.id+'왕',countryId:c.id,role:'king',ability:0,personality:'balanced'},{id:'minister-'+c.id,name:c.id+'승상',countryId:c.id,role:'minister',ability:0,personality:'balanced'}]);
+w.people.push(...['a','b','b'].map((countryId,i)=>({id:'general-'+i,name:'장군'+i,countryId,role:'general',ability:i?0:4,personality:'balanced',slot:i===2?1:0})));
+w.territories.forEach((t,i)=>t.ownerId=i<4?'a':'b');
+w.cartography={version:1,style:'illustrated',opacity:.25,background:null,polygons:{},links:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,11]].map(p=>p.map(i=>'tile-'+i))};
+const world=validateWorld(w);let fixture;
+for(let trial=1;trial<200;trial++){const seed=trial*104729;
+ const before=createRun(world,seed),after=nextTurn(before),record=after.history[0],death=record.events.find(e=>e.type==='death');if(!death)continue;
+ let saved;saveRun({setItem:(_,value)=>saved=JSON.parse(value)},before);
+ const person=after.world.people.find(p=>p.countryId===death.nationId&&p.role==='general'&&p.slot===death.slot);
+ fixture={world:JSON.parse(serializeWorld(world)),before:saved,after:after.engineState,record,deadId:person.id};break;
+}
+if(!fixture)throw new Error('Missing reproducible death fixture');
+await mkdir(new URL('../.artifacts/',import.meta.url),{recursive:true});await writeFile(new URL('../.artifacts/v08-browser-fixture.json',import.meta.url),JSON.stringify(fixture));
