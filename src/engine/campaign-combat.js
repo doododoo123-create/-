@@ -1,5 +1,6 @@
 import { expeditionRoute, expeditionChance, fieldPaths } from './field-command.js';
 import { campaignDefenders, movementFatigue, retreatPath } from './campaign-logistics.js';
+import { applyHomeRetreat } from './retreat-home.js';
 import { chooseFrontier } from './frontier.js';
 import { combatBonuses, combatCasualties, roundedTroops } from '../model/combat-rules.js';
 
@@ -14,6 +15,7 @@ export function resolveCampaign(ctx){
  };
  const retreat=(nation,g,battleIndex)=>{
   if(!g.active||!g.alive||!Number.isInteger(g.position))return;
+  if(rules.retreatMode==='home'){const placement=applyHomeRetreat(s,Atlas,nation,g,h.capitalCell(s,nation));if(!placement)return;emit('retreat',g.name+(placement.reason==='capital'?' · 수도 인근 재배치':' · 본인 영지 복귀'),placement.reason==='capital'?'남은 담당 영지가 없어 수도 인근의 자국 영토에 배치했어.':'육지 경로 유무와 관계없이 남은 본인 담당 영지로 복귀했어.',{nation,slot:g.slot,role:'general',battleIndex,moves:placement.moves,stranded:false,destination:placement.to,reason:placement.reason,relocation:placement.relocation},true);return;}
   const path=retreatPath(s,Atlas,nation,g),moves=[];
   if(path){move(nation,g,path,'retreat',moves);g.stranded=false;}
   else g.stranded=true;
@@ -82,7 +84,7 @@ export function resolveCampaign(ctx){
    emit('resolve',b.summary,automatic?'병력 손실 없음':`공격 ${b.attack.army} → ${a.troops}만 / 방어 ${b.defense.army} → ${d.troops}만`,{battleIndex:index,success:b.winner===actor},true);
    deathCheck(b,a,d,wave);
    if(finalWin){
-    // Only physically displaced commanders retreat. A blocked unit never teleports to its new home.
+    // Only displaced survivors retreat; older campaigns keep their recorded blocked-route rules.
     for(const g of other.generals)if(g.active&&g.alive&&Number.isInteger(g.position)&&s.cells[g.position].owner!==opponent)retreat(opponent,g,index);
     h.ensureStations(s);h.ensureFieldPositions(s);
    }

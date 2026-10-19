@@ -1,3 +1,4 @@
+import { LEGACY_ARMY_BANDS } from '../src/model/combat-rules.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { blankWorld,validateWorld } from '../src/model/world.js';
@@ -10,7 +11,7 @@ import { stackUnits } from '../src/ui/unit-stack.js';
 import { makeTurnScenes } from '../src/ui/playback.js';
 
 function campaign({cols=4,rows=3,split=4,broken=false}={}){
- const w=blankWorld({rows,cols});w.rules.baseCapacity=100;w.rules.seaSupply=false;w.rules.expeditionChances=[100,100,100,100,100,100];
+ const w=blankWorld({rows,cols});w.rules.baseCapacity=100;w.rules.armyBands=structuredClone(LEGACY_ARMY_BANDS);w.rules.retreatMode='blocked';w.rules.seaSupply=false;w.rules.expeditionChances=[100,100,100,100,100,100];
  w.countries=['a','b'].map((id,i)=>({id,name:id,color:i?'#006bff':'#ff2028',troops:45,recruitment:0,personality:'balanced'}));
  w.people=w.countries.flatMap(c=>Array.from({length:4},(_,slot)=>({id:c.id+slot,countryId:c.id,name:c.id+slot,role:'general',ability:0,personality:'balanced',slot})));
  w.territories.forEach((t,i)=>t.ownerId=i<split?'a':'b');
@@ -99,7 +100,7 @@ test('all directly bordering nations remain eligible regardless of connection pl
 });
 test('card stacks expose narrow side strips, keep front tip fixed, cycle and promote the active commander',()=>{
  const markers=Array.from({length:3},(_,slot)=>({territory:{id:'t'},person:{id:'g'+slot,slot},country:{id:'a'},role:'general',point:[100,200]}));
- const stack=stackUnits(markers,{focus:{t:'g1'}});assert.equal(stack.at(-1).person.id,'g1');assert.equal(stack.at(-1).stackOffset,0);assert.deepEqual(stack.at(-1).point,[100,200]);assert.deepEqual(stack.map(v=>v.stackOffset),[18,9,0]);
+ const stack=stackUnits(markers,{focus:{t:'g1'}});assert.equal(stack.at(-1).person.id,'g1');assert.equal(stack.at(-1).stackOffset,0);assert.deepEqual(stack.at(-1).point,[100,200]);assert.deepEqual(stack.map(v=>v.stackOffset),[48,24,0]);
  assert.equal(stackUnits(markers,{focus:{t:'g1'},battle:{actorId:'a',slot:2}}).at(-1).person.id,'g2');
 });
 test('new campaigns preserve fatigue, defense waves, retreat/home movements and exact history after save/replay',async()=>{

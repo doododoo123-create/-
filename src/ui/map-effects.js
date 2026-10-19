@@ -45,7 +45,7 @@ export function renderMapEffects(effects,geometry,world,currentMarkers,beforeMar
   const same=(m,e)=>m.country.id===e.countryId&&m.role===e.role&&(e.role==='king'||m.person?.slot===e.slot);
   const stacks=new Map(),occupied=[];
   const textWidth=(text,size)=>[...text].reduce((n,c)=>n+(/[가-힣]/.test(c)?size:size*.58),0)+20;
-  const labels=effects.units.map(e=>{
+  const labels=effects.units.filter(e=>!['death','appointment'].includes(e.type)).map(e=>{
     const marker=currentMarkers.find(m=>same(m,e))||beforeMarkers.find(m=>same(m,e));if(!marker)return '';
     const key=`${e.countryId}:${e.role}:${e.slot}`,row=stacks.get(key)||0;stacks.set(key,row+1);
     const width=Math.min(300,Math.max(74,textWidth(e.label,17)));

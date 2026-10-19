@@ -1,10 +1,11 @@
+import { LEGACY_ARMY_BANDS } from '../src/model/combat-rules.js';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { createReferenceWorld } from '../src/data/reference-world.js';
 import { createRun, nextTurn } from '../src/engine/simulation.js';
 import { saveRun } from '../src/storage/run-store.js';
 import { serializeWorld } from '../src/storage/world-store.js';
 import { unitMarkers } from '../src/ui/atlas-view.js';
-const world = createReferenceWorld(), expected = {};world.rules.fieldCommand=false;world.rules.troopRounding='soldier';
+const world = createReferenceWorld(), expected = {};world.rules.armyBands=structuredClone(LEGACY_ARMY_BANDS);world.rules.fieldCommand=false;world.rules.troopRounding='soldier';
 let run = createRun(world, 123456);
 for (let i = 0; i < 110; i++) {
   run = nextTurn(run);

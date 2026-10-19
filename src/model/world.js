@@ -86,10 +86,11 @@ export function validateWorld(source) {
   if(typeof combat.advancedCampaign!=='boolean')fail('새 원정 규칙 설정을 확인해 주세요.');rules.advancedCampaign=combat.advancedCampaign;
   for(const [key,label,min,max] of [['territoryArmyLimit','영토당 충원 상한',1,10000],['fatigueStep','피로 적용 이동 칸',1,100],['fatiguePenalty','피로 감점',0,100]])rules[key]=number(combat[key],label,min,max);
   rules.supplyGainRange=array(combat.supplyGainRange,'보급 강화 한도 범위',2).map(v=>number(v,'지휘한도 증가',1,3));if(rules.supplyGainRange.length!==2||rules.supplyGainRange[0]>rules.supplyGainRange[1])fail('지휘한도 증가 범위를 1~3만 내에서 지정해 주세요.');
+  if(!['home','blocked'].includes(combat.retreatMode))fail('퇴각 규칙은 본인 영지 복귀 또는 이전 경로 규칙이어야 합니다.');rules.retreatMode=combat.retreatMode;
   rules.reliefRadius=number(combat.reliefRadius,'구원 범위',0,20);
   rules.expeditionChances=array(combat.expeditionChances,'거리별 출전 확률',6).map(v=>number(v,'출전 확률',0,100));if(rules.expeditionChances.length!==6||rules.expeditionChances.some((v,i)=>i&&v>rules.expeditionChances[i-1]))fail('거리별 출전 확률 6개를 감소 순서로 입력해 주세요.');
   for(const [key,label,min,max] of [['combatSides','전투 주사위',10,60],['experiencePerWin','승리당 보정',0,10],['experienceCap','전적 보정 상한',0,50],['mountainBonus','산악 보정',0,50]])rules[key]=number(combat[key],label,min,max);
-  rules.armyBands=array(combat.armyBands,'병력 보정 구간',16).map((pair,i)=>{if(!Array.isArray(pair)||pair.length!==2)fail('병력 보정은 배율·점수 쌍이어야 합니다.');const result=[number(pair[0],'병력 배율',1.001,1000,false),number(pair[1],'병력 보정',0,100)];if(i&&(pair[0]<=combat.armyBands[i-1][0]||pair[1]<combat.armyBands[i-1][1]))fail('병력 보정 배율과 점수는 증가 순서여야 합니다.');return result;});
+  rules.armyBands=array(combat.armyBands,'병력 보정 구간',16).map((pair,i)=>{if(!Array.isArray(pair)||pair.length!==2)fail('병력 보정은 배율·점수 쌍이어야 합니다.');const result=[number(pair[0],'병력 배율',1,1000,false),number(pair[1],'병력 보정',0,100)];if(i&&(pair[0]<=combat.armyBands[i-1][0]||pair[1]<combat.armyBands[i-1][1]))fail('병력 보정 배율과 점수는 증가 순서여야 합니다.');return result;});
   if(!rules.armyBands.length)fail('병력 보정 구간을 1개 이상 입력해 주세요.');
   rules.captureThresholds=array(combat.captureThresholds,'추가 점령 기준',2).map(v=>number(v,'점령 점수 차',1,200));if(rules.captureThresholds.length!==2||rules.captureThresholds[0]>=rules.captureThresholds[1])fail('추가 점령 기준은 작은 점수부터 2개 지정해 주세요.');
   rules.combatLosses=Object.fromEntries(['narrow','clear','rout','draw'].map(key=>{const pair=array(combat.combatLosses?.[key],'전투 손실 기준',2).map(v=>number(v,'손실 비율',0,1,false));if(pair.length!==2)fail('양측 손실 기준을 입력해 주세요.');return [key,pair];}));

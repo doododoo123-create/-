@@ -11,3 +11,9 @@
 .march-label {paint-order:stroke;stroke:#111;stroke-width:3px;fill:white}
 .march-routes .retreat {stroke:#c7ced7;stroke-dasharray:4 5}
 .march-routes .home {stroke:#e7effa;stroke-dasharray:7 5}
+
+/* Route-free retreat appears at its recorded destination, without a false road across enemy land. */
+.unit-redeploy {animation:commander-redeploy var(--march-time,1.6s) linear both;animation-delay:var(--march-delay,0s)}
+.playback-paused .unit-redeploy {animation-play-state:paused}
+@keyframes commander-redeploy {0%,20%{opacity:0}65%,100%{opacity:1}}
+@media(prefers-reduced-motion:reduce){.unit-redeploy{animation:none}}

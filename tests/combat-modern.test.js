@@ -1,3 +1,4 @@
+import { LEGACY_ARMY_BANDS } from '../src/model/combat-rules.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { blankWorld,validateWorld } from '../src/model/world.js';
@@ -7,9 +8,9 @@ import { createDemoWorld } from '../src/data/demo-world.js';
 import { createRun,nextTurn,engineFor,restoreRun } from '../src/engine/simulation.js';
 import { replayTurn } from '../src/engine/replay.js';
 import { makeTurnScenes } from '../src/ui/playback.js';
-const rules={...ADDITIVE_COMBAT_DEFAULTS,fieldCommand:false,troopRounding:'soldier'};
+const rules={...ADDITIVE_COMBAT_DEFAULTS,armyBands:structuredClone(LEGACY_ARMY_BANDS),fieldCommand:false,troopRounding:'soldier'};
 function fixture({cols=2,a=35,b=6,terrain='plain'}={}){
- const w=blankWorld({rows:2,cols});w.rules={...w.rules,fieldCommand:false,troopRounding:'soldier'};w.rules.baseCapacity=100;w.countries=['a','b'].map((id,i)=>({id,name:id,color:i?'#ef2028':'#006bff',troops:i?b:a,recruitment:0,personality:'balanced'}));
+ const w=blankWorld({rows:2,cols});w.rules={...w.rules,armyBands:structuredClone(LEGACY_ARMY_BANDS),fieldCommand:false,troopRounding:'soldier'};w.rules.baseCapacity=100;w.countries=['a','b'].map((id,i)=>({id,name:id,color:i?'#ef2028':'#006bff',troops:i?b:a,recruitment:0,personality:'balanced'}));
  w.people=w.countries.map(c=>({id:`g-${c.id}`,countryId:c.id,name:c.id,role:'general',ability:0,personality:'balanced',slot:0}));w.territories.forEach((t,i)=>{t.ownerId=i<cols?'a':'b';if(i>=cols)t.terrain=terrain;});return validateWorld(w);
 }
 test('army ratio boundaries, general/experience/terrain points and the natural 1-in-900 upset use only additive scores',()=>{

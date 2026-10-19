@@ -46,7 +46,7 @@ export function renderJudgmentOverlay({world,playback}) {
     const person=judgmentPerson(frame,nation,role,event.slot);
     const score=record.domesticScore;
     const showDie=scene.kind==='roll'||result&&record.type==='domestic';
-    const die=showDie?renderDie(scene.kind==='roll'?scene.value:score?.raw,scene.faces||10,scene.kind==='roll'?phase:'locked',event.type==='death_roll'?'전사 판정':event.type==='minister'?'내정 선택':event.type==='war_target'?'공격 국가':event.type==='expedition_roll'?'출전 판정':'D10 판정',scene.kind==='roll'?scene.bonus||0:score?.ability||0):'';
+    const die=showDie?renderDie(scene.kind==='roll'?scene.value:score?.raw,scene.faces||10,scene.kind==='roll'?phase:'locked',event.type==='death_roll'?'전사 판정':event.type==='minister'?'내정 선택':event.type==='war_target'?'공격 국가':event.type==='expedition_roll'?'출전 판정':event.type==='supply_roll'?'지휘한도 증가':'D10 판정',scene.kind==='roll'?scene.bonus||0:score?.ability||0):'';
     body=`<div class="judgment-single">${judgmentPortrait(person,nation,role)}${die}</div>${judgmentTraits(person,role,nation)}`;
     if(result)note=event.success?'내정 성공':'내정 실패 · 변화 없음';
     else if(event.type==='death_roll')note='1~3 전사 · 4~10 생존';

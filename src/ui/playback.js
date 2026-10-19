@@ -5,7 +5,7 @@ export function makeTurnScenes(record,before) {
   for(const event of record.events) {
     const frame=record.frames?.[event.index]||{before,after:before};
     const motion=record.movements?.find(m=>m.eventIndex===event.index);
-    if(motion){scenes.push({id:`move-${event.index}`,kind:'movement',event,battleIndex:event.battleIndex,title:'지휘관 출정·복귀',worldBefore:frame.before,worldAfter:frame.before,campsBefore:camps,camps:motion.camps,moves:motion.moves});camps=motion.camps;}
+    if(motion){scenes.push({id:`move-${event.index}`,kind:'movement',event,battleIndex:event.battleIndex,title:motion.moves.some(m=>m.kind==='redeploy')?'생존 지휘관 재배치':'지휘관 출정·복귀',worldBefore:frame.before,worldAfter:frame.before,campsBefore:camps,camps:motion.camps,moves:motion.moves});camps=motion.camps;}
     const start=scenes.length;
     const roll=record.rolls[event.rollIndex];
     const attempts=event.type==='king'?(roll?.attempts||[]):roll?[roll.value]:[];

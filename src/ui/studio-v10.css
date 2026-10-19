@@ -1,0 +1,14 @@
+.game-skin .map-unit-token[data-role=king] .token-copy b {color:#ffd65a;text-shadow:0 1px 2px #000}
+.king-crown {font:normal 11px/1 sans-serif;flex:none}
+.unit-status-wash {pointer-events:none;animation:unit-status-pulse var(--outcome-time,1.8s) linear both;animation-delay:var(--outcome-delay,0s)}
+.unit-status-wash.death {fill:#ff101b}
+.unit-status-wash.appointment {fill:#ffd23e}
+.unit-status-label {pointer-events:none;font:800 18px/1 'Malgun Gothic',sans-serif;paint-order:stroke;stroke:#081015;stroke-width:3px;stroke-linejoin:round}
+.unit-status-label.death {fill:#ff3038}
+.unit-status-label.appointment {fill:#39ff73}
+.unit-appointment {animation-name:commander-appointment}
+@keyframes unit-status-pulse {0%,25%,50%,75%{opacity:.5}12.5%,37.5%,62.5%,87.5%,100%{opacity:0}}
+@keyframes commander-appointment {0%,25%,50%,75%{filter:brightness(1.5) drop-shadow(0 0 9px #ffd23e)}12.5%,37.5%,62.5%,87.5%,100%{filter:brightness(1)}}
+@keyframes commander-death {0%,25%,50%,75%{filter:brightness(1.2) drop-shadow(0 0 9px #ff101b);opacity:1}12.5%,37.5%,62.5%{filter:brightness(.65);opacity:1}85%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.9)}}
+.playback-paused .unit-status-wash {animation-play-state:paused}
+@media(prefers-reduced-motion:reduce){.unit-status-wash{animation:none;opacity:.22}.unit-appointment{filter:drop-shadow(0 0 5px #ffd23e)}.unit-death{filter:drop-shadow(0 0 5px #ff101b);opacity:.7}}
