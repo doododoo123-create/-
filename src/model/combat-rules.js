@@ -1,6 +1,7 @@
 // Pure combat calculations. Troops are expressed in ten-thousands, precise to one soldier.
 export const ADDITIVE_COMBAT_DEFAULTS=Object.freeze({
  battleMode:'additive30',combatSides:30,experiencePerWin:1,experienceCap:9,mountainBonus:8,
+ advancedCampaign:true,territoryArmyLimit:10,fatigueStep:4,fatiguePenalty:2,supplyGainRange:[1,3],
  fieldCommand:true,troopRounding:'ten-thousand',reliefRadius:3,expeditionChances:[100,85,70,55,40,25],
  armyBands:[[1.25,4],[1.5,10],[2,16],[3,21],[5,25],[10,27],[20,28]],
  captureThresholds:[8,16],

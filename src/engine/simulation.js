@@ -3,7 +3,7 @@ import { clone,validateWorld,landCount,countryPeople,neighbors } from '../model/
 import { V11_ATLAS,V11_NATIONS } from '../data/v11-preset.js';
 import { seaSupplyPorts } from '../model/sea-supply.js';
 import { createV11Engine } from './v11-core.js';
-export const ENGINE_VERSION='studio-v11-14';
+export const ENGINE_VERSION='studio-v11-15';
 const engineCache=new WeakMap();
 export const livingCountries=world=>world.countries.filter(c=>landCount(world,c.id)>0);
 export function numericSeed(seed){const text=String(seed??123456).trim();if(!/^\d+$/.test(text)||Number(text)>4294967295)throw new Error('원본과 같은 난수를 사용하려면 시드를 0~4294967295 정수로 입력해 주세요.');return Number(text)>>>0;}
@@ -28,11 +28,11 @@ export function engineFor(definition){
 }
 export function projectWorld(definition,state,providedEngine=null){
   const {engine,ids,territoryIds}=providedEngine||engineFor(definition);
-  const countries=definition.countries.map((base,i)=>{const c=state.countries[i];return {...base,troops:c.army,reserve:c.reserve,recruitment:c.extraRecruitment,supplyBonus:c.supplyBonus,ownTurns:c.ownTurns,capitalId:territoryIds[engine.capitalCell(state,i)]||null,commanders:c.generals.filter(g=>g.active&&g.alive).length};});
+  const countries=definition.countries.map((base,i)=>{const c=state.countries[i];return {...base,troops:c.army,reserve:c.reserve,recruitment:c.extraRecruitment,supplyBonus:c.supplyBonus,ownTurns:c.ownTurns,capitalId:territoryIds[engine.capitalCell(state,i)]||null,...(definition.rules.advancedCampaign&&definition.rules.fieldCommand&&definition.rules.battleMode==='additive30'?{armyLimit:engine.lands(state,i)*definition.rules.territoryArmyLimit,reinforcementRoom:Math.max(0,engine.lands(state,i)*definition.rules.territoryArmyLimit-c.army)}:{}),commanders:c.generals.filter(g=>g.active&&g.alive).length};});
   const people=[];
   for(let i=0;i<countries.length;i++){
     const configured=countryPeople(definition,ids[i]);people.push(...configured.filter(p=>p.role!=='general'));
-    for(const g of state.countries[i].generals){const original=configured.find(p=>p.role==='general'&&p.slot===g.slot);if(!original&&!g.active&&!g.generation)continue;const station=engine.stationCell(state,i,g.slot);people.push({...(original||{}),id:g.generation||!original?`officer-${ids[i]}-${g.slot}-${g.generation}`:original.id,countryId:ids[i],name:g.name,role:'general',personality:original?.personality||'balanced',feature:g.feature,ability:g.ability,commandBonus:g.commandBonus,slot:g.slot,troops:g.troops,capacity:engine.capacity(state.countries[i],g),active:g.active,alive:g.alive,waited:g.waited,generation:g.generation,...(g.wins!==undefined?{wins:g.wins}:{}),stationId:territoryIds[station]||null,...(definition.rules.battleMode==='additive30'&&definition.rules.fieldCommand?{positionId:territoryIds[g.position]||null}:{}),connected:g.active&&station!==null?engine.capitalConnected(state,i,g.slot):false,territoryIds:state.cells.filter(t=>t.owner===i&&t.commander===g.slot).map(t=>territoryIds[t.id])});}
+    for(const g of state.countries[i].generals){const original=configured.find(p=>p.role==='general'&&p.slot===g.slot);if(!original&&!g.active&&!g.generation)continue;const station=engine.stationCell(state,i,g.slot),stranded=!!g.stranded||(g.stranded!==undefined&&Number.isInteger(g.position)&&state.cells[g.position]?.owner!==i);people.push({...(original||{}),id:g.generation||!original?`officer-${ids[i]}-${g.slot}-${g.generation}`:original.id,countryId:ids[i],name:g.name,role:'general',personality:original?.personality||'balanced',feature:g.feature,ability:g.ability,commandBonus:g.commandBonus,slot:g.slot,troops:g.troops,capacity:engine.capacity(state.countries[i],g),active:g.active,alive:g.alive,waited:g.waited,generation:g.generation,...(g.wins!==undefined?{wins:g.wins}:{}),...(g.stranded!==undefined?{stranded}:{}),stationId:territoryIds[station]||null,...(definition.rules.battleMode==='additive30'&&definition.rules.fieldCommand?{positionId:territoryIds[g.position]||null}:{}),connected:g.active&&!stranded&&station!==null?engine.capitalConnected(state,i,g.slot):false,territoryIds:state.cells.filter(t=>t.owner===i&&t.commander===g.slot).map(t=>territoryIds[t.id])});}
   }
   const territories=definition.territories.map((t,i)=>{const cell=state.cells[i],commander=people.find(p=>p.countryId===ids[cell.owner]&&p.role==='general'&&p.slot===cell.commander);return {...t,ownerId:ids[cell.owner],commanderSlot:cell.commander,commanderId:commander?.id||null};});
   return {...definition,countries,people,territories};
@@ -72,8 +72,8 @@ export function nextTurn(input,controls){
 export function casualty(own,enemy,rate){const base=rate*100;if(!own||!enemy||!base)return 0;const n=own*base*enemy*2,d=(own+enemy)*100;return Math.min(own,Math.max(1,Math.floor((n*2+d)/(d*2))));}
 export function borderTargets(world,id){return world.territories.filter(t=>t.ownerId!==id&&neighbors(world,t).some(n=>n.ownerId===id));}
 export function restoreRun(data){
-  if(![ENGINE_VERSION,'studio-v11-13','studio-v11-12','studio-v11-11'].includes(data?.engineVersion))throw new Error('현재 v11 엔진과 다른 실행 저장입니다.');
-  const source=clone(data.initialWorld);if(data.engineVersion!==ENGINE_VERSION&&source?.rules){source.rules.fieldCommand=false;source.rules.troopRounding='soldier';if(data.engineVersion!=='studio-v11-13')source.rules.battleMode='v11';if(data.engineVersion==='studio-v11-11')source.rules.seaSupply=false;}
+  if(![ENGINE_VERSION,'studio-v11-14','studio-v11-13','studio-v11-12','studio-v11-11'].includes(data?.engineVersion))throw new Error('현재 v11 엔진과 다른 실행 저장입니다.');
+  const source=clone(data.initialWorld);if(data.engineVersion!==ENGINE_VERSION&&source?.rules){source.rules.advancedCampaign=false;if(data.engineVersion!=='studio-v11-14'){source.rules.fieldCommand=false;source.rules.troopRounding='soldier';}if(!['studio-v11-13','studio-v11-14'].includes(data.engineVersion))source.rules.battleMode='v11';if(data.engineVersion==='studio-v11-11')source.rules.seaSupply=false;}
   const definition=validateWorld(source),context=engineFor(definition),state=clone(data.engineState);
   if(!context.engine.validState(state)||state.seed!==numericSeed(data.seed))throw new Error('저장된 경기의 병력·영토·난수 상태가 올바르지 않습니다.');
   if(!Array.isArray(data.history)||data.history.length!==state.turns||data.history.length>10000)throw new Error('저장된 턴 기록이 경기와 일치하지 않습니다.');

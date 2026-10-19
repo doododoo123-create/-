@@ -83,6 +83,9 @@ export function validateWorld(source) {
   if(!['v11','additive30'].includes(combat.battleMode))fail('지원하지 않는 전투 방식입니다.');rules.battleMode=combat.battleMode;
   if(typeof combat.fieldCommand!=='boolean')fail('실제 출정·복귀 설정을 확인해 주세요.');rules.fieldCommand=combat.fieldCommand;
   if(!['soldier','ten-thousand'].includes(combat.troopRounding))fail('병력 반올림 단위를 확인해 주세요.');rules.troopRounding=combat.troopRounding;
+  if(typeof combat.advancedCampaign!=='boolean')fail('새 원정 규칙 설정을 확인해 주세요.');rules.advancedCampaign=combat.advancedCampaign;
+  for(const [key,label,min,max] of [['territoryArmyLimit','영토당 충원 상한',1,10000],['fatigueStep','피로 적용 이동 칸',1,100],['fatiguePenalty','피로 감점',0,100]])rules[key]=number(combat[key],label,min,max);
+  rules.supplyGainRange=array(combat.supplyGainRange,'보급 강화 한도 범위',2).map(v=>number(v,'지휘한도 증가',1,3));if(rules.supplyGainRange.length!==2||rules.supplyGainRange[0]>rules.supplyGainRange[1])fail('지휘한도 증가 범위를 1~3만 내에서 지정해 주세요.');
   rules.reliefRadius=number(combat.reliefRadius,'구원 범위',0,20);
   rules.expeditionChances=array(combat.expeditionChances,'거리별 출전 확률',6).map(v=>number(v,'출전 확률',0,100));if(rules.expeditionChances.length!==6||rules.expeditionChances.some((v,i)=>i&&v>rules.expeditionChances[i-1]))fail('거리별 출전 확률 6개를 감소 순서로 입력해 주세요.');
   for(const [key,label,min,max] of [['combatSides','전투 주사위',10,60],['experiencePerWin','승리당 보정',0,10],['experienceCap','전적 보정 상한',0,50],['mountainBonus','산악 보정',0,50]])rules[key]=number(combat[key],label,min,max);

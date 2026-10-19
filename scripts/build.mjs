@@ -32,6 +32,7 @@ const css = await readFile(resolve(root, 'src/ui/style.css'), 'utf8');
 const visuals = await readFile(resolve(root, 'src/ui/visuals.css'), 'utf8');
 const mapStage = await readFile(resolve(root, 'src/ui/map-stage.css'), 'utf8');
 const mapEditorCss = await readFile(resolve(root, 'src/ui/map-editor.css'), 'utf8');
+const campaignCss=await readFile(resolve(root,'src/ui/studio-v09.css'),'utf8');
 const fieldCss=await readFile(resolve(root,'src/ui/studio-v08.css'),'utf8');
 const studioCss = await readFile(resolve(root, 'src/ui/studio-v07.css'), 'utf8');
 const mapRefinementsCss = await readFile(resolve(root, 'src/ui/map-refinements.css'), 'utf8');
@@ -53,6 +54,7 @@ html = html.replace('<link rel="stylesheet" href="./src/ui/style.css">', `<style
   .replace('<link rel="stylesheet" href="./src/ui/map-refinements.css">', `<style>${mapRefinementsCss}</style>`)
   .replace('<link rel="stylesheet" href="./src/ui/studio-v07.css">', `<style>${studioCss}</style>`)
   .replace('<link rel="stylesheet" href="./src/ui/studio-v08.css">', `<style>${fieldCss}</style>`)
+  .replace('<link rel="stylesheet" href="./src/ui/studio-v09.css">', `<style>${campaignCss}</style>`)
   .replace('href="./favicon.svg"', `href="data:image/svg+xml;base64,${favicon}"`)
   .replace('<script type="module" src="./src/app.js"></script>', `<script>${script}</script>`);
 const dist = resolve(root, 'dist');

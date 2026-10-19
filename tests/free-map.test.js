@@ -34,7 +34,7 @@ test('adjacency recognizes a common partial border but excludes corner contact a
 });
 test('reference layout keeps edited countries, portraits, territory names and rules',()=>{const w=createDemoWorld();w.people[0].portraitKey='general-050';w.territories[0].name='내 항구';w.rules.recruitGain=9;const next=referenceLayout(w);assert.deepEqual(next.people,w.people);assert.deepEqual(next.countries,w.countries);assert.equal(next.territories[0].name,'내 항구');assert.deepEqual(next.rules,w.rules);});
 test('recorded forward camps and returns use friendly connected land without modifying battle state or RNG',()=>{
- let r=createRun(createReferenceWorld(),123456),outbound=0,returns=0;
+ const w=createReferenceWorld();w.rules.advancedCampaign=false;let r=createRun(w,123456),outbound=0,returns=0;
  for(let i=0;i<80&&!r.result;i++){
   const before=r,context=engineFor(r.initialWorld),expected=context.engine.prepareTurn(r.engineState);r=nextTurn(r);assert.deepEqual(r.engineState,{...expected.state,history:[]});assert.equal(r.rng,expected.state.rng);
   const record=r.history.at(-1),scenes=makeTurnScenes(record,before.world);

@@ -3,7 +3,7 @@ import { blankWorld,validateWorld } from '../src/model/world.js';
 import { createRun,nextTurn } from '../src/engine/simulation.js';
 import { saveRun } from '../src/storage/run-store.js';
 import { serializeWorld } from '../src/storage/world-store.js';
-const w=blankWorld({rows:3,cols:4});w.rules.baseCapacity=100;w.rules.expeditionChances=[100,100,100,100,100,100];
+const w=blankWorld({rows:3,cols:4});w.rules.baseCapacity=100;w.rules.advancedCampaign=false;w.rules.expeditionChances=[100,100,100,100,100,100];
 w.countries=['a','b'].map((id,i)=>({id,name:i?'수비국':'공격국',color:i?'#006BFF':'#EF2028',troops:i?7:35,recruitment:0,personality:'balanced'}));
 w.people=w.countries.flatMap(c=>[{id:'king-'+c.id,name:c.id+'왕',countryId:c.id,role:'king',ability:0,personality:'balanced'},{id:'minister-'+c.id,name:c.id+'승상',countryId:c.id,role:'minister',ability:0,personality:'balanced'}]);
 w.people.push(...['a','b','b'].map((countryId,i)=>({id:'general-'+i,name:'장군'+i,countryId,role:'general',ability:i?0:4,personality:'balanced',slot:i===2?1:0})));

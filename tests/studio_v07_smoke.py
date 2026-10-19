@@ -15,7 +15,7 @@ with sync_playwright() as p:
   context.set_offline(True)
  page.locator('nav [data-page="simulation"]').click();saved=page.evaluate("localStorage.getItem('saguk-studio.completed-run.v11')");expect(page.locator('.veteran-stars').first).to_be_visible();assert all(len(s)<=3 for s in page.locator('.veteran-stars').all_text_contents())
  assert page.locator('.unit-pin-tip').count()>0;assert page.locator('img[data-portrait-key^="king-"]').count()>0
- page.locator('[data-action="history-older"]').click();page.locator('.history-entry[data-id="1"]').click();expect(page.locator('.replay-banner')).to_contain_text('1턴 역사 재생 중');page.locator('[data-action="scene-skip"]').click()
+ page.locator('[data-action="history-older"]').click();page.locator('.history-entry[data-id="1"]').click();expect(page.locator('.replay-banner')).to_contain_text('1 / 110턴');page.locator('[data-action="auto"]').click();page.locator('[data-action="scene-skip"]').click()
  for unit in fixture['expected']['1']['units']:
   marker=page.locator(f'.map-unit-position[data-person="{unit["id"]}"]');expect(marker).to_have_attribute('data-camp',unit['camp']);text=marker.locator('.token-copy strong').inner_text().replace(',','');assert str(unit['troops']) in text,(unit,text)
  owners=page.locator('.atlas-cell').evaluate_all('els=>els.map(e=>[e.dataset.territory,e.dataset.owner])');assert owners==fixture['expected']['1']['owners'];assert page.evaluate("localStorage.getItem('saguk-studio.completed-run.v11')")==saved
@@ -30,7 +30,7 @@ with sync_playwright() as p:
  if not os.environ.get('STUDIO_OFFLINE'):page.screenshot(path=str(ROOT/'docs/v07-map-preview.png'))
  page.keyboard.press('s');page.keyboard.press('Escape');page.locator('[data-action="return-live"]').click();assert page.evaluate("localStorage.getItem('saguk-studio.completed-run.v11')")==saved
  print('PASS: 실제 D30 공격/수비 첨부 주사위·선행 점수 보존·미래 눈금 숨김·사건 중앙 추적·수동 이동 유지·흰색 녹화 글자',flush=True)
- page.reload(wait_until='networkidle');page.locator('nav [data-page="simulation"]').click();page.locator('.history-entry[data-id="15"]').click();expect(page.locator('.replay-banner')).to_contain_text('15턴 역사 재생 중');page.locator('[data-action="scene-skip"]').click();assert page.locator('.atlas-cell').evaluate_all('els=>els.map(e=>[e.dataset.territory,e.dataset.owner])')==fixture['expected']['15']['owners'];page.locator('[data-action="return-live"]').click()
+ page.reload(wait_until='networkidle');page.locator('nav [data-page="simulation"]').click();page.locator('.history-entry[data-id="15"]').click();expect(page.locator('.replay-banner')).to_contain_text('15 / 110턴');page.locator('[data-action="auto"]').click();page.locator('[data-action="scene-skip"]').click();assert page.locator('.atlas-cell').evaluate_all('els=>els.map(e=>[e.dataset.territory,e.dataset.owner])')==fixture['expected']['15']['owners'];page.locator('[data-action="return-live"]').click()
  print('PASS: 별/새 초상화/마커·110턴의 오래된 기록 클릭·저장 후 재생·당시 영토/부대/임시주둔 일치·현재 경기 불변',flush=True)
  page.locator('#camera-follow').uncheck();page.locator('[data-action="map-zoom-in"]').click();page.locator('h1').click();old=box(page);page.keyboard.press('ArrowRight');assert box(page)!=old;old=box(page);page.keyboard.press('Shift+ArrowDown');assert box(page)!=old
  page.locator('[data-action="map-fullscreen"]').click();expect(page.locator('.map-stage')).to_be_visible();old=box(page);page.keyboard.press('ArrowLeft');assert box(page)!=old;assert page.locator('.map-stage .map-camera-controls').count()==0;page.keyboard.press('Escape')

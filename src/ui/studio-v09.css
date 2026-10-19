@@ -1,0 +1,13 @@
+/* Country identity stays visible outside the decorative portrait art. */
+.judgment-person .framed-portrait,.scene-portrait .framed-portrait {
+ outline:4px solid var(--nation);outline-offset:2px;
+ box-shadow:0 0 0 7px #111923,0 0 22px color-mix(in srgb,var(--nation) 40%,transparent);
+}
+.defense-wave {font-size:13px;text-align:center;color:white;margin:0 0 12px;text-shadow:1px 1px 2px #000}
+.fatigue-bonus {color:#ff9e98!important}
+.map-unit-position[data-stack-front="false"] .token-copy {opacity:.7}
+.map-unit-position[data-stack-count]:not([data-stack-count="1"]) .map-unit-token {cursor:pointer}
+.unit-stack-card .map-unit-token:focus-visible {outline:3px solid white;outline-offset:-3px}
+.march-label {paint-order:stroke;stroke:#111;stroke-width:3px;fill:white}
+.march-routes .retreat {stroke:#c7ced7;stroke-dasharray:4 5}
+.march-routes .home {stroke:#e7effa;stroke-dasharray:7 5}

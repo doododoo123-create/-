@@ -20,7 +20,8 @@ export function renderJudgmentOverlay({world,playback}) {
   if(!judgmentVisible(playback))return '';
   const state=playback.state,scene=playback.scene,event=scene.event||{},record=state.record;
   const phase=state.phase==='departing'?'locked':state.phase;
-  const frame=event.type==='appointment'?scene.worldAfter===scene.worldBefore?record.frames?.[event.index]?.after||world:scene.worldAfter:scene.worldBefore||world;
+  world=vividWorld(world);
+  const frame=vividWorld(event.type==='appointment'?scene.worldAfter===scene.worldBefore?record.frames?.[event.index]?.after||world:scene.worldAfter:scene.worldBefore||world);
   const nation=findCountry(frame,event.nationId||record.actorId);
   const battle=record.battles[scene.battleIndex];
   const duel=!!battle&&['attack_roll','defense_roll','resolve','battle_auto'].includes(event.type);
@@ -51,5 +52,5 @@ export function renderJudgmentOverlay({world,playback}) {
     else if(event.type==='death_roll')note='1~3 전사 · 4~10 생존';
     else if(event.type==='expedition_roll'||!showDie)note=event.detail;
   }
-  return `<aside class="map-judgment ${duel?'is-duel':''}" data-event="${esc(event.type||'')}" data-phase="${state.phase}" aria-label="지도 중앙 판정" aria-live="polite"><h2>${esc(displayEventText(title))}</h2>${body}${note?`<p class="judgment-result">${esc(displayEventText(note))}</p>`:''}</aside>`;
+  return `<aside class="map-judgment ${duel?'is-duel':''}" data-event="${esc(event.type||'')}" data-phase="${state.phase}" aria-label="지도 중앙 판정" aria-live="polite"><h2>${esc(displayEventText(title))}</h2>${duel&&battle.defendersTotal>1?`<p class="defense-wave">순차 방어 ${battle.wave} / ${battle.defendersTotal} · 모든 수비대 격파 시 점령</p>`:''}${body}${note?`<p class="judgment-result">${esc(displayEventText(note))}</p>`:''}</aside>`;
 }

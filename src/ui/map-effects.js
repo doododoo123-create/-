@@ -35,7 +35,7 @@ export function mapEffects(scene) {
     const t=after.territories[i],prev=before.territories[i];
     if(t.ownerId!==prev?.ownerId){const c=after.countries.find(c=>c.id===t.ownerId);output.territories.push({territoryId:t.id,countryId:t.ownerId,label:`${c?.name||'무주지'} 점령`});}
   }
-  if(event.type==='resolve'&&!output.units.length&&!output.territories.length&&!event.success)add(event.nationId,'king',null,'unchanged',0,'+0만 · 변화 없음','neutral');
+  if(event.type==='resolve'&&!output.units.length&&!output.territories.length&&(!event.success||event.title?.includes('충원 상한')))add(event.nationId,'king',null,'unchanged',0,'+0만 · 변화 없음','neutral');
   if(event.type==='elimination')add(event.targetId,'king',null,'elimination',0,'멸망','negative');
   output.announcement=event.type==='round_end'?'라운드 병력 생산':event.type==='roster'?'지휘 구역 재편':displayEventText(event.title||'');
   return output;

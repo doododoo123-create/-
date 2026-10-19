@@ -7,7 +7,7 @@ import { ADDITIVE_COMBAT_DEFAULTS,combatCasualties } from '../src/model/combat-r
 import { fieldPaths,expeditionChance,fieldDefense } from '../src/engine/field-command.js';
 import { replayTurn } from '../src/engine/replay.js';
 function setup({relief=false,bridge=false,position=3}={}){
- const w=blankWorld({rows:3,cols:4});w.rules.baseCapacity=100;
+ const w=blankWorld({rows:3,cols:4});w.rules.baseCapacity=100;w.rules.advancedCampaign=false;
  w.countries=['a','b'].map(id=>({id,name:id,color:id==='a'?'#ff0000':'#0000ff',troops:35,recruitment:0,personality:'balanced'}));
  w.people=['a','b','b'].map((id,i)=>({id:'g'+i,countryId:id,name:'장군'+i,role:'general',ability:0,personality:'balanced',slot:i===2?1:0}));
  w.territories.forEach((t,i)=>t.ownerId=i<4?'a':'b');
