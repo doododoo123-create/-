@@ -1,3 +1,4 @@
+import { PRE_REFORM_COMBAT } from '../src/model/combat-rules.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {blankWorld,validateWorld}from '../src/model/world.js';
@@ -11,7 +12,7 @@ import {renderAtlas}from '../src/ui/atlas-view.js';
 import {unitOutcome}from '../src/ui/unit-outcomes.js';
 import {stackUnits}from '../src/ui/unit-stack.js';
 function fixture({split=4,broken=true,old=false}={}){
- const w=blankWorld({rows:3,cols:4});w.rules.baseCapacity=100;w.rules.seaSupply=false;w.rules.expeditionChances=[100,100,100,100,100,100];if(old){w.rules.retreatMode='blocked';w.rules.armyBands=structuredClone(LEGACY_ARMY_BANDS);}
+ const w=blankWorld({rows:3,cols:4});Object.assign(w.rules,structuredClone(PRE_REFORM_COMBAT));w.rules.baseCapacity=100;w.rules.seaSupply=false;w.rules.expeditionChances=[100,100,100,100,100,100];if(old){Object.assign(w.rules,structuredClone(PRE_REFORM_COMBAT));w.rules.retreatMode='blocked';w.rules.armyBands=structuredClone(LEGACY_ARMY_BANDS);}
  w.countries=['a','b'].map(id=>({id,name:id,color:id==='a'?'#ff0000':'#006bff',troops:45,recruitment:0,personality:'balanced'}));
  w.people=w.countries.flatMap(c=>Array.from({length:3},(_,slot)=>({id:c.id+slot,name:c.id+slot,countryId:c.id,role:'general',ability:0,personality:'balanced',slot})));
  w.territories.forEach((t,i)=>t.ownerId=i<split?'a':'b');w.cartography={version:1,style:'classic',opacity:.2,background:null,polygons:{},links:Array.from({length:11},(_,i)=>[i,i+1]).filter(([i])=>!broken||i!==split).map(p=>p.map(i=>'tile-'+i))};
@@ -60,7 +61,7 @@ test('a successor and a newly activated commander both receive gold appointment 
  const newScene={...scene,event:{type:'roster'},worldBefore:{...scene.worldBefore,people:scene.worldBefore.people.filter(p=>p.id!==person.id)}};assert.equal(unitOutcome(newScene,record,person),'appointment');
 });
 test('old v0.9 stored histories retain stronger original bands and blocked retreat on replay and continuation',async()=>{
- const w=createReferenceWorld();w.rules.retreatMode='blocked';w.rules.armyBands=structuredClone(LEGACY_ARMY_BANDS);let r=createRun(w,23);for(let i=0;i<22;i++)r=nextTurn(r);
+ const w=createReferenceWorld();Object.assign(w.rules,structuredClone(PRE_REFORM_COMBAT));w.rules.retreatMode='blocked';w.rules.armyBands=structuredClone(LEGACY_ARMY_BANDS);let r=createRun(w,23);for(let i=0;i<22;i++)r=nextTurn(r);
  const data=JSON.parse(JSON.stringify(r));data.engineVersion='studio-v11-15';delete data.initialWorld.rules.retreatMode;const restored=restoreRun(data);assert.equal(restored.initialWorld.rules.retreatMode,'blocked');assert.deepEqual(restored.initialWorld.rules.armyBands,LEGACY_ARMY_BANDS);assert.deepEqual(nextTurn(restored).engineState,nextTurn(r).engineState);await replayTurn(restored,20);
 });
 test('new rule runs save and replay personal/capital relocations and survivor rosters exactly',async()=>{

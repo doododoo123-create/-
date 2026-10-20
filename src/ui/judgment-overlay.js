@@ -1,4 +1,5 @@
-import { sideBonus, renderCombatBonuses } from './combat-view.js';
+import { renderChoiceReel } from './choice-reel.js';
+import { sideBonus, renderCombatBonuses, veteranStars } from './combat-view.js';
 import { vividWorld } from './palette.js';
 import { displayName, displayEventText } from './display-names.js';
 import {countryPeople,findCountry,ROLES,PERSONALITIES,MINISTER_STYLES} from '../model/world.js';
@@ -11,7 +12,7 @@ export function judgmentVisible(playback){
   return !!(playback.state&&!playback.complete&&!(playback.groupDone&&!playback.playing)&&scene&& !['apply','summary','movement'].includes(scene.kind)&&scene.event?.type!=='territory');
 }
 function judgmentPerson(world,country,role,slot){return countryPeople(world,country?.id).find(p=>p.role===role&&(role!=='general'||p.slot===slot));}
-function judgmentPortrait(person,country,role){return `<figure class="judgment-person" style="--nation:${country?.color||'#c0b698'}"><div class="framed-portrait">${portraitImage(person,country,role)}</div><figcaption><strong>${esc(displayName(person,ROLES[role]))}</strong><small>${esc(country?.name||'')} · ${ROLES[role]}</small></figcaption></figure>`;}
+function judgmentPortrait(person,country,role,army=null){return `<figure class="judgment-person" style="--nation:${country?.color||'#c0b698'}"><div class="framed-portrait">${portraitImage(person,country,role)}</div><figcaption><strong>${esc(displayName(person,ROLES[role]))}${role==='general'?veteranStars(person):''}</strong><small>${role==='general'?`병력 ${army??person?.troops??0}만`:esc(country?.name||'')+' · '+ROLES[role]}</small></figcaption></figure>`;}
 function judgmentTraits(person,role,country){
   const trait=role==='king'?PERSONALITIES[person?.personality||country?.personality]:role==='minister'?MINISTER_STYLES[person?.ministerStyle||'balanced']:`능력 ${judgmentSign(person?.ability)}`;
   return `<p class="judgment-feature">${esc(person?.feature||trait||'')}<span>${role==='minister'?`${esc(trait)} · 능력 ${judgmentSign(person?.ability)}`:role==='king'?esc(trait||''):`능력 ${judgmentSign(person?.ability)}`}</span></p>`;
@@ -35,10 +36,16 @@ export function renderJudgmentOverlay({world,playback}) {
       const current=event.type===(attack?'attack_roll':'defense_roll');
       const seen=result||attack&&event.type==='defense_roll';
       const die=battle.automatic?'<span class="judgment-auto">전투 판정 없음</span>':renderDie(current||seen?info.raw:null,battle.sides||10,current?phase:seen?'locked':'waiting',attack?'공격':'수비',sideBonus(info));
-      return `<div class="judgment-side ${key}"><div class="judgment-side-label">${attack?'공격':battle.relief?'구원 수비':'수비'} · ${esc(country?.name)} <small>${info.army}만</small></div><div class="judgment-roll">${judgmentPortrait(person||{name:info.name},country,'general')}${die}</div>${judgmentTraits(person,'general',country)}${renderCombatBonuses(info)}</div>`;
+      return `<div class="judgment-side ${key}"><div class="judgment-side-label">${attack?'공격':battle.relief?'구원 수비':'수비'} · ${esc(country?.name)} <small>${info.army}만</small></div><div class="judgment-roll">${judgmentPortrait({...person,name:person?.name||info.name,wins:info.wins??person?.wins},country,'general',info.army)}${die}</div>${judgmentTraits(person,'general',country)}${renderCombatBonuses(info)}</div>`;
     };
     body=`<div class="judgment-duel">${side('attack',true)}<span class="judgment-vs">VS</span>${side('defense',false)}</div>`;
     if(result)note=battle.automatic?(battle.returnBlocked?'복귀 차단 · 구원군 없음 · 영토 1개 점령':'무방비 영토 · 1개 점령 · 병력 손실 없음'):`공격 −${battle.losses.attack.amount}만 · 수비 −${battle.losses.defense.amount}만 · 영토 ${battle.takenCells.length}개 점령`;
+  }else if(event.type==='hold'){
+    const person=judgmentPerson(frame,nation,'general',event.slot);
+    body=`<div class="judgment-single refusal-person">${judgmentPortrait(person,nation,'general')}</div><p class="dispatch-refusal">출정 거부</p>`;
+  }else if(scene.kind==='reel'){
+    const role=event.role||'king',person=judgmentPerson(frame,nation,role,event.slot);
+    body=`<div class="judgment-single">${judgmentPortrait(person,nation,role)}${renderChoiceReel(scene,phase,playback.sceneProgress)}</div>`;
   }else if(['round_end','roster','waiting','finish','elimination'].includes(event.type)){
     note=event.type==='round_end'?'각 지역에서 병력을 생산합니다.':event.detail;
   }else{

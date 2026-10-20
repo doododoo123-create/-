@@ -8,7 +8,7 @@ export const ROLES = { king:'국왕', minister:'승상', general:'장군' };
 export const DEFAULT_RULES = Object.freeze({
   mode:'v11', diceSides:10, seaSupply:true, ...structuredClone(ADDITIVE_COMBAT_DEFAULTS), domesticThresholds:{balanced:5,peaceful:7,aggressive:3},
   ministerWeights:{balanced:[3,3,4],recruiter:[5,2,3],producer:[2,3,5],supplier:[2,2,6]},
-  successTarget:6,recruitGain:3,productionGain:3,supplyGain:5,baseCapacity:20,minimumReserve:5,
+  successTarget:6,recruitGain:3,productionGain:3,supplyGain:5,baseCapacity:7,minimumReserve:5,
   territoryProduction:1,armyAdvantageBonus:1,lossRates:{win:.3,tie:.4,loss:.5},roundLimit:30,
 });
 export const clone = value => structuredClone(value);
@@ -93,7 +93,11 @@ export function validateWorld(source) {
   rules.armyBands=array(combat.armyBands,'병력 보정 구간',16).map((pair,i)=>{if(!Array.isArray(pair)||pair.length!==2)fail('병력 보정은 배율·점수 쌍이어야 합니다.');const result=[number(pair[0],'병력 배율',1,1000,false),number(pair[1],'병력 보정',0,100)];if(i&&(pair[0]<=combat.armyBands[i-1][0]||pair[1]<combat.armyBands[i-1][1]))fail('병력 보정 배율과 점수는 증가 순서여야 합니다.');return result;});
   if(!rules.armyBands.length)fail('병력 보정 구간을 1개 이상 입력해 주세요.');
   rules.captureThresholds=array(combat.captureThresholds,'추가 점령 기준',2).map(v=>number(v,'점령 점수 차',1,200));if(rules.captureThresholds.length!==2||rules.captureThresholds[0]>=rules.captureThresholds[1])fail('추가 점령 기준은 작은 점수부터 2개 지정해 주세요.');
-  rules.combatLosses=Object.fromEntries(['narrow','clear','rout','draw'].map(key=>{const pair=array(combat.combatLosses?.[key],'전투 손실 기준',2).map(v=>number(v,'손실 비율',0,1,false));if(pair.length!==2)fail('양측 손실 기준을 입력해 주세요.');return [key,pair];}));
+  if(typeof combat.commandReform!=='boolean')fail('지휘체계 개편 설정을 확인해 주세요.');rules.commandReform=combat.commandReform;
+  for(const [key,label,min,max] of [['capacityCap','최대 지휘한도',1,10000],['capacityWinStep','지휘한도 증가 승수 간격',1,100],['capacityWinCap','지휘한도 증가 최대 적용 승수',0,100]])rules[key]=number(combat[key],label,min,max);
+  if(!['own','smaller'].includes(combat.casualtyBasis))fail('전투 손실 기준 병력을 확인해 주세요.');rules.casualtyBasis=combat.casualtyBasis;
+  rules.lossThresholds=array(combat.lossThresholds,'손실 등급 점수 차',3).map(v=>number(v,'손실 등급 점수 차',1,200));if(rules.lossThresholds.length!==3||rules.lossThresholds.some((v,i)=>i&&v<=rules.lossThresholds[i-1]))fail('손실 등급 점수 차 3개를 증가 순서로 지정해 주세요.');
+  rules.combatLosses=Object.fromEntries(['narrow','clear','major','rout','draw'].map(key=>{const pair=array((combat.combatLosses?.[key]??(key==='major'?ADDITIVE_COMBAT_DEFAULTS.combatLosses.major:undefined)),'전투 손실 기준',2).map(v=>number(v,'손실 비율',0,1,false));if(pair.length!==2)fail('양측 손실 기준을 입력해 주세요.');return [key,pair];}));
   const cartography=validateCartography(input.cartography,territories);
   if(mapKind==='free'&&(!cartography||cartography.links===null||territories.some(t=>!Object.hasOwn(cartography.polygons,t.id))))fail('자유 지도에는 모든 영토의 경계와 인접 연결 목록이 필요합니다.');
   return {schemaVersion:2,id:text(input.id,'세계 ID',100),name:text(input.name,'세계 이름'),description:optionalText(input.description,300),rows,cols,mapKind,countries,people,territories,rules,...(cartography?{cartography}:{})};

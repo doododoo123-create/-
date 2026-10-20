@@ -1,3 +1,4 @@
+import { PRE_REFORM_COMBAT } from '../src/model/combat-rules.js';
 import { LEGACY_ARMY_BANDS } from '../src/model/combat-rules.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -11,7 +12,7 @@ import { stackUnits } from '../src/ui/unit-stack.js';
 import { makeTurnScenes } from '../src/ui/playback.js';
 
 function campaign({cols=4,rows=3,split=4,broken=false}={}){
- const w=blankWorld({rows,cols});w.rules.baseCapacity=100;w.rules.armyBands=structuredClone(LEGACY_ARMY_BANDS);w.rules.retreatMode='blocked';w.rules.seaSupply=false;w.rules.expeditionChances=[100,100,100,100,100,100];
+ const w=blankWorld({rows,cols});Object.assign(w.rules,structuredClone(PRE_REFORM_COMBAT));w.rules.baseCapacity=100;w.rules.armyBands=structuredClone(LEGACY_ARMY_BANDS);w.rules.retreatMode='blocked';w.rules.seaSupply=false;w.rules.expeditionChances=[100,100,100,100,100,100];
  w.countries=['a','b'].map((id,i)=>({id,name:id,color:i?'#006bff':'#ff2028',troops:45,recruitment:0,personality:'balanced'}));
  w.people=w.countries.flatMap(c=>Array.from({length:4},(_,slot)=>({id:c.id+slot,countryId:c.id,name:c.id+slot,role:'general',ability:0,personality:'balanced',slot})));
  w.territories.forEach((t,i)=>t.ownerId=i<split?'a':'b');
@@ -110,7 +111,7 @@ test('new campaigns preserve fatigue, defense waves, retreat/home movements and 
  assert.equal(JSON.stringify(restored),saved);assert.deepEqual(nextTurn(restored).engineState,nextTurn(r).engineState);
 });
 test('v0.8 saved games pin their original rules and replay without advanced campaign changes',async()=>{
- const w=createReferenceWorld();w.rules.advancedCampaign=false;let r=createRun(w,135);for(let i=0;i<20;i++)r=nextTurn(r);
+ const w=createReferenceWorld();Object.assign(w.rules,structuredClone(PRE_REFORM_COMBAT));w.rules.advancedCampaign=false;let r=createRun(w,135);for(let i=0;i<20;i++)r=nextTurn(r);
  const data=JSON.parse(JSON.stringify(r));data.engineVersion='studio-v11-14';for(const key of ['advancedCampaign','territoryArmyLimit','fatigueStep','fatiguePenalty','supplyGainRange'])delete data.initialWorld.rules[key];
  const restored=restoreRun(data);assert.equal(restored.initialWorld.rules.advancedCampaign,false);assert.equal(restored.initialWorld.rules.fieldCommand,true);assert.deepEqual(nextTurn(restored).engineState,nextTurn(r).engineState);await replayTurn(restored,17);
 });

@@ -1,3 +1,4 @@
+import { PRE_REFORM_COMBAT } from '../src/model/combat-rules.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { blankWorld,validateWorld } from '../src/model/world.js';
@@ -7,7 +8,7 @@ import { ADDITIVE_COMBAT_DEFAULTS,combatCasualties } from '../src/model/combat-r
 import { fieldPaths,expeditionChance,fieldDefense } from '../src/engine/field-command.js';
 import { replayTurn } from '../src/engine/replay.js';
 function setup({relief=false,bridge=false,position=3}={}){
- const w=blankWorld({rows:3,cols:4});w.rules.baseCapacity=100;w.rules.advancedCampaign=false;
+ const w=blankWorld({rows:3,cols:4});Object.assign(w.rules,structuredClone(PRE_REFORM_COMBAT));w.rules.baseCapacity=100;w.rules.advancedCampaign=false;
  w.countries=['a','b'].map(id=>({id,name:id,color:id==='a'?'#ff0000':'#0000ff',troops:35,recruitment:0,personality:'balanced'}));
  w.people=['a','b','b'].map((id,i)=>({id:'g'+i,countryId:id,name:'장군'+i,role:'general',ability:0,personality:'balanced',slot:i===2?1:0}));
  w.territories.forEach((t,i)=>t.ownerId=i<4?'a':'b');
@@ -38,14 +39,14 @@ test('friendly routes cannot cross enemy land or use the separate sea supply net
  const r=setup(),{engine}=engineFor(r.initialWorld);assert(!fieldPaths(r.engineState,engine.ATLAS,1,8).has(4));r.engineState.cells[7].owner=0;assert(!fieldPaths(r.engineState,engine.ATLAS,1,8).has(7));
 });
 test('losses are rounded once to whole ten-thousands including zero, half-up boundaries and a zero-army death judgment',()=>{
- const rules=ADDITIVE_COMBAT_DEFAULTS;assert.equal(combatCasualties(30,1,'win',20,rules).amount,0);assert.equal(combatCasualties(30,10,'win',20,rules).amount,1);assert.equal(combatCasualties(1,30,'loss',20,rules).amount,1);assert.equal(combatCasualties(10,10,'draw',0,rules).amount,2);
+ const rules={...ADDITIVE_COMBAT_DEFAULTS,...structuredClone(PRE_REFORM_COMBAT)};assert.equal(combatCasualties(30,1,'win',20,rules).amount,0);assert.equal(combatCasualties(30,10,'win',20,rules).amount,1);assert.equal(combatCasualties(1,30,'loss',20,rules).amount,1);assert.equal(combatCasualties(10,10,'draw',0,rules).amount,2);
 });
 test('saved new campaigns reconstruct authoritative positions, dispatch decisions, movements and integer armies',async()=>{
  let r=createRun(createReferenceWorld(),123456);const selected={};for(let i=0;i<45&&!r.result;i++){r=nextTurn(r);assert(engineFor(r.initialWorld).engine.validState(r.engineState));assert(r.engineState.countries.every(c=>Number.isInteger(c.army)&&c.generals.every(g=>Number.isInteger(g.troops))));if([2,17,39].includes(r.turn))selected[r.turn]=r.history.at(-1);}
  const saved=JSON.stringify(r),restored=restoreRun(JSON.parse(saved));for(const [turn,record] of Object.entries(selected)){const replay=await replayTurn(restored,Number(turn));assert.deepEqual(replay.record.movements,record.movements);assert.deepEqual(replay.record.frames,record.frames);}assert.equal(JSON.stringify(r),saved);assert.deepEqual(nextTurn(r).engineState,nextTurn(restored).engineState);
 });
 test('v0.7 saved D30 campaigns keep soldier precision and visual-only camps on restoration and future turns',async()=>{
- const w=createReferenceWorld();w.rules.fieldCommand=false;w.rules.troopRounding='soldier';let r=createRun(w,77);for(let i=0;i<8;i++)r=nextTurn(r);const data=JSON.parse(JSON.stringify(r));data.engineVersion='studio-v11-13';delete data.initialWorld.rules.fieldCommand;delete data.initialWorld.rules.troopRounding;
+ const w=createReferenceWorld();Object.assign(w.rules,structuredClone(PRE_REFORM_COMBAT));w.rules.fieldCommand=false;w.rules.troopRounding='soldier';let r=createRun(w,77);for(let i=0;i<8;i++)r=nextTurn(r);const data=JSON.parse(JSON.stringify(r));data.engineVersion='studio-v11-13';delete data.initialWorld.rules.fieldCommand;delete data.initialWorld.rules.troopRounding;
  const restored=restoreRun(data);assert.equal(restored.initialWorld.rules.fieldCommand,false);assert.equal(restored.initialWorld.rules.troopRounding,'soldier');assert.deepEqual(nextTurn(restored).engineState,nextTurn(r).engineState);await replayTurn(restored,4);
 });
 test('relief includes exactly three friendly steps and excludes disconnected candidates',()=>{

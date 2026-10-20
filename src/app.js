@@ -82,7 +82,7 @@ function render() {
   $('#app').innerHTML = `
     <aside class="sidebar">
       <a class="brand" href="#" data-page="overview" aria-label="사국쟁패 Studio 세계 개요"><span class="brand-symbol">${icon('compass', 29)}</span><span><strong>사국쟁패</strong><small>HISTORY STUDIO</small></span></a>
-      <div class="workspace-label">WORKSPACE <span>v0.10.0</span></div>
+      <div class="workspace-label">WORKSPACE <span>v0.11.0</span></div>
       <button class="world-switch" data-action="world-meta"><span class="world-icon">${icon('globe', 19)}</span><span><b>${esc(world.name)}</b><small>나의 세계 · 편집 가능</small></span>${icon('edit', 13)}</button>
       <div class="nav-label">세계 만들기</div>
       <nav aria-label="주요 메뉴">${Object.entries(pages).slice(0, 4).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}<div class="nav-label nav-second">역사 관찰하기</div>${Object.entries(pages).slice(4).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}</nav>
@@ -93,7 +93,7 @@ function render() {
       <main id="main-content" class="${ui.page === 'simulation' ? 'simulation-page' : ''} ${playback.state&&!playback.playing&&!playback.complete?'playback-paused':''}" tabindex="-1">
         ${pageHeading()}
         ${ui.page === 'overview' ? overview() : ui.page === 'countries' ? countriesPage() : ui.page === 'people' ? peoplePage() : ui.page === 'map' ? mapPage() : ui.page === 'simulation' ? simulationPage() : rulesPage()}
-        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.10.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
+        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.11.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
       </main>
     </div>`;
   mapCamera.restore();if(ui.page==='simulation')mapCamera.follow(playback);
@@ -296,7 +296,7 @@ const actions = {
   'focus-country': id => { ui.focusedCountry=id; render(); },
   'new-run': newRunDialog,
   'replay-run': () => {if(replaySession)returnFromReplay();stop();if(!run)return;const next=createRun(run.initialWorld,run.seed);playback.reset();mapCamera.followKey=null;ui.historyOffset=0;run=next;saveRun(localStorage,run);render();notify('같은 시작 세계와 시드로 처음부터 재생합니다.');},
-  'reset-rules': () => {if(confirm('규칙 설정을 첨부 원본 v11 기본값으로 복원할까요?')){const next=clone(world);next.rules={...clone(DEFAULT_RULES),seaSupply:false,battleMode:'v11'};next.people.forEach(p=>{if(p.role==='general')p.ability=Math.sign(p.ability)*2;});updateWorld(next);}},
+  'reset-rules': () => {if(confirm('규칙 설정을 첨부 원본 v11 기본값으로 복원할까요?')){const next=clone(world);next.rules={...clone(DEFAULT_RULES),seaSupply:false,battleMode:'v11',baseCapacity:20,commandReform:false};next.people.forEach(p=>{if(p.role==='general')p.ability=Math.sign(p.ability)*2;});updateWorld(next);}},
   'map-fullscreen': openMapFullscreen,
   'map-fullscreen-close': closeMapFullscreen,
   'recording': () => { ui.recording = !ui.recording; render(); },

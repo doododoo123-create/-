@@ -10,7 +10,8 @@ export class MapCamera {
  keyboard(event,context){this.manual();const v=this.view(context),step=(event.shiftKey?3:1)*70/v.zoom;v.x+=event.key==='ArrowLeft'?-step:event.key==='ArrowRight'?step:0;v.y+=event.key==='ArrowUp'?-step:event.key==='ArrowDown'?step:0;this.clamp(v);this.update(context);}
  follow(playback){
   if(!this.autoFollow||!playback?.state||!playback.scene)return;const scene=playback.scene,record=playback.state.record,key=`${record.turn}:${scene.event?.index}:${scene.kind==='movement'?'move':'event'}`;
-  if(this.followKey===key)return;this.followKey=key;const target=sceneFocus(scene,record);if(!target)return;
+  if(this.followKey===key)return;this.followKey=key;const focus=sceneFocus(scene,record);if(!focus)return;
+  const target=[...focus],camera=this.view('simulation');if(record.battles?.[scene.battleIndex]&&scene.kind!=='movement')target[1]-=165/camera.zoom;
   this.cancelMotion();const v=this.view('simulation'),from=[v.x,v.y],start=globalThis.performance?.now()||0;
   if(!globalThis.requestAnimationFrame||globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches){[v.x,v.y]=target;this.clamp(v);this.update('simulation');return;}
   const tick=now=>{const t=Math.min(1,(now-start)/550),ease=t*t*(3-2*t);v.x=from[0]+(target[0]-from[0])*ease;v.y=from[1]+(target[1]-from[1])*ease;this.clamp(v);this.update('simulation');this.motion=t<1?requestAnimationFrame(tick):null;};this.motion=requestAnimationFrame(tick);

@@ -5,7 +5,7 @@ let dieArtInstance=0;
 const diceSigned=n=>n>0?`+${n}`:String(n||0);
 function attachedDie(value){
  const prefix=`dice-art-${++dieArtInstance}-`,source=DICE_ART[value]||DICE_ART[1];
- return source.replace('<svg ',`<svg class="dice-art ${DICE_ART[value]?'':'blank-face'}" aria-hidden="true" `).replace(/id="([^"]+)"/g,(_,id)=>`id="${prefix}${id}"`).replace(/url\(#([^)]+)\)/g,(_,id)=>`url(#${prefix}${id})`);
+ return source.replace(/(<text\b[^>]*\by=")103(")/g,(_,a,b)=>a+'91'+b).replace('<svg ',`<svg class="dice-art ${DICE_ART[value]?'':'blank-face'}" aria-hidden="true" `).replace(/id="([^"]+)"/g,(_,id)=>`id="${prefix}${id}"`).replace(/url\(#([^)]+)\)/g,(_,id)=>`url(#${prefix}${id})`);
 }
 export function renderDie(value,sides,phase='waiting',label='주사위',bonus=0){
  const rolling=phase==='rolling',revealed=Number.isInteger(value)&&!rolling,total=phase==='locked'&&bonus?value+bonus:value;

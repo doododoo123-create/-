@@ -1,3 +1,4 @@
+import { choiceFor } from './choice-reel.js';
 // Presentation reads committed engine events. Its clock never consumes game randomness.
 export const leadGeneral = (world,id) => world.people.find(p=>p.countryId===id&&p.role==='general'&&p.active&&p.alive)||null;
 export function makeTurnScenes(record,before) {
@@ -6,11 +7,12 @@ export function makeTurnScenes(record,before) {
     const frame=record.frames?.[event.index]||{before,after:before};
     const motion=record.movements?.find(m=>m.eventIndex===event.index);
     if(motion){scenes.push({id:`move-${event.index}`,kind:'movement',event,battleIndex:event.battleIndex,title:motion.moves.some(m=>m.kind==='redeploy')?'생존 지휘관 재배치':'지휘관 출정·복귀',worldBefore:frame.before,worldAfter:frame.before,campsBefore:camps,camps:motion.camps,moves:motion.moves});camps=motion.camps;}
+    if(event.type==='expedition_roll')continue;
     const start=scenes.length;
     const roll=record.rolls[event.rollIndex];
     const attempts=event.type==='king'?(roll?.attempts||[]):roll?[roll.value]:[];
     if(attempts.length) attempts.forEach((value,attempt)=>scenes.push({
-      id:`${event.type}-${event.index}-${attempt}`,kind:'roll',role:event.role,event,
+      id:`${event.type}-${event.index}-${attempt}`,kind:['king','minister','war_target'].includes(event.type)?'reel':'roll',choice:choiceFor(event,frame.before,value),role:event.role,event,
       battleIndex:event.battleIndex,diceIndices:[event.rollIndex],value,faces:roll.sides,
       title:attempt<attempts.length-1?'전쟁 대상 없음 · 국왕 주사위 다시 굴림':event.type==='king'?'국왕의 행동 선택':event.type==='minister'?'승상의 내정 선택':event.type==='war_target'?'공격 국가 선택':event.type==='expedition_roll'?'지휘관의 출전 판정':event.title,
       lockedTitle:attempt<attempts.length-1?'공격 가능한 국가가 없어 재판정':event.title,
@@ -40,7 +42,7 @@ export class TurnPlayback {
   clearTimer(){if(this.handle!==null)this.cancel(this.handle);this.handle=null;}
   load(record,before,after,play=true){
     this.clearTimer();this.groupEnd=null;this.groupDone=false;const scenes=makeTurnScenes(record,before);scenes.at(-1).worldAfter=after;
-    this.state={record,before,after,scenes,index:0,phase:scenes[0].kind==='roll'?'rolling':'holding',playing:play,finished:false};
+    this.state={record,before,after,scenes,index:0,phase:['roll','reel'].includes(scenes[0].kind)?'rolling':'holding',playing:play,finished:false};
     this.remaining=this.duration();this.onChange();if(play)this.arm();
   }
   arm(){if(!this.state?.playing||this.state.finished)return;this.clearTimer();this.scheduledSpeed=Math.max(.1,Number(this.speed())||1);this.deadline=this.now()+this.remaining/this.scheduledSpeed;this.handle=this.schedule(()=>{this.handle=null;this.advance();},this.remaining/this.scheduledSpeed);}
@@ -53,7 +55,7 @@ export class TurnPlayback {
     else if(this.state.phase==='merging')this.state.phase='locked';
     else if(this.state.phase!=='departing'&&this.state.scenes[this.state.index+1]?.kind==='apply')this.state.phase='departing';
     else if(this.groupEnd===this.state.index&&this.state.index<this.state.scenes.length-1){this.state.playing=false;this.groupDone=true;if(this.scene.kind==='apply')this.state.phase='settled';this.onChange();return;}
-    else if(this.state.index<this.state.scenes.length-1){this.state.index++;this.state.phase=this.scene.kind==='roll'?'rolling':'holding';}
+    else if(this.state.index<this.state.scenes.length-1){this.state.index++;this.state.phase=['roll','reel'].includes(this.scene.kind)?'rolling':'holding';}
     else{this.state.finished=true;this.state.playing=false;this.onChange();this.onFinish();return;}
     this.remaining=this.duration();this.onChange();if(this.state.playing)this.arm();
   }

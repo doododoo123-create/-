@@ -2,6 +2,8 @@ import { readFile,readdir,writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 export async function syncStudioArt(root){
  const dice={},leaders={};
+ const ocean=await readFile(resolve(root,'assets/maps/reference-ocean.jpg'));
+ await writeFile(resolve(root,'src/data/ocean-art.js'),'// High-detail ocean embedded by scripts/studio-art.mjs for offline use.\nexport const OCEAN_ART = '+JSON.stringify('data:image/jpeg;base64,'+ocean.toString('base64'))+';\n');
  for(const name of (await readdir(resolve(root,'assets/dice'))).filter(n=>/^die_\d{2}\.svg$/.test(n)).sort()){
   const svg=await readFile(resolve(root,'assets/dice',name),'utf8');
   if(/<\s*(script|foreignObject|image|iframe)|\bon\w+\s*=|\bhref\s*=|url\((?!#)/i.test(svg))throw new Error('다이스 SVG 형식을 확인해 주세요.');
