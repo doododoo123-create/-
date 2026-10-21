@@ -15,7 +15,7 @@ export class MapEditor {
   begin(mode){if(this.draft&&this.draft.length&&!confirm('적용하지 않은 경계 작업을 취소할까요?'))return;this.mode=mode;this.original=null;this.draft=null;if(mode==='reshape'){this.original=cellPoints(this.currentCell());this.draft=clone(this.original);}if(['trace','create'].includes(mode))this.draft=[];this.render();}
   action(action){if(action==='map-edit-reset-anchors'){this.resetAnchors();return true;}
     if(!action.startsWith('map-edit-'))return false;
-    const key=action.slice(9);if(key==='reference')return false;
+    const key=action.slice(9);if(['reference','continent160'].includes(key))return false;
     if(['select','paint','terrain','reshape','trace','create','move','center','label','station','battle','links'].includes(key)){this.begin(key);return true;}
     if(key==='apply')this.apply();
     else if(key==='free'){this.save(this.freeWorld());this.notify('격자 제한을 해제했습니다. 영토를 추가·삭제·이동할 수 있습니다.');}

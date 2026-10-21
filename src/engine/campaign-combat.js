@@ -52,7 +52,7 @@ export function resolveCampaign(ctx){
   const route=routes.get(cellId),chance=expeditionChance(route.distance,rules),roll=die('expedition:'+slot,100),accepted=roll<=chance;
   emit('expedition_roll',a.name+' · '+(accepted?'출전 결정':'주둔 유지'),route.distance+'칸 · 출전 확률 '+chance+'% · D100',{nation:actor,slot,role:'general',roll,faces:100,distance:route.distance,chance,accepted,cellId});
   if(!accepted){emit('hold',a.name+' 출전하지 않음','선택한 목표를 포기하고 현재 위치에서 대기해.',{nation:actor,slot,role:'general',cellId});continue;}
-  const home=other.generals[s.cells[cellId].commander],defense=campaignDefenders(s,Atlas,opponent,cellId,home,rules.reliefRadius);
+  const home=other.generals[s.cells[cellId].commander],defense=campaignDefenders(s,Atlas,opponent,cellId,home,Math.floor(rules.reliefRadius*(rules.distanceScale||1)));
   const queue=defense.queue.length?defense.queue:[{general:home,path:null,kind:'absent'}],assaultId=battles.length;
   for(let wave=0;wave<queue.length;wave++){
    const entry=queue[wave],d=entry.general,automatic=!defense.queue.length,index=battles.length,moves=[];

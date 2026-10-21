@@ -1,3 +1,4 @@
+import { scaledDistance } from '../model/map-scale.js';
 // Authoritative field positions and paths. Coordinates and sea supply never enter these rules.
 export function fieldPaths(state,atlas,countryId,start){
  const paths=new Map();if(!state.cells[start]||state.cells[start].owner!==countryId)return paths;
@@ -12,7 +13,7 @@ export function expeditionRoute(state,atlas,countryId,general,targetId){
  if(!fronts.length)return null;const path=paths.get(fronts[0]);
  return {from:fronts[0],path,distance:path.length}; // Includes the final attack into the enemy territory.
 }
-export function expeditionChance(distance,rules){return rules.expeditionChances[Math.min(distance,rules.expeditionChances.length)-1];}
+export function expeditionChance(distance,rules){return rules.expeditionChances[Math.min(scaledDistance(distance,rules),rules.expeditionChances.length)-1];}
 export function fieldDefense(state,atlas,countryId,homeGeneral,radius){
  const home=homeGeneral.station,canFight=g=>g.active&&g.alive&&g.troops>0;
  if(!canFight(homeGeneral))return {general:homeGeneral,blocked:false,relief:false,path:null,available:false};

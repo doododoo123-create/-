@@ -2,6 +2,8 @@ import { readFile,readdir,writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 export async function syncStudioArt(root){
  const dice={},leaders={};
+ const vector=await readFile(resolve(root,'assets/maps/continent_160.art.svg'));
+ await writeFile(resolve(root,'src/data/continent160-art.js'),'// Inert vector artwork embedded by scripts/studio-art.mjs.\nexport const CONTINENT160_ART = '+JSON.stringify('data:image/svg+xml;base64,'+vector.toString('base64'))+';\n');
  const ocean=await readFile(resolve(root,'assets/maps/reference-ocean.jpg'));
  await writeFile(resolve(root,'src/data/ocean-art.js'),'// High-detail ocean embedded by scripts/studio-art.mjs for offline use.\nexport const OCEAN_ART = '+JSON.stringify('data:image/jpeg;base64,'+ocean.toString('base64'))+';\n');
  for(const name of (await readdir(resolve(root,'assets/dice'))).filter(n=>/^die_\d{2}\.svg$/.test(n)).sort()){

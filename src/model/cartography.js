@@ -46,7 +46,7 @@ export function validateCartography(input,territories){
   }
   let links=null;
   if(input.links!==null&&input.links!==undefined){if(!Array.isArray(input.links)||input.links.length>10000)throw new Error('인접 관계 목록이 올바르지 않습니다.');const keys=new Set();links=input.links.map(pair=>{if(!Array.isArray(pair)||pair.length!==2||pair[0]===pair[1]||!pair.every(id=>ids.has(id)))throw new Error('인접 관계가 없는 영토 또는 자기 자신을 가리킵니다.');const p=[...pair].sort(),key=JSON.stringify(p);if(keys.has(key))throw new Error('인접 관계가 중복되었습니다.');keys.add(key);return p;});}
-  if(input.plate!==undefined&&input.plate!=='reference')throw new Error('지원하지 않는 지도 삽화입니다.');
+  if(input.plate!==undefined&&!['reference','continent160'].includes(input.plate))throw new Error('지원하지 않는 지도 삽화입니다.');
   return {version:1,style:input.style,opacity:input.opacity,background,polygons,links,...(input.plate?{plate:input.plate}:{})};
 }
 export function setTerritoryLinks(existing,territoryId,selectedIds){

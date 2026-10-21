@@ -1,3 +1,6 @@
+import { createContinent160World } from './data/continent160-world.js';
+import { continent160Layout } from './model/continent160-layout.js';
+import { MAP_SCALE_DEFAULTS, CONTINENT160_RULES } from './model/map-scale.js';
 import { renderRulesEditor, rulesFromForm, armyBandRow } from './ui/rules-view.js';
 import { replayTurn } from './engine/replay.js';
 import { vividWorld, VIVID_COLORS } from './ui/palette.js';
@@ -23,7 +26,7 @@ import { mapEditorToolbar } from './ui/map-editor-view.js';
 const $ = selector => document.querySelector(selector);
 let initialError = '';
 let world;
-try { world = vividWorld(loadWorld(localStorage) || createReferenceWorld()); } catch (error) { world = createDemoWorld(); initialError = error.message + ' 시작 예제를 표시합니다. 기존 저장 데이터는 덮어쓰지 않았습니다.'; }
+try { world = vividWorld(loadWorld(localStorage) || createContinent160World()); } catch (error) { world = createDemoWorld(); initialError = error.message + ' 시작 예제를 표시합니다. 기존 저장 데이터는 덮어쓰지 않았습니다.'; }
 const ui = { page: 'overview', selected: world.territories[0]?.id, paint: false, brush: world.countries[0]?.id || '', countryFilter: '', roleFilter: '', search: '', showNames: true, recording: false, mapFullscreen:false, seed: '20261017', speed: 1, mapStyle: 'atlas', editorView:'atlas', focusedCountry: null, historyOffset:0, replayLoading:false,stackFocus:{} };
 const mapCamera=new MapCamera();
 const mapGenerator=new MapGenerator({getWorld:()=>world,apply:next=>{mapEditor.draft=null;mapEditor.mode='select';mapCamera.resetAll();mapEditor.save(next);},notify});
@@ -82,7 +85,7 @@ function render() {
   $('#app').innerHTML = `
     <aside class="sidebar">
       <a class="brand" href="#" data-page="overview" aria-label="사국쟁패 Studio 세계 개요"><span class="brand-symbol">${icon('compass', 29)}</span><span><strong>사국쟁패</strong><small>HISTORY STUDIO</small></span></a>
-      <div class="workspace-label">WORKSPACE <span>v0.11.0</span></div>
+      <div class="workspace-label">WORKSPACE <span>v0.12.0</span></div>
       <button class="world-switch" data-action="world-meta"><span class="world-icon">${icon('globe', 19)}</span><span><b>${esc(world.name)}</b><small>나의 세계 · 편집 가능</small></span>${icon('edit', 13)}</button>
       <div class="nav-label">세계 만들기</div>
       <nav aria-label="주요 메뉴">${Object.entries(pages).slice(0, 4).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}<div class="nav-label nav-second">역사 관찰하기</div>${Object.entries(pages).slice(4).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}</nav>
@@ -93,7 +96,7 @@ function render() {
       <main id="main-content" class="${ui.page === 'simulation' ? 'simulation-page' : ''} ${playback.state&&!playback.playing&&!playback.complete?'playback-paused':''}" tabindex="-1">
         ${pageHeading()}
         ${ui.page === 'overview' ? overview() : ui.page === 'countries' ? countriesPage() : ui.page === 'people' ? peoplePage() : ui.page === 'map' ? mapPage() : ui.page === 'simulation' ? simulationPage() : rulesPage()}
-        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.11.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
+        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.12.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
       </main>
     </div>`;
   mapCamera.restore();if(ui.page==='simulation')mapCamera.follow(playback);
@@ -221,8 +224,8 @@ function personDialog(id) {
 }
 function newWorldDialog() {
   stop();
-  openDialog('새 세계 만들기', '현재 세계는 먼저 파일로 내보내 보관해 주세요. 지도 종류를 선택해 시작합니다. 자유 지도는 영토 수·위치가 격자에 묶이지 않습니다.', `<label>지도 종류<select name="mapTemplate"><option value="reference">참고 그림의 자유 대륙 · 칠국 예제</option><option value="free">빈 자유 지도 · 영토 1개로 시작</option><option value="grid">기존 격자 지도</option><option value="original">원본 v11 칠국 지도</option></select></label><label>세계 이름<input name="name" maxlength="80" required placeholder="예: 삼국의 시대"></label><div class="fields-two" id="grid-dimensions" style="display:none"><label>가로 영토 수<input disabled type="number" name="cols" min="2" max="24" value="10" required></label><label>세로 영토 수<input disabled type="number" name="rows" min="2" max="20" value="8" required></label></div><div class="notice">현재 작업 공간의 세계와 실행 기록이 새 세계로 교체됩니다. 파일로 내보낸 세계는 다시 불러올 수 있습니다.</div>`, '새 세계 만들기');
-  dialogHandler = data => { const type=data.get('mapTemplate');let next=type==='reference'?createReferenceWorld():type==='original'?createDemoWorld():blankWorld({name:data.get('name'),cols:Number(data.get('cols')||10),rows:Number(data.get('rows')||8)});if(type==='free'){next.mapKind='free';next.territories=[{id:'tile-0',name:'첫 영토',ownerId:null}];next.cartography={version:1,style:'illustrated',opacity:.3,background:null,polygons:{'tile-0':{points:[[500,300],[700,300],[700,500],[500,500]],center:[600,400]}},links:[]};}next.name=data.get('name');setNewWorld(next); notify('새 세계를 만들었습니다. 지도 편집에서 영토·인접 관계를 바꿀 수 있습니다.'); };
+  openDialog('새 세계 만들기', '현재 세계는 먼저 파일로 내보내 보관해 주세요. 지도 종류를 선택해 시작합니다. 자유 지도는 영토 수·위치가 격자에 묶이지 않습니다.', `<label>지도 종류<select name="mapTemplate"><option value="continent160">첨부 SVG 대륙 · 160영토 · 규모 조정 규칙</option><option value="reference">기존 참고 대륙 · 80영토</option><option value="free">빈 자유 지도 · 영토 1개로 시작</option><option value="grid">기존 격자 지도</option><option value="original">원본 v11 칠국 지도</option></select></label><label>세계 이름<input name="name" maxlength="80" required placeholder="예: 삼국의 시대"></label><div class="fields-two" id="grid-dimensions" style="display:none"><label>가로 영토 수<input disabled type="number" name="cols" min="2" max="24" value="10" required></label><label>세로 영토 수<input disabled type="number" name="rows" min="2" max="20" value="8" required></label></div><div class="notice">현재 작업 공간의 세계와 실행 기록이 새 세계로 교체됩니다. 파일로 내보낸 세계는 다시 불러올 수 있습니다.</div>`, '새 세계 만들기');
+  dialogHandler = data => { const type=data.get('mapTemplate');let next=type==='continent160'?createContinent160World():type==='reference'?createReferenceWorld():type==='original'?createDemoWorld():blankWorld({name:data.get('name'),cols:Number(data.get('cols')||10),rows:Number(data.get('rows')||8)});if(type==='free'){next.mapKind='free';next.territories=[{id:'tile-0',name:'첫 영토',ownerId:null}];next.cartography={version:1,style:'illustrated',opacity:.3,background:null,polygons:{'tile-0':{points:[[500,300],[700,300],[700,500],[500,500]],center:[600,400]}},links:[]};}next.name=data.get('name');setNewWorld(next); notify('새 세계를 만들었습니다. 지도 편집에서 영토·인접 관계를 바꿀 수 있습니다.'); };
 }
 function metaDialog() {
   stop(); render();
@@ -271,12 +274,14 @@ const actions = {
   'history-newer':()=>{ui.historyOffset=Math.max(0,ui.historyOffset-100);render();},
   'add-army-band':()=>editArmyBands(),
   'remove-army-band':id=>editArmyBands(id),
-  'modern-rules':()=>{const next=clone(world);if(next.rules.battleMode==='v11')next.people.forEach(p=>{if(p.role==='general')p.ability*=2;});next.rules={...next.rules,...clone(ADDITIVE_COMBAT_DEFAULTS)};updateWorld(next);notify('새 D30 규칙을 적용했습니다. 새 실행부터 사용합니다.');},
+  'scale160-rules':()=>{const next=clone(world);if(next.rules.battleMode==='v11')next.people.forEach(p=>{if(p.role==='general')p.ability*=2;});next.rules={...next.rules,...clone(ADDITIVE_COMBAT_DEFAULTS),...clone(CONTINENT160_RULES)};updateWorld(next);notify('160영토용 규칙을 적용했습니다. 새 실행부터 사용합니다.');},
+  'modern-rules':()=>{const next=clone(world);if(next.rules.battleMode==='v11')next.people.forEach(p=>{if(p.role==='general')p.ability*=2;});next.rules={...next.rules,...clone(ADDITIVE_COMBAT_DEFAULTS),...clone(world.territories.length===160?CONTINENT160_RULES:MAP_SCALE_DEFAULTS)};updateWorld(next);notify('새 D30 규칙을 적용했습니다. 새 실행부터 사용합니다.');},
   'map-generate': () => {stop();mapGenerator.open();},
   'save': () => { persist(true); render(); },
   'export': () => { downloadFile(`${fileName(world.name)}.world.json`, serializeWorld(world)); notify('세계 파일을 내보냈습니다. 국가·인물·지도·규칙이 모두 포함됩니다.'); },
   'import': () => { stop(); render(); $('#world-file').click(); },
   'new-world': newWorldDialog, 'world-meta': metaDialog,
+  'map-edit-continent160':()=>{if(confirm('첨부 SVG의 160영토 지도로 바꾸고 160영토용 규칙을 적용할까요? 국가와 인물은 유지하고 영토 소유권은 새 지형에 다시 배정합니다. 편집 되돌리기로 복구할 수 있습니다.')){mapEditor.draft=null;mapEditor.mode='select';mapEditor.save(continent160Layout(world));notify('160영토 지도와 규모 조정 규칙을 적용했습니다. 새 실행부터 사용합니다.');}},
   'map-edit-reference': () => {if(confirm('참고 그림의 해안·바다·영토 배치와 실제 인접 연결을 적용할까요? 국가·인물·영토 이름은 유지합니다. 기존 지도는 편집 되돌리기로 복구할 수 있습니다.')){const next=referenceLayout(world);mapEditor.draft=null;mapEditor.mode='select';mapEditor.save(next);}},
   'go-simulation': () => navigate('simulation'),
   'add-country': () => countryDialog(), 'edit-country': id => countryDialog(id),
@@ -296,7 +301,7 @@ const actions = {
   'focus-country': id => { ui.focusedCountry=id; render(); },
   'new-run': newRunDialog,
   'replay-run': () => {if(replaySession)returnFromReplay();stop();if(!run)return;const next=createRun(run.initialWorld,run.seed);playback.reset();mapCamera.followKey=null;ui.historyOffset=0;run=next;saveRun(localStorage,run);render();notify('같은 시작 세계와 시드로 처음부터 재생합니다.');},
-  'reset-rules': () => {if(confirm('규칙 설정을 첨부 원본 v11 기본값으로 복원할까요?')){const next=clone(world);next.rules={...clone(DEFAULT_RULES),seaSupply:false,battleMode:'v11',baseCapacity:20,commandReform:false};next.people.forEach(p=>{if(p.role==='general')p.ability=Math.sign(p.ability)*2;});updateWorld(next);}},
+  'reset-rules': () => {if(confirm('규칙 설정을 첨부 원본 v11 기본값으로 복원할까요?')){const next=clone(world);next.rules={...clone(DEFAULT_RULES),...clone(MAP_SCALE_DEFAULTS),seaSupply:false,battleMode:'v11',baseCapacity:20,commandReform:false};next.people.forEach(p=>{if(p.role==='general')p.ability=Math.sign(p.ability)*2;});updateWorld(next);}},
   'map-fullscreen': openMapFullscreen,
   'map-fullscreen-close': closeMapFullscreen,
   'recording': () => { ui.recording = !ui.recording; render(); },

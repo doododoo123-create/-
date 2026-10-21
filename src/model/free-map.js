@@ -7,20 +7,20 @@ export function freeMapFrom(world,cells){
   next.territories.forEach((t,i)=>{Object.defineProperty(next.cartography.polygons,t.id,{value:{...(next.cartography.polygons[t.id]?.anchors?{anchors:next.cartography.polygons[t.id].anchors}:{}),points:cells[i].points,center:cells[i].center,...(cells[i].holes?{holes:cells[i].holes}:{})},enumerable:true,writable:true,configurable:true});delete t.row;delete t.col;});
   next.mapKind='free';return next;
 }
-export function sharedBoundary(a,b){
+export function sharedBoundary(a,b,minLength=.8){
   for(let i=0;i<a.length;i++)for(let j=0;j<b.length;j++){
     const p=a[i],q=a[(i+1)%a.length],r=b[j],s=b[(j+1)%b.length],dx=q[0]-p[0],dy=q[1]-p[1],length=Math.hypot(dx,dy);
     if(!length)continue;
     if(Math.abs(dx*(r[1]-p[1])-dy*(r[0]-p[0]))/length>.04||Math.abs(dx*(s[1]-p[1])-dy*(s[0]-p[0]))/length>.04)continue;
     const project=v=>((v[0]-p[0])*dx+(v[1]-p[1])*dy)/length,u=project(r),v=project(s);
-    if(Math.min(length,Math.max(u,v))-Math.max(0,Math.min(u,v))>.8)return true;
+    if(Math.min(length,Math.max(u,v))-Math.max(0,Math.min(u,v))>minLength)return true;
   }return false;
 }
-export function boundaryLinks(world){const ts=world.territories,shapes=world.cartography.polygons,links=[];for(let i=0;i<ts.length;i++)for(let j=i+1;j<ts.length;j++)if(sharedBoundary(shapes[ts[i].id].points,shapes[ts[j].id].points))links.push([ts[i].id,ts[j].id].sort());return links;}
+export function boundaryLinks(world){const ts=world.territories,shapes=world.cartography.polygons,links=[];for(let i=0;i<ts.length;i++)for(let j=i+1;j<ts.length;j++)if(sharedBoundary(shapes[ts[i].id].points,shapes[ts[j].id].points,world.cartography?.plate==='continent160'?0.1:0.8))links.push([ts[i].id,ts[j].id].sort());return links;}
 export function addFreeTerritory(world,points,ownerId=null){
   const next=clone(world),id=newId('land'),shape=validatePolygon(points);next.territories.push({id,name:`새 영토 ${next.territories.length+1}`,ownerId});
   next.cartography.polygons[id]={points:shape,center:polygonCenter(shape)};
-  for(const t of world.territories)if(sharedBoundary(shape,world.cartography.polygons[t.id].points))next.cartography.links.push([t.id,id]);
+  for(const t of world.territories)if(sharedBoundary(shape,world.cartography.polygons[t.id].points,world.cartography.plate==='continent160'?0.1:0.8))next.cartography.links.push([t.id,id]);
   return {world:validateWorld(next),id};
 }
 export function removeFreeTerritory(world,id){

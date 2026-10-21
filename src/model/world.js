@@ -1,3 +1,4 @@
+import { MAP_SCALE_DEFAULTS, scaledProduction } from './map-scale.js';
 import { ADDITIVE_COMBAT_DEFAULTS, isModernCombat } from './combat-rules.js';
 import { V11_ATLAS, V11_NATIONS, V11_ROSTERS } from '../data/v11-preset.js';
 import { validateCartography } from './cartography.js';
@@ -6,7 +7,7 @@ export const PERSONALITIES = { balanced:'균형형', peaceful:'내정형', aggre
 export const MINISTER_STYLES = { balanced:'균형형', recruiter:'모병형', producer:'충원형', supplier:'보급형' };
 export const ROLES = { king:'국왕', minister:'승상', general:'장군' };
 export const DEFAULT_RULES = Object.freeze({
-  mode:'v11', diceSides:10, seaSupply:true, ...structuredClone(ADDITIVE_COMBAT_DEFAULTS), domesticThresholds:{balanced:5,peaceful:7,aggressive:3},
+  mode:'v11', diceSides:10, seaSupply:true, ...structuredClone(MAP_SCALE_DEFAULTS), ...structuredClone(ADDITIVE_COMBAT_DEFAULTS), domesticThresholds:{balanced:5,peaceful:7,aggressive:3},
   ministerWeights:{balanced:[3,3,4],recruiter:[5,2,3],producer:[2,3,5],supplier:[2,2,6]},
   successTarget:6,recruitGain:3,productionGain:3,supplyGain:5,baseCapacity:7,minimumReserve:5,
   territoryProduction:1,armyAdvantageBonus:1,lossRates:{win:.3,tie:.4,loss:.5},roundLimit:30,
@@ -17,7 +18,7 @@ export const landCount = (world,id) => world.territories.filter(t=>t.ownerId===i
 export const findCountry = (world,id) => world.countries.find(c=>c.id===id);
 export const countryPeople = (world,id) => world.people.filter(p=>p.countryId===id);
 export const totalTroops = world => world.countries.reduce((n,c)=>n+c.troops,0);
-export const production = (world,c) => landCount(world,c.id)*world.rules.territoryProduction+c.recruitment;
+export const production = (world,c) => scaledProduction(landCount(world,c.id),world.rules)+c.recruitment;
 export function neighbors(world,t) {
   if(!t)return [];
   if(world.cartography?.links!==null&&world.cartography?.links!==undefined){const ids=new Set(world.cartography.links.filter(pair=>pair.includes(t.id)).flat());ids.delete(t.id);return world.territories.filter(n=>ids.has(n.id));}
@@ -79,6 +80,8 @@ export function validateWorld(source) {
   const thresholds=object(r.domesticThresholds,'성향별 내정 구간'),losses=object(r.lossRates,'손실률'),weights=object(r.ministerWeights,'승상 행동 확률');
   const rules={mode:'v11',diceSides:10,seaSupply:r.seaSupply??true,domesticThresholds:Object.fromEntries(Object.keys(PERSONALITIES).map(k=>[k,number(thresholds[k],`${PERSONALITIES[k]} 내정 구간`,0,10)])),ministerWeights:Object.fromEntries(Object.keys(MINISTER_STYLES).map(k=>{const a=array(weights[k],'승상 행동 구간',3).map(v=>number(v,'승상 행동 확률',0,10));if(a.length!==3||a.reduce((n,v)=>n+v,0)!==10)fail('각 승상 성향의 세 확률 눈금 합계는 10이어야 합니다.');return [k,a];})),lossRates:Object.fromEntries(['win','tie','loss'].map(k=>[k,number(losses[k],'손실률',0,1,false)]))};
   for(const [key,label,min,max] of [['successTarget','내정 성공 기준',1,12],['recruitGain','모병 증가량',0,10000],['productionGain','충원 강화 증가량',0,10000],['supplyGain','보급 강화 증가량',0,10000],['baseCapacity','기본 지휘한도',1,10000],['minimumReserve','수도 최소 병력',0,10000],['territoryProduction','영토당 생산',0,10000],['armyAdvantageBonus','병력 우세 보정',0,10],['roundLimit','제한 라운드',1,100]])rules[key]=number(r[key],label,min,max);
+  const scale={...MAP_SCALE_DEFAULTS,...r};for(const [key,label,min,max,integer]of [['territoriesPerCommander','장군당 담당 영토',1,12,true],['productionDivisor','생산 영토 묶음',1,10,true],['distanceScale','이동 거리 환산',1,3,false]])rules[key]=number(scale[key],label,min,max,integer);
+  if(typeof scale.adaptiveReserve!=='boolean')fail('소국 수도 예비병 설정을 확인해 주세요.');rules.adaptiveReserve=scale.adaptiveReserve;
   const combat={...clone(ADDITIVE_COMBAT_DEFAULTS),...r};
   if(!['v11','additive30'].includes(combat.battleMode))fail('지원하지 않는 전투 방식입니다.');rules.battleMode=combat.battleMode;
   if(typeof combat.fieldCommand!=='boolean')fail('실제 출정·복귀 설정을 확인해 주세요.');rules.fieldCommand=combat.fieldCommand;
