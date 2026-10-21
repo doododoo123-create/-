@@ -1,4 +1,9 @@
 // Visual effects read recorded outcomes; they never infer or change a battle result.
+export function unitBattling(scene,record,person){
+ if(!person||person.role!=='general'||!scene||!['territory','attack_roll','defense_roll','resolve'].includes(scene.event?.type)||scene.kind==='apply')return false;
+ const b=record?.battles?.[scene.battleIndex];
+ return !!b&&!b.automatic&&((person.countryId===b.actorId&&person.slot===b.slot)||(person.countryId===b.defenderId&&person.slot===b.defenseSlot));
+}
 export function unitOutcome(scene,record,person){
  if(!person||person.role!=='general'||scene?.kind!=='apply')return '';
  const e=scene.event;

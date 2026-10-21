@@ -15,7 +15,7 @@ export function mapEffects(scene) {
   for(const c of after.countries){
     const prev=oldCountries.get(c.id);if(!prev)continue;
     const delta=(c.reserve??0)-(prev.reserve??0);
-    if(delta)add(c.id,'king',null,'army',delta,`수도 ${effectSign(delta)}만`,delta>0?'positive':'negative');
+    if(delta)add(c.id,'king',null,'army',delta,`수도 ${event.type==='resupply'?'배분 ':event.type==='roster'?'이관 ':''}${effectSign(delta)}만명`,delta>0?'positive':event.type==='resupply'||event.type==='roster'?'transfer':'negative');
     const recruitment=c.recruitment-prev.recruitment;
     if(recruitment)add(c.id,'king',null,'recruitment',recruitment,`매 라운드 충원 ${effectSign(recruitment)}만`,'upgrade');
     const supply=(c.supplyBonus??0)-(prev.supplyBonus??0);
@@ -25,7 +25,7 @@ export function mapEffects(scene) {
   for(const key of new Set([...oldGenerals.keys(),...nextGenerals.keys()])){
     const prev=oldGenerals.get(key),next=nextGenerals.get(key),p=next||prev;
     const delta=(next?.troops??0)-(prev?.troops??0);
-    if(delta)add(p.countryId,'general',p.slot,'army',delta,`${event.type==='roster'&&delta<0?'이관 ':''}${effectSign(delta)}만`,delta>0?'positive':'negative');
+    if(delta)add(p.countryId,'general',p.slot,'army',delta,`${event.type==='roster'?'이관 ':event.type==='resupply'?'배분 ':''}${effectSign(delta)}만명`,delta>0?'positive':event.type==='roster'?'transfer':'negative');
     const capacity=(next?.capacity??0)-(prev?.capacity??0);
     if(capacity&&next?.active&&next?.alive&&event.type==='resolve')add(p.countryId,'general',p.slot,'capacity',capacity,`한도 ${effectSign(capacity)}만`,'upgrade');
     if(prev?.alive&&next?.alive===false)add(p.countryId,'general',p.slot,'death',0,'전사','negative');
@@ -50,7 +50,7 @@ export function renderMapEffects(effects,geometry,world,currentMarkers,beforeMar
     const key=`${e.countryId}:${e.role}:${e.slot}`,row=stacks.get(key)||0;stacks.set(key,row+1);
     const width=Math.min(300,Math.max(74,textWidth(e.label,17)));
     const x=Math.min(1200-width/2-4,Math.max(width/2+4,marker.point[0]));
-    const y=Math.max(28,marker.point[1]-55-row*26);
+    const y=Math.max(28,marker.point[1]-70-row*26);
     occupied.push({x:x-width/2,y:y-22,w:width,h:26});
     return `<g class="map-unit-feedback ${e.tone}" data-effect="${e.type}" data-country="${esc(e.countryId)}" data-role="${e.role}" data-slot="${e.slot??''}" data-delta="${e.delta}" transform="translate(${x},${y})"><path d="M0 4V12"/><rect x="${-width/2}" y="-22" width="${width}" height="26" rx="5"/><text text-anchor="middle" y="-4">${esc(e.label)}</text></g>`;
   }).join('');

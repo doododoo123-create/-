@@ -1,3 +1,6 @@
+import { prepareV13World } from './model/world-v13.js';
+import { renderApp } from './ui/mobile-renderer.js';
+import { mobileProfile } from './ui/performance-profile.js';
 import { createContinent160World } from './data/continent160-world.js';
 import { continent160Layout } from './model/continent160-layout.js';
 import { MAP_SCALE_DEFAULTS, CONTINENT160_RULES } from './model/map-scale.js';
@@ -26,7 +29,7 @@ import { mapEditorToolbar } from './ui/map-editor-view.js';
 const $ = selector => document.querySelector(selector);
 let initialError = '';
 let world;
-try { world = vividWorld(loadWorld(localStorage) || createContinent160World()); } catch (error) { world = createDemoWorld(); initialError = error.message + ' 시작 예제를 표시합니다. 기존 저장 데이터는 덮어쓰지 않았습니다.'; }
+try { world = vividWorld(prepareV13World(loadWorld(localStorage) || createContinent160World())); } catch (error) { world = createDemoWorld(); initialError = error.message + ' 시작 예제를 표시합니다. 기존 저장 데이터는 덮어쓰지 않았습니다.'; }
 const ui = { page: 'overview', selected: world.territories[0]?.id, paint: false, brush: world.countries[0]?.id || '', countryFilter: '', roleFilter: '', search: '', showNames: true, recording: false, mapFullscreen:false, seed: '20261017', speed: 1, mapStyle: 'atlas', editorView:'atlas', focusedCountry: null, historyOffset:0, replayLoading:false,stackFocus:{} };
 const mapCamera=new MapCamera();
 const mapGenerator=new MapGenerator({getWorld:()=>world,apply:next=>{mapEditor.draft=null;mapEditor.mode='select';mapCamera.resetAll();mapEditor.save(next);},notify});
@@ -78,14 +81,14 @@ function closeMapFullscreen(){
   if(document.fullscreenElement===$('#app'))document.exitFullscreen().catch(()=>{});
 }
 function render() {
-  document.title = `${world.name} · 사국쟁패 Studio`;
+  document.title = `${world.name} · 사국쟁패 Studio${mobileProfile()?' 모바일 경량판':''}`;
   document.body.classList.toggle('map-stage-open',ui.mapFullscreen);
   $('#app').className = ui.mapFullscreen?'map-fullscreen':ui.recording ? 'recording-mode' : '';
-  if(ui.mapFullscreen){$('#app').innerHTML=renderMapStage({world:playback.displayWorld||run?.world||previewWorld(world),run,playback,auto,speed:ui.speed,showNames:ui.showNames,focusedCountry:ui.focusedCountry,stackFocus:ui.stackFocus});mapCamera.restore();mapCamera.follow(playback);return;}
-  $('#app').innerHTML = `
+  if(ui.mapFullscreen){renderApp($('#app'),renderMapStage({world:playback.displayWorld||run?.world||previewWorld(world),run,playback,auto,speed:ui.speed,showNames:ui.showNames,focusedCountry:ui.focusedCountry,stackFocus:ui.stackFocus}));mapCamera.restore();mapCamera.follow(playback);return;}
+  renderApp($('#app'), `
     <aside class="sidebar">
       <a class="brand" href="#" data-page="overview" aria-label="사국쟁패 Studio 세계 개요"><span class="brand-symbol">${icon('compass', 29)}</span><span><strong>사국쟁패</strong><small>HISTORY STUDIO</small></span></a>
-      <div class="workspace-label">WORKSPACE <span>v0.12.0</span></div>
+      <div class="workspace-label">WORKSPACE <span>v0.13.0${mobileProfile()?' · 경량판':' · 일반판'}</span></div>
       <button class="world-switch" data-action="world-meta"><span class="world-icon">${icon('globe', 19)}</span><span><b>${esc(world.name)}</b><small>나의 세계 · 편집 가능</small></span>${icon('edit', 13)}</button>
       <div class="nav-label">세계 만들기</div>
       <nav aria-label="주요 메뉴">${Object.entries(pages).slice(0, 4).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}<div class="nav-label nav-second">역사 관찰하기</div>${Object.entries(pages).slice(4).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}</nav>
@@ -96,9 +99,9 @@ function render() {
       <main id="main-content" class="${ui.page === 'simulation' ? 'simulation-page' : ''} ${playback.state&&!playback.playing&&!playback.complete?'playback-paused':''}" tabindex="-1">
         ${pageHeading()}
         ${ui.page === 'overview' ? overview() : ui.page === 'countries' ? countriesPage() : ui.page === 'people' ? peoplePage() : ui.page === 'map' ? mapPage() : ui.page === 'simulation' ? simulationPage() : rulesPage()}
-        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.12.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
+        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.13.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
       </main>
-    </div>`;
+    </div>`);
   mapCamera.restore();if(ui.page==='simulation')mapCamera.follow(playback);
 }
 function navItem(key, glyph, label) { return `<button class="nav-item ${ui.page === key ? 'active' : ''}" data-page="${key}" ${ui.page === key ? 'aria-current="page"' : ''}>${icon(glyph, 19)}${label}${key === 'countries' || key === 'people' ? `<span class="nav-count">${key === 'countries' ? world.countries.length : world.people.length}</span>` : ''}</button>`; }

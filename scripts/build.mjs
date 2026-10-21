@@ -3,6 +3,7 @@
 import { readFile, writeFile, mkdir, cp } from 'node:fs/promises';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
 import { syncStudioArt } from './studio-art.mjs';
 import { syncKitIcons } from './ui-kit.mjs';
 import { syncGeneralPortraits } from './general-portraits.mjs';
@@ -10,12 +11,17 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 await syncStudioArt(root);
 await syncKitIcons(root);
 await syncGeneralPortraits(root);
+const mobileMeta=JSON.parse(await readFile(resolve(root,'assets/maps/continent_160.mobile.json'),'utf8'));
+const sourceHash=createHash('sha256').update(await readFile(resolve(root,'assets/maps/continent_160.art.svg'))).digest('hex');
+if(mobileMeta.sourceSha256!==sourceHash)throw new Error('지도 원본이 바뀌었습니다. python scripts/mobile-map.py로 모바일 배경을 다시 생성해 주세요.');
 const visited = new Set(), chunks = [];
+let mobileBuild=false;
 async function bundle(path) {
   path = resolve(path);
   if (visited.has(path)) return;
   visited.add(path);
   let source = await readFile(path, 'utf8');
+  if(mobileBuild&&path===resolve(root,'src/data/continent160-art.js'))source='export const CONTINENT160_ART = '+JSON.stringify('data:image/webp;base64,'+(await readFile(resolve(root,'assets/maps/continent_160.mobile.webp'))).toString('base64'))+';';
   const imports = [...source.matchAll(/^import\s+\{[^}]*\}\s+from\s+['"]([^'"]+)['"];?\s*$/gm)];
   for (const match of imports) {
     if (!match[1].startsWith('.')) throw new Error('Only local imports are supported');
@@ -26,13 +32,13 @@ async function bundle(path) {
   if (/^\s*(import|export)\s/m.test(source)) throw new Error(`Unsupported module syntax in ${path}`);
   chunks.push(`\n// ${path.slice(root.length + 1)}\n${source}`);
 }
-await bundle(resolve(root, 'src/app.js'));
-const script = `(() => {\n'use strict';\n${chunks.join('\n')}\n})();`.replace(/<\/script/gi, '<\\/script');
+async function scriptFor(mobile){mobileBuild=mobile;visited.clear();chunks.length=0;await bundle(resolve(root,'src/app.js'));return `(() => {\n'use strict';\n${chunks.join('\n')}\n})();`.replace(/<\/script/gi,'<\\/script');}
 const css = await readFile(resolve(root, 'src/ui/style.css'), 'utf8');
 const visuals = await readFile(resolve(root, 'src/ui/visuals.css'), 'utf8');
 const mapStage = await readFile(resolve(root, 'src/ui/map-stage.css'), 'utf8');
 const mapEditorCss = await readFile(resolve(root, 'src/ui/map-editor.css'), 'utf8');
 const reformCss=await readFile(resolve(root,'src/ui/studio-v11.css'),'utf8');
+const v13Css=await readFile(resolve(root,'src/ui/studio-v13.css'),'utf8');
 const latestCss=await readFile(resolve(root,'src/ui/studio-v10.css'),'utf8');
 const campaignCss=await readFile(resolve(root,'src/ui/studio-v09.css'),'utf8');
 const fieldCss=await readFile(resolve(root,'src/ui/studio-v08.css'),'utf8');
@@ -59,15 +65,17 @@ html = html.replace('<link rel="stylesheet" href="./src/ui/style.css">', `<style
   .replace('<link rel="stylesheet" href="./src/ui/studio-v09.css">', `<style>${campaignCss}</style>`)
   .replace('<link rel="stylesheet" href="./src/ui/studio-v10.css">', `<style>${latestCss}</style>`)
   .replace('<link rel="stylesheet" href="./src/ui/studio-v11.css">', `<style>${reformCss}</style>`)
-  .replace('href="./favicon.svg"', `href="data:image/svg+xml;base64,${favicon}"`)
-  .replace('<script type="module" src="./src/app.js"></script>', `<script>${script}</script>`);
+  .replace('<link rel="stylesheet" href="./src/ui/studio-v13.css">', `<style>${v13Css}</style>`)
+  .replace('href="./favicon.svg"', `href="data:image/svg+xml;base64,${favicon}"`);
 const dist = resolve(root, 'dist');
 await mkdir(dist, { recursive: true });
-await writeFile(resolve(dist, '사국쟁패 Studio.html'), html);
-if (process.argv.includes('--release')) {
-  await writeFile(resolve(root, '사국쟁패 Studio.html'), html);
-  console.log('GitHub ZIP에 포함할 루트 실행본도 갱신했습니다.');
+for(const mobile of [false,true]){
+ const script=await scriptFor(mobile),name=mobile?'사국쟁패 Studio 모바일 경량.html':'사국쟁패 Studio.html';
+ const output=html.replace('<html lang="ko">',`<html lang="ko" data-performance="${mobile?'mobile':'normal'}">`).replace('<script type="module" src="./src/app.js"></script>',`<script>${script}</script>`);
+ await writeFile(resolve(dist,name),output);
+ if(process.argv.includes('--release'))await writeFile(resolve(root,name),output);
+ console.log(`단독 실행본 생성: dist/${name} (${Math.ceil(Buffer.byteLength(output)/1024)}KB)`);
 }
 await mkdir(resolve(dist, 'docs'), { recursive: true });
 await cp(resolve(root, 'docs/reference'), resolve(dist, 'docs/reference'), { recursive: true });
-console.log(`단독 실행본 생성: dist/사국쟁패 Studio.html (${Math.ceil(Buffer.byteLength(html) / 1024)}KB)\n브라우저에서 더블클릭해 실행할 수 있습니다. 외부 서비스와 설치가 필요 없습니다.`);
+console.log('일반판과 모바일 경량판은 같은 규칙과 저장 형식으로 작동합니다. 외부 서비스와 설치가 필요 없습니다.');

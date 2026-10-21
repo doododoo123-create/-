@@ -10,8 +10,8 @@ import { unitOutcome } from '../src/ui/unit-outcomes.js';
 import { arrangeUnits } from '../src/ui/unit-layout.js';
 import { makeTurnScenes,TurnPlayback } from '../src/ui/playback.js';
 test('pins are fixed immediately above labels even at edges or when several units share a territory',()=>{
- const a=arrangeUnits([{point:[20,10]},{point:[20,10]}]);assert.deepEqual(a.map(m=>m.point),[[20,-57],[20,-57]]);
- const w=createRun(createReferenceWorld(),1).world;for(const m of unitMarkers(w)){const p=mapAnchor(w,m.territory.id,'label');assert.equal(m.point[0],p[0]);assert.equal(m.point[1]+55,p[1]-12);}
+ const a=arrangeUnits([{point:[20,10]},{point:[20,10]}]);assert.deepEqual(a.map(m=>m.point),[[20,-46],[20,-46]]);
+ const w=createRun(createReferenceWorld(),1).world;for(const m of unitMarkers(w)){const p=mapAnchor(w,m.territory.id,'label');assert.equal(m.point[0],p[0]);assert.equal(m.point[1]+44,p[1]-12);}
 });
 test('a king has a crown and a country-color card without an extra gold outline and the ocean belongs to the same SVG background as the land',()=>{
  const w=createRun(createReferenceWorld(),1).world,html=renderAtlas(w);assert.equal((html.match(/class="king-crown"/g)||[]).length,7);assert(!html.includes('king-gold-outline'));assert(html.includes('<g class="unified-map-background"'));assert(html.includes('<image class="ocean-texture"'));assert(!html.includes('<img class="ocean-texture"'));

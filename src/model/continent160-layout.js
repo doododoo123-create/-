@@ -1,4 +1,5 @@
 import { CONTINENT160_CELLS } from '../data/continent160-map.js';
+import { CONTINENT160_NAMES } from '../data/continent160-names.js';
 import { clone, validateWorld, landCount } from './world.js';
 import { mapAnchor } from './cartography-geometry.js';
 import { shapeAnchor } from './cartography.js';
@@ -40,7 +41,7 @@ export function continentOwners(world,cells=CONTINENT160_CELLS){
 export function continent160Layout(input){
  const world=clone(input),owners=continentOwners(world);world.mapKind='free';
  world.cartography={version:1,style:'illustrated',plate:'continent160',opacity:.18,background:null,polygons:{},links:[]};
- world.territories=CONTINENT160_CELLS.map((t,i)=>{const shape={points:clone(t.points)};shape.center=shapeAnchor(shape.points,[],t.center);world.cartography.polygons[t.id]=shape;return {id:t.id,name:t.name,ownerId:owners[i],terrain:t.terrain};});
+ world.territories=CONTINENT160_CELLS.map((t,i)=>{const shape={points:clone(t.points)};shape.center=shapeAnchor(shape.points,[],t.center);world.cartography.polygons[t.id]=shape;return {id:t.id,name:CONTINENT160_NAMES[t.id],ownerId:owners[i],terrain:t.terrain};});
  world.cartography.links=CONTINENT160_CELLS.flatMap(t=>t.neighbors.filter(id=>t.id<id).map(id=>[t.id,id]));
  for(const c of world.countries){const own=world.territories.filter(t=>t.ownerId===c.id),old=mapAnchor(input,c.capitalId)||[600,400];c.capitalId=own.sort((a,b)=>{const p=world.cartography.polygons[a.id].center,q=world.cartography.polygons[b.id].center;return Math.hypot(p[0]-old[0],p[1]-old[1])-Math.hypot(q[0]-old[0],q[1]-old[1]);})[0]?.id||null;}
  if(world.rules.battleMode==='v11')world.people.forEach(p=>{if(p.role==='general')p.ability*=2;});

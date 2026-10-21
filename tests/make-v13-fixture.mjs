@@ -1,0 +1,11 @@
+import{mkdir,writeFile}from'node:fs/promises';
+import{createContinent160World}from'../src/data/continent160-world.js';
+import{createReferenceWorld}from'../src/data/reference-world.js';
+import{createRun,nextTurn}from'../src/engine/simulation.js';
+import{serializeWorld}from'../src/storage/world-store.js';
+import{saveRun}from'../src/storage/run-store.js';
+const encode=run=>{let data;saveRun({setItem:(_,v)=>data=JSON.parse(v)},run);return{world:JSON.parse(serializeWorld(run.initialWorld)),run:data};};
+let run=createRun(createContinent160World(),777);for(let i=0;i<50;i++)run=nextTurn(run,i%7===0?{rolls:{king:10}}:{rolls:{king:1,minister:1,domestic:1}});
+const turn=[...run.history].reverse().find(r=>r.turn>30&&r.battles.some(b=>!b.automatic&&b.winner!==null&&(b.losses.attack.amount+b.losses.defense.amount)>0))?.turn;if(!turn)throw Error('No replayable real battle');
+const expected=Object.fromEntries(run.world.territories.map(t=>[t.id,t.ownerId]));
+await mkdir('.artifacts',{recursive:true});await writeFile('.artifacts/v13-browser-fixture.json',JSON.stringify({history:encode(run),turn,expected,legacy:encode(nextTurn(createRun(createReferenceWorld(),77),{rolls:{king:1,minister:1,domestic:1}}))}));

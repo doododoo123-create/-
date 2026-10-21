@@ -40,7 +40,7 @@ test('capacity starts at seven, gains once per three wins through nine and caps 
 });
 test('a real third victory grants +1 capacity and combat XP without fabricating troops; succession resets both',()=>{
  let r=createRun(reformWorld(),7),g=r.engineState.countries[0].generals[0];g.wins=2;g.position=3;g.station=3;syncRun(r);
- r=nextTurn(r,assault);g=r.engineState.countries[0].generals[0];assert.equal(g.wins,3);assert.equal(engineFor(r.initialWorld).engine.capacity(r.engineState.countries[0],g),8);assert.equal(r.history[0].battles[0].attack.experienceBonus,2);assert(g.troops<7);
+ r=nextTurn(r,assault);g=r.engineState.countries[0].generals[0];assert.equal(g.wins,3);assert.equal(engineFor(r.initialWorld).engine.capacity(r.engineState.countries[0],g),8);assert.equal(r.history[0].battles[0].attack.experienceBonus,0);assert(g.troops<7);
  let dead=createRun(reformWorld(),7),c=dead.engineState.countries[0],officer=c.generals[0];officer.alive=false;officer.waited=3;officer.wins=9;officer.troops=0;officer.position=null;syncRun(dead);
  dead=nextTurn(dead,{rolls:{king:1,minister:1,domestic:1,'successor:0':9}});const replacement=dead.world.people.find(p=>p.countryId==='a'&&p.role==='general'&&p.slot===0);assert.equal(replacement.wins,0);assert.equal(replacement.capacity,7);
 });

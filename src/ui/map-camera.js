@@ -1,4 +1,5 @@
 import { sceneFocus } from './camera-focus.js';
+import { mobileProfile } from './performance-profile.js';
 // View state only; SVG coordinates and the world remain unchanged.
 export function mapZoomControls(context='overview'){
  return `<div class="map-camera-controls" data-camera-controls="${context}"><button type="button" class="button outline" data-action="map-zoom-out" data-camera="${context}" aria-label="지도 축소">−</button><output data-camera-scale="${context}">100%</output><button type="button" class="button outline" data-action="map-zoom-in" data-camera="${context}" aria-label="지도 확대">＋</button><button type="button" class="button subtle" data-action="map-zoom-reset" data-camera="${context}">전체 보기</button>${context==='simulation'?`<label class="toggle-label"><input type="checkbox" id="camera-follow" checked> 사건 자동 추적</label>`:''}${context==='editor'?`<button type="button" class="button outline" data-action="map-pan-toggle" data-camera="editor" aria-pressed="false">지도 이동</button>`:''}</div>`;
@@ -13,7 +14,7 @@ export class MapCamera {
   if(this.followKey===key)return;this.followKey=key;const focus=sceneFocus(scene,record);if(!focus)return;
   const target=[...focus],camera=this.view('simulation');if(record.battles?.[scene.battleIndex]&&scene.kind!=='movement')target[1]-=165/camera.zoom;
   this.cancelMotion();const v=this.view('simulation'),from=[v.x,v.y],start=globalThis.performance?.now()||0;
-  if(!globalThis.requestAnimationFrame||globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches){[v.x,v.y]=target;this.clamp(v);this.update('simulation');return;}
+  if(mobileProfile()||!globalThis.requestAnimationFrame||globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches){[v.x,v.y]=target;this.clamp(v);this.update('simulation');return;}
   const tick=now=>{const t=Math.min(1,(now-start)/550),ease=t*t*(3-2*t);v.x=from[0]+(target[0]-from[0])*ease;v.y=from[1]+(target[1]-from[1])*ease;this.clamp(v);this.update('simulation');this.motion=t<1?requestAnimationFrame(tick):null;};this.motion=requestAnimationFrame(tick);
  }
  view(context){if(!this.views.has(context))this.views.set(context,{zoom:1,x:600,y:400});return this.views.get(context);}

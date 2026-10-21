@@ -1,0 +1,35 @@
+/* Compact map pins only; portraits in the central judgment window keep their size. */
+.game-skin .map-unit-token{width:40px;height:68px;padding:2px 1px;gap:0;border-width:1.5px}
+.game-skin .map-unit-token .token-portraits{width:34px;height:35px;flex-basis:35px}
+.game-skin .map-unit-token .token-copy b{width:35px;max-width:35px;font-size:8px;line-height:12px;gap:0}
+.game-skin .map-unit-token .token-copy strong{font-size:11px;line-height:14px}
+.game-skin .map-unit-token .token-copy strong small{font-size:6px;margin:0}
+.game-skin .map-unit-token .token-copy strong>span{font-size:8px}
+.game-skin .map-unit-token .veteran-stars{font-size:6px;letter-spacing:-1px;flex:none}
+.game-skin .map-unit-token .king-crown{font-size:8px}
+.battle-alert-label{font:800 16px 'Malgun Gothic',sans-serif;fill:#fff;stroke:#000;stroke-width:3px;paint-order:stroke;stroke-linejoin:round}
+.battle-alert-leader{fill:none;stroke:#fff;stroke-width:1.2px;paint-order:stroke}
+.game-skin .token-wrap{height:72px}
+.unit-battle-glow{fill:none;stroke:#ffdb58;stroke-width:2.5px;animation:commander-engaged var(--outcome-time,1.8s) linear both;animation-delay:var(--outcome-delay,0s)}
+@keyframes commander-engaged{0%,25%,50%,75%,100%{opacity:1;stroke:#fff3b0}12.5%,37.5%,62.5%,87.5%{opacity:.4;stroke:#e6aa21}}
+.unit-status-label.victory{fill:#ffe269}.unit-status-label.defeat{fill:#d2d6db}
+.playback-paused .unit-battle-glow{animation-play-state:paused}
+.game-skin .map-unit-feedback.positive{--feedback:#55adff}.game-skin .map-unit-feedback.negative{--feedback:#ff4654}.game-skin .map-unit-feedback.transfer{--feedback:#e6eef5}
+.game-skin .map-unit-feedback.positive text,.game-skin .map-unit-feedback.negative text,.game-skin .map-unit-feedback.transfer text{fill:var(--feedback)!important;stroke:#000;stroke-width:3px;paint-order:stroke}
+/* Mobile is a separate file, never automatically selected by screen size. */
+html[data-performance=mobile] .atlas-map{filter:none!important}
+html[data-performance=mobile] .map-unit-token,html[data-performance=mobile] .map-unit-token *{box-shadow:none!important;text-shadow:none!important}
+html[data-performance=mobile] .atlas-map .territory{transition:none!important;filter:none!important}
+html[data-performance=mobile] .unit-outcome{filter:none!important}
+html[data-performance=mobile] .unit-victory{animation-name:mobile-victory}
+html[data-performance=mobile] .unit-defeat{animation-name:mobile-defeat}
+html[data-performance=mobile] .unit-defeat{filter:grayscale(1)!important}
+html[data-performance=mobile] .unit-appointment{animation-name:mobile-victory}
+html[data-performance=mobile] .unit-death{animation-name:mobile-death}
+html[data-performance=mobile] .map-judgment,html[data-performance=mobile] .judgment-person,html[data-performance=mobile] .map-feedback-layer{backdrop-filter:none!important;filter:none!important}
+html[data-performance=mobile] .battle-emblem,html[data-performance=mobile] .campaign-route,html[data-performance=mobile] .march-routes path{animation:none!important;filter:none!important}
+@keyframes mobile-victory{0%,25%,50%,75%,100%{opacity:1}12.5%,37.5%,62.5%,87.5%{opacity:.6}}
+@keyframes mobile-defeat{0%,25%,50%,75%,100%{opacity:.55;filter:grayscale(1)}12.5%,37.5%,62.5%,87.5%{opacity:.85;filter:grayscale(1)}}
+@keyframes mobile-death{0%,25%,50%,75%{opacity:1}12.5%,37.5%,62.5%{opacity:.5}100%{opacity:0}}
+@media(max-width:620px){.game-skin .map-unit-token .token-copy b{font-size:8px}}
+@media(prefers-reduced-motion:reduce){.unit-battle-glow{animation:none;opacity:1}html[data-performance=mobile] .unit-outcome{animation:none}}
