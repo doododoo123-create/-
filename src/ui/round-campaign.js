@@ -21,7 +21,7 @@ export function roundCampaign(world,presentation){
  const limit=presentation.finished?Infinity:scene?.event?.index??-1;
  const applied=r=>r!==record||presentation.finished;
  for(const r of records){
-  for(const motion of r.movements||[])if(applied(r)||motion.eventIndex<limit||motion.eventIndex===limit&&scene?.kind!=='movement')for(const m of motion.moves)if(m.kind!=='redeploy')movements.push({...m,key:`${r.turn}:${motion.eventIndex}:${m.personId}`});
+  for(const motion of r.movements||[])for(const m of motion.moves)if(applied(r)||motion.eventIndex<limit||motion.eventIndex===limit&&(scene?.kind!=='movement'||['retreat','redeploy'].includes(m.kind)))movements.push({...m,key:`${r.turn}:${motion.eventIndex}:${m.personId}`});
   for(const b of r.battles||[]){
    const event=r.events.find(e=>e.type==='territory'&&e.battleIndex===b.index),resolve=r.events.find(e=>e.type==='resolve'&&e.battleIndex===b.index);
    const revealed=applied(r)||event&&(event.index<limit||event.index===limit&&scene?.kind!=='movement');
@@ -31,6 +31,7 @@ export function roundCampaign(world,presentation){
     if(side==='defense'&&b.automatic)continue;
     const moving=motion?.moves.find(m=>m.countryId===countryId&&m.slot===slot),person=frame?.people.find(p=>p.role==='general'&&p.countryId===countryId&&p.slot===slot);
     const fromId=moving?.fromId||person?.positionId||person?.stationId||(side==='attack'?b.fromId:b.territoryId);
+    if(side==='defense'&&fromId===b.territoryId)continue;
     const laneKey=`${side}:${fromId}:${b.territoryId}`,lane=lanes.get(laneKey)||0;lanes.set(laneKey,lane+1);
     routes.push({key:`${r.turn}-${b.index}-${side}`,side,countryId,fromId,toId:b.territoryId,lane,active:r===record&&scene?.battleIndex===b.index&&presentation.phase!=='settled'});
    }
@@ -65,12 +66,17 @@ export function sharedFrontPath(geometry,a,b){
  }
  const path=paths.join(' ');cache.set(key,path);return path;
 }
-export function campaignHatchDefs(world){return world.countries.map((c,i)=>`<pattern id="round-hatch-${i}" patternUnits="userSpaceOnUse" width="8" height="8"><path d="M0 0H8M0 0V8" fill="none" stroke="${c.color}" stroke-width="2.5"/><path d="M1 1H8M1 1V8" fill="none" stroke="#000" stroke-opacity=".3" stroke-width=".5"/></pattern>`).join('');}
+export function campaignHatchDefs(world){return world.countries.map((c,i)=>`<pattern id="round-hatch-${i}" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(28)"><path d="M0 0V4" fill="none" stroke="${c.color}" stroke-width="1.4"/><path d="M1 0V4" fill="none" stroke="#000" stroke-opacity=".3" stroke-width=".35"/></pattern>`).join('');}
 export function renderRoundCaptures(world,geometry,campaign){return `<g class="round-captures" pointer-events="none">${[...campaign.captures.values()].map(c=>{const i=world.territories.findIndex(t=>t.id===c.territoryId),owner=world.countries.findIndex(n=>n.id===c.ownerId);return `<path class="round-captured-territory" data-round-capture="${esc(c.territoryId)}" data-capture-owner="${esc(c.ownerId)}" d="${geometry.cells[i].path}" fill="url(#round-hatch-${owner})" fill-rule="evenodd" stroke="${world.countries[owner]?.color||'#fff'}" stroke-width="1.5"/>`;}).join('')}</g>`;}
 export function renderRoundRoutes(world,geometry,campaign){
  const country=id=>world.countries.find(c=>c.id===id);
  const routes=campaign.routes.map(r=>battleRoute(mapAnchor(world,r.fromId,'station',geometry),mapAnchor(world,r.toId,'battle',geometry),r.side,country(r.countryId)?.color,{id:r.key,lane:r.lane,active:r.active})).join('');
  const frontLines=campaign.fronts.map(f=>{const a=geometry.cells[world.territories.findIndex(t=>t.id===f.fromId)],b=geometry.cells[world.territories.findIndex(t=>t.id===f.toId)],d=sharedFrontPath(geometry,a,b);return d?`<g class="round-stalemate" data-front-from="${esc(f.fromId)}" data-front-to="${esc(f.toId)}"><path class="front-shadow" d="${d}"/><path class="front-line" d="${d}"/></g>`:'';}).join('');
- const marches=campaign.movements.map(m=>`<path class="round-march ${esc(m.kind)}" data-round-move="${esc(m.key)}" style="stroke:${country(m.countryId)?.color||'#fff'}" d="M${m.path.map(id=>mapAnchor(world,id,'station',geometry)).filter(Boolean).map(p=>p.join(',')).join(' L')}"/>`).join('');
+ const marches=campaign.movements.map(m=>{
+  const retreat=['retreat','redeploy'].includes(m.kind),points=m.path.map(id=>mapAnchor(world,id,'station',geometry)).filter(Boolean);if(points.length<2||m.fromId===m.toId)return '';
+  const d=`M${points.map(p=>p.join(',')).join(' L')}`,color=country(m.countryId)?.color||'#fff',marker='retreat-'+m.key.replace(/[^a-zA-Z0-9_-]/g,'-');
+  if(!retreat)return `<path class="round-march ${esc(m.kind)}" data-round-move="${esc(m.key)}" style="stroke:${color}" d="${d}"/>`;
+  return `<g class="round-retreat ${m.kind==='redeploy'?'relocation':''}" data-retreat-from="${esc(m.fromId)}" data-retreat-to="${esc(m.toId)}" data-retreat-person="${esc(m.personId)}"><title>${m.kind==='redeploy'?'경로 없는 재배치':'패배 후 퇴각'}</title><defs><marker id="${marker}" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M1 1 11 6 1 11 4 6Z" fill="${color}" stroke="#071116" stroke-width="1"/></marker></defs><path class="retreat-shadow" d="${d}"/><path class="retreat-arrow" style="stroke:${color}" d="${d}" marker-end="url(#${marker})"/></g>`;
+ }).join('');
  return `<g class="round-campaign-history" pointer-events="none">${marches}${routes}${frontLines}</g>`;
 }

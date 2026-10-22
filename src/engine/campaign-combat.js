@@ -94,6 +94,14 @@ export function resolveCampaign(ctx){
     // Only displaced survivors retreat; older campaigns keep their recorded blocked-route rules.
     for(const nation of [actor,opponent])for(const g of s.countries[nation].generals)if(g.active&&g.alive&&Number.isInteger(g.position)&&s.cells[g.position].owner!==nation&&h.lands(s,nation))retreat(nation,g,index);
     h.ensureStations(s);h.ensureFieldPositions(s);
+    if(rules.occupationAdvance){
+     const nation=b.captureOwner??actor,commander=nation===actor?a:d,destination=b.takenCells[0];
+     if(commander.active&&commander.alive&&commander.troops>0&&s.cells[destination]?.owner===nation){
+      const path=fieldPaths(s,Atlas,nation,commander.position).get(destination),advance=[];
+      move(nation,commander,path,'occupation',advance);
+      if(advance.length)emit('occupation',commander.name+' · 점령지 진입','획득한 영토에 주둔하며 다음 행동도 이 위치에서 계산해.',{nation,slot:commander.slot,role:'general',battleIndex:index,moves:advance},true);
+     }
+    }
    }
    if(!finalWin&&b.winner===actor&&d.alive){
     const paths=fieldPaths(s,Atlas,opponent,d.position),homePath=paths.get(d.station);

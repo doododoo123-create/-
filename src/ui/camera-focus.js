@@ -14,9 +14,9 @@ export function nationFraming(world,id,viewport={width:1200,height:800}){
 export function placeCompactDuel(){
  const root=globalThis.document?.querySelector?.('.map-stage'),pane=root?.querySelector('.is-compact-duel'),ring=root?.querySelector('.battle-emblem .target-ring');
  if(!pane||!ring)return;
- const r=root.getBoundingClientRect(),b=ring.getBoundingClientRect(),width=pane.offsetWidth,height=pane.offsetHeight,x=b.x+b.width/2-r.x,y=b.y-r.y;
+ const r=root.getBoundingClientRect(),b=ring.getBoundingClientRect(),width=pane.offsetWidth,height=pane.offsetHeight,x=b.x+b.width/2-r.x;
  const left=Math.max(8,Math.min(r.width-width-8,x-width/2));
- const above=y-height-14,top=above>=8?above:Math.min(r.height-height-8,y+b.height+20);
+ const above=b.y+b.height/2-r.y-42-height-10,top=above>=8?above:Math.min(r.height-height-8,b.y+b.height/2-r.y+42+10);
  pane.style.left=`${left}px`;pane.style.top=`${Math.max(8,top)}px`;
 }
 export function cameraExtent(width=1200,height=800){const ratio=Math.max(.1,width/height);return ratio<1.5?[1200,1200/ratio]:[800*ratio,800];}

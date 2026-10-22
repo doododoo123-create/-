@@ -1,0 +1,42 @@
+/* Smaller persistent pins, with no zoom-based removal of commanders. */
+.game-skin .map-unit-token{width:32px;height:54px;padding:1px;gap:0;border-width:1.2px}
+.game-skin .map-unit-token .token-portraits{width:27px;height:27px;flex-basis:27px}
+.game-skin .map-unit-token .token-copy b{width:28px;max-width:28px;font-size:7px;line-height:10px;gap:0}
+.game-skin .map-unit-token .token-copy strong{font-size:9px;line-height:11px}
+.game-skin .map-unit-token .token-copy strong small{display:none}
+.game-skin .map-unit-token .token-copy strong>span{font-size:7px}
+.game-skin .map-unit-token .veteran-stars{font-size:5px;letter-spacing:-1px}
+.game-skin .map-unit-token .king-crown{font-size:7px}
+.game-skin .token-wrap{height:58px}
+.game-skin .atlas-scroll .map-unit-position{visibility:visible}
+.game-skin .atlas-scroll[data-detail] .map-unit-position:not(.unit-key){visibility:visible}
+.unit-display-scale{transform-origin:0 0;transform:translate(0,35px) scale(var(--unit-display-scale,1)) translate(0,-35px)}
+.map-unit-position[data-combat-side=attack]>.unit-duel-layout{transform:translate(var(--battle-attack-x,0px),var(--battle-attack-y,0px))}
+.map-unit-position[data-combat-side=defense]>.unit-duel-layout{transform:translate(var(--battle-defense-x,0px),var(--battle-defense-y,0px))}
+.map-unit-position[data-combat-side] .unit-display-scale{transform:scale(var(--duel-display-scale,1))}
+.game-skin .unit-engaged .unit-focal-body{transform:none}
+.map-unit-position[data-combat-side] .unit-pin-tip{display:none}
+.battle-icon-scale{transform-origin:0 0;transform:scale(var(--battle-icon-scale,1))}
+.game-skin .atlas-name.name-battle-site{transform:translateY(var(--battle-label-offset,20px))}
+.round-retreat path{fill:none;stroke-linejoin:round;stroke-linecap:round}
+.round-retreat .retreat-shadow{stroke:#071116;stroke-width:4.2;opacity:.8}
+.round-retreat .retreat-arrow{stroke-width:2.2;stroke-dasharray:5 3;opacity:.9}
+.round-retreat.relocation .retreat-arrow{stroke-dasharray:1 4}
+.game-skin .map-stage .map-judgment.is-compact-duel.is-v16-duel{width:280px;padding:6px 8px;max-width:calc(100% - 16px)}
+.game-skin .is-v16-duel .judgment-duel{gap:6px;align-items:flex-start}
+.game-skin .is-v16-duel .judgment-vs{display:none}
+.game-skin .is-v16-duel .judgment-side{flex:1;min-width:0;border-top:2px solid var(--nation);padding-top:3px}
+.mini-fighter-name{font-size:10px;line-height:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:white;font-weight:700}
+.mini-fighter-name .veteran-stars{font-size:8px;margin-left:2px;color:#ffe076;letter-spacing:-1px}
+.mini-score-roll{display:flex;align-items:center;justify-content:center;gap:7px}
+.game-skin .is-v16-duel .mini-score-roll .visual-die-block{flex:0 0 36px;width:36px;max-width:36px;margin:0}
+.game-skin .is-v16-duel .mini-score-roll .visual-die.attached-die{width:36px;height:36px}
+.game-skin .is-v16-duel .observer-score{display:flex;flex-direction:column;align-items:center;gap:0;margin:0;min-width:62px}
+.game-skin .is-v16-duel .observer-score>span{display:block;font-size:7px;line-height:10px}
+.game-skin .is-v16-duel .observer-score>strong{font-size:21px;line-height:22px}
+.game-skin .is-v16-duel .observer-score>small{display:block;font-size:7px;line-height:11px;margin:0;white-space:nowrap}
+.game-skin .is-v16-duel .observer-bonuses{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin:4px 0 0;font-size:9px;line-height:12px;text-align:center}
+.game-skin .is-v16-duel .observer-bonuses>span{padding:0 2px;white-space:nowrap;background:#1b2c38;border-radius:2px}
+.mini-bonus-total{font-size:9px;line-height:14px;text-align:center;margin-top:2px;border-top:1px solid #465765;color:#fff}
+
+.mini-fighter-name>small{font-size:8px;font-weight:400;margin-left:3px;color:#d0dfe7}

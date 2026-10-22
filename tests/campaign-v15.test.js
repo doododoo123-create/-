@@ -111,7 +111,7 @@ test('camera framing uses the acting nation and all visible borders without futu
  for(const v of [{width:1600,height:1000},{width:390,height:844},{width:844,height:390}]){const f=nationFraming(r0.world,'a',v);assert(f.zoom>=.5&&f.zoom<=3.2);assert(Number.isFinite(f.x)&&Number.isFinite(f.y));}
  const p=new TurnPlayback();p.load(record,r0.world,r.world,false);p.state.index=index;
  const html=renderJudgmentOverlay({world:scene.worldBefore,playback:p});assert(html.includes('is-compact-duel'));assert(!html.includes('judgment-side-label'));assert(!html.includes(`data-score-visible="true"`));
- const map=renderAtlas(scene.worldBefore,{presentation:{...p.state,effectStage:null}});assert(!map.includes('전투 발생'));assert(!map.includes('unit-combat-role'));assert(map.includes('battle-side-token attack'));
+ const map=renderAtlas(scene.worldBefore,{presentation:{...p.state,effectStage:null}});assert(!map.includes('전투 발생'));assert(!map.includes('unit-combat-role'));assert(map.includes('data-combat-side="attack"'));
  p.state.index=scenes.findIndex(s=>s.kind==='apply'&&s.event.type==='resolve');p.state.effectStage='territory';assert(renderAtlas(r.world,{presentation:p.state}).includes('data-round-capture="tile-3"'));
 });
 test('an actual seven-country round retains earlier captures in a later nation and clears at the production boundary',()=>{
