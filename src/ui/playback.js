@@ -6,6 +6,7 @@ export function makeTurnScenes(record,before) {
   const scenes=[];let camps=record.campsBefore||before.visualCamps||{};
   for(const event of record.events) {
     const frame=record.frames?.[event.index]||{before,after:before};
+    if(event.type==='round_end')scenes.push({id:'round-settle',kind:'round-settle',event:{type:'round_settle',index:event.index-.5},title:'한 바퀴의 영토 확정',worldBefore:frame.before,worldAfter:frame.before,camps});
     const motion=record.movements?.find(m=>m.eventIndex===event.index);
     if(motion){scenes.push({id:`move-${event.index}`,kind:'movement',event,battleIndex:event.battleIndex,title:motion.moves.some(m=>m.kind==='redeploy')?'생존 지휘관 재배치':'지휘관 출정·복귀',worldBefore:frame.before,worldAfter:frame.before,campsBefore:camps,camps:motion.camps,moves:motion.moves});camps=motion.camps;}
     if(event.type==='expedition_roll')continue;
@@ -41,9 +42,9 @@ export class TurnPlayback {
   get sceneProgress(){if(!this.scene)return 0;const left=this.playing&&this.handle!==null?Math.max(0,(this.deadline-this.now())*this.scheduledSpeed):this.remaining;return Math.max(0,Math.min(1,1-left/this.duration()));}
   duration(){return observerDuration(this.scene,this.state.record,this.state.phase==='departing'?'departing':this.state.effectStage||this.state.phase,this.reducedMotion());}
   clearTimer(){if(this.handle!==null)this.cancel(this.handle);this.handle=null;}
-  load(record,before,after,play=true){
+  load(record,before,after,play=true,history=[]){
     this.clearTimer();this.groupEnd=null;this.groupDone=false;const scenes=makeTurnScenes(record,before);scenes.at(-1).worldAfter=after;
-    this.state={record,before,after,scenes,index:0,phase:['roll','reel'].includes(scenes[0].kind)?'rolling':'holding',playing:play,finished:false};
+    this.state={record,before,after,scenes,index:0,roundRecords:history.filter(r=>r.round===record.round&&r.turn<record.turn),phase:['roll','reel'].includes(scenes[0].kind)?'rolling':'holding',playing:play,finished:false};
     this.remaining=this.duration();this.onChange();if(play)this.arm();
   }
   arm(){if(!this.state?.playing||this.state.finished)return;this.clearTimer();this.scheduledSpeed=Math.max(.1,Number(this.speed())||1);this.deadline=this.now()+this.remaining/this.scheduledSpeed;this.handle=this.schedule(()=>{this.handle=null;this.advance();},this.remaining/this.scheduledSpeed);}

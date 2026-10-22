@@ -38,7 +38,7 @@ const adjacent=(a,b)=>!!(Atlas.cells[a.id]&&Atlas.cells[a.id].neighbors.includes
 const lands=(s,id)=>s.cells.filter(c=>c.owner===id).length;
 const REGION_SIZE=modern?(V11_RULES.territoriesPerCommander||4):4;
 const slotCount=(s,id)=>Math.ceil(lands(s,id)/REGION_SIZE);
-const minimumReserveFor=(s,id)=>requiredReserve(s,id,V11_RULES);
+const minimumReserveFor=(s,id)=>Math.min(requiredReserve(s,id,V11_RULES),advanced&&Number.isFinite(V11_RULES.capitalReserveLimit)?V11_RULES.capitalReserveLimit:Infinity);
 // A recovering small country can be below its newly raised target until production refills it.
 const reserveFloorFor=(s,id)=>V11_RULES.adaptiveReserve?Math.min(minimumReserveFor(s,id),Math.max(1,Math.floor(V11_RULES.territoryArmyLimit/2))):minimumReserveFor(s,id);
 const landProduction=count=>scaledProduction(count,V11_RULES);
@@ -51,6 +51,7 @@ const totalArmy=c=>modern?troopRound(c.reserve+c.generals.reduce((n,g)=>n+g.troo
 const aliveIds=s=>s.countries.filter(c=>lands(s,c.id)>0).map(c=>c.id);
 const currentActor=s=>s.result?null:s.schedule[s.scheduleIndex];
 function syncArmy(c){if(modern){c.reserve=troopRound(c.reserve);c.generals.forEach(g=>g.troops=troopRound(g.troops));}c.army=totalArmy(c);}
+function capCapital(s,id){const c=s.countries[id];if(!advanced||!Number.isFinite(V11_RULES.capitalReserveLimit))return 0;const blocked=troopRound(Math.max(0,c.reserve-V11_RULES.capitalReserveLimit));c.reserve=troopRound(c.reserve-blocked);syncArmy(c);return blocked;}
 function randomInt(s,n){if(!Number.isInteger(n)||n<1)throw Error('추첨 후보가 없습니다');s.rng=(Math.imul(s.rng,1664525)+1013904223)>>>0;return Math.floor(s.rng/4294967296*n);}
 const CAPITAL_HOMES=Atlas.capitals;
 function capitalCell(s,id){
@@ -129,10 +130,10 @@ function produceLimited(s,id){
  const c=s.countries[id],before=totalArmy(c),parts=supplyComponents(s,id),capital=capitalCell(s,id),main=parts.find(p=>p.includes(capital))||[];
  const plannedCentral=landProduction(main.length)+c.extraRecruitment,centralGain=Math.min(plannedCentral,reinforcementRoom(s,id,V11_RULES));
  let blocked=plannedCentral-centralGain,discarded=0;c.reserve=troopRound(c.reserve+centralGain);
- const allocated=distribute(s,id),isolated=[];
+ const allocated=distribute(s,id),capitalBlocked=capCapital(s,id),isolated=[];blocked+=capitalBlocked;
  for(const cells of parts){if(cells.includes(capital))continue;const produced=landProduction(cells.length),accepted=Math.min(produced,reinforcementRoom(s,id,V11_RULES)),local=allocateLocal(s,id,cells,accepted);
   for(let k=0;k<allocated.length;k++)allocated[k]+=local.allocated[k];blocked+=produced-accepted;discarded+=local.discarded;isolated.push({cells,produced,blocked:produced-accepted,...local});}
- syncArmy(c);return {id,gain:troopRound(totalArmy(c)-before),rate:reinforcement(s,id),centralGain,blocked,discarded,isolated,allocated,reserve:c.reserve,garrison:capitalGuard(c),pool:0,limit:lands(s,id)*V11_RULES.territoryArmyLimit};
+ syncArmy(c);return {id,gain:troopRound(totalArmy(c)-before),rate:reinforcement(s,id),centralGain:centralGain-capitalBlocked,blocked,discarded,isolated,allocated,reserve:c.reserve,garrison:capitalGuard(c),pool:0,limit:lands(s,id)*V11_RULES.territoryArmyLimit};
 }
 function connectionPlan(s,id,allowed){
  const parts=landComponents(s,id);if(parts.length<2)return {components:parts.length,distance:null,targets:[]};
@@ -224,7 +225,7 @@ function reconcile(s){
  for(const c of s.countries){const n=slotCount(s,c.id),selected=new Set(regionSlots(s,c.id));for(const g of c.generals){const active=selected.has(g.slot)||(homeRetreat&&n>0&&g.appointed&&g.alive);if(g.active&&!active){retired.push({id:c.id,station:advanced&&g.stranded?null:g.station,troops:g.troops,name:g.name});g.troops=0;changes.push(c.short+' '+g.name+' 대기 전환');}if(!g.active&&active&&g.alive){changes.push(c.short+' '+g.name+(g.appointed?' 복귀':' 신설'));g.appointed=true;}g.active=active;}assignRegions(s,c.id);}
  ensureStations(s);if(field)ensureFieldPositions(s);
  for(const r of retired){const c=s.countries[r.id];if(!lands(s,r.id))continue;const area=connectedSupply(s,r.id,r.station);if(area.includes(capitalCell(s,r.id)))c.reserve+=r.troops;else if(area.length){const local=allocateLocal(s,r.id,area,r.troops);if(local.discarded)changes.push(r.name+' 고립 잔여 '+local.discarded+'만명 해산');}}
- for(const c of s.countries)syncArmy(c);return changes;
+ for(const c of s.countries){if(s.initialConfig&&advanced&&Number.isFinite(V11_RULES.capitalReserveLimit)&&c.reserve>V11_RULES.capitalReserveLimit){distribute(s,c.id);const excess=capCapital(s,c.id);if(excess)changes.push(c.short+' 수도 초과 예비병 '+excess+'만 미편성');}syncArmy(c);}return changes;
 }
 function distribute(s,id,balanced=false){
  const c=s.countries[id],given=Array(c.generals.length).fill(0),main=new Set(connectedSupply(s,id,capitalCell(s,id)));
@@ -243,7 +244,7 @@ function createGame(options){const o=options||{},v=Number(o.seed===undefined?123
  const cells=[];
  if(config.freeform)for(const cell of Atlas.cells)cells.push({id:cells.length,row:cell.row,col:cell.col,owner:cell.owner,commander:null});
  else for(let row=0;row<ROWS;row++)for(let col=0;col<COLS;col++)cells.push({id:cells.length,row,col,owner:Atlas.cells[cells.length].owner,commander:null});
- const s={version:VERSION,seed,rng:seed,countries,cells,mapVersion:Atlas.id,capitals:CAPITAL_HOMES.slice(),round:1,turns:0,roundLimit:Math.max(1,Math.min(100,Math.floor(Number(o.roundLimit)||30))),schedule:NATIONS.map(c=>c.id),scheduleIndex:0,history:[],result:null};reconcile(s);for(const c of countries)distribute(s,c.id,true);s.initialConfig=copy({seed,roundLimit:s.roundLimit,countries:countries.map((c,id)=>{const x=(o.countries||[])[id]||{};return {king:c.king,minister:c.minister,ministerAbility:c.ministerAbility,...([-2,0,2].includes(Number(x.generalAbility))?{generalAbility:Number(x.generalAbility)}:{})};})});return s;
+ const s={version:VERSION,seed,rng:seed,countries,cells,mapVersion:Atlas.id,capitals:CAPITAL_HOMES.slice(),round:1,turns:0,roundLimit:Math.max(1,Math.min(100,Math.floor(Number(o.roundLimit)||30))),schedule:NATIONS.map(c=>c.id),scheduleIndex:0,history:[],result:null};reconcile(s);for(const c of countries){distribute(s,c.id,true);const unassigned=capCapital(s,c.id);if(unassigned)c.initialUnassigned=unassigned;}s.initialConfig=copy({seed,roundLimit:s.roundLimit,countries:countries.map((c,id)=>{const x=(o.countries||[])[id]||{};return {king:c.king,minister:c.minister,ministerAbility:c.ministerAbility,...([-2,0,2].includes(Number(x.generalAbility))?{generalAbility:Number(x.generalAbility)}:{})};})});return s;
 }
 function stats(s){return s.countries.map(c=>({id:c.id,lands:lands(s,c.id),army:c.army,reserve:c.reserve,garrison:capitalGuard(c),reservePool:reservePool(c),recruitment:reinforcement(s,c.id),extraRecruitment:c.extraRecruitment,supplyBonus:c.supplyBonus,commanders:c.generals.filter(g=>g.active&&g.alive).length}));}
 function snapshot(s){return {countries:copy(s.countries),cells:copy(s.cells),capitals:copy(s.capitals)};}
@@ -259,7 +260,7 @@ function validState(s,legacy=false){
  if(!Number.isInteger(s.round)||s.round<1||s.round>s.roundLimit||s.roundLimit>100||!Number.isInteger(s.roundLimit)||!Number.isInteger(s.turns)||s.turns<0)return false;
  if(!Number.isInteger(s.scheduleIndex)||s.scheduleIndex<0||s.scheduleIndex>=s.schedule.length||new Set(s.schedule).size!==s.schedule.length||!s.schedule.every(id=>Number.isInteger(id)&&id>=0&&id<NUM_NATIONS))return false;
  const coords=new Set();for(let i=0;i<(config.freeform?Atlas.cells.length:ROWS*COLS);i++){const x=s.cells[i];if(x.id!==i||!Number.isInteger(x.owner)||x.owner<0||x.owner>=NUM_NATIONS||!Number.isInteger(x.row)||!Number.isInteger(x.col)||x.row<0||x.row>=ROWS||x.col<0||x.col>=COLS)return false;coords.add(x.row+','+x.col);if(!Number.isInteger(x.commander)||x.commander<0||x.commander>=(modern&&V11_RULES.commandReform?MAX_GENERALS:slotCount(s,x.owner))||modern&&V11_RULES.commandReform&&!s.countries[x.owner].generals[x.commander]?.active)return false;}if(!config.freeform&&coords.size!==ROWS*COLS)return false;
- for(let id=0;id<NUM_NATIONS;id++){if(lands(s,id)?(!Number.isInteger(s.capitals[id])||!s.cells[s.capitals[id]]||s.cells[s.capitals[id]].owner!==id):s.capitals[id]!==null)return false;const c=s.countries[id];if(c.id!==id||!has(KINGS,c.king)||!has(MINISTERS,c.minister)||![-2,0,2].includes(c.ministerAbility)||![-1,0,1].includes(c.commandBonus)||c.generals.length!==MAX_GENERALS)return false;for(const k of ['army','reserve','extraRecruitment','supplyBonus','ownTurns'])if((modern&&['army','reserve'].includes(k))?!validTroop(c[k]):(!Number.isSafeInteger(c[k])||c[k]<0))return false;if(c.army!==totalArmy(c)||c.reserve<Math.min(reserveFloorFor(s,id),c.army))return false;
+ for(let id=0;id<NUM_NATIONS;id++){if(lands(s,id)?(!Number.isInteger(s.capitals[id])||!s.cells[s.capitals[id]]||s.cells[s.capitals[id]].owner!==id):s.capitals[id]!==null)return false;const c=s.countries[id];if(c.id!==id||!has(KINGS,c.king)||!has(MINISTERS,c.minister)||![-2,0,2].includes(c.ministerAbility)||![-1,0,1].includes(c.commandBonus)||c.generals.length!==MAX_GENERALS)return false;for(const k of ['army','reserve','extraRecruitment','supplyBonus','ownTurns'])if((modern&&['army','reserve'].includes(k))?!validTroop(c[k]):(!Number.isSafeInteger(c[k])||c[k]<0))return false;if(advanced&&Number.isFinite(V11_RULES.capitalReserveLimit)&&c.reserve>V11_RULES.capitalReserveLimit)return false;if(c.initialUnassigned!==undefined&&(!Number.isSafeInteger(c.initialUnassigned)||c.initialUnassigned<0))return false;if(c.army!==totalArmy(c)||c.reserve<Math.min(reserveFloorFor(s,id),c.army))return false;
  for(let k=0;k<MAX_GENERALS;k++){const g=c.generals[k];if(g.slot!==k||g.active!==((modern&&V11_RULES.commandReform?regionSlots(s,id).includes(k):k<slotCount(s,id))||(homeRetreat&&lands(s,id)>0&&g.appointed&&g.alive))||!(modern?Number.isInteger(g.ability)&&g.ability>=-4&&g.ability<=4:[-2,0,2].includes(g.ability))||![-1,0,1].includes(g.commandBonus)||!validTroop(g.troops)||g.troops>capacity(c,g)||!Number.isInteger(g.waited)||g.waited<0||g.waited>3||!Number.isInteger(g.generation)||g.generation<0||typeof g.name!=='string'||!g.name||typeof g.alive!=='boolean')return false;if(modern&&(!Number.isInteger(g.wins)||g.wins<0))return false;if(field&&(g.active&&g.alive?(!Number.isInteger(g.position)||!s.cells[g.position]||((!advanced||!g.stranded)&&s.cells[g.position].owner!==id)):(g.position!==null||(advanced&&g.stranded))))return false;if(advanced&&(typeof g.stranded!=='boolean'||homeRetreat&&g.stranded))return false;if((!g.alive||!g.active)&&g.troops!==0)return false;if(!legacy&&(g.active?stationCell(s,id,k)===null:g.station!==null))return false;const count=s.cells.filter(x=>x.owner===id&&x.commander===k).length;if(count>REGION_SIZE||(g.active&&!count&&!homeRetreat))return false;}
  if(!lands(s,id)&&c.army!==0)return false;}
  if(!s.result&&!lands(s,currentActor(s)))return false;if(s.result&&(!['limit','conquest'].includes(s.result.reason)||!s.result.winners.length||!s.result.winners.every(id=>aliveIds(s).includes(id))))return false;return true;
@@ -295,7 +296,7 @@ function prepareTurn(input,controls){
   emit('domestic_roll','승상의 실행 판정','6점 이상 성공',{nation:actor,role:'minister',roll:value,faces:10,ability:me.ministerAbility,score,success,sub});
   let acceptedGain=V11_RULES.recruitGain,supplyGain=SUPPLY_GAIN;
   if(success){
-   if(sub===0){if(advanced)acceptedGain=Math.min(acceptedGain,reinforcementRoom(s,actor,V11_RULES));me.reserve=troopRound(me.reserve+acceptedGain);distribute(s,actor);}
+   if(sub===0){if(advanced)acceptedGain=Math.min(acceptedGain,reinforcementRoom(s,actor,V11_RULES));me.reserve=troopRound(me.reserve+acceptedGain);distribute(s,actor);acceptedGain-=capCapital(s,actor);}
    if(sub===1)me.extraRecruitment+=V11_RULES.productionGain;
    if(sub===2){if(advanced){const [low,high]=V11_RULES.supplyGainRange,rolled=die('supply_gain',high-low+1);supplyGain=low+rolled-1;emit('supply_roll','지휘한도 증가량','모든 장군에게 +'+supplyGain+'만 · 기존 예비병만 배분',{nation:actor,role:'minister',roll:rolled,faces:high-low+1,gain:supplyGain});}me.supplyBonus+=supplyGain;distribute(s,actor);}
   }
@@ -359,7 +360,7 @@ function prepareTurn(input,controls){
   const changes=reconcile(s);
   if(homeRetreat)for(const c of s.countries)for(const g of c.generals)if(g.active&&g.alive&&g.position!==g.station&&!s.cells.some(cell=>cell.owner===c.id&&cell.commander===g.slot)){const placement=applyHomeRetreat(s,Atlas,c.id,g,capitalCell(s,c.id));if(placement)emit('retreat',g.name+' · 수도 인근 재배치','담당 영지가 없는 생존 지휘관은 병력과 전적을 유지하고 수도 인근에 배치해.',{nation:c.id,slot:g.slot,role:'general',moves:placement.moves,stranded:false,destination:placement.to,reason:placement.reason,relocation:placement.relocation},true);}
   if(changes.length||battles.some(b=>b.takenCell!==undefined))emit('roster','지휘 구역 재편',changes.join(' · ')||'현재 영지 수에 맞춰 담당 구역을 정리했어.',{},true);
-  const captured=battles.reduce((n,b)=>n+b.takenCells.length,0);record.summary=s.countries[opponent].short+' 원정 · 장군 '+battles.length+'회 공격 · 영지 +'+captured+(battles.some(b=>b.automatic)?' · 자동 점령 포함':'');
+  const captured=battles.reduce((n,b)=>n+(b.captureOwner===opponent?0:b.takenCells.length),0),lost=battles.reduce((n,b)=>n+(b.captureOwner===opponent?b.takenCells.length:0),0);record.summary=s.countries[opponent].short+' 원정 · 장군 '+battles.length+'회 공격 · 영지 +'+captured+(lost?' / 역점령 −'+lost:'')+(battles.some(b=>b.automatic)?' · 자동 점령 포함':'');
  }
  if(advanced&&(V11_RULES.commandReform?kind==='domestic':!battles.some(b=>!b.automatic))){
   const moves=[];for(const g of me.generals){if(!g.active||!g.alive)continue;const path=fieldPaths(s,Atlas,actor,g.position).get(g.station);if(path&&path.length>1){moves.push({nation:actor,slot:g.slot,generation:g.generation,kind:'home',from:g.position,to:g.station,path});g.position=g.station;g.stranded=false;}}

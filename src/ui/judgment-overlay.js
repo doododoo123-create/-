@@ -10,7 +10,7 @@ import {renderDie} from './die-view.js';
 const judgmentSign=n=>n>0?`+${n}`:String(n||0);
 export function judgmentVisible(playback){
   const scene=playback.scene;
-  return !!(playback.state&&!playback.complete&&!(playback.groupDone&&!playback.playing)&&scene&& !['apply','summary','movement'].includes(scene.kind)&&scene.event?.type!=='territory');
+  return !!(playback.state&&!playback.complete&&!(playback.groupDone&&!playback.playing)&&scene&& !['apply','summary','movement','round-settle'].includes(scene.kind)&&scene.event?.type!=='territory');
 }
 function judgmentPerson(world,country,role,slot){return countryPeople(world,country?.id).find(p=>p.role===role&&(role!=='general'||p.slot===slot));}
 function judgmentPortrait(person,country,role,army=null){return `<figure class="judgment-person" style="--nation:${country?.color||'#c0b698'}"><div class="framed-portrait">${portraitImage(person,country,role)}</div><figcaption><strong>${esc(displayName(person,ROLES[role]))}${role==='general'?veteranStars(person):''}</strong><small>${role==='general'?`병력 ${army??person?.troops??0}만`:esc(country?.name||'')+' · '+ROLES[role]}</small></figcaption></figure>`;}
@@ -34,13 +34,15 @@ export function renderJudgmentOverlay({world,playback}) {
     const side=(key,attack)=>{
       const info=battle[key],country=findCountry(frame,attack?battle.actorId:battle.defenderId);
       const person=judgmentPerson(frame,country,'general',attack?battle.slot:battle.defenseSlot);
-      const current=event.type===(attack?'attack_roll':'defense_roll');
-      const seen=result||attack&&event.type==='defense_roll';
-      const die=battle.automatic?'<span class="judgment-auto">전투 판정 없음</span>':renderDie(current||seen?info.raw:null,battle.sides||10,current?phase:seen?'locked':'waiting',attack?'공격':'수비',sideBonus(info),{rawFace:true});
-      return `<div class="judgment-side ${key}"><div class="judgment-side-label">${attack?'공격':battle.relief?'구원 수비':'수비'} · ${esc(country?.name)} <small>${info.army}만</small></div><div class="judgment-roll">${judgmentPortrait({...person,name:person?.name||info.name,wins:info.wins??person?.wins},country,'general',info.army)}<div class="observer-die-column">${die}${battle.automatic?'':renderObserverScore(info,seen||current&&phase==='locked')}</div></div>${judgmentTraits(person,'general',country)}${renderObserverBonuses(info)}</div>`;
+      const current=event.type===(attack?'attack_roll':'defense_roll'),seen=result||attack&&event.type==='defense_roll';
+      const visible=seen||current&&phase==='locked';
+      const die=battle.automatic?'<span class="judgment-auto">—</span>':renderDie(current||seen?info.raw:null,battle.sides||30,current?phase:seen?'locked':'waiting',attack?'⚔':'🛡',sideBonus(info),{rawFace:true});
+      return `<div class="judgment-side ${key}" style="--nation:${country?.color||'#fff'}"><div class="judgment-roll">${judgmentPortrait({...person,name:person?.name||info.name,wins:info.wins??person?.wins},country,'general',info.army)}<div class="observer-die-column">${die}${battle.automatic?'':renderObserverScore(info,visible)}</div></div></div>`;
     };
-    body=`<div class="judgment-duel">${side('attack',true)}<span class="judgment-vs">VS</span>${side('defense',false)}</div>`;
-    if(result)note=battleConsequence(battle);
+    body=`<div class="judgment-duel">${side('attack',true)}<span class="judgment-vs">⚔</span>${side('defense',false)}</div>`;
+    const detail=`<details class="mini-combat-details"><summary>보정</summary><div>${renderObserverBonuses(battle.attack)}${renderObserverBonuses(battle.defense)}</div></details>`;
+    note=result?battle.winner===null?'무승부':battle.takenCells.length?`${battle.winner===battle.actor?'점령':'역점령'} ${battle.takenCells.length}`:'영토 유지':'';
+    return `<aside class="map-judgment is-duel is-compact-duel" data-event="${esc(event.type)}" data-phase="${state.phase}" aria-label="${esc(battle.territoryName)} 전투 판정"><header class="mini-combat-header"><span>${esc(battle.territoryName)}</span>${battle.defendersTotal>1?`<small>${battle.wave}/${battle.defendersTotal}</small>`:''}</header>${body}${detail}${note?`<p class="mini-combat-result">${esc(note)}</p>`:''}</aside>`;
   }else if(event.type==='hold'){
     const person=judgmentPerson(frame,nation,'general',event.slot);
     body=`<div class="judgment-single refusal-person">${judgmentPortrait(person,nation,'general')}</div><p class="dispatch-refusal">출정 거부</p>`;

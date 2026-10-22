@@ -7,7 +7,7 @@ export function battleConsequence(battle){
  if(!battle)return '';
  if(battle.automatic)return '무방비 영토 · 1개 점령';
  if(battle.winner===null)return '무승부 · 영토 유지';
- if(battle.winner===battle.target)return '공격 격퇴 · 영토 유지';
+ if(battle.winner===battle.target)return battle.takenCells.length?`방어 대승 · 역점령 ${battle.takenCells.length}개`:'공격 격퇴 · 영토 유지';
  if(battle.takenCells.length)return `공격 성공 · 영토 ${battle.takenCells.length}개 점령`;
  if(battle.defendersTotal>1&&battle.wave<battle.defendersTotal)return `수비대 ${battle.wave}/${battle.defendersTotal} 격파 · 전투 계속`;
  return '대결 승리 · 점령 없음';
@@ -40,6 +40,7 @@ export function applicationNotice(scene,record,step){
 }
 export function observerDuration(scene,record,phase,reduced=false){
  if(phase==='departing')return reduced?80:240;
+ if(scene.kind==='round-settle')return reduced?100:1200;
  if(scene.kind==='movement')return reduced?100:1600;
  if(phase==='rolling')return reduced?80:900;
  if(phase==='raw'||phase==='merging')return 500;

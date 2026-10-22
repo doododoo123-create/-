@@ -27,10 +27,10 @@ test('manual steps and a paused accelerated clock retain their exact effect stag
  const {run,before,record}=fixture;let now=0,task=null,speed=1;const p=new TurnPlayback({now:()=>now,schedule:(fn,delay)=>{task={fn,delay};return 1;},cancel:()=>task=null,speed:()=>speed});p.load(record,before,run.world,false);
  while(p.scene!==null&&!(p.scene.kind==='apply'&&p.scene.event?.type==='resolve'&&p.scene.battleIndex===fixture.battle.index))p.step();assert.equal(p.state.effectStage,'outcome');p.resume();now+=350;p.pause();const left=p.remaining;speed=8;p.resume();assert.equal(task.delay,left/8);assert.equal(p.state.effectStage,'outcome');task.fn();assert.equal(p.state.effectStage,'troops');p.pause();p.step();assert.equal(p.state.effectStage,'territory');p.finish();assert.equal(p.displayWorld,run.world);assert.equal(task,null);
 });
-test('duel card focus and role labels are shown during rolls, while winner text and troop changes appear separately',()=>{
+test('duel focus and icon roles are shown during rolls, while winner text and troop changes appear separately',()=>{
  const {record,before,battle,scene}=fixture,roll=makeTurnScenes(record,before).find(s=>s.event?.type==='attack_roll'&&s.battleIndex===battle.index);
  const draw=(s,stage=null)=>renderAtlas(stage?applicationWorld(s,stage):s.worldBefore,{presentation:{record,scenes:[s],index:0,phase:'holding',effectStage:stage}});
- const html=draw(roll);assert.equal((html.match(/unit-engaged/g)||[]).length,2);assert.equal((html.match(/class="unit-combat-role"/g)||[]).length,2);assert(html.includes('combat-focused'));assert(html.includes('observer-country-labels'));
+ const html=draw(roll);assert.equal((html.match(/unit-engaged/g)||[]).length,2);assert.equal((html.match(/class="unit-combat-role"/g)||[]).length,0);assert(html.includes('battle-side-token attack'));assert(html.includes('battle-side-token defense'));assert(html.includes('combat-focused'));assert(html.includes('observer-country-labels'));
  assert(draw(scene,'outcome').includes('unit-status-label victory'));assert(!draw(scene,'outcome').includes('data-effect="army"'));assert(!draw(scene,'troops').includes('unit-status-label victory'));assert(draw(scene,'troops').includes('data-effect="army"'));assert(!draw(scene,'troops').includes('data-territory-effect='));assert(draw(scene,'territory').includes('data-territory-effect='));
 });
 test('zoom-aware landmarks preserve all map data and expose an explicit all-information mode',()=>{

@@ -3,6 +3,7 @@ export const LEGACY_ARMY_BANDS=Object.freeze([[1.25,4],[1.5,10],[2,16],[3,21],[5
 export const ADDITIVE_COMBAT_DEFAULTS=Object.freeze({
  battleMode:'additive30',combatSides:30,experiencePerWin:1,experienceWinStep:3,experienceCap:3,mountainBonus:8,
  retreatMode:'home',advancedCampaign:true,territoryArmyLimit:10,fatigueStep:4,fatiguePenalty:2,supplyGainRange:[1,3],
+ capitalReserveLimit:10,defenderCounterattack:true,counterCaptureThresholds:[20,40],
  fieldCommand:true,troopRounding:'ten-thousand',reliefRadius:3,expeditionChances:[100,85,70,55,40,25],
  armyBands:[[1,0],[1.5,1],[2,3],[3,5],[4,7],[5,9],[7,12],[10,15],[15,18],[20,20]],
  captureThresholds:[20,40],lossThresholds:[10,20,40],casualtyBasis:'own',

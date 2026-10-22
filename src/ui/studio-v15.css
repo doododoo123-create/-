@@ -1,0 +1,45 @@
+/* Round-long campaign ink is static; only the current duel animates. */
+.game-skin .round-captures{opacity:.95}
+.game-skin .round-captured-territory{stroke-linejoin:round}
+.game-skin .round-campaign-history .campaign-route{animation:none;stroke-width:2.8px}
+.game-skin .round-campaign-history .campaign-route.defense{stroke-dasharray:5 3;stroke-width:2.5px}
+.game-skin .round-campaign-history .campaign-route-shadow{stroke-width:4.7px;stroke:#02080d}
+.game-skin .round-campaign-history .past-route{opacity:.62}
+.game-skin .round-campaign-history .past-route .campaign-route{stroke-width:1.9px}
+.game-skin .round-campaign-history .active-route{opacity:1}
+.round-march{fill:none;stroke-width:1.3;stroke-dasharray:2 4;opacity:.38}
+.round-stalemate path{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.round-stalemate .front-shadow{stroke:#071018;stroke-width:6}
+.round-stalemate .front-line{stroke:#fff;stroke-width:2.8;stroke-dasharray:4 3}
+.game-skin .battle-side-token{width:30px;height:30px;position:relative;border:2px solid var(--nation);border-radius:50%;background:#07111b;overflow:hidden;box-shadow:0 0 0 1px #000}
+.battle-side-token img{width:100%;height:100%;object-fit:cover;object-position:center 20%;opacity:.7}
+.battle-side-token b{position:absolute;inset:0;display:grid;place-items:center;font-size:18px;color:#fff;text-shadow:0 1px 3px #000,-1px -1px #000,1px 1px #000}
+.game-skin .map-stage .map-judgment.is-compact-duel{width:196px;max-width:calc(100% - 16px);min-width:0;padding:5px 6px;top:12px;left:50%;transform:none;border:1px solid #697e8c;border-radius:5px;background:#08131bef;box-shadow:0 3px 12px #0009;backdrop-filter:none;animation:none;overflow:visible}
+.mini-combat-header{display:flex;justify-content:space-between;gap:3px;margin:0 0 3px;color:#fff;font-size:9px;line-height:1.2}
+.mini-combat-header>span{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.mini-combat-header small{font-size:8px}
+.game-skin .is-compact-duel .judgment-duel{display:flex;gap:3px;align-items:center}
+.game-skin .is-compact-duel .judgment-vs{font-size:11px;flex:0 0 10px;color:#fff}
+.game-skin .is-compact-duel .judgment-side{min-width:0;flex:1}
+.game-skin .is-compact-duel .judgment-roll{display:flex;gap:3px;flex-wrap:nowrap;align-items:center}
+.game-skin .is-compact-duel .judgment-person{width:39px;flex:0 0 39px;border:1px solid var(--nation);border-radius:3px;box-shadow:none}
+.game-skin .is-compact-duel .judgment-person .framed-portrait{height:35px;width:100%;border:0;box-shadow:none}
+.game-skin .is-compact-duel .judgment-person figcaption{padding:2px 0;border:0;border-top:1px solid var(--nation);line-height:1.1}
+.game-skin .is-compact-duel .judgment-person strong{font-size:9px;gap:0;line-height:1.2;flex-wrap:nowrap;white-space:nowrap}
+.game-skin .is-compact-duel .judgment-person small{font-size:8px;margin-top:1px;line-height:1.2}
+.game-skin .is-compact-duel .judgment-person .veteran-stars{font-size:6px;letter-spacing:-1px}
+.game-skin .is-compact-duel .observer-die-column{width:35px;min-width:0;flex:0 0 35px}
+.game-skin .is-compact-duel .judgment-side .visual-die-block{width:35px;max-width:35px;flex:0 0 35px;margin:0}
+.game-skin .is-compact-duel .visual-die.attached-die{width:35px;height:35px}
+.game-skin .is-compact-duel .attached-die>small{font-size:6px;bottom:-1px;line-height:1}
+.game-skin .is-compact-duel .attached-die.custom-die-value .die-number{font-size:18px}
+.game-skin .is-compact-duel .observer-score{display:block;margin:2px 0 0;line-height:1}
+.game-skin .is-compact-duel .observer-score>strong{font-size:17px;line-height:1;color:#fff}
+.game-skin .is-compact-duel .observer-score>span,.game-skin .is-compact-duel .observer-score>small{display:none}
+.mini-combat-details{position:absolute;right:5px;bottom:-15px;font-size:8px;color:#d7e7ef;z-index:2}
+.mini-combat-details summary{cursor:pointer;padding:1px 4px;border-radius:2px;background:#10202ce8}
+.mini-combat-details[open]>div{position:absolute;right:0;top:15px;width:190px;padding:5px;background:#0a1825f5;border:1px solid #607d93;border-radius:4px}
+.mini-combat-details .observer-bonuses{font-size:9px;margin:2px}.mini-combat-details .observer-bonuses:first-child{border-bottom:1px solid #495b66;padding-bottom:4px}
+.mini-combat-result{margin:3px 0 0;text-align:center;font-size:9px;line-height:1.2;color:#fff}
+.game-skin .atlas-territory.captured{animation:none}
+
+.game-skin .atlas-scroll.combat-focused>.map-event-announcement{display:none}

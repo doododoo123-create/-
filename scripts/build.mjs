@@ -40,6 +40,7 @@ const mapEditorCss = await readFile(resolve(root, 'src/ui/map-editor.css'), 'utf
 const reformCss=await readFile(resolve(root,'src/ui/studio-v11.css'),'utf8');
 const v13Css=await readFile(resolve(root,'src/ui/studio-v13.css'),'utf8');
 const v14Css=await readFile(resolve(root,'src/ui/studio-v14.css'),'utf8');
+const v15Css=await readFile(resolve(root,'src/ui/studio-v15.css'),'utf8');
 const latestCss=await readFile(resolve(root,'src/ui/studio-v10.css'),'utf8');
 const campaignCss=await readFile(resolve(root,'src/ui/studio-v09.css'),'utf8');
 const fieldCss=await readFile(resolve(root,'src/ui/studio-v08.css'),'utf8');
@@ -68,6 +69,7 @@ html = html.replace('<link rel="stylesheet" href="./src/ui/style.css">', `<style
   .replace('<link rel="stylesheet" href="./src/ui/studio-v11.css">', `<style>${reformCss}</style>`)
   .replace('<link rel="stylesheet" href="./src/ui/studio-v13.css">', `<style>${v13Css}</style>`)
   .replace('<link rel="stylesheet" href="./src/ui/studio-v14.css">', `<style>${v14Css}</style>`)
+  .replace('<link rel="stylesheet" href="./src/ui/studio-v15.css">', `<style>${v15Css}</style>`)
   .replace('href="./favicon.svg"', `href="data:image/svg+xml;base64,${favicon}"`);
 const dist = resolve(root, 'dist');
 await mkdir(dist, { recursive: true });

@@ -83,6 +83,10 @@ export function validateWorld(source) {
   const scale={...MAP_SCALE_DEFAULTS,...r};for(const [key,label,min,max,integer]of [['territoriesPerCommander','장군당 담당 영토',1,12,true],['productionDivisor','생산 영토 묶음',1,10,true],['distanceScale','이동 거리 환산',1,3,false]])rules[key]=number(scale[key],label,min,max,integer);
   if(typeof scale.adaptiveReserve!=='boolean')fail('소국 수도 예비병 설정을 확인해 주세요.');rules.adaptiveReserve=scale.adaptiveReserve;
   const combat={...clone(ADDITIVE_COMBAT_DEFAULTS),...r};
+  rules.capitalReserveLimit=combat.capitalReserveLimit===null?null:number(combat.capitalReserveLimit,'수도 최대 예비병',1,10000);
+  if(typeof combat.defenderCounterattack!=='boolean')fail('방어 역점령 설정을 확인해 주세요.');rules.defenderCounterattack=combat.defenderCounterattack;
+  rules.counterCaptureThresholds=array(combat.counterCaptureThresholds,'방어 역점령 점수차',2).map(v=>number(v,'역점령 점수차',1,1000));
+  if(rules.counterCaptureThresholds.length!==2||rules.counterCaptureThresholds[0]>=rules.counterCaptureThresholds[1])fail('방어 역점령 기준 두 개를 증가 순서로 입력해 주세요.');
   if(!['v11','additive30'].includes(combat.battleMode))fail('지원하지 않는 전투 방식입니다.');rules.battleMode=combat.battleMode;
   if(typeof combat.fieldCommand!=='boolean')fail('실제 출정·복귀 설정을 확인해 주세요.');rules.fieldCommand=combat.fieldCommand;
   if(!['soldier','ten-thousand'].includes(combat.troopRounding))fail('병력 반올림 단위를 확인해 주세요.');rules.troopRounding=combat.troopRounding;

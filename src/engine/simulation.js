@@ -4,7 +4,7 @@ import { clone,validateWorld,landCount,countryPeople,neighbors } from '../model/
 import { V11_ATLAS,V11_NATIONS } from '../data/v11-preset.js';
 import { seaSupplyPorts } from '../model/sea-supply.js';
 import { createV11Engine } from './v11-core.js';
-export const ENGINE_VERSION='studio-v11-19';
+export const ENGINE_VERSION='studio-v11-20';
 const engineCache=new WeakMap();
 export const livingCountries=world=>world.countries.filter(c=>landCount(world,c.id)>0);
 export function numericSeed(seed){const text=String(seed??123456).trim();if(!/^\d+$/.test(text)||Number(text)>4294967295)throw new Error('원본과 같은 난수를 사용하려면 시드를 0~4294967295 정수로 입력해 주세요.');return Number(text)>>>0;}
@@ -29,7 +29,7 @@ export function engineFor(definition){
 }
 export function projectWorld(definition,state,providedEngine=null){
   const {engine,ids,territoryIds}=providedEngine||engineFor(definition);
-  const countries=definition.countries.map((base,i)=>{const c=state.countries[i];return {...base,troops:c.army,reserve:c.reserve,recruitment:c.extraRecruitment,supplyBonus:c.supplyBonus,ownTurns:c.ownTurns,capitalId:territoryIds[engine.capitalCell(state,i)]||null,...(definition.rules.advancedCampaign&&definition.rules.fieldCommand&&definition.rules.battleMode==='additive30'?{armyLimit:engine.lands(state,i)*definition.rules.territoryArmyLimit,reinforcementRoom:Math.max(0,engine.lands(state,i)*definition.rules.territoryArmyLimit-c.army)}:{}),commanders:c.generals.filter(g=>g.active&&g.alive).length};});
+  const countries=definition.countries.map((base,i)=>{const c=state.countries[i];return {...base,troops:c.army,reserve:c.reserve,recruitment:c.extraRecruitment,supplyBonus:c.supplyBonus,ownTurns:c.ownTurns,capitalId:territoryIds[engine.capitalCell(state,i)]||null,...(definition.rules.advancedCampaign&&definition.rules.fieldCommand&&definition.rules.battleMode==='additive30'?{armyLimit:engine.lands(state,i)*definition.rules.territoryArmyLimit,reinforcementRoom:Math.max(0,engine.lands(state,i)*definition.rules.territoryArmyLimit-c.army)}:{}),commanders:c.generals.filter(g=>g.active&&g.alive).length,...(c.initialUnassigned?{initialUnassigned:c.initialUnassigned}:{})};});
   const people=[];
   for(let i=0;i<countries.length;i++){
     const configured=countryPeople(definition,ids[i]);people.push(...configured.filter(p=>p.role!=='general'));
@@ -43,10 +43,10 @@ function normalizeRecord(raw,before,after,definition,state,context){
   const {ids,territoryIds}=context,actor=definition.countries[raw.actor],rolls=[];
   const events=raw.events.map((source,index)=>{const {view,...e}=source;const event={...e,index,nationId:ids[e.nation??raw.actor],targetId:ids[e.target]||null};if(Number.isInteger(e.roll)&&Number.isInteger(e.faces)){event.rollIndex=rolls.length;rolls.push({label:e.title,value:e.roll,sides:e.faces,type:e.type,slot:e.slot,attempts:e.attempts||[e.roll],eventIndex:index});}return event;});
   const battles=raw.battles.map(b=>({...b,actorId:ids[b.actor],defenderId:ids[b.target],territoryId:territoryIds[b.cellId],territoryName:definition.territories[b.cellId].name,fromId:territoryIds[b.from],takenTerritoryIds:b.takenCells.map(i=>territoryIds[i]),attackerPersonId:before.people.find(p=>p.countryId===ids[b.actor]&&p.role==='general'&&p.slot===b.slot)?.id,defenderPersonId:before.people.find(p=>p.countryId===ids[b.target]&&p.role==='general'&&p.slot===b.defenseSlot)?.id}));
-  const changes=battles.flatMap(b=>b.takenCells.map(i=>({territoryId:territoryIds[i],name:definition.territories[i].name,from:ids[b.target],to:ids[b.actor]})));
+  const changes=battles.flatMap(b=>b.takenCells.map(i=>({territoryId:territoryIds[i],name:definition.territories[i].name,from:ids[b.captureOwner===b.target?b.actor:b.target],to:ids[b.captureOwner??b.actor]})));
   const production=raw.events.filter(e=>e.type==='round_end').flatMap(e=>e.gains.map(g=>({...g,countryId:ids[g.id],name:definition.countries[g.id].name})));
   const eliminatedIds=raw.events.filter(e=>e.type==='elimination').map(e=>ids[e.target]);
-  const record={turn:raw.number,round:raw.round,actorId:actor.id,actorName:actor.name,color:actor.color,type:raw.kind,title:`${actor.name} · ${raw.summary}`,detail:raw.summary,action:raw.action,success:raw.kind==='domestic'?raw.success:changes.length>0,rolls,events,battles,changes,production,eliminatedIds,result:resultFor(state,ids),beforeStats:raw.before,afterStats:raw.after,domesticScore:raw.domesticScore||null,defenderId:ids[raw.target]||null};
+  const record={turn:raw.number,round:raw.round,actorId:actor.id,actorName:actor.name,color:actor.color,type:raw.kind,title:`${actor.name} · ${raw.summary}`,detail:raw.summary,action:raw.action,success:raw.kind==='domestic'?raw.success:changes.some(c=>c.to===actor.id),rolls,events,battles,changes,production,eliminatedIds,result:resultFor(state,ids),beforeStats:raw.before,afterStats:raw.after,domesticScore:raw.domesticScore||null,defenderId:ids[raw.target]||null};
   let visible=before;const frames=raw.events.map(e=>{const next=e.view?projectWorld(definition,{...state,...e.view},context):visible;const frame={before:visible,after:next};visible=next;return frame;});
   Object.defineProperty(record,'frames',{value:frames,enumerable:false});Object.defineProperty(record,'finalWorld',{value:after,enumerable:false});
   return record;
@@ -73,15 +73,18 @@ export function nextTurn(input,controls){
 export function casualty(own,enemy,rate){const base=rate*100;if(!own||!enemy||!base)return 0;const n=own*base*enemy*2,d=(own+enemy)*100;return Math.min(own,Math.max(1,Math.floor((n*2+d)/(d*2))));}
 export function borderTargets(world,id){return world.territories.filter(t=>t.ownerId!==id&&neighbors(world,t).some(n=>n.ownerId===id));}
 export function restoreRun(data){
-  if(![ENGINE_VERSION,'studio-v11-18','studio-v11-17','studio-v11-16','studio-v11-15','studio-v11-14','studio-v11-13','studio-v11-12','studio-v11-11'].includes(data?.engineVersion))throw new Error('현재 v11 엔진과 다른 실행 저장입니다.');
-  const source=clone(data.initialWorld);if(data.engineVersion!==ENGINE_VERSION&&source?.rules){
+  if(![ENGINE_VERSION,'studio-v11-19','studio-v11-18','studio-v11-17','studio-v11-16','studio-v11-15','studio-v11-14','studio-v11-13','studio-v11-12','studio-v11-11'].includes(data?.engineVersion))throw new Error('현재 v11 엔진과 다른 실행 저장입니다.');
+  const source=clone(data.initialWorld),revision=Number(data.engineVersion.split('-').at(-1));
+  if(revision<20&&source?.rules){source.rules.capitalReserveLimit??=null;source.rules.defenderCounterattack??=false;source.rules.counterCaptureThresholds??=[20,40];}
+  if(revision<19&&source?.rules){
     source.rules.experienceWinStep??=1;source.rules.experienceCap??=9;
-    if(data.engineVersion!=='studio-v11-18'){
-    Object.assign(source.rules,MAP_SCALE_DEFAULTS);
-    if(data.engineVersion!=='studio-v11-17'){source.rules.commandReform=false;source.rules.casualtyBasis='smaller';
-    if(data.engineVersion!=='studio-v11-16'){source.rules.retreatMode='blocked';if(data.engineVersion!=='studio-v11-15')source.rules.advancedCampaign=false;if(!['studio-v11-14','studio-v11-15'].includes(data.engineVersion)){source.rules.fieldCommand=false;source.rules.troopRounding='soldier';}if(!['studio-v11-13','studio-v11-14','studio-v11-15'].includes(data.engineVersion))source.rules.battleMode='v11';if(data.engineVersion==='studio-v11-11')source.rules.seaSupply=false;}
-    }
-    }
+    if(revision<18)Object.assign(source.rules,MAP_SCALE_DEFAULTS);
+    if(revision<17){source.rules.commandReform=false;source.rules.casualtyBasis='smaller';}
+    if(revision<16)source.rules.retreatMode='blocked';
+    if(revision<15)source.rules.advancedCampaign=false;
+    if(revision<14){source.rules.fieldCommand=false;source.rules.troopRounding='soldier';}
+    if(revision<13)source.rules.battleMode='v11';
+    if(revision<12)source.rules.seaSupply=false;
   }
   const definition=validateWorld(source),context=engineFor(definition),state=clone(data.engineState);
   if(!context.engine.validState(state)||state.seed!==numericSeed(data.seed))throw new Error('저장된 경기의 병력·영토·난수 상태가 올바르지 않습니다.');

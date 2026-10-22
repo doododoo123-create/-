@@ -257,3 +257,14 @@ engine18은17 저장의 지휘한도/손실/home 복귀를 그대로 보존하�
 - `ui/camera-focus.js`의 `cameraExtent`는 화면 비율에 맞는 viewBox를 만들고 `battleFraming`은 공격/수비/전장을 묶어 판정창 아래에 둡니다. `MapCamera`는 같은 턴·같은 전장의 판정과 순차 수비에서 구도를 유지하며 resize 때 다시 계산합니다. 원본 그림의 확장된 바다 범위 안에서 상하 중심 이동을 허용합니다. 수동 줌/이동과 자동 추적 선택은 유지합니다. 역사 진입 시 카메라와 추적 키를 함께 보관하고 복귀 시 복원합니다.
 - `judgment-overlay.js`는 전투 창에서만 `renderDie`의 rawFace 옵션을 사용합니다. 실물 주사위는 원래 눈금, 큰 점수는 기록된 최종 점수입니다. 상대 판정 전 값은 표시하지 않습니다. 일반 arena 주사위 표현은 기존 방식을 유지합니다. 수정값0은 관전 보정 목록에서 생략합니다.
 - `studio-v14.css`는 현재 두 카드의 확대를 핀 끝 기준으로 적용하고 주변 정보 대비를 낮춥니다. 축소/보통/확대/all/editor 수준과 가로·세로 창 크기를 지원합니다. 판정창은 상단에 고정 배치하며 사라질 때만 전용 퇴장 애니메이션을 씁니다. 정지 상태의 위치도 같은 기준입니다.
+
+
+## v0.15 한 바퀴의 지도 연출과 방어 역점령
+
+- `ui/round-campaign.js`는 TurnPlayback.state의 roundRecords(현재 기록보다 이전의 같은 round), before 프레임, 현재 공개된 event index/effectStage만 읽는 표시 계층이다. 시작 소유권을 이전 changes의 역순으로 복원하고, 실제 결과 적용이 영토 단계에 도달한 capture만 격자로 표시한다. replayTurn은 가벼운 체크포인트를 위해 이전 history를 비우므로 app이 저장 역사에서 해당 round의 이미 완료된 기록을 따로 전달한다. 불러온 게임의 정지 지도는 completedRoundPresentation으로 복원한다.
+- 실제 world.territories 소유권·국경·카드 위치는 엔진 그대로다. atlas-view가 바탕 채색에만 baseOwners를 참조하고 같은 다각형에 새 소유국 SVG pattern을 덮는다. UI 표시 세계를 엔진에 전달하지 않는다. round_end 앞의 round-settle 장면에서 누적 흔적을 잠깐 유지하고 생산부터 단색으로 확정한다. 통일 finish/완료도 정리한다.
+- 역사 경로는 기록된 이동 출발지 또는 당시 프레임에서 읽는다. 같은 출발/대상/종류는 순번별 곡률을 적용하고, 국가색 marker를 경로별로 두어 다음 국가 색으로 바뀌지 않는다. 무승부는 fromId와 territoryId 다각형의 실제 공유 선분만 그리며 소유권이 같아지면 없어진다. 이전 화살표·이동선은 정적이며 현재 대결만 강조한다.
+- camera-focus.nationFraming은 행동 시작 시 자국 영토 중심과 모든 접경 범위만 읽는다. 미래 선택된 공격 대상과 점수를 보지 않는다. map-camera는 국가 행동당 한 번 고정하고, placeCompactDuel은 전투 표식의 화면 좌표로 약196px 창을 전장 위 빈 공간에 배치한다. 화면 크기 변경·수동 카메라 이동도 같은 기준이다.
+- `engine/counterattack.js`는 방어 점수 우세와 이미 확정된 결과를 받아 최대0/1/2를 계산하고 접경 영토를 결정적으로 고른다. 패배한 공격자는 재대결하지 않지만 다른 살아 있는 적 지휘관은 자동 점령을 막는다. captureOwner가 역점령 방향을 명시하며 simulation.normalizeRecord가 올바른 from/to changes로 기록한다. 기존 홈 복귀, 수도 갱신, 전사와 멸망 처리를 재사용한다.
+- 수도 상한은 v11-core의 capCapital로 모집/중앙 생산/새 초기 배치/반환 병력에 적용한다. distribute가 먼저 실행되어 개인군의 빈자리를 채운다. 국가 전체·개인 지휘한도는 독립적으로 유지된다. 미수용 신규 인원은 blocked에 포함되고 초기 미편성은 initialUnassigned로 표시한다.
+- 엔진20 이전 저장은 수도 상한 null, 역점령 false로 복구한다. 엔진19의 전적3승 간격과160영토 설정을 유지하고,18 이하의 구버전 복구를 숫자 revision 조건으로 분리했다. 새 규칙은 새 실행부터 적용한다.

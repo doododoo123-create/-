@@ -3,6 +3,7 @@ import { campaignDefenders, movementFatigue, retreatPath } from './campaign-logi
 import { applyHomeRetreat } from './retreat-home.js';
 import { chooseFrontier } from './frontier.js';
 import { combatBonuses, combatCasualties, roundedTroops } from '../model/combat-rules.js';
+import { counterCaptureLimit, counterCapture } from './counterattack.js';
 
 // New campaign rules are isolated from the original v11 / v0.8 turn algorithm.
 export function resolveCampaign(ctx){
@@ -79,13 +80,19 @@ export function resolveCampaign(ctx){
    const finalWin=b.winner===actor&&wave===queue.length-1;
    b.captureLimit=finalWin?h.conquestLimit(b):0;
    if(finalWin){b.takenCells=capture(b);b.takenCell=cellId;recent.push(...b.takenCells);}
+   if(rules.defenderCounterattack){
+    b.captureOwner=b.winner===opponent?opponent:actor;b.counterCaptureLimit=counterCaptureLimit(b,rules);
+    if(b.counterCaptureLimit){b.takenCells=counterCapture(s,Atlas,b,rules);if(b.takenCells.length)b.takenCell=b.takenCells[0];}
+   }
    h.syncArmy(me);h.syncArmy(other);b.after={attack:a.troops,defense:d.troops};
    b.summary=b.winner===actor?(finalWin?a.name+' 승리 · 영지 '+b.takenCells.length+'개 점령':a.name+' 승리 · 다음 수비대와 계속 전투'):b.winner===opponent?d.name+' 방어 성공 · 영지 유지':'무승부 · 영지 유지';
+   if(b.counterCaptureLimit&&b.takenCells.length)b.summary=d.name+' 방어 대승 · 역점령 '+b.takenCells.length+'개';
+   else if(b.counterCaptureLimit)b.summary=d.name+' 방어 대승 · 역점령 가능한 영토 없음';
    emit('resolve',b.summary,automatic?'병력 손실 없음':`공격 ${b.attack.army} → ${a.troops}만 / 방어 ${b.defense.army} → ${d.troops}만`,{battleIndex:index,success:b.winner===actor},true);
    deathCheck(b,a,d,wave);
-   if(finalWin){
+   if(finalWin||b.counterCaptureLimit&&b.takenCells.length){
     // Only displaced survivors retreat; older campaigns keep their recorded blocked-route rules.
-    for(const g of other.generals)if(g.active&&g.alive&&Number.isInteger(g.position)&&s.cells[g.position].owner!==opponent)retreat(opponent,g,index);
+    for(const nation of [actor,opponent])for(const g of s.countries[nation].generals)if(g.active&&g.alive&&Number.isInteger(g.position)&&s.cells[g.position].owner!==nation&&h.lands(s,nation))retreat(nation,g,index);
     h.ensureStations(s);h.ensureFieldPositions(s);
    }
    if(!finalWin&&b.winner===actor&&d.alive){

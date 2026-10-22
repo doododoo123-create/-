@@ -1,4 +1,24 @@
 import { mapAnchor } from '../model/cartography-geometry.js';
+import { neighbors } from '../model/world.js';
+export function nationFraming(world,id,viewport={width:1200,height:800}){
+ const own=world.territories.filter(t=>t.ownerId===id);if(!own.length)return null;
+ const points=own.map(t=>mapAnchor(world,t.id,'reference'));
+ const mean=points.reduce((p,q)=>[p[0]+q[0]/points.length,p[1]+q[1]/points.length],[0,0]);
+ const center=[...points].sort((a,b)=>Math.hypot(a[0]-mean[0],a[1]-mean[1])-Math.hypot(b[0]-mean[0],b[1]-mean[1]))[0];
+ // Every adjacent frontier is included, so framing cannot disclose the future selected target.
+ const frontier=new Set(own.flatMap(t=>neighbors(world,t).map(n=>n.id))),all=[...points,...[...frontier].map(v=>mapAnchor(world,v,'reference'))];
+ const rx=Math.max(...all.map(p=>Math.abs(p[0]-center[0])))+75,ry=Math.max(...all.map(p=>Math.abs(p[1]-center[1])))+110;
+ const [w,h]=cameraExtent(viewport.width,viewport.height);
+ return {x:center[0],y:center[1],zoom:Math.max(.5,Math.min(3.2,w*.88/(2*rx),h*.86/(2*ry)))};
+}
+export function placeCompactDuel(){
+ const root=globalThis.document?.querySelector?.('.map-stage'),pane=root?.querySelector('.is-compact-duel'),ring=root?.querySelector('.battle-emblem .target-ring');
+ if(!pane||!ring)return;
+ const r=root.getBoundingClientRect(),b=ring.getBoundingClientRect(),width=pane.offsetWidth,height=pane.offsetHeight,x=b.x+b.width/2-r.x,y=b.y-r.y;
+ const left=Math.max(8,Math.min(r.width-width-8,x-width/2));
+ const above=y-height-14,top=above>=8?above:Math.min(r.height-height-8,y+b.height+20);
+ pane.style.left=`${left}px`;pane.style.top=`${Math.max(8,top)}px`;
+}
 export function cameraExtent(width=1200,height=800){const ratio=Math.max(.1,width/height);return ratio<1.5?[1200,1200/ratio]:[800*ratio,800];}
 export function battleFraming(scene,record,viewport={width:1200,height:800}){
  const battle=record.battles?.[scene?.battleIndex],world=scene.worldBefore||scene.worldAfter;if(!battle||!world)return null;
