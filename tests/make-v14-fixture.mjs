@@ -1,0 +1,14 @@
+import{mkdir,writeFile}from'node:fs/promises';
+import{createContinent160World}from'../src/data/continent160-world.js';
+import{createRun,nextTurn}from'../src/engine/simulation.js';
+import{replayTurn}from'../src/engine/replay.js';
+import{serializeWorld}from'../src/storage/world-store.js';
+import{saveRun}from'../src/storage/run-store.js';
+import{makeTurnScenes}from'../src/ui/playback.js';
+import{applicationSteps}from'../src/ui/observer-flow.js';
+const encode=run=>{let data;saveRun({setItem:(_,v)=>data=JSON.parse(v)},run);return{world:JSON.parse(serializeWorld(run.initialWorld)),run:data};};
+let run=createRun(createContinent160World(),777);for(let i=0;i<50;i++)run=nextTurn(run,i%7===0?{rolls:{king:10}}:{rolls:{king:1,minister:1,domestic:1}});
+const turn=[...run.history].reverse().find(r=>r.turn>30&&r.battles.some(b=>!b.automatic&&b.winner!==null&&(b.losses.attack.amount+b.losses.defense.amount)>0))?.turn;if(!turn)throw Error('No replayable real battle');
+const replay=await replayTurn(run,turn),b=replay.record.battles.find(b=>!b.automatic&&b.winner!==null&&(b.losses.attack.amount+b.losses.defense.amount)>0),scene=makeTurnScenes(replay.record,replay.before).find(s=>s.kind==='apply'&&s.event.type==='resolve'&&s.battleIndex===b.index);
+const owners=world=>Object.fromEntries(world.territories.map(t=>[t.id,t.ownerId]));
+await mkdir('.artifacts',{recursive:true});await writeFile('.artifacts/v14-browser-fixture.json',JSON.stringify({history:encode(run),turn,battle:b,steps:applicationSteps(scene,replay.record),before:owners(scene.worldBefore),after:owners(scene.worldAfter),expected:owners(run.world)}));

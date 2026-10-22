@@ -27,7 +27,7 @@ test('raw die, modifier merge and final face show recorded scores without clampi
 test('battle result is announced before ownership and troop changes are applied',()=>{
  const f=fixture(true),player=new TurnPlayback();player.load(f.record,f.before,f.after,false);
  while(player.scene.event?.type!=='resolve')player.step();assert.equal(player.scene.kind,'result');const old=player.displayWorld;
- assert.deepEqual(old,player.scene.worldBefore);player.step();assert.equal(player.state.phase,'departing');assert.deepEqual(player.displayWorld,old);player.step();assert.equal(player.scene.kind,'apply');assert.deepEqual(player.displayWorld,player.scene.worldAfter);
+ assert.deepEqual(old,player.scene.worldBefore);player.step();assert.equal(player.state.phase,'departing');assert.deepEqual(player.displayWorld,old);player.step();assert.equal(player.scene.kind,'apply');assert.equal(player.state.effectStage,'outcome');assert.deepEqual(player.displayWorld,player.scene.worldBefore);while(player.state.effectStage!=='territory')player.step();assert.deepEqual(player.displayWorld.territories,player.scene.worldAfter.territories);
  player.finish();assert.deepEqual(player.displayWorld,f.after);assert.equal(player.showingResult,true);
 });
 test('speed changes affect only remaining clock time; reset cancels callbacks',()=>{

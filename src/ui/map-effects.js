@@ -1,10 +1,11 @@
 import { territoryCell } from '../model/cartography-geometry.js';
 import { displayEventText } from './display-names.js';
 import {esc} from './icons.js';
+import { applicationNotice, observedExperience } from './observer-flow.js';
 // Exact changes between recorded frames. No game rules or randomness are evaluated here.
 const effectKey=p=>`${p.countryId}:${p.slot}`;
 const effectSign=n=>n>0?`+${n}`:`−${Math.abs(n)}`;
-export function mapEffects(scene) {
+export function mapEffects(scene,stage=null,record=null) {
   const output={units:[],territories:[],announcement:''};
   if(scene?.kind!=='apply'||!scene.worldBefore||!scene.worldAfter)return output;
   const before=scene.worldBefore,after=scene.worldAfter,event=scene.event||{};
@@ -28,6 +29,8 @@ export function mapEffects(scene) {
     if(delta)add(p.countryId,'general',p.slot,'army',delta,`${event.type==='roster'?'이관 ':event.type==='resupply'?'배분 ':''}${effectSign(delta)}만명`,delta>0?'positive':event.type==='roster'?'transfer':'negative');
     const capacity=(next?.capacity??0)-(prev?.capacity??0);
     if(capacity&&next?.active&&next?.alive&&event.type==='resolve')add(p.countryId,'general',p.slot,'capacity',capacity,`한도 ${effectSign(capacity)}만`,'upgrade');
+    const experience=next&&prev?observedExperience(next,after.rules)-observedExperience(prev,before.rules):0;
+    if(experience>0&&next.active&&next.alive&&event.type==='resolve')add(p.countryId,'general',p.slot,'experience',experience,`전적 보정 ${effectSign(experience)}점`,'upgrade');
     if(prev?.alive&&next?.alive===false)add(p.countryId,'general',p.slot,'death',0,'전사','negative');
     if((next?.generation??0)>(prev?.generation??0))add(p.countryId,'general',p.slot,'appointment',0,'후임 부임','upgrade');
   }
@@ -38,6 +41,11 @@ export function mapEffects(scene) {
   if(event.type==='resolve'&&!output.units.length&&!output.territories.length&&(!event.success||event.title?.includes('충원 상한')))add(event.nationId,'king',null,'unchanged',0,'+0만 · 변화 없음','neutral');
   if(event.type==='elimination')add(event.targetId,'king',null,'elimination',0,'멸망','negative');
   output.announcement=event.type==='round_end'?'라운드 병력 생산':event.type==='roster'?'지휘 구역 재편':displayEventText(event.title||'');
+  if(stage&&stage!=='all'){
+    output.units=output.units.filter(e=>stage==='troops'?e.type==='army':stage==='territory'?e.type==='capital':stage==='growth'?['capacity','experience','recruitment','supply'].includes(e.type):false);
+    if(stage!=='territory')output.territories=[];
+    output.announcement=displayEventText(applicationNotice(scene,record,stage));
+  }
   return output;
 }
 
@@ -49,10 +57,11 @@ export function renderMapEffects(effects,geometry,world,currentMarkers,beforeMar
     const marker=currentMarkers.find(m=>same(m,e))||beforeMarkers.find(m=>same(m,e));if(!marker)return '';
     const key=`${e.countryId}:${e.role}:${e.slot}`,row=stacks.get(key)||0;stacks.set(key,row+1);
     const width=Math.min(300,Math.max(74,textWidth(e.label,17)));
-    const x=Math.min(1200-width/2-4,Math.max(width/2+4,marker.point[0]));
-    const y=Math.max(28,marker.point[1]-70-row*26);
+    const candidates=[[0,-70-row*29],[0,-99-row*29],[0,-128-row*29],[width*.6,-70-row*29],[-width*.6,-70-row*29],[0,-157-row*29]];
+    const places=candidates.map(([dx,dy])=>({x:Math.min(1200-width/2-4,Math.max(width/2+4,marker.point[0]+dx)),y:Math.max(28,marker.point[1]+dy)}));
+    const {x,y}=places.find(p=>!occupied.some(o=>p.x-width/2<o.x+o.w+4&&p.x+width/2+4>o.x&&p.y-22<o.y+o.h+4&&p.y+4>o.y))||places.at(-1);
     occupied.push({x:x-width/2,y:y-22,w:width,h:26});
-    return `<g class="map-unit-feedback ${e.tone}" data-effect="${e.type}" data-country="${esc(e.countryId)}" data-role="${e.role}" data-slot="${e.slot??''}" data-delta="${e.delta}" transform="translate(${x},${y})"><path d="M0 4V12"/><rect x="${-width/2}" y="-22" width="${width}" height="26" rx="5"/><text text-anchor="middle" y="-4">${esc(e.label)}</text></g>`;
+    return `<g class="map-unit-feedback ${e.tone}" data-effect="${e.type}" data-country="${esc(e.countryId)}" data-role="${e.role}" data-slot="${e.slot??''}" data-delta="${e.delta}" transform="translate(${x},${y})"><path d="M${marker.point[0]-x} ${marker.point[1]-40-y} L0 4"/><rect x="${-width/2}" y="-22" width="${width}" height="26" rx="5"/><text text-anchor="middle" y="-4">${esc(e.label)}</text></g>`;
   }).join('');
   const territories=effects.territories.map(e=>{
     const t=world.territories.find(t=>t.id===e.territoryId);if(!t)return '';

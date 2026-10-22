@@ -1,4 +1,5 @@
 import { choiceFor } from './choice-reel.js';
+import { applicationSteps, applicationWorld, observerDuration } from './observer-flow.js';
 // Presentation reads committed engine events. Its clock never consumes game randomness.
 export const leadGeneral = (world,id) => world.people.find(p=>p.countryId===id&&p.role==='general'&&p.active&&p.alive)||null;
 export function makeTurnScenes(record,before) {
@@ -35,10 +36,10 @@ export class TurnPlayback {
   get playing(){return !!this.state?.playing;}
   get complete(){return !this.state||this.state.finished;}
   get showingResult(){return this.scene?.kind==='summary';}
-  get displayWorld(){return this.state?.finished?this.state.after:this.scene?.worldAfter;}
+  get displayWorld(){return this.state?.finished?this.state.after:this.scene?.kind==='apply'&&this.state.phase!=='settled'?applicationWorld(this.scene,this.state.effectStage):this.scene?.worldAfter;}
   get movementProgress(){if(this.scene?.kind!=='movement')return 0;const left=this.playing&&this.handle!==null?Math.max(0,(this.deadline-this.now())*this.scheduledSpeed):this.remaining;return Math.max(0,Math.min(1,1-left/this.duration()));}
   get sceneProgress(){if(!this.scene)return 0;const left=this.playing&&this.handle!==null?Math.max(0,(this.deadline-this.now())*this.scheduledSpeed):this.remaining;return Math.max(0,Math.min(1,1-left/this.duration()));}
-  duration(){return this.state.phase==='departing'?(this.reducedMotion()?80:240):this.scene.kind==='movement'?(this.reducedMotion()?100:1600):this.scene.kind==='apply'?1800:this.state.phase==='rolling'?(this.reducedMotion()?80:900):this.state.phase==='raw'?500:this.state.phase==='merging'?500:this.scene.kind==='summary'?1200:this.scene.kind==='result'?1400:700;}
+  duration(){return observerDuration(this.scene,this.state.record,this.state.phase==='departing'?'departing':this.state.effectStage||this.state.phase,this.reducedMotion());}
   clearTimer(){if(this.handle!==null)this.cancel(this.handle);this.handle=null;}
   load(record,before,after,play=true){
     this.clearTimer();this.groupEnd=null;this.groupDone=false;const scenes=makeTurnScenes(record,before);scenes.at(-1).worldAfter=after;
@@ -50,12 +51,13 @@ export class TurnPlayback {
   resume(){if(!this.state||this.state.finished)return;this.groupEnd=null;this.groupDone=false;this.state.playing=true;this.onChange();this.arm();}
   advance(){
     if(!this.state||this.state.finished)return;this.clearTimer();
+    if(this.scene.kind==='apply'&&this.state.effectStage){const steps=applicationSteps(this.scene,this.state.record),index=steps.indexOf(this.state.effectStage);if(index<steps.length-1){this.state.effectStage=steps[index+1];this.remaining=this.duration();this.onChange();if(this.state.playing)this.arm();return;}}
     if(this.state.phase==='rolling')this.state.phase=this.scene.bonus?'raw':'locked';
     else if(this.state.phase==='raw')this.state.phase='merging';
     else if(this.state.phase==='merging')this.state.phase='locked';
     else if(this.state.phase!=='departing'&&this.state.scenes[this.state.index+1]?.kind==='apply')this.state.phase='departing';
     else if(this.groupEnd===this.state.index&&this.state.index<this.state.scenes.length-1){this.state.playing=false;this.groupDone=true;if(this.scene.kind==='apply')this.state.phase='settled';this.onChange();return;}
-    else if(this.state.index<this.state.scenes.length-1){this.state.index++;this.state.phase=['roll','reel'].includes(this.scene.kind)?'rolling':'holding';}
+    else if(this.state.index<this.state.scenes.length-1){this.state.index++;this.state.phase=['roll','reel'].includes(this.scene.kind)?'rolling':'holding';this.state.effectStage=this.scene.kind==='apply'?applicationSteps(this.scene,this.state.record)[0]:null;}
     else{this.state.finished=true;this.state.playing=false;this.onChange();this.onFinish();return;}
     this.remaining=this.duration();this.onChange();if(this.state.playing)this.arm();
   }

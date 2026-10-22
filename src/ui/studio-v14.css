@@ -1,0 +1,85 @@
+/* An unobstructed recording map, with attention reserved for the current incident. */
+.game-skin .atlas-map .atlas-name{font-size:12px;stroke-width:2.2px!important;font-weight:650}
+.game-skin .atlas-map .atlas-name.name-incident{font-size:15px;font-weight:800;stroke-width:3px!important}
+.game-skin .country-outlines>g>path:first-child{stroke-width:6px}
+.game-skin .country-outlines .country-border-color{stroke-width:4px}
+.game-skin .atlas-territory{stroke-width:.65px}
+.observer-country-labels{display:none;font:800 28px 'Malgun Gothic',sans-serif;fill:#fff;stroke:#09171d;stroke-width:3px;paint-order:stroke;opacity:.75;letter-spacing:2px}
+.atlas-scroll[data-detail=wide] .observer-country-labels{display:block}
+.atlas-scroll.combat-focused .observer-country-labels{display:none}
+.atlas-scroll[data-detail=wide] .atlas-name:not(.name-key),.atlas-scroll[data-detail=wide] .map-unit-position:not(.unit-key){visibility:hidden}
+.atlas-scroll[data-detail=wide] .mountain-markers{opacity:.4}
+.atlas-scroll[data-detail=regional] .observer-country-labels,.atlas-scroll[data-detail=battle] .observer-country-labels,.atlas-scroll[data-detail=all] .observer-country-labels,.atlas-scroll[data-detail=editor] .observer-country-labels{display:none}
+.atlas-scroll[data-detail=all] .atlas-name,.atlas-scroll[data-detail=all] .map-unit-position{visibility:visible}
+.combat-focused .map-unit-position:not(.unit-engaged){opacity:.60}
+.combat-focused .atlas-name:not(.name-incident){opacity:.48}
+.unit-engaged .unit-focal-body{transform:scale(1.12);transform-box:fill-box;transform-origin:50% 100%}
+.unit-combat-role{font:800 13px 'Malgun Gothic',sans-serif;fill:white;stroke:#061016;stroke-width:3px;paint-order:stroke}
+.battle-place-label{font:800 13px 'Malgun Gothic',sans-serif;fill:#fff;stroke:#000;stroke-width:3px;paint-order:stroke}
+.observer-detail-control{display:flex;align-items:center;gap:5px;white-space:nowrap;font-size:11px}
+.observer-detail-control select{width:auto;min-width:0;font-size:11px;padding:5px 7px}
+.game-skin .map-judgment{top:6%;transform:translateX(-50%);max-width:min(640px,calc(100% - 24px));padding:12px 16px;background:#0d1a21f7}
+.game-skin .playback-paused .map-judgment{transform:translateX(-50%)}
+@keyframes judgment-leave{from{opacity:1;transform:translate(-50%,0)}to{opacity:0;transform:translate(-50%,-10px)}}
+.game-skin .map-judgment.is-duel{width:min(640px,calc(100% - 24px))}
+.game-skin .map-judgment h2{margin:0 0 4px;font-size:19px}
+.observer-duel-stage{font-size:11px;margin:0 0 9px;color:#d1dfe9}
+.game-skin .map-judgment.is-duel .judgment-side-label{margin-bottom:6px;font-size:12px;font-weight:700}
+.game-skin .map-judgment.is-duel .judgment-side-label small{display:none}
+.game-skin .map-judgment.is-duel .die-caption,.game-skin .map-judgment.is-duel .die-equation{display:none}
+.game-skin .map-judgment.is-duel .judgment-side .visual-die-block{align-self:center;margin:0}
+.observer-score{display:grid;grid-template-columns:auto auto;justify-content:center;align-items:baseline;gap:0 9px;margin-top:5px;font-variant-numeric:tabular-nums}
+.observer-score>span{font-size:11px;color:#cfdee9}
+.observer-score>strong{font:bold 32px/1.1 Georgia,'Malgun Gothic',serif;color:#fff}
+.observer-score small{grid-column:1/-1;font-size:10px;color:#bacbd8;margin-top:3px}
+.observer-die-column{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0}
+.observer-die-column .observer-score{gap:0 6px}
+.observer-score[data-score-visible=false]>strong{color:#6b7d8b}
+.game-skin .map-judgment .judgment-feature{margin:7px 0 0;font-size:11px}
+.observer-bonuses{display:flex;justify-content:center;flex-wrap:wrap;gap:4px;margin-top:5px;font-size:11px}
+.observer-bonuses>span{padding:2px 5px;background:#21333e;border-radius:3px;color:#e4edf4}
+.observer-bonuses .no-bonus{background:none;color:#98aab6}
+.game-skin .map-judgment .judgment-result{font-size:14px;font-weight:700;margin-top:9px;color:#fff}
+.game-skin .map-event-announcement{top:6%;background:#0d1a21f5;border-color:#90a4b4;max-width:85%;font-size:clamp(12px,1.3vw,19px)}
+.map-event-announcement[data-effect-stage=outcome]{border-color:#ffdf78}
+.map-event-announcement[data-effect-stage=troops]{border-color:#ff6770}
+.map-event-announcement[data-effect-stage=territory]{border-color:#c7e1ff}
+.map-event-announcement[data-effect-stage=growth]{border-color:#b3df95}
+.game-skin .defense-wave{font-size:12px;line-height:1.4;margin:6px 0 10px;padding:4px 6px;background:#253641;color:#e6f0f8}
+@media(max-width:620px){
+ .game-skin .map-judgment{top:3%;padding:9px;max-width:calc(100% - 16px)}
+ .game-skin .map-judgment.is-duel{width:calc(100% - 16px);min-width:0}
+ .game-skin .map-judgment h2{font-size:16px}
+ .game-skin .map-judgment .judgment-person{width:64px;flex-basis:64px}
+ .game-skin .map-judgment .judgment-person .framed-portrait{height:78px}
+ .game-skin .map-judgment .visual-die-block{width:57px;max-width:57px}
+ .game-skin .map-judgment .attached-die{width:54px;height:54px}
+ .game-skin .map-judgment .judgment-roll{gap:4px}
+ .game-skin .map-judgment .judgment-person strong{font-size:11px}
+ .game-skin .map-judgment .judgment-person small{font-size:10px}
+ .observer-score>strong{font-size:28px}.observer-score small{font-size:9px}
+ .observer-bonuses{font-size:10px;gap:3px}.observer-bonuses>span{padding:2px 3px}
+ .game-skin .map-judgment .judgment-feature{font-size:10px}
+ .game-skin .map-judgment .judgment-result{font-size:12px}
+}
+@media(max-height:700px){
+ .game-skin .map-judgment{top:10px;padding:7px 11px}
+ .game-skin .map-judgment .judgment-person .framed-portrait{height:78px}
+ .game-skin .map-judgment .judgment-person figcaption{padding:3px 2px}
+ .game-skin .map-judgment .judgment-person strong{font-size:11px}
+ .game-skin .map-judgment .judgment-person small{font-size:10px}
+ .observer-score>strong{font-size:26px}
+ .game-skin .map-judgment .judgment-feature{font-size:10px;margin-top:4px}
+ .game-skin .map-judgment .judgment-result{margin-top:5px;font-size:12px}
+}
+@media(max-height:540px){
+ .game-skin .map-judgment{top:8px;padding:6px 11px}
+ .game-skin .map-judgment h2{font-size:14px}.observer-duel-stage{margin-bottom:5px;font-size:10px}
+ .game-skin .map-judgment .judgment-person .framed-portrait{height:66px}
+ .game-skin .map-judgment .attached-die{width:52px;height:52px}
+ .observer-duel-stage{display:none}
+ .game-skin .map-judgment .judgment-feature{display:block;font-size:9px;margin-top:4px}
+ .observer-score>strong{font-size:26px}.observer-bonuses{font-size:10px;margin-top:3px}
+ .game-skin .map-judgment .judgment-result{font-size:11px;margin-top:4px}
+}
+@media(prefers-reduced-motion:reduce){.unit-engaged .unit-focal-body{transform:none}}

@@ -828,6 +828,92 @@ html[data-performance=mobile] .battle-emblem,html[data-performance=mobile] .camp
 @media(max-width:620px){.game-skin .map-unit-token .token-copy b{font-size:8px}}
 @media(prefers-reduced-motion:reduce){.unit-battle-glow{animation:none;opacity:1}html[data-performance=mobile] .unit-outcome{animation:none}}
 </style>
+  <style>/* An unobstructed recording map, with attention reserved for the current incident. */
+.game-skin .atlas-map .atlas-name{font-size:12px;stroke-width:2.2px!important;font-weight:650}
+.game-skin .atlas-map .atlas-name.name-incident{font-size:15px;font-weight:800;stroke-width:3px!important}
+.game-skin .country-outlines>g>path:first-child{stroke-width:6px}
+.game-skin .country-outlines .country-border-color{stroke-width:4px}
+.game-skin .atlas-territory{stroke-width:.65px}
+.observer-country-labels{display:none;font:800 28px 'Malgun Gothic',sans-serif;fill:#fff;stroke:#09171d;stroke-width:3px;paint-order:stroke;opacity:.75;letter-spacing:2px}
+.atlas-scroll[data-detail=wide] .observer-country-labels{display:block}
+.atlas-scroll.combat-focused .observer-country-labels{display:none}
+.atlas-scroll[data-detail=wide] .atlas-name:not(.name-key),.atlas-scroll[data-detail=wide] .map-unit-position:not(.unit-key){visibility:hidden}
+.atlas-scroll[data-detail=wide] .mountain-markers{opacity:.4}
+.atlas-scroll[data-detail=regional] .observer-country-labels,.atlas-scroll[data-detail=battle] .observer-country-labels,.atlas-scroll[data-detail=all] .observer-country-labels,.atlas-scroll[data-detail=editor] .observer-country-labels{display:none}
+.atlas-scroll[data-detail=all] .atlas-name,.atlas-scroll[data-detail=all] .map-unit-position{visibility:visible}
+.combat-focused .map-unit-position:not(.unit-engaged){opacity:.60}
+.combat-focused .atlas-name:not(.name-incident){opacity:.48}
+.unit-engaged .unit-focal-body{transform:scale(1.12);transform-box:fill-box;transform-origin:50% 100%}
+.unit-combat-role{font:800 13px 'Malgun Gothic',sans-serif;fill:white;stroke:#061016;stroke-width:3px;paint-order:stroke}
+.battle-place-label{font:800 13px 'Malgun Gothic',sans-serif;fill:#fff;stroke:#000;stroke-width:3px;paint-order:stroke}
+.observer-detail-control{display:flex;align-items:center;gap:5px;white-space:nowrap;font-size:11px}
+.observer-detail-control select{width:auto;min-width:0;font-size:11px;padding:5px 7px}
+.game-skin .map-judgment{top:6%;transform:translateX(-50%);max-width:min(640px,calc(100% - 24px));padding:12px 16px;background:#0d1a21f7}
+.game-skin .playback-paused .map-judgment{transform:translateX(-50%)}
+@keyframes judgment-leave{from{opacity:1;transform:translate(-50%,0)}to{opacity:0;transform:translate(-50%,-10px)}}
+.game-skin .map-judgment.is-duel{width:min(640px,calc(100% - 24px))}
+.game-skin .map-judgment h2{margin:0 0 4px;font-size:19px}
+.observer-duel-stage{font-size:11px;margin:0 0 9px;color:#d1dfe9}
+.game-skin .map-judgment.is-duel .judgment-side-label{margin-bottom:6px;font-size:12px;font-weight:700}
+.game-skin .map-judgment.is-duel .judgment-side-label small{display:none}
+.game-skin .map-judgment.is-duel .die-caption,.game-skin .map-judgment.is-duel .die-equation{display:none}
+.game-skin .map-judgment.is-duel .judgment-side .visual-die-block{align-self:center;margin:0}
+.observer-score{display:grid;grid-template-columns:auto auto;justify-content:center;align-items:baseline;gap:0 9px;margin-top:5px;font-variant-numeric:tabular-nums}
+.observer-score>span{font-size:11px;color:#cfdee9}
+.observer-score>strong{font:bold 32px/1.1 Georgia,'Malgun Gothic',serif;color:#fff}
+.observer-score small{grid-column:1/-1;font-size:10px;color:#bacbd8;margin-top:3px}
+.observer-die-column{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0}
+.observer-die-column .observer-score{gap:0 6px}
+.observer-score[data-score-visible=false]>strong{color:#6b7d8b}
+.game-skin .map-judgment .judgment-feature{margin:7px 0 0;font-size:11px}
+.observer-bonuses{display:flex;justify-content:center;flex-wrap:wrap;gap:4px;margin-top:5px;font-size:11px}
+.observer-bonuses>span{padding:2px 5px;background:#21333e;border-radius:3px;color:#e4edf4}
+.observer-bonuses .no-bonus{background:none;color:#98aab6}
+.game-skin .map-judgment .judgment-result{font-size:14px;font-weight:700;margin-top:9px;color:#fff}
+.game-skin .map-event-announcement{top:6%;background:#0d1a21f5;border-color:#90a4b4;max-width:85%;font-size:clamp(12px,1.3vw,19px)}
+.map-event-announcement[data-effect-stage=outcome]{border-color:#ffdf78}
+.map-event-announcement[data-effect-stage=troops]{border-color:#ff6770}
+.map-event-announcement[data-effect-stage=territory]{border-color:#c7e1ff}
+.map-event-announcement[data-effect-stage=growth]{border-color:#b3df95}
+.game-skin .defense-wave{font-size:12px;line-height:1.4;margin:6px 0 10px;padding:4px 6px;background:#253641;color:#e6f0f8}
+@media(max-width:620px){
+ .game-skin .map-judgment{top:3%;padding:9px;max-width:calc(100% - 16px)}
+ .game-skin .map-judgment.is-duel{width:calc(100% - 16px);min-width:0}
+ .game-skin .map-judgment h2{font-size:16px}
+ .game-skin .map-judgment .judgment-person{width:64px;flex-basis:64px}
+ .game-skin .map-judgment .judgment-person .framed-portrait{height:78px}
+ .game-skin .map-judgment .visual-die-block{width:57px;max-width:57px}
+ .game-skin .map-judgment .attached-die{width:54px;height:54px}
+ .game-skin .map-judgment .judgment-roll{gap:4px}
+ .game-skin .map-judgment .judgment-person strong{font-size:11px}
+ .game-skin .map-judgment .judgment-person small{font-size:10px}
+ .observer-score>strong{font-size:28px}.observer-score small{font-size:9px}
+ .observer-bonuses{font-size:10px;gap:3px}.observer-bonuses>span{padding:2px 3px}
+ .game-skin .map-judgment .judgment-feature{font-size:10px}
+ .game-skin .map-judgment .judgment-result{font-size:12px}
+}
+@media(max-height:700px){
+ .game-skin .map-judgment{top:10px;padding:7px 11px}
+ .game-skin .map-judgment .judgment-person .framed-portrait{height:78px}
+ .game-skin .map-judgment .judgment-person figcaption{padding:3px 2px}
+ .game-skin .map-judgment .judgment-person strong{font-size:11px}
+ .game-skin .map-judgment .judgment-person small{font-size:10px}
+ .observer-score>strong{font-size:26px}
+ .game-skin .map-judgment .judgment-feature{font-size:10px;margin-top:4px}
+ .game-skin .map-judgment .judgment-result{margin-top:5px;font-size:12px}
+}
+@media(max-height:540px){
+ .game-skin .map-judgment{top:8px;padding:6px 11px}
+ .game-skin .map-judgment h2{font-size:14px}.observer-duel-stage{margin-bottom:5px;font-size:10px}
+ .game-skin .map-judgment .judgment-person .framed-portrait{height:66px}
+ .game-skin .map-judgment .attached-die{width:52px;height:52px}
+ .observer-duel-stage{display:none}
+ .game-skin .map-judgment .judgment-feature{display:block;font-size:9px;margin-top:4px}
+ .observer-score>strong{font-size:26px}.observer-bonuses{font-size:10px;margin-top:3px}
+ .game-skin .map-judgment .judgment-result{font-size:11px;margin-top:4px}
+}
+@media(prefers-reduced-motion:reduce){.unit-engaged .unit-focal-body{transform:none}}
+</style>
   <script>(() => {
 'use strict';
 
@@ -2686,44 +2772,88 @@ class MapGenerator {
 
 // src/ui/camera-focus.js
 
+function cameraExtent(width=1200,height=800){const ratio=Math.max(.1,width/height);return ratio<1.5?[1200,1200/ratio]:[800*ratio,800];}
+function battleFraming(scene,record,viewport={width:1200,height:800}){
+ const battle=record.battles?.[scene?.battleIndex],world=scene.worldBefore||scene.worldAfter;if(!battle||!world)return null;
+ const target=mapAnchor(world,battle.territoryId,'battle');if(!target)return null;
+ const people=world.people.filter(p=>p.role==='general'&&((p.countryId===battle.actorId&&p.slot===battle.slot)||!battle.automatic&&(p.countryId===battle.defenderId&&p.slot===battle.defenseSlot)));
+ const points=[target,...people.map(p=>mapAnchor(world,scene.camps?.[p.id]?.territoryId||p.positionId||p.stationId,'label')).filter(Boolean)];
+ const left=Math.min(...points.map(p=>p[0]))-46,right=Math.max(...points.map(p=>p[0]))+46,top=Math.min(...points.map(p=>p[1]))-116,bottom=Math.max(...points.map(p=>p[1]))+30;
+ const [width,height]=cameraExtent(viewport.width,viewport.height),scale=Math.min(viewport.width/1200,viewport.height/800);
+ const reserved=Math.max(viewport.reservedTop||0,viewport.height<=540?.56:viewport.height<=700?.50:.45),targetY=Math.min(.93,Math.max(viewport.height<=540?.76:.72,reserved+.12));
+ const zoom=Math.max(.5,Math.min(4.2,1.6/scale,width*.8/(right-left),height*(targetY-reserved)/Math.max(1,target[1]-top),height*(.96-targetY)/Math.max(1,bottom-target[1])));
+ return {zoom,x:(left+right)/2,y:target[1]-(targetY-.5)*height/zoom};
+}
 function sceneFocus(scene,record){
  if(!scene?.event||scene.kind==='summary')return null;const world=scene.worldAfter||scene.worldBefore;if(!world)return null;
  if(scene.kind==='movement'&&scene.moves?.length)return mapAnchor(world,scene.moves[0].toId,'station');
  const battle=record.battles?.[scene.battleIndex];if(battle)return mapAnchor(world,battle.territoryId,'battle');
  if(scene.event.type==='round_end')return [600,400];
  const id=scene.event.nationId||record.actorId,country=world.countries.find(c=>c.id===id);if(!country)return null;
- const person=scene.event.role==='general'?world.people.find(p=>p.countryId===id&&p.role==='general'&&p.slot===scene.event.slot):null;
- return mapAnchor(world,person?.positionId||person?.stationId||country.capitalId,'station');
+ const general=scene.event.role==='general'||Number.isInteger(scene.event.slot),person=general?world.people.find(p=>p.countryId===id&&p.role==='general'&&p.slot===scene.event.slot):null;
+ const previous=general?scene.worldBefore?.people.find(p=>p.countryId===id&&p.role==='general'&&p.slot===scene.event.slot):null;
+ return mapAnchor(world,scene.camps?.[person?.id]?.territoryId||person?.positionId||person?.stationId||previous?.positionId||previous?.stationId||country.capitalId,'station');
 }
+
+
+// src/ui/observer-map.js
+
+
+
+const observerMapCache=new WeakMap();
+function observerLandmarks(world){
+ if(observerMapCache.has(world))return observerMapCache.get(world);
+ const capitals=new Set(world.countries.map(c=>c.capitalId)),frontier=new Set(world.territories.filter(t=>neighbors(world,t).some(n=>n.ownerId!==t.ownerId)).map(t=>t.id));
+ const cards=[...world.countries.map(c=>mapAnchor(world,c.capitalId,'label')),...world.people.filter(p=>p.role==='general'&&p.active&&p.alive).map(p=>mapAnchor(world,p.positionId||p.stationId,'label'))].filter(Boolean).map(p=>[p[0],p[1]-56]);
+ const countries=world.countries.flatMap(country=>{const own=world.territories.filter(t=>t.ownerId===country.id);if(!own.length)return [];const points=own.map(t=>mapAnchor(world,t.id,'label')),center=points.reduce((p,q)=>[p[0]+q[0]/points.length,p[1]+q[1]/points.length],[0,0]);
+  const half=country.name.length*14,clear=points.filter(p=>!cards.some(c=>Math.abs(p[0]-c[0])<half+26&&p[1]-22>c[1]-38&&p[1]-55<c[1]+44)),candidates=clear.length?clear:points,anchor=candidates.reduce((a,b)=>Math.hypot(...a.map((v,i)=>v-center[i]))<Math.hypot(...b.map((v,i)=>v-center[i]))?a:b);return [{country,point:anchor}];});
+ const value={capitals,frontier,countries};observerMapCache.set(world,value);return value;
+}
+function incidentTerritories(world,scene,battle){
+ const ids=new Set();if(battle)ids.add(battle.territoryId);
+ for(const move of scene?.moves||[]){ids.add(move.fromId);ids.add(move.toId);}
+ for(const p of world.people)if(p.role==='general'&&battle&&((p.countryId===battle.actorId&&p.slot===battle.slot)||(p.countryId===battle.defenderId&&p.slot===battle.defenseSlot)))ids.add(p.positionId||p.stationId);
+ if(!battle&&scene?.event?.nationId){const c=world.countries.find(c=>c.id===scene.event.nationId),person=world.people.find(p=>p.role==='general'&&p.countryId===c?.id&&p.slot===scene.event.slot);if(person)ids.add(person.positionId||person.stationId);else if(c)ids.add(c.capitalId);}
+ return ids;
+}
+function renderCountryLabels(landmarks){return `<g class="observer-country-labels" pointer-events="none">${landmarks.countries.map(({country,point})=>`<text text-anchor="middle" x="${point[0]}" y="${point[1]-23}" data-country-label="${esc(country.id)}">${esc(country.name)}</text>`).join('')}</g>`;}
+function observerDetail(mode,scale,zoom=scale){return mode==='all'?'all':zoom<1.2||scale<.95?'wide':scale<1.55?'regional':'battle';}
 
 
 // src/ui/map-camera.js
 
 
+
 // View state only; SVG coordinates and the world remain unchanged.
 function mapZoomControls(context='overview'){
- return `<div class="map-camera-controls" data-camera-controls="${context}"><button type="button" class="button outline" data-action="map-zoom-out" data-camera="${context}" aria-label="지도 축소">−</button><output data-camera-scale="${context}">100%</output><button type="button" class="button outline" data-action="map-zoom-in" data-camera="${context}" aria-label="지도 확대">＋</button><button type="button" class="button subtle" data-action="map-zoom-reset" data-camera="${context}">전체 보기</button>${context==='simulation'?`<label class="toggle-label"><input type="checkbox" id="camera-follow" checked> 사건 자동 추적</label>`:''}${context==='editor'?`<button type="button" class="button outline" data-action="map-pan-toggle" data-camera="editor" aria-pressed="false">지도 이동</button>`:''}</div>`;
+ return `<div class="map-camera-controls" data-camera-controls="${context}"><button type="button" class="button outline" data-action="map-zoom-out" data-camera="${context}" aria-label="지도 축소">−</button><output data-camera-scale="${context}">100%</output><button type="button" class="button outline" data-action="map-zoom-in" data-camera="${context}" aria-label="지도 확대">＋</button><button type="button" class="button subtle" data-action="map-zoom-reset" data-camera="${context}">전체 보기</button>${context==='simulation'?`<label class="toggle-label"><input type="checkbox" id="camera-follow" checked> 사건 자동 추적</label>`:''}${context!=='editor'?`<label class="observer-detail-control">지도 정보 <select data-map-detail aria-label="지도 정보 표시"><option value="auto">확대에 맞춰 표시</option><option value="all">모든 정보 표시</option></select></label>`:''}${context==='editor'?`<button type="button" class="button outline" data-action="map-pan-toggle" data-camera="editor" aria-pressed="false">지도 이동</button>`:''}</div>`;
 }
 class MapCamera {
- constructor(){this.views=new Map();this.drag=null;this.panEditor=false;this.suppressClick=false;this.autoFollow=true;this.followKey=null;this.motion=null;}
+ constructor(){this.views=new Map();this.drag=null;this.panEditor=false;this.suppressClick=false;this.autoFollow=true;this.followKey=null;this.motion=null;this.detailMode='auto';}
  cancelMotion(){if(this.motion!==null){globalThis.cancelAnimationFrame?.(this.motion);this.motion=null;}}
  manual(){this.cancelMotion();}
  keyboard(event,context){this.manual();const v=this.view(context),step=(event.shiftKey?3:1)*70/v.zoom;v.x+=event.key==='ArrowLeft'?-step:event.key==='ArrowRight'?step:0;v.y+=event.key==='ArrowUp'?-step:event.key==='ArrowDown'?step:0;this.clamp(v);this.update(context);}
+ viewport(context){const el=globalThis.document?.querySelector?.(`.atlas-scroll[data-map-camera="${context}"]`);return {width:el?.clientWidth||1200,height:el?.clientHeight||800};}
  follow(playback){
-  if(!this.autoFollow||!playback?.state||!playback.scene)return;const scene=playback.scene,record=playback.state.record,key=`${record.turn}:${scene.event?.index}:${scene.kind==='movement'?'move':'event'}`;
-  if(this.followKey===key)return;this.followKey=key;const focus=sceneFocus(scene,record);if(!focus)return;
-  const target=[...focus],camera=this.view('simulation');if(record.battles?.[scene.battleIndex]&&scene.kind!=='movement')target[1]-=165/camera.zoom;
-  this.cancelMotion();const v=this.view('simulation'),from=[v.x,v.y],start=globalThis.performance?.now()||0;
-  if(mobileProfile()||!globalThis.requestAnimationFrame||globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches){[v.x,v.y]=target;this.clamp(v);this.update('simulation');return;}
-  const tick=now=>{const t=Math.min(1,(now-start)/550),ease=t*t*(3-2*t);v.x=from[0]+(target[0]-from[0])*ease;v.y=from[1]+(target[1]-from[1])*ease;this.clamp(v);this.update('simulation');this.motion=t<1?requestAnimationFrame(tick):null;};this.motion=requestAnimationFrame(tick);
+  if(!this.autoFollow||!playback?.state||!playback.scene)return;
+  const scene=playback.scene,record=playback.state.record,battle=record.battles?.[scene.battleIndex];
+  const key=battle?`${record.turn}:battle:${battle.territoryId}`:`${record.turn}:${scene.event?.index}:${scene.kind==='movement'?'move':'event'}`;
+  if(this.followKey===key)return;const focus=sceneFocus(scene,record);if(!focus)return;
+  this.followKey=key;this.cancelMotion();const v=this.view('simulation'),viewport=this.viewport('simulation'),pane=globalThis.document?.querySelector?.('.map-judgment'),map=globalThis.document?.querySelector?.('.atlas-scroll[data-map-camera="simulation"]');
+  if(pane?.getBoundingClientRect&&map?.getBoundingClientRect)viewport.reservedTop=(pane.getBoundingClientRect().bottom-map.getBoundingClientRect().top+12)/viewport.height;
+  const framing=battle?battleFraming(scene,record,viewport):null;
+  const target=framing||{x:focus[0],y:focus[1],zoom:v.zoom};this.clamp(target);
+  const from={...v},start=globalThis.performance?.now()||0;
+  if(mobileProfile()||!globalThis.requestAnimationFrame||globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches){Object.assign(v,target);this.update('simulation');return;}
+  const tick=now=>{const t=Math.min(1,(now-start)/450),ease=t*t*(3-2*t);v.x=from.x+(target.x-from.x)*ease;v.y=from.y+(target.y-from.y)*ease;v.zoom=from.zoom+(target.zoom-from.zoom)*ease;this.update('simulation');this.motion=t<1?requestAnimationFrame(tick):null;};this.motion=requestAnimationFrame(tick);
  }
  view(context){if(!this.views.has(context))this.views.set(context,{zoom:1,x:600,y:400});return this.views.get(context);}
  resetAll(){this.cancelMotion();this.followKey=null;this.views.clear();this.panEditor=false;this.drag=null;}
- box(context){const v=this.view(context);return [v.x-600/v.zoom,v.y-400/v.zoom,1200/v.zoom,800/v.zoom];}
+ box(context){const v=this.view(context),viewport=this.viewport(context),[w,h]=cameraExtent(viewport.width,viewport.height);return [v.x-w/2/v.zoom,v.y-h/2/v.zoom,w/v.zoom,h/v.zoom];}
  restore(){document.querySelectorAll('.atlas-scroll[data-map-camera]').forEach(el=>this.update(el.dataset.mapCamera));}
- update(context){const v=this.view(context);document.querySelectorAll(`.atlas-scroll[data-map-camera="${context}"]`).forEach(el=>{el.querySelector('.atlas-map').setAttribute('viewBox',this.box(context).join(' '));el.dataset.zoom=String(v.zoom);el.classList.toggle('camera-pan-mode',context==='editor'&&this.panEditor);});document.querySelectorAll(`[data-camera-scale="${context}"]`).forEach(el=>el.textContent=`${Math.round(v.zoom*100)}%`);const followBox=document.querySelector('#camera-follow');if(followBox)followBox.checked=this.autoFollow;const select=document.querySelector('#map-editor-zoom');if(context==='editor'&&select){let option=[...select.options].find(o=>Number(o.value)===v.zoom);if(!option){option=new Option(`${Math.round(v.zoom*100)}%`,String(v.zoom));select.add(option);}select.value=String(v.zoom);}document.querySelectorAll('[data-action="map-pan-toggle"]').forEach(el=>el.setAttribute('aria-pressed',String(this.panEditor)));}
+ update(context){const v=this.view(context);document.querySelectorAll(`.atlas-scroll[data-map-camera="${context}"]`).forEach(el=>{el.querySelector('.atlas-map').setAttribute('viewBox',this.box(context).join(' '));el.dataset.zoom=String(v.zoom);const bounds=this.viewport(context),scale=Math.min(bounds.width/1200,bounds.height/800)*v.zoom;el.dataset.detail=context==='editor'?'editor':observerDetail(this.detailMode,scale,v.zoom);el.classList.toggle('camera-pan-mode',context==='editor'&&this.panEditor);});document.querySelectorAll(`[data-camera-scale="${context}"]`).forEach(el=>el.textContent=`${Math.round(v.zoom*100)}%`);document.querySelectorAll('[data-map-detail]').forEach(el=>el.value=this.detailMode);const followBox=document.querySelector('#camera-follow');if(followBox)followBox.checked=this.autoFollow;const select=document.querySelector('#map-editor-zoom');if(context==='editor'&&select){let option=[...select.options].find(o=>Number(o.value)===v.zoom);if(!option){option=new Option(`${Math.round(v.zoom*100)}%`,String(v.zoom));select.add(option);}select.value=String(v.zoom);}document.querySelectorAll('[data-action="map-pan-toggle"]').forEach(el=>el.setAttribute('aria-pressed',String(this.panEditor)));}
  zoom(context,value,anchor=null){this.manual();const v=this.view(context),next=Math.round(Math.max(.5,Math.min(5,value))*1000)/1000;if(anchor){v.x=anchor[0]-(anchor[0]-v.x)*v.zoom/next;v.y=anchor[1]-(anchor[1]-v.y)*v.zoom/next;}v.zoom=next;this.clamp(v);this.update(context);}
- clamp(v){v.x=Math.max(0,Math.min(1200,v.x));v.y=Math.max(0,Math.min(800,v.y));}
+ clamp(v){const context=[...this.views].find(([,view])=>view===v)?.[0]||'simulation',viewport=this.viewport(context),[,height]=cameraExtent(viewport.width,viewport.height),half=height/(2*v.zoom);v.x=Math.max(0,Math.min(1200,v.x));v.y=Math.max(Math.min(0,-800+half),Math.min(Math.max(800,1600-half),v.y));}
  action(action,context){if(!['map-zoom-in','map-zoom-out','map-zoom-reset','map-pan-toggle'].includes(action))return false;context||='overview';this.manual();if(action==='map-pan-toggle'){this.panEditor=!this.panEditor;this.update('editor');return true;}if(action==='map-zoom-reset'){this.views.set(context,{zoom:1,x:600,y:400});this.update(context);}else this.zoom(context,this.view(context).zoom*(action==='map-zoom-in'?1.25:.8));return true;}
  point(event,svg){const matrix=svg?.getScreenCTM();if(!matrix)return null;const p=new DOMPoint(event.clientX,event.clientY).matrixTransform(matrix.inverse());return [p.x,p.y];}
  wheel(event){const el=event.target.closest('.atlas-scroll[data-map-camera]');if(!el||event.target.closest('dialog'))return;const svg=el.querySelector('.atlas-map'),point=this.point(event,svg);if(!point)return;event.preventDefault();this.zoom(el.dataset.mapCamera,this.view(el.dataset.mapCamera).zoom*Math.exp(-Math.max(-160,Math.min(160,event.deltaY))*.0025),point);}
@@ -2924,14 +3054,77 @@ function mapEditorToolbar(editor,world,ui){
 }
 
 
+// src/ui/observer-flow.js
+
+// Recorded results become a sequence of readable display steps. These previews never enter the engine.
+const observerWorlds=new WeakMap();
+const observedExperience=(person,rules)=>rules.battleMode==='additive30'?combatBonuses(1,1,0,person?.wins||0,'plain',rules).experienceBonus:0;
+function observerBattle(scene,record){return record?.battles?.[scene?.battleIndex]||null;}
+function battleConsequence(battle){
+ if(!battle)return '';
+ if(battle.automatic)return '무방비 영토 · 1개 점령';
+ if(battle.winner===null)return '무승부 · 영토 유지';
+ if(battle.winner===battle.target)return '공격 격퇴 · 영토 유지';
+ if(battle.takenCells.length)return `공격 성공 · 영토 ${battle.takenCells.length}개 점령`;
+ if(battle.defendersTotal>1&&battle.wave<battle.defendersTotal)return `수비대 ${battle.wave}/${battle.defendersTotal} 격파 · 전투 계속`;
+ return '대결 승리 · 점령 없음';
+}
+function applicationSteps(scene,record){
+ const b=observerBattle(scene,record);
+ if(scene?.kind!=='apply'||scene.event?.type!=='resolve'||!b)return ['all'];
+ const steps=['outcome'];
+ if(!b.automatic&&((b.losses?.attack.amount||0)+(b.losses?.defense.amount||0)>0))steps.push('troops');
+ steps.push('territory');
+ const old=new Map(scene.worldBefore.people.map(p=>[p.id,p]));
+ if(scene.worldAfter.people.some(p=>old.has(p.id)&&((p.capacity||0)>(old.get(p.id).capacity||0)||observedExperience(p,scene.worldAfter.rules)>observedExperience(old.get(p.id),scene.worldBefore.rules))))steps.push('growth');
+ return steps;
+}
+function applicationWorld(scene,step){
+ if(!step||step==='all'||step==='growth')return scene.worldAfter;
+ if(step==='outcome')return scene.worldBefore;
+ if(!observerWorlds.has(scene))observerWorlds.set(scene,new Map());const cache=observerWorlds.get(scene);if(cache.has(step))return cache.get(step);
+ const before=scene.worldBefore,after=scene.worldAfter,old=new Map(before.people.map(p=>[p.id,p])),next=new Map(after.people.map(p=>[p.id,p]));
+ const world=step==='troops'?{...before,countries:before.countries.map(c=>{const n=after.countries.find(n=>n.id===c.id);return {...c,troops:n?.troops??c.troops,reserve:n?.reserve??c.reserve};}),people:before.people.map(p=>({...p,troops:next.get(p.id)?.troops??p.troops}))}:{...after,people:after.people.map(p=>({...p,capacity:old.get(p.id)?.capacity??p.capacity,wins:old.get(p.id)?.wins??p.wins}))};
+ cache.set(step,world);return world;
+}
+function applicationNotice(scene,record,step){
+ const b=observerBattle(scene,record);if(!b||scene?.kind!=='apply')return '';
+ if(step==='outcome')return b.automatic?'무방비 영토 진입':b.winner===null?'무승부':`${b.winner===b.actor?b.attack.name:b.defense.name} 승리`;
+ if(step==='troops')return `병력 손실 · 공격 −${b.losses.attack.amount}만명 / 수비 −${b.losses.defense.amount}만명`;
+ if(step==='territory')return battleConsequence(b);
+ if(step==='growth')return '전투 경험 · 지휘관 성장';
+ return '';
+}
+function observerDuration(scene,record,phase,reduced=false){
+ if(phase==='departing')return reduced?80:240;
+ if(scene.kind==='movement')return reduced?100:1600;
+ if(phase==='rolling')return reduced?80:900;
+ if(phase==='raw'||phase==='merging')return 500;
+ const b=observerBattle(scene,record),capital=b?.takenTerritoryIds?.some(id=>scene.worldBefore.countries.some(c=>c.capitalId===id));
+ if(scene.kind==='apply'){
+  if(scene.event?.type==='death'||scene.event?.type==='elimination')return reduced?140:2800;
+  if(phase==='outcome')return b?.automatic?800:capital?1800:1200;
+  if(phase==='troops')return 1200;
+  if(phase==='territory')return capital?2000:1400;
+  if(phase==='growth')return 1100;
+  return ['resupply','round_end'].includes(scene.event?.type)?1100:1500;
+ }
+ if(scene.kind==='summary')return 1200;
+ if(scene.kind==='result')return b?(b.automatic?900:capital||Math.abs(b.attack.score-b.defense.score)<=3?1900:1400):1000;
+ if(['death','elimination','finish'].includes(scene.event?.type))return 1600;
+ return 700;
+}
+
+
 // src/ui/map-effects.js
+
 
 
 
 // Exact changes between recorded frames. No game rules or randomness are evaluated here.
 const effectKey=p=>`${p.countryId}:${p.slot}`;
 const effectSign=n=>n>0?`+${n}`:`−${Math.abs(n)}`;
-function mapEffects(scene) {
+function mapEffects(scene,stage=null,record=null) {
   const output={units:[],territories:[],announcement:''};
   if(scene?.kind!=='apply'||!scene.worldBefore||!scene.worldAfter)return output;
   const before=scene.worldBefore,after=scene.worldAfter,event=scene.event||{};
@@ -2955,6 +3148,8 @@ function mapEffects(scene) {
     if(delta)add(p.countryId,'general',p.slot,'army',delta,`${event.type==='roster'?'이관 ':event.type==='resupply'?'배분 ':''}${effectSign(delta)}만명`,delta>0?'positive':event.type==='roster'?'transfer':'negative');
     const capacity=(next?.capacity??0)-(prev?.capacity??0);
     if(capacity&&next?.active&&next?.alive&&event.type==='resolve')add(p.countryId,'general',p.slot,'capacity',capacity,`한도 ${effectSign(capacity)}만`,'upgrade');
+    const experience=next&&prev?observedExperience(next,after.rules)-observedExperience(prev,before.rules):0;
+    if(experience>0&&next.active&&next.alive&&event.type==='resolve')add(p.countryId,'general',p.slot,'experience',experience,`전적 보정 ${effectSign(experience)}점`,'upgrade');
     if(prev?.alive&&next?.alive===false)add(p.countryId,'general',p.slot,'death',0,'전사','negative');
     if((next?.generation??0)>(prev?.generation??0))add(p.countryId,'general',p.slot,'appointment',0,'후임 부임','upgrade');
   }
@@ -2965,6 +3160,11 @@ function mapEffects(scene) {
   if(event.type==='resolve'&&!output.units.length&&!output.territories.length&&(!event.success||event.title?.includes('충원 상한')))add(event.nationId,'king',null,'unchanged',0,'+0만 · 변화 없음','neutral');
   if(event.type==='elimination')add(event.targetId,'king',null,'elimination',0,'멸망','negative');
   output.announcement=event.type==='round_end'?'라운드 병력 생산':event.type==='roster'?'지휘 구역 재편':displayEventText(event.title||'');
+  if(stage&&stage!=='all'){
+    output.units=output.units.filter(e=>stage==='troops'?e.type==='army':stage==='territory'?e.type==='capital':stage==='growth'?['capacity','experience','recruitment','supply'].includes(e.type):false);
+    if(stage!=='territory')output.territories=[];
+    output.announcement=displayEventText(applicationNotice(scene,record,stage));
+  }
   return output;
 }
 
@@ -2976,10 +3176,11 @@ function renderMapEffects(effects,geometry,world,currentMarkers,beforeMarkers=[]
     const marker=currentMarkers.find(m=>same(m,e))||beforeMarkers.find(m=>same(m,e));if(!marker)return '';
     const key=`${e.countryId}:${e.role}:${e.slot}`,row=stacks.get(key)||0;stacks.set(key,row+1);
     const width=Math.min(300,Math.max(74,textWidth(e.label,17)));
-    const x=Math.min(1200-width/2-4,Math.max(width/2+4,marker.point[0]));
-    const y=Math.max(28,marker.point[1]-70-row*26);
+    const candidates=[[0,-70-row*29],[0,-99-row*29],[0,-128-row*29],[width*.6,-70-row*29],[-width*.6,-70-row*29],[0,-157-row*29]];
+    const places=candidates.map(([dx,dy])=>({x:Math.min(1200-width/2-4,Math.max(width/2+4,marker.point[0]+dx)),y:Math.max(28,marker.point[1]+dy)}));
+    const {x,y}=places.find(p=>!occupied.some(o=>p.x-width/2<o.x+o.w+4&&p.x+width/2+4>o.x&&p.y-22<o.y+o.h+4&&p.y+4>o.y))||places.at(-1);
     occupied.push({x:x-width/2,y:y-22,w:width,h:26});
-    return `<g class="map-unit-feedback ${e.tone}" data-effect="${e.type}" data-country="${esc(e.countryId)}" data-role="${e.role}" data-slot="${e.slot??''}" data-delta="${e.delta}" transform="translate(${x},${y})"><path d="M0 4V12"/><rect x="${-width/2}" y="-22" width="${width}" height="26" rx="5"/><text text-anchor="middle" y="-4">${esc(e.label)}</text></g>`;
+    return `<g class="map-unit-feedback ${e.tone}" data-effect="${e.type}" data-country="${esc(e.countryId)}" data-role="${e.role}" data-slot="${e.slot??''}" data-delta="${e.delta}" transform="translate(${x},${y})"><path d="M${marker.point[0]-x} ${marker.point[1]-40-y} L0 4"/><rect x="${-width/2}" y="-22" width="${width}" height="26" rx="5"/><text text-anchor="middle" y="-4">${esc(e.label)}</text></g>`;
   }).join('');
   const territories=effects.territories.map(e=>{
     const t=world.territories.find(t=>t.id===e.territoryId);if(!t)return '';
@@ -3005,6 +3206,7 @@ function arrangeUnits(units){
 
 
 // src/ui/battle-map.js
+
 function battleMapDefs(attack='#ef8c62',defense='#9acbe1'){return ['attack','defense'].map((key,i)=>`<marker id="${key}-head" viewBox="0 0 14 14" refX="11" refY="7" markerWidth="14" markerHeight="14" markerUnits="userSpaceOnUse" orient="auto"><path d="M1 1 12 7 1 13 4 7Z" fill="${i?defense:attack}" stroke="#172b2c" stroke-width="1"/></marker>`).join('');}
 function battlePosition(point,markers){
   const offsets=[[0,0],[76,0],[-76,0],[0,-86],[0,86],[64,-74],[-64,-74],[64,74],[-64,74],[110,0],[-110,0],[0,-120],[0,120]];
@@ -3019,9 +3221,9 @@ function battleRoute(from,to,side,color){
   const d=`M${start} Q${middle} ${end}`;
   return `<path class="campaign-route-shadow" d="${d}"/><path class="campaign-route ${side}" style="stroke:${color||'#fff'}" d="${d}" fill="none" marker-end="url(#${side}-head)"/>`;
 }
-function battleEmblem(point,markers=[]){
+function battleEmblem(point,markers=[],name=''){
  const [lx,ly]=[[0,-30],[72,-30],[-72,-30],[0,-112],[102,-55],[-102,-55]].find(([x,y])=>!markers.some(m=>Math.abs(point[0]+x-m.point[0])<62&&point[1]+y+5>m.point[1]-36&&point[1]+y-18<m.point[1]+36))||[72,-30];
- return `<g class="battle-emblem" transform="translate(${point})" aria-label="전투 지점">${lx?`<path class="battle-alert-leader" d="M0 -22 L${lx} ${ly+5}"/>`:""}<text class="battle-alert-label" text-anchor="middle" x="${lx}" y="${ly}">전투 발생</text><circle class="target-ring" r="21"/><circle class="battle-emblem-face" r="14"/><g class="battle-swords-outline" fill="none" stroke="#000" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="m-8-9 12 12m-1-5-5 5m8 1-3-3m-11-10 2 5 3-3ZM8-9-4 3m1-5 5 5m-8 1 3-3M8-9 6-4 3-7Z"/></g><g class="battle-swords" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="m-8-9 12 12m-1-5-5 5m8 1-3-3m-11-10 2 5 3-3ZM8-9-4 3m1-5 5 5m-8 1 3-3M8-9 6-4 3-7Z"/></g></g>`;}
+ return `<g class="battle-emblem" transform="translate(${point})" aria-label="전투 지점">${lx?`<path class="battle-alert-leader" d="M0 -22 L${lx} ${ly+5}"/>`:""}<text class="battle-alert-label" text-anchor="middle" x="${lx}" y="${ly}">전투 발생</text><circle class="target-ring" r="21"/><circle class="battle-emblem-face" r="14"/><g class="battle-swords-outline" fill="none" stroke="#000" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="m-8-9 12 12m-1-5-5 5m8 1-3-3m-11-10 2 5 3-3ZM8-9-4 3m1-5 5 5m-8 1 3-3M8-9 6-4 3-7Z"/></g><g class="battle-swords" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="m-8-9 12 12m-1-5-5 5m8 1-3-3m-11-10 2 5 3-3ZM8-9-4 3m1-5 5 5m-8 1 3-3M8-9 6-4 3-7Z"/></g>${name?`<text class="battle-place-label" text-anchor="middle" y="38">${esc(name)}</text>`:''}</g>`;}
 
 
 // src/data/ocean-art.js
@@ -3036,6 +3238,7 @@ function renderOcean(coast){return `<g class="ocean-scenery" pointer-events="non
 
 
 // src/ui/atlas-view.js
+
 
 
 
@@ -3080,9 +3283,10 @@ function renderAtlas(world,{selected,observe=false,showNames=true,presentation=n
   const outlineClips=outlines.map(e=>`<clipPath id="${e.clipId}" clipPathUnits="userSpaceOnUse">${world.territories.flatMap((t,i)=>t.ownerId===e.ownerId?[`<path d="${geometry.cells[i].path}" clip-rule="evenodd"/>`]:[]).join('')}</clipPath>`).join('');
   const scene=presentation?.scenes[presentation.index],battle=record?.battles[scene?.battleIndex];
   const battleVisible=presentation?.phase!=='settled'&&!!battle&&['territory','attack_roll','defense_roll','battle_auto','resolve'].includes(scene?.event?.type);
-  const effects=mapEffects(presentation?.phase==='settled'?null:scene),captured=new Set(effects.territories.map(e=>e.territoryId));
+  const effectStage=presentation?.effectStage;
+  const effects=mapEffects(presentation?.phase==='settled'?null:scene,effectStage,record),captured=new Set(effects.territories.map(e=>e.territoryId));
   const camps=scene?.camps||world.visualCamps||{};
-  const markers=unitMarkers(world,geometry,camps);
+  const markers=unitMarkers(world,geometry,camps),landmarks=observerLandmarks(world),incidents=incidentTerritories(world,scene,battleVisible?battle:null);
   if(presentation?.phase!=='settled'&&scene?.kind==='apply'&&scene.event?.type==='death'&&scene.worldBefore){
     const entry=record.events.find(e=>e.type==='territory'&&e.battleIndex===scene.battleIndex),fallback=record.frames?.[entry?.index]?.before;
     for(const source of [scene.worldBefore,fallback].filter(Boolean))for(const m of unitMarkers(source,geometry,scene.camps||{}))if(m.role==='general'&&m.country.id===scene.event.nationId&&m.person.slot===scene.event.slot&&!markers.some(n=>n.person?.id===m.person.id))markers.push({...m,ghost:true});
@@ -3096,7 +3300,7 @@ function renderAtlas(world,{selected,observe=false,showNames=true,presentation=n
   let regions='';
   if(!custom&&world.mapKind==='v11')for(const edge of V11_ATLAS.edges){const a=world.territories[edge.a],b=world.territories[edge.b];if(a.ownerId===b.ownerId&&a.commanderSlot!==b.commanderSlot)regions+=edge.path+' ';}
 
-  return `<div class="atlas-scroll" data-map-camera="${editing?'editor':observe?'simulation':'overview'}" ${illustrated?`data-ocean="true"`:''}><svg class="atlas-map ${illustrated?'illustrated-atlas':'classic-atlas'} ${background?'image-atlas':''} ${editing?'editing-atlas':''}" style="--map-opacity:${design?.opacity??.3}" viewBox="0 0 ${geometry.width||1200} ${geometry.height||800}" role="group" aria-label="${esc(world.name)} 대륙 지도"><defs><linearGradient id="sea-light" x2="0" y2="1"><stop stop-color="#9cbbb9"/><stop offset="1" stop-color="#648e98"/></linearGradient><linearGradient id="land-light" x2=".8" y2="1"><stop stop-color="#f4e9c8"/><stop offset="1" stop-color="#d2c49a"/></linearGradient><filter id="land-shadow"><feDropShadow dx="0" dy="7" stdDeviation="7" flood-color="#1c4d57" flood-opacity=".25"/></filter><clipPath id="continent-clip"><path d="${geometry.coastPath}" clip-rule="evenodd"/></clipPath>${battleMapDefs(findCountry(world,battle?.actorId)?.color,findCountry(world,battle?.defenderId)?.color)}${outlineClips}${illustrated&&!vectorPlate?`<pattern id="ocean-repeat" patternUnits="userSpaceOnUse" width="2400" height="1600"><image class="ocean-texture" id="ocean-tile" href="${oceanSource()}" width="1200" height="800" preserveAspectRatio="none"/><use href="#ocean-tile" transform="translate(2400 0) scale(-1 1)"/><use href="#ocean-tile" transform="translate(0 1600) scale(1 -1)"/><use href="#ocean-tile" transform="translate(2400 1600) scale(-1 -1)"/></pattern>`:''}</defs>
+  return `<div class="atlas-scroll ${battleVisible?'combat-focused':''}" data-map-camera="${editing?'editor':observe?'simulation':'overview'}" ${illustrated?`data-ocean="true"`:''}><svg class="atlas-map ${illustrated?'illustrated-atlas':'classic-atlas'} ${background?'image-atlas':''} ${editing?'editing-atlas':''}" style="--map-opacity:${design?.opacity??.3}" viewBox="0 0 ${geometry.width||1200} ${geometry.height||800}" role="group" aria-label="${esc(world.name)} 대륙 지도"><defs><linearGradient id="sea-light" x2="0" y2="1"><stop stop-color="#9cbbb9"/><stop offset="1" stop-color="#648e98"/></linearGradient><linearGradient id="land-light" x2=".8" y2="1"><stop stop-color="#f4e9c8"/><stop offset="1" stop-color="#d2c49a"/></linearGradient><filter id="land-shadow"><feDropShadow dx="0" dy="7" stdDeviation="7" flood-color="#1c4d57" flood-opacity=".25"/></filter><clipPath id="continent-clip"><path d="${geometry.coastPath}" clip-rule="evenodd"/></clipPath>${battleMapDefs(findCountry(world,battle?.actorId)?.color,findCountry(world,battle?.defenderId)?.color)}${outlineClips}${illustrated&&!vectorPlate?`<pattern id="ocean-repeat" patternUnits="userSpaceOnUse" width="2400" height="1600"><image class="ocean-texture" id="ocean-tile" href="${oceanSource()}" width="1200" height="800" preserveAspectRatio="none"/><use href="#ocean-tile" transform="translate(2400 0) scale(-1 1)"/><use href="#ocean-tile" transform="translate(0 1600) scale(1 -1)"/><use href="#ocean-tile" transform="translate(2400 1600) scale(-1 -1)"/></pattern>`:''}</defs>
     <g class="unified-map-background" pointer-events="none">${illustrated&&!vectorPlate?`<rect class="ocean-surface" x="-1200" y="-800" width="3600" height="2400" fill="url(#ocean-repeat)"/>`:""}<rect width="1200" height="800" fill="${illustrated?'transparent':'url(#sea-light)'}"/>
     ${!background?` ${illustrated?renderOcean(geometry.coastPath):''}<g class="sea-decor" fill="none" stroke="#d8eeea" opacity=".3">${Array.from({length:18},(_,i)=>{const x=visualHash(i,1)*1160,y=visualHash(i,2)*760;return `<path d="M${x},${y}q13-5 26 0t26 0"/>`;}).join('')}</g>
     <text class="sea-label" x="540" y="71">북 해</text><text class="sea-label" x="46" y="447" transform="rotate(-78 46 447)">서쪽의 바다</text><text class="sea-label" x="1020" y="738">남 해</text>
@@ -3106,23 +3310,26 @@ ${illustrated?`<image class="terrain-art" href="${TERRAIN_ART}" x="0" y="0" widt
     </g><g class="atlas-cells">${world.territories.map(t=>{const g=territoryCell(world,geometry,t),c=findCountry(world,t.ownerId);return `<g class="atlas-cell ${linkedIds.includes(t.id)?'linked-territory':''}" data-territory="${esc(t.id)}" data-owner="${esc(t.ownerId||'')}" ${observe?'data-observe="true"':''} tabindex="0" role="button" title="${esc(t.name)} · ${esc(c?.name||'무주지')}" aria-label="${esc(t.name)} · ${esc(c?.name||'무주지')}"><path class="territory atlas-territory ${!observe&&selected===t.id?'selected':''} ${battleVisible&&t.id===battle.territoryId?'battle-target':''} ${captured.has(t.id)?'captured':''}" d="${g.path}" fill-rule="evenodd" style="--nation:${c?.color||'#b6b9a9'}"/><title>${esc(t.name)} · ${esc(c?.name||'무주지')}</title></g>`;}).join('')}</g>
     ${!illustrated?`<g class="atlas-terrain" clip-path="url(#continent-clip)" pointer-events="none">${geometry.cells.flatMap((g,i)=>{if(visualHash(i,4)<.58)return [];const [x,y]=g.center;const mountain=visualHash(i,5)>.5;return [`<g transform="translate(${x-18},${y+12})" opacity=".15" stroke="#364d36" stroke-width="1.6" fill="none">${mountain?'<path d="m-12 4 12-19L12 4M-3-9l3 4 4-3m5 11 10-16 12 16"/>':'<path d="m-8 4 8-18L8 4Zm8 0v7m8-4 7-15 7 15m-7 0v6"/>'}</g>`];}).join('')}<path class="atlas-river" d="M245 190C380 290 245 368 440 400S640 615 804 669M838 192C800 350 715 394 600 432S426 533 370 640"/></g>`:''}
     <g class="country-outlines" pointer-events="none">${outlines.map(e=>`<g clip-path="url(#${e.clipId})" data-border-owner="${esc(e.ownerId||'neutral')}"><path d="${e.path}" fill="none" stroke="#111e20" stroke-width="8"/><path class="country-border-color" d="${e.path}" fill="none" stroke="${findCountry(world,e.ownerId)?.color||'#c5bb96'}" stroke-width="5.5"/></g>`).join('')}</g><path class="commander-border" d="${regions}" fill="none"/>
-    ${showNames?`<g class="atlas-labels" pointer-events="none">${world.territories.map(t=>{const p=mapAnchor(world,t.id,'label',geometry);return `<text x="${p[0]}" y="${p[1]+5}" text-anchor="middle" class="atlas-name">${esc(vectorPlate?t.name.replace(/^영지 (\d+)$/,'$1'):t.name)}</text>`;}).join('')}</g>`:''}
+    ${showNames&&!editing?renderCountryLabels(landmarks):''}
+    ${showNames?`<g class="atlas-labels" pointer-events="none">${world.territories.map(t=>{const p=mapAnchor(world,t.id,'label',geometry);return `<text x="${p[0]}" y="${p[1]+5}" text-anchor="middle" class="atlas-name ${landmarks.capitals.has(t.id)||incidents.has(t.id)?'name-key':''} ${incidents.has(t.id)?'name-incident':''}" data-territory-label="${esc(t.id)}">${esc(vectorPlate?t.name.replace(/^영지 (\d+)$/,'$1'):t.name)}</text>`;}).join('')}</g>`:''}
     <g class="station-leaders" pointer-events="none">${showUnits?markers.filter(m=>Math.hypot(m.anchorPoint[0]-m.point[0],m.anchorPoint[1]-m.point[1]-UNIT_PIN_OFFSET)>.001).map(m=>`<path d="M${m.anchorPoint} L${m.point[0]},${m.point[1]+UNIT_PIN_OFFSET}"/><circle cx="${m.anchorPoint[0]}" cy="${m.anchorPoint[1]}" r="3" style="stroke:${m.country.color}"/>`).join(''):''}</g>
     <g class="mountain-markers" pointer-events="none">${world.territories.filter(t=>t.terrain==='mountain').map(t=>{const p=mapAnchor(world,t.id,'label',geometry);return `<text x="${p[0]+24}" y="${p[1]+5}" text-anchor="middle" aria-label="산악">▲</text>`;}).join('')}</g>
     ${scene?.kind==='movement'?`<g class="march-routes" pointer-events="none">${scene.moves.filter(m=>m.kind!=='redeploy').map(m=>{const points=m.path.map(id=>mapAnchor(world,id,'station',geometry)).filter(Boolean);return `<path class="${m.kind}" d="M${points.map(p=>p.join(',')).join(' L')}"/>`;}).join('')}</g>`:''}
     <g class="country-tokens">${stackUnits(showUnits?markers:[],{focus:stackFocus,battle,scene,record}).map(({country,person,territory,point,role,troops,ghost,stackOffset,stackCount,stackFront})=>{
-      const outcome=presentation?.phase==='settled'?'':unitOutcome(scene,record,person),battling=battleVisible&&unitBattling(scene,record,person),name=displayName(person,country.name),motion=scene?.kind==='movement'&&scene.moves?.find(m=>m.personId===person?.id);
+      const outcome=presentation?.phase==='settled'||scene?.event?.type==='resolve'&&effectStage&&effectStage!=='outcome'?'':unitOutcome(scene,record,person),battling=battleVisible&&unitBattling(scene,record,person),name=displayName(person,country.name),motion=scene?.kind==='movement'&&scene.moves?.find(m=>m.personId===person?.id);
+      const engaged=battleVisible&&role==='general'&&((country.id===battle.actorId&&person.slot===battle.slot)||(country.id===battle.defenderId&&person.slot===battle.defenseSlot));
+      const keyUnit=engaged||motion||ghost||outcome||effects.units.some(e=>e.countryId===country.id&&e.role===role&&(role==='king'||e.slot===person?.slot))||role==='king'||focusedCountry===country.id||landmarks.frontier.has(territory.id);
       const origin=motion?unitMarkers(world,geometry,scene.campsBefore).find(m=>m.person?.id===person.id)?.point:null;
       const waypoints=motion&&motion.kind!=='redeploy'&&origin?[origin,...motion.path.slice(1,-1).map(id=>(()=>{const p=mapAnchor(world,id,'station',geometry);return [p[0],p[1]-12-UNIT_PIN_OFFSET];})()),point]:null;
       const relative=waypoints?.map(p=>[p[0]-point[0],p[1]-point[1]]),motionStyle=relative?`offset-path:path('M${relative.map(p=>p.join(',')).join(' L')}');--march-time:${1.6/(presentation?.speed||1)}s;--march-delay:${-1.6*(presentation?.movementProgress||0)/(presentation?.speed||1)}s`:motion?.kind==='redeploy'?`--march-time:${1.6/(presentation?.speed||1)}s;--march-delay:${-1.6*(presentation?.movementProgress||0)/(presentation?.speed||1)}s`:'';
-      return `<g class="map-unit-position" transform="translate(${point})" data-person="${esc(person?.id||country.id)}" data-camp="${esc(territory.id)}" data-outcome="${outcome}" data-stack-count="${stackCount}" data-stack-front="${stackFront}" ${ghost?'data-ghost="true"':''}><g class="${motion?(motion.kind==='redeploy'?'unit-redeploy':'unit-marching'):''} ${outcome?'unit-outcome unit-'+outcome:''} ${battling?'unit-battling':''}" style="${motionStyle}${outcome||battling?`;--outcome-time:${1.8/(presentation?.speed||1)}s;--outcome-delay:${-1.8*(presentation?.sceneProgress||0)/(presentation?.speed||1)}s`:''}"><g transform="translate(${stackOffset},0)" class="unit-stack-card">${stackFront?`<path class="unit-pin-tip" d="M-15 32 L0 44 L15 32" style="--nation:${country.color}"/>`:''}<foreignObject x="${-UNIT_CARD_WIDTH/2}" y="${-UNIT_CARD_HEIGHT/2}" width="${UNIT_CARD_WIDTH}" height="${UNIT_CARD_HEIGHT+4}"><div xmlns="http://www.w3.org/1999/xhtml" class="token-wrap"><button class="map-unit-token ${focusedCountry===country.id?'focused':''} ${battleVisible&&country.id===battle.actorId&&person?.slot===battle.slot?'attacking':''}" data-role="${role}" data-slot="${person?.slot??''}" data-action="${stackCount>1?'cycle-stack':'focus-country'}" data-id="${esc(stackCount>1?territory.id:country.id)}" style="--nation:${country.color}" title="${esc(name)} · ${role==='king'?'수도 예비병':`장군 주둔군 / 한도 ${person.capacity}만 / ${person.connected?'수도 연결':'단절'}`} ${troops}만${person?.stranded?' · 퇴각 불가':''}${stackCount>1?' · 클릭하여 포갠 카드 넘기기':''}" aria-label="${esc(name)} · 병력 ${troops}만"><span class="token-portraits">${portraitImage(person,country,role)}</span><span class="token-copy"><b>${role==='king'?'<i class="king-crown" aria-label="국왕">👑</i>':''}<span>${esc(name)}</span>${role==='general'&&person?.wins>=3?`<i class="veteran-stars" aria-label="${person.wins}승">${'★'.repeat(Math.min(3,Math.floor(person.wins/3)))}</i>`:''}</b><strong><small>병력</small> ${format(troops)}<span>만</span></strong></span></button></div></foreignObject>${battling?'<rect class="unit-battle-glow" x="-22" y="-36" width="44" height="72" rx="5" pointer-events="none"/>':''}${['death','appointment'].includes(outcome)?`<rect class="unit-status-wash ${outcome}" x="-20" y="-34" width="40" height="72" rx="4" pointer-events="none"/>`:''}${outcome?`<text class="unit-status-label ${outcome}" data-effect="${outcome}" text-anchor="middle" y="-43">${({death:'사망',appointment:'임관',victory:'승',defeat:'패'})[outcome]}</text>`:''}</g>${motion?`<text class="march-label" text-anchor="middle" y="-43">${motion.kind==='return'?'복귀 · 방어':motion.kind==='relief'?'구원 · 방어':motion.kind==='retreat'?'퇴각':motion.kind==='redeploy'?'재배치':motion.kind==='home'?'담당지 복귀':'출정'}</text>`:''}</g></g>`;
+      return `<g class="map-unit-position ${engaged?'unit-engaged':''} ${keyUnit?'unit-key':''}" transform="translate(${point})" data-person="${esc(person?.id||country.id)}" data-camp="${esc(territory.id)}" data-outcome="${outcome}" data-stack-count="${stackCount}" data-stack-front="${stackFront}" ${ghost?'data-ghost="true"':''}><g class="${motion?(motion.kind==='redeploy'?'unit-redeploy':'unit-marching'):''} ${outcome?'unit-outcome unit-'+outcome:''} ${battling?'unit-battling':''}" style="${motionStyle}${outcome||battling?`;--outcome-time:${1.8/(presentation?.speed||1)}s;--outcome-delay:${-1.8*(presentation?.sceneProgress||0)/(presentation?.speed||1)}s`:''}"><g transform="translate(${stackOffset},0)" class="unit-stack-card"><g class="unit-focal-body">${stackFront?`<path class="unit-pin-tip" d="M-15 32 L0 44 L15 32" style="--nation:${country.color}"/>`:''}<foreignObject x="${-UNIT_CARD_WIDTH/2}" y="${-UNIT_CARD_HEIGHT/2}" width="${UNIT_CARD_WIDTH}" height="${UNIT_CARD_HEIGHT+4}"><div xmlns="http://www.w3.org/1999/xhtml" class="token-wrap"><button class="map-unit-token ${focusedCountry===country.id?'focused':''} ${battleVisible&&country.id===battle.actorId&&person?.slot===battle.slot?'attacking':''}" data-role="${role}" data-slot="${person?.slot??''}" data-action="${stackCount>1?'cycle-stack':'focus-country'}" data-id="${esc(stackCount>1?territory.id:country.id)}" style="--nation:${country.color}" title="${esc(name)} · ${role==='king'?'수도 예비병':`장군 주둔군 / 한도 ${person.capacity}만 / ${person.connected?'수도 연결':'단절'}`} ${troops}만${person?.stranded?' · 퇴각 불가':''}${stackCount>1?' · 클릭하여 포갠 카드 넘기기':''}" aria-label="${esc(name)} · 병력 ${troops}만"><span class="token-portraits">${portraitImage(person,country,role)}</span><span class="token-copy"><b>${role==='king'?'<i class="king-crown" aria-label="국왕">👑</i>':''}<span>${esc(name)}</span>${role==='general'&&person?.wins>=3?`<i class="veteran-stars" aria-label="${person.wins}승">${'★'.repeat(Math.min(3,Math.floor(person.wins/3)))}</i>`:''}</b><strong><small>병력</small> ${format(troops)}<span>만</span></strong></span></button></div></foreignObject>${battling?`<text class="unit-combat-role" text-anchor="middle" y="-43">${country.id===battle.actorId?'공격':'수비'}</text>`:''}${battling?'<rect class="unit-battle-glow" x="-22" y="-36" width="44" height="72" rx="5" pointer-events="none"/>':''}${['death','appointment'].includes(outcome)?`<rect class="unit-status-wash ${outcome}" x="-20" y="-34" width="40" height="72" rx="4" pointer-events="none"/>`:''}${outcome?`<text class="unit-status-label ${outcome}" data-effect="${outcome}" text-anchor="middle" y="-43">${({death:'사망',appointment:'임관',victory:'승',defeat:'패'})[outcome]}</text>`:''}</g></g>${motion?`<text class="march-label" text-anchor="middle" y="-43">${motion.kind==='return'?'복귀 · 방어':motion.kind==='relief'?'구원 · 방어':motion.kind==='retreat'?'퇴각':motion.kind==='redeploy'?'재배치':motion.kind==='home'?'담당지 복귀':'출정'}</text>`:''}</g></g>`;
     }).join('')}</g>
-    ${battleVisible&&battlePoint?`<g class="map-campaign" pointer-events="none"><path class="battle-location-leader" d="M${targetPoint} L${battlePoint}"/>${battleRoute(attackPoint,battlePoint,'attack',findCountry(world,battle?.actorId)?.color)}${battleRoute(defensePoint,battlePoint,'defense',findCountry(world,battle?.defenderId)?.color)}${battleEmblem(battlePoint,markers)}</g>`:''}
+    ${battleVisible&&battlePoint?`<g class="map-campaign" pointer-events="none"><path class="battle-location-leader" d="M${targetPoint} L${battlePoint}"/>${battleRoute(attackPoint,battlePoint,'attack',findCountry(world,battle?.actorId)?.color)}${battleRoute(defensePoint,battlePoint,'defense',findCountry(world,battle?.defenderId)?.color)}${battleEmblem(battlePoint,markers,battle.territoryName)}</g>`:''}
     ${renderMapEffects(effects,geometry,world,markers,scene?.worldBefore?unitMarkers(scene.worldBefore,geometry):[])}
     ${!vectorPlate?`<g class="map-compass" transform="translate(1115 98)" fill="none" stroke="#345962" opacity=".65"><circle r="27"/><path d="M0-38V38M-38 0H38m-12-12L12 12M-12 12 12-12"/><path d="M0-24 7 9 0 5-7 9Z" fill="#345962"/><text y="-46" text-anchor="middle" fill="#345962" stroke="none">N</text></g>`:''}
     ${editing?renderMapDraft(draft,draftMode):''}
     ${editing&&selected?`<g class="map-edit-anchors">${[['reference','기준','#fff'],['label','이름','#81d8ff'],['station','경로','#8ef3ba'],['battle','전투','#ff9b92']].map(([key,label,color],i)=>{const p=mapAnchor(world,selected,key,geometry);return `<g data-map-anchor="${key}" transform="translate(${p})" style="--anchor-color:${color}"><circle r="${6+i*3}"/><path d="M-10 0H10M0-10V10"/><text x="12" y="${-16-i*13}">${label}</text></g>`;}).join('')}</g>`:''}
-  </svg>${effects.announcement?`<div class="map-event-announcement" aria-live="polite">${esc(effects.announcement)}</div>`:''}</div>`;
+  </svg>${effects.announcement?`<div class="map-event-announcement" data-effect-stage="${esc(effectStage||'all')}" aria-live="polite">${esc(effects.announcement)}</div>`:''}</div>`;
 }
 function renderNationCards(world,focusedCountry) {
   world=vividWorld(world);
@@ -3163,6 +3370,11 @@ function renderChoiceReel(scene,phase,progress=0){
 const sideBonus=side=>side.bonus??((side.ability||0)+(side.armyBonus||0));
 const combatSign=n=>n>=0?`+${n}`:`${n}`;
 function renderCombatBonuses(side){return `<div class="combat-breakdown"><span>장군 ${combatSign(side.ability||0)}</span><span>병력 ${combatSign(side.armyBonus||0)}</span>${side.experienceBonus!==undefined?`<span>전적 ${combatSign(side.experienceBonus)}</span><span>지형 ${combatSign(side.terrainBonus||0)}</span>`:''}${side.fatigueBonus!==undefined?`<span class="fatigue-bonus">이동 ${side.movementEdges}칸 ${combatSign(side.fatigueBonus)}</span>`:''}</div>`;}
+function renderObserverBonuses(side){
+ const items=[['장군',side.ability],['병력',side.armyBonus],['전적',side.experienceBonus],['산악',side.terrainBonus],['피로',side.fatigueBonus]].filter(([,n])=>n);
+ return `<div class="observer-bonuses">${items.length?items.map(([name,n])=>`<span>${name} ${combatSign(n)}</span>`).join(''):'<span class="no-bonus">추가 보정 없음</span>'}</div>`;
+}
+function renderObserverScore(side,revealed){return `<div class="observer-score" data-score-visible="${revealed}"><span>최종 점수</span><strong>${revealed?side.score:'—'}</strong><small>${revealed?`주사위 ${side.raw} ${sideBonus(side)<0?'−':'+'} 보정 ${Math.abs(sideBonus(side))}`:'판정 대기'}</small></div>`;}
 function veteranStars(person){return person?.wins>=3?`<span class="veteran-stars" title="${esc(person.wins)}승">${'★'.repeat(Math.min(3,Math.floor(person.wins/3)))}</span>`:'';}
 
 
@@ -3191,11 +3403,11 @@ function attachedDie(value){
  const prefix=`dice-art-${++dieArtInstance}-`,source=DICE_ART[value]||DICE_ART[1];
  return source.replace(/(<text\b[^>]*\by=")103(")/g,(_,a,b)=>a+'91'+b).replace('<svg ',`<svg class="dice-art ${DICE_ART[value]?'':'blank-face'}" aria-hidden="true" `).replace(/id="([^"]+)"/g,(_,id)=>`id="${prefix}${id}"`).replace(/url\(#([^)]+)\)/g,(_,id)=>`url(#${prefix}${id})`);
 }
-function renderDie(value,sides,phase='waiting',label='주사위',bonus=0){
- const rolling=phase==='rolling',revealed=Number.isInteger(value)&&!rolling,total=phase==='locked'&&bonus?value+bonus:value;
+function renderDie(value,sides,phase='waiting',label='주사위',bonus=0,options={}){
+ const rolling=phase==='rolling',revealed=Number.isInteger(value)&&!rolling,total=!options.rawFace&&phase==='locked'&&bonus?value+bonus:value;
  const face=revealed?total:null,frames=[1,.22,.53,.87,.36,1,.68].map(n=>Math.max(1,Math.min(60,Math.round(n*sides))));
  const artwork=rolling?`<span class="die-art-stack">${frames.map((n,i)=>`<span class="die-art-frame" style="--frame:${i};--die-ink:${diceColor(n,sides)}">${attachedDie(n)}</span>`).join('')}</span>`:attachedDie(face);
- return `<div class="visual-die-block" style="--die-ink:${diceColor(revealed?total:null,sides)};${diceReel(sides)}"><span class="die-caption">${esc(label)}</span><div class="visual-die attached-die ${rolling?'rolling':''} ${revealed?'locked':''} ${phase==='merging'?'merging':''} ${!DICE_ART[face]&&!rolling?'custom-die-value':''}" data-die-locked="${revealed}" data-die-value="${revealed?total:''}" data-die-sides="${sides}" aria-label="${esc(label)} ${revealed?total:rolling?'굴리는 중':'대기'}">${artwork}<span class="die-number">${revealed?total:'?'}</span><small>D${sides}${phase==='locked'&&bonus?' + 보정':''}</small>${revealed&&bonus&&phase==='merging'?`<b class="merging-bonus">${diceSigned(bonus)}</b>`:''}</div><div class="die-equation ${revealed?'':'waiting-equation'}">${revealed?`${value}${bonus?` <b>${diceSigned(bonus)}</b> = <strong>${value+bonus}</strong>`:' 확정'}`:'눈금 → 보정 → 최종 점수'}</div></div>`;
+ return `<div class="visual-die-block" style="--die-ink:${diceColor(revealed?total:null,sides)};${diceReel(sides)}"><span class="die-caption">${esc(label)}</span><div class="visual-die attached-die ${rolling?'rolling':''} ${revealed?'locked':''} ${phase==='merging'?'merging':''} ${!DICE_ART[face]&&!rolling?'custom-die-value':''}" data-die-locked="${revealed}" data-die-value="${revealed?total:''}" data-die-sides="${sides}" aria-label="${esc(label)} ${revealed?total:rolling?'굴리는 중':'대기'}">${artwork}<span class="die-number">${revealed?total:'?'}</span><small>D${sides}${!options.rawFace&&phase==='locked'&&bonus?' + 보정':''}</small>${revealed&&bonus&&phase==='merging'?`<b class="merging-bonus">${diceSigned(bonus)}</b>`:''}</div><div class="die-equation ${revealed?'':'waiting-equation'}">${revealed?`${value}${bonus?` <b>${diceSigned(bonus)}</b> = <strong>${value+bonus}</strong>`:' 확정'}`:'눈금 → 보정 → 최종 점수'}</div></div>`;
 }
 
 
@@ -3249,6 +3461,7 @@ function renderArena({world,run,playback,showControls=true}) {
 
 // src/ui/playback.js
 
+
 // Presentation reads committed engine events. Its clock never consumes game randomness.
 const leadGeneral = (world,id) => world.people.find(p=>p.countryId===id&&p.role==='general'&&p.active&&p.alive)||null;
 function makeTurnScenes(record,before) {
@@ -3285,10 +3498,10 @@ class TurnPlayback {
   get playing(){return !!this.state?.playing;}
   get complete(){return !this.state||this.state.finished;}
   get showingResult(){return this.scene?.kind==='summary';}
-  get displayWorld(){return this.state?.finished?this.state.after:this.scene?.worldAfter;}
+  get displayWorld(){return this.state?.finished?this.state.after:this.scene?.kind==='apply'&&this.state.phase!=='settled'?applicationWorld(this.scene,this.state.effectStage):this.scene?.worldAfter;}
   get movementProgress(){if(this.scene?.kind!=='movement')return 0;const left=this.playing&&this.handle!==null?Math.max(0,(this.deadline-this.now())*this.scheduledSpeed):this.remaining;return Math.max(0,Math.min(1,1-left/this.duration()));}
   get sceneProgress(){if(!this.scene)return 0;const left=this.playing&&this.handle!==null?Math.max(0,(this.deadline-this.now())*this.scheduledSpeed):this.remaining;return Math.max(0,Math.min(1,1-left/this.duration()));}
-  duration(){return this.state.phase==='departing'?(this.reducedMotion()?80:240):this.scene.kind==='movement'?(this.reducedMotion()?100:1600):this.scene.kind==='apply'?1800:this.state.phase==='rolling'?(this.reducedMotion()?80:900):this.state.phase==='raw'?500:this.state.phase==='merging'?500:this.scene.kind==='summary'?1200:this.scene.kind==='result'?1400:700;}
+  duration(){return observerDuration(this.scene,this.state.record,this.state.phase==='departing'?'departing':this.state.effectStage||this.state.phase,this.reducedMotion());}
   clearTimer(){if(this.handle!==null)this.cancel(this.handle);this.handle=null;}
   load(record,before,after,play=true){
     this.clearTimer();this.groupEnd=null;this.groupDone=false;const scenes=makeTurnScenes(record,before);scenes.at(-1).worldAfter=after;
@@ -3300,12 +3513,13 @@ class TurnPlayback {
   resume(){if(!this.state||this.state.finished)return;this.groupEnd=null;this.groupDone=false;this.state.playing=true;this.onChange();this.arm();}
   advance(){
     if(!this.state||this.state.finished)return;this.clearTimer();
+    if(this.scene.kind==='apply'&&this.state.effectStage){const steps=applicationSteps(this.scene,this.state.record),index=steps.indexOf(this.state.effectStage);if(index<steps.length-1){this.state.effectStage=steps[index+1];this.remaining=this.duration();this.onChange();if(this.state.playing)this.arm();return;}}
     if(this.state.phase==='rolling')this.state.phase=this.scene.bonus?'raw':'locked';
     else if(this.state.phase==='raw')this.state.phase='merging';
     else if(this.state.phase==='merging')this.state.phase='locked';
     else if(this.state.phase!=='departing'&&this.state.scenes[this.state.index+1]?.kind==='apply')this.state.phase='departing';
     else if(this.groupEnd===this.state.index&&this.state.index<this.state.scenes.length-1){this.state.playing=false;this.groupDone=true;if(this.scene.kind==='apply')this.state.phase='settled';this.onChange();return;}
-    else if(this.state.index<this.state.scenes.length-1){this.state.index++;this.state.phase=['roll','reel'].includes(this.scene.kind)?'rolling':'holding';}
+    else if(this.state.index<this.state.scenes.length-1){this.state.index++;this.state.phase=['roll','reel'].includes(this.scene.kind)?'rolling':'holding';this.state.effectStage=this.scene.kind==='apply'?applicationSteps(this.scene,this.state.record)[0]:null;}
     else{this.state.finished=true;this.state.playing=false;this.onChange();this.onFinish();return;}
     this.remaining=this.duration();this.onChange();if(this.state.playing)this.arm();
   }
@@ -3327,6 +3541,7 @@ class TurnPlayback {
 
 
 // src/ui/judgment-overlay.js
+
 
 
 
@@ -3364,11 +3579,11 @@ function renderJudgmentOverlay({world,playback}) {
       const person=judgmentPerson(frame,country,'general',attack?battle.slot:battle.defenseSlot);
       const current=event.type===(attack?'attack_roll':'defense_roll');
       const seen=result||attack&&event.type==='defense_roll';
-      const die=battle.automatic?'<span class="judgment-auto">전투 판정 없음</span>':renderDie(current||seen?info.raw:null,battle.sides||10,current?phase:seen?'locked':'waiting',attack?'공격':'수비',sideBonus(info));
-      return `<div class="judgment-side ${key}"><div class="judgment-side-label">${attack?'공격':battle.relief?'구원 수비':'수비'} · ${esc(country?.name)} <small>${info.army}만</small></div><div class="judgment-roll">${judgmentPortrait({...person,name:person?.name||info.name,wins:info.wins??person?.wins},country,'general',info.army)}${die}</div>${judgmentTraits(person,'general',country)}${renderCombatBonuses(info)}</div>`;
+      const die=battle.automatic?'<span class="judgment-auto">전투 판정 없음</span>':renderDie(current||seen?info.raw:null,battle.sides||10,current?phase:seen?'locked':'waiting',attack?'공격':'수비',sideBonus(info),{rawFace:true});
+      return `<div class="judgment-side ${key}"><div class="judgment-side-label">${attack?'공격':battle.relief?'구원 수비':'수비'} · ${esc(country?.name)} <small>${info.army}만</small></div><div class="judgment-roll">${judgmentPortrait({...person,name:person?.name||info.name,wins:info.wins??person?.wins},country,'general',info.army)}<div class="observer-die-column">${die}${battle.automatic?'':renderObserverScore(info,seen||current&&phase==='locked')}</div></div>${judgmentTraits(person,'general',country)}${renderObserverBonuses(info)}</div>`;
     };
     body=`<div class="judgment-duel">${side('attack',true)}<span class="judgment-vs">VS</span>${side('defense',false)}</div>`;
-    if(result)note=battle.automatic?(battle.returnBlocked?'복귀 차단 · 구원군 없음 · 영토 1개 점령':'무방비 영토 · 1개 점령 · 병력 손실 없음'):`공격 −${battle.losses.attack.amount}만 · 수비 −${battle.losses.defense.amount}만 · 영토 ${battle.takenCells.length}개 점령`;
+    if(result)note=battleConsequence(battle);
   }else if(event.type==='hold'){
     const person=judgmentPerson(frame,nation,'general',event.slot);
     body=`<div class="judgment-single refusal-person">${judgmentPortrait(person,nation,'general')}</div><p class="dispatch-refusal">출정 거부</p>`;
@@ -3388,7 +3603,7 @@ function renderJudgmentOverlay({world,playback}) {
     else if(event.type==='death_roll')note='1~3 전사 · 4~10 생존';
     else if(event.type==='expedition_roll'||!showDie)note=event.detail;
   }
-  return `<aside class="map-judgment ${duel?'is-duel':''}" data-event="${esc(event.type||'')}" data-phase="${state.phase}" aria-label="지도 중앙 판정" aria-live="polite"><h2>${esc(displayEventText(title))}</h2>${duel&&battle.defendersTotal>1?`<p class="defense-wave">순차 방어 ${battle.wave} / ${battle.defendersTotal} · 모든 수비대 격파 시 점령</p>`:''}${body}${note?`<p class="judgment-result">${esc(displayEventText(note))}</p>`:''}</aside>`;
+  return `<aside class="map-judgment ${duel?'is-duel':''}" data-event="${esc(event.type||'')}" data-phase="${state.phase}" aria-label="지도 중앙 판정" aria-live="polite"><h2>${esc(duel?battle.territoryName+' 전투':displayEventText(title))}</h2>${duel?`<p class="observer-duel-stage">${esc(displayEventText(title))}</p>`:''}${duel&&battle.defendersTotal>1?`<p class="defense-wave">순차 방어 ${battle.wave} / ${battle.defendersTotal} · 모든 수비대 격파 시 점령</p>`:''}${body}${note?`<p class="judgment-result">${esc(displayEventText(note))}</p>`:''}</aside>`;
 }
 
 
@@ -3398,7 +3613,7 @@ function renderJudgmentOverlay({world,playback}) {
 // A clean recording canvas. The persistent #app owns the browser fullscreen session.
 function renderMapStage({world,playback,speed=1,showNames=true,focusedCountry=null,stackFocus={}}) {
   const active=playback.state&&!playback.complete;
-  return `<main class="map-stage simulation-page ${active&&!playback.playing?'playback-paused':''}" style="--playback-speed:${speed}" data-event="${playback.scene?.event?.type||'ready'}" data-phase="${playback.state?.phase||'ready'}" data-playing="${playback.playing}" data-finished="${playback.complete}" aria-label="지도 전체화면"><div class="map-stage-atlas">${renderAtlas(world,{observe:true,showNames,presentation:playback.state?{...playback.state,speed,movementProgress:playback.movementProgress,sceneProgress:playback.sceneProgress}:null,focusedCountry,stackFocus})}</div>${renderJudgmentOverlay({world,playback})}<div class="map-stage-alert" role="alert" hidden></div></main>`;
+  return `<main class="map-stage simulation-page ${active&&!playback.playing?'playback-paused':''}" style="--playback-speed:${speed}" data-battle-index="${playback.scene?.battleIndex??''}" data-effect-stage="${playback.state?.effectStage||'none'}" data-event="${playback.scene?.event?.type||'ready'}" data-phase="${playback.state?.phase||'ready'}" data-playing="${playback.playing}" data-finished="${playback.complete}" aria-label="지도 전체화면"><div class="map-stage-atlas">${renderAtlas(world,{observe:true,showNames,presentation:playback.state?{...playback.state,speed,movementProgress:playback.movementProgress,sceneProgress:playback.sceneProgress}:null,focusedCountry,stackFocus})}</div>${renderJudgmentOverlay({world,playback})}<div class="map-stage-alert" role="alert" hidden></div></main>`;
 }
 
 
@@ -3522,6 +3737,7 @@ let world;
 try { world = vividWorld(prepareV13World(loadWorld(localStorage) || createContinent160World())); } catch (error) { world = createDemoWorld(); initialError = error.message + ' 시작 예제를 표시합니다. 기존 저장 데이터는 덮어쓰지 않았습니다.'; }
 const ui = { page: 'overview', selected: world.territories[0]?.id, paint: false, brush: world.countries[0]?.id || '', countryFilter: '', roleFilter: '', search: '', showNames: true, recording: false, mapFullscreen:false, seed: '20261017', speed: 1, mapStyle: 'atlas', editorView:'atlas', focusedCountry: null, historyOffset:0, replayLoading:false,stackFocus:{} };
 const mapCamera=new MapCamera();
+try{if(localStorage.getItem('saguk-studio.viewer-detail')==='all')mapCamera.detailMode='all';}catch{}
 const mapGenerator=new MapGenerator({getWorld:()=>world,apply:next=>{mapEditor.draft=null;mapEditor.mode='select';mapCamera.resetAll();mapEditor.save(next);},notify});
 const mapEditor=new MapEditor({getWorld:()=>world,getSelected:()=>ui.selected,setSelected:id=>{ui.selected=id;},commit:updateWorld,render,notify});
 let auto = false, nativeMapFullscreen=false;
@@ -3578,7 +3794,7 @@ function render() {
   renderApp($('#app'), `
     <aside class="sidebar">
       <a class="brand" href="#" data-page="overview" aria-label="사국쟁패 Studio 세계 개요"><span class="brand-symbol">${icon('compass', 29)}</span><span><strong>사국쟁패</strong><small>HISTORY STUDIO</small></span></a>
-      <div class="workspace-label">WORKSPACE <span>v0.13.0${mobileProfile()?' · 경량판':' · 일반판'}</span></div>
+      <div class="workspace-label">WORKSPACE <span>v0.14.0${mobileProfile()?' · 경량판':' · 일반판'}</span></div>
       <button class="world-switch" data-action="world-meta"><span class="world-icon">${icon('globe', 19)}</span><span><b>${esc(world.name)}</b><small>나의 세계 · 편집 가능</small></span>${icon('edit', 13)}</button>
       <div class="nav-label">세계 만들기</div>
       <nav aria-label="주요 메뉴">${Object.entries(pages).slice(0, 4).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}<div class="nav-label nav-second">역사 관찰하기</div>${Object.entries(pages).slice(4).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}</nav>
@@ -3589,7 +3805,7 @@ function render() {
       <main id="main-content" class="${ui.page === 'simulation' ? 'simulation-page' : ''} ${playback.state&&!playback.playing&&!playback.complete?'playback-paused':''}" tabindex="-1">
         ${pageHeading()}
         ${ui.page === 'overview' ? overview() : ui.page === 'countries' ? countriesPage() : ui.page === 'people' ? peoplePage() : ui.page === 'map' ? mapPage() : ui.page === 'simulation' ? simulationPage() : rulesPage()}
-        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.13.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
+        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.14.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
       </main>
     </div>`);
   mapCamera.restore();if(ui.page==='simulation')mapCamera.follow(playback);
@@ -3742,7 +3958,7 @@ function newRunDialog() {
   dialogHandler = data => { const seed = data.get('seed').trim(); const next = createRun(world, seed); playback.reset();mapCamera.followKey=null;ui.historyOffset=0;run = next;saveRun(localStorage,run);ui.seed = seed; render(); notify('현재 편집한 세계로 새 실행을 준비했습니다.'); };
 }
 function editArmyBands(remove=null){const rows=[...document.querySelectorAll('#army-bands tr')].map(row=>[Number(row.querySelector('[name^="army-ratio"]').value),Number(row.querySelector('[name^="army-score"]').value)]);if(remove!==null){if(rows.length<=1)return;rows.splice(Number(remove),1);}else{if(rows.length>=16)return;const last=rows.at(-1);rows.push([Math.min(1000,last[0]*2),Math.min(100,last[1]+1)]);}$('#army-bands').innerHTML=rows.map(armyBandRow).join('');}
-function returnFromReplay(){if(timer)clearTimeout(timer);timer=null;replayToken++;ui.replayLoading=false;if(!replaySession)return;playback.pause();playback.reset();Object.assign(playback,replaySession.presentation);if(playback.state)playback.state.playing=false;mapCamera.cancelMotion();mapCamera.views.set('simulation',{...replaySession.camera});mapCamera.followKey=playback.state?`${playback.state.record.turn}:${playback.scene?.event?.index}:${playback.scene?.kind==='movement'?'move':'event'}`:null;replaySession=null;render();}
+function returnFromReplay(){if(timer)clearTimeout(timer);timer=null;replayToken++;ui.replayLoading=false;if(!replaySession)return;playback.pause();playback.reset();Object.assign(playback,replaySession.presentation);if(playback.state)playback.state.playing=false;mapCamera.cancelMotion();mapCamera.views.set('simulation',{...replaySession.camera});mapCamera.followKey=replaySession.cameraKey??null;replaySession=null;render();}
 async function loadHistoryTurn(turn,play=true){
  if(!replaySession||turn<1||turn>replaySession.endTurn)return;
  if(timer)clearTimeout(timer);timer=null;playback.pause();
@@ -3756,7 +3972,7 @@ async function showHistoryTurn(id){
  const endTurn=replaySession?.endTurn??run.history.filter(r=>r.turn!==pending).at(-1)?.turn??0;
  if(turn<1||turn>endTurn)return;
  stop();
- if(!replaySession)replaySession={turn,endTurn,playing:true,presentation:{state:playback.state,remaining:playback.remaining,groupEnd:playback.groupEnd,groupDone:playback.groupDone},camera:{...mapCamera.view('simulation')}};
+ if(!replaySession)replaySession={turn,endTurn,playing:true,presentation:{state:playback.state,remaining:playback.remaining,groupEnd:playback.groupEnd,groupDone:playback.groupDone},camera:{...mapCamera.view('simulation')},cameraKey:mapCamera.followKey};
  await loadHistoryTurn(turn,true);
 }
 
@@ -3836,6 +4052,7 @@ document.addEventListener('submit', event => {
 document.addEventListener('change', async event => {
   const target = event.target;
   if(target.id==='map-editor-zoom'){mapEditor.zoom=Number(target.value);mapCamera.zoom('editor',mapEditor.zoom);return;}
+  if(target.matches('[data-map-detail]')){mapCamera.detailMode=target.value==='all'?'all':'auto';try{localStorage.setItem('saguk-studio.viewer-detail',mapCamera.detailMode);}catch{}mapCamera.restore();return;}
   if(target.id==='camera-follow'){mapCamera.autoFollow=target.checked;mapCamera.cancelMotion();if(target.checked){mapCamera.followKey=null;mapCamera.follow(playback);}return;}
   if(target.name==='role'&&target.closest('#editor-dialog')){const field=$('#editor-dialog [name="ability"]'),values=target.value==='general'&&world.rules.battleMode==='additive30'?[-4,-3,-2,-1,0,1,2,3,4]:[-2,0,2],previous=Number(field.value);field.innerHTML=values.map(v=>`<option value="${v}" ${v===previous?'selected':''}>${v>0?'+':''}${v}</option>`).join('');if(!values.includes(previous))field.value='0';}
   if(target.id==='map-background-file'){const file=target.files?.[0];target.value='';try{await mapEditor.importBackground(file);}catch(error){notify(error.message,true);}return;}
@@ -3903,6 +4120,8 @@ document.addEventListener('keydown',event=>{
   if(event.key==='Escape'&&ui.recording){ui.recording=false;render();}
 });
 window.addEventListener('beforeunload', event => { if (playback.state&&!playback.complete||mapEditor.draft?.length||mapGenerator.dialog?.open&&mapGenerator.state?.mask) { event.preventDefault(); event.returnValue = ''; } });
+let observerResizeFrame=null;
+window.addEventListener('resize',()=>{if(observerResizeFrame!==null)cancelAnimationFrame(observerResizeFrame);observerResizeFrame=requestAnimationFrame(()=>{observerResizeFrame=null;mapCamera.cancelMotion();mapCamera.followKey=null;mapCamera.restore();if(ui.page==='simulation')mapCamera.follow(playback);});});
 $('#editor-dialog').addEventListener('click', event => { if (event.target === $('#editor-dialog')) { $('#editor-dialog').close(); dialogHandler = null; } });
 try { const saved=loadRun(localStorage);if(saved&&saved.initialWorld.id===world.id){run=saved;ui.seed=saved.seed;} } catch(error){initialError ||= error.message;}
 if (!initialError) persist();
