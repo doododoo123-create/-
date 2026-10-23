@@ -1,0 +1,31 @@
+/* Card size and all local notices share one zoom transform. */
+.game-skin .atlas-map .atlas-name{font-size:9.6px;stroke-width:1.8px!important}
+.game-skin .atlas-map .atlas-name.name-incident{font-size:12px;stroke-width:2.2px!important}
+.game-skin .atlas-scroll.combat-focused .map-unit-position:not(.unit-engaged),
+.game-skin .atlas-scroll.combat-focused .map-unit-position:not(.unit-engaged) .map-unit-token{opacity:1}
+.game-skin .unit-feedback-text,.game-skin .unit-loss-label,.game-skin .march-label,.game-skin .unit-combat-role,.game-skin .unit-status-label{font:800 8px/1.2 'Malgun Gothic',sans-serif;fill:#fff;stroke:#000;stroke-width:1.7px;paint-order:stroke;stroke-linejoin:round;pointer-events:none}
+.game-skin .unit-status-label.death{fill:#ff3038}.game-skin .unit-status-label.appointment{fill:#39ff73}
+.game-skin .unit-status-label.victory{fill:#ff263d}.game-skin .unit-status-label.defeat,.game-skin .unit-status-label.draw{fill:#fff}
+.unit-result-wash{fill:#46505a;fill-opacity:.32;pointer-events:none}
+.game-skin .unit-victory .map-unit-token,.game-skin .unit-defeat .map-unit-token{filter:grayscale(.55) brightness(.9)}
+/* Keep loss, role and centered result labels stable while only the card border pulses. */
+.game-skin .unit-victory,.game-skin .unit-defeat,html[data-performance=mobile] .unit-victory,html[data-performance=mobile] .unit-defeat{animation:none;opacity:1;filter:none!important}
+.game-skin .unit-victory .unit-battle-glow{animation:commander-engaged var(--outcome-time,1.8s) linear both;animation-delay:var(--outcome-delay,0s)}
+.game-skin .unit-defeat .map-unit-token{animation:v19-defeat-card var(--outcome-time,1.8s) linear both;animation-delay:var(--outcome-delay,0s)}
+@keyframes v19-defeat-card{0%,25%,50%,75%,100%{opacity:.72}12.5%,37.5%,62.5%,87.5%{opacity:1}}
+.playback-paused .unit-defeat .map-unit-token{animation-play-state:paused}
+.map-unit-position[data-unit-role=minister]>.unit-duel-layout{transform:translate(var(--minister-offset-x,45px),0)}
+.map-unit-position[data-unit-role=minister] .unit-pin-tip{display:none}
+.game-skin .map-unit-token .minister-role{font-size:7px;color:#fff}
+.game-skin .map-stage .map-judgment.is-royal-die{width:200px;min-width:0;max-width:calc(100% - 16px);padding:6px 8px;transform:none;border:1px solid var(--nation);border-radius:5px;background:#091620f5;box-shadow:0 2px 8px #0008;animation:none}
+.game-skin .is-royal-die .judgment-feature{font-size:9px;line-height:1.3;margin:3px 0}
+.game-skin .is-royal-die .visual-die-block{width:58px;max-width:58px;margin:3px auto}
+.game-skin .is-royal-die .attached-die{width:46px;height:46px}
+.game-skin .is-royal-die .die-caption{font-size:9px}.game-skin .is-royal-die .die-equation{font-size:9px}
+.game-skin .is-royal-die .die-number{font-size:23px}
+.game-skin .is-royal-die .royal-result{font-size:10px;margin:3px 0;text-align:center;color:#fff}
+.season-front path{fill:none;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.season-front-shadow{stroke:#03080b;stroke-width:4}
+.season-front-color{stroke-width:2.2}
+.game-skin .map-territory-feedback text{font-size:9px}
+@media(prefers-reduced-motion:reduce){.game-skin .unit-defeat .map-unit-token{animation:none!important}}

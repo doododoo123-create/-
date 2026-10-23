@@ -11,7 +11,6 @@
 .atlas-scroll[data-detail=wide] .mountain-markers{opacity:.4}
 .atlas-scroll[data-detail=regional] .observer-country-labels,.atlas-scroll[data-detail=battle] .observer-country-labels,.atlas-scroll[data-detail=all] .observer-country-labels,.atlas-scroll[data-detail=editor] .observer-country-labels{display:none}
 .atlas-scroll[data-detail=all] .atlas-name,.atlas-scroll[data-detail=all] .map-unit-position{visibility:visible}
-.combat-focused .map-unit-position:not(.unit-engaged){opacity:.60}
 .combat-focused .atlas-name:not(.name-incident){opacity:.48}
 .unit-engaged .unit-focal-body{transform:scale(1.12);transform-box:fill-box;transform-origin:50% 100%}
 .unit-combat-role{font:800 13px 'Malgun Gothic',sans-serif;fill:white;stroke:#061016;stroke-width:3px;paint-order:stroke}

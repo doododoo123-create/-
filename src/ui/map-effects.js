@@ -51,29 +51,25 @@ export function mapEffects(scene,stage=null,record=null) {
   return output;
 }
 
-export function renderMapEffects(effects,geometry,world,currentMarkers,beforeMarkers=[]) {
-  const same=(m,e)=>m.country.id===e.countryId&&m.role===e.role&&(e.role==='king'||m.person?.slot===e.slot);
-  const stacks=new Map(),occupied=[];
-  const textWidth=(text,size)=>[...text].reduce((n,c)=>n+(/[가-힣]/.test(c)?size:size*.58),0)+20;
-  const labels=effects.units.filter(e=>!['death','appointment'].includes(e.type)).map(e=>{
-    const marker=currentMarkers.find(m=>same(m,e))||beforeMarkers.find(m=>same(m,e));if(!marker)return '';
-    const key=`${e.countryId}:${e.role}:${e.slot}`,row=stacks.get(key)||0;stacks.set(key,row+1);
-    const width=Math.min(300,Math.max(74,textWidth(e.label,17)));
-    const candidates=[[0,-70-row*29],[0,-99-row*29],[0,-128-row*29],[width*.6,-70-row*29],[-width*.6,-70-row*29],[0,-157-row*29]];
-    const places=candidates.map(([dx,dy])=>({x:Math.min(1200-width/2-4,Math.max(width/2+4,marker.point[0]+dx)),y:Math.max(28,marker.point[1]+dy)}));
-    const {x,y}=places.find(p=>!occupied.some(o=>p.x-width/2<o.x+o.w+4&&p.x+width/2+4>o.x&&p.y-22<o.y+o.h+4&&p.y+4>o.y))||places.at(-1);
-    occupied.push({x:x-width/2,y:y-22,w:width,h:26});
-    return `<g class="map-unit-feedback ${e.tone}" data-effect="${e.type}" data-country="${esc(e.countryId)}" data-role="${e.role}" data-slot="${e.slot??''}" data-delta="${e.delta}" transform="translate(${x},${y})"><path d="M${marker.point[0]-x} ${marker.point[1]-40-y} L0 4"/><rect x="${-width/2}" y="-22" width="${width}" height="26" rx="5"/><text text-anchor="middle" y="-4">${esc(e.label)}</text></g>`;
-  }).join('');
-  const territories=effects.territories.map(e=>{
-    const t=world.territories.find(t=>t.id===e.territoryId);if(!t)return '';
-    const point=territoryCell(world,geometry,t).center,label=e.label.length>17?e.label.slice(0,14)+'… 점령':e.label,width=Math.max(90,textWidth(label,13));
-    const spots=[[0,24],[0,-34],[0,52],[0,-58],[70,24],[-70,24],[0,80],[100,50],[-100,50]];
-    let chosen;
-    for(const [dx,dy] of spots){const box={x:Math.min(1196-width,Math.max(4,point[0]+dx-width/2)),y:Math.min(770,Math.max(4,point[1]+dy-14)),w:width,h:21};if(!occupied.some(o=>box.x<o.x+o.w+4&&box.x+box.w+4>o.x&&box.y<o.y+o.h+4&&box.y+box.h+4>o.y)){chosen=box;break;}}
-    chosen ||= {x:point[0]-width/2,y:point[1]+10,w:width,h:21};occupied.push(chosen);
-    const x=chosen.x+width/2,y=chosen.y+14;
-    return `<g class="map-territory-feedback" data-territory-effect="${esc(t.id)}" transform="translate(${x},${y})"><path d="M${point[0]-x} ${point[1]-y}L0 0"/><rect x="${-width/2}" y="-14" width="${width}" height="21" rx="4"/><text text-anchor="middle" y="1">${esc(label)}</text></g>`;
-  }).join('');
-  return labels||territories?`<g class="map-feedback-layer" pointer-events="none">${territories}${labels}</g>`:'';
+// Feedback lives inside the recipient card's zoom/stack transform, not in world-sized boxes.
+export function unitFeedback(effects,marker){
+ return effects.units.filter(e=>!['death','appointment'].includes(e.type)&&marker.country.id===e.countryId&&marker.role===e.role&&(e.role==='king'||marker.person?.slot===e.slot));
+}
+export function renderUnitFeedback(entries,{combatSide=false,hasLoss=false,hasStatus=false}={}){
+ const start=hasLoss?-55:combatSide||hasStatus?-46:-36;
+ return entries.map((e,i)=>`<text class="unit-feedback-text" data-effect="${e.type}" data-country="${esc(e.countryId)}" data-role="${e.role}" data-slot="${e.slot??''}" data-delta="${e.delta}" text-anchor="middle" y="${start-i*10}">${esc(e.label)}</text>`).join('');
+}
+export function renderMapEffects(effects,geometry,world){
+ const occupied=[],textWidth=(text,size)=>[...text].reduce((n,c)=>n+(/[가-힣]/.test(c)?size:size*.58),0)+20;
+ const territories=effects.territories.map(e=>{
+  const t=world.territories.find(t=>t.id===e.territoryId);if(!t)return '';
+  const point=territoryCell(world,geometry,t).center,label=e.label.length>17?e.label.slice(0,14)+'… 점령':e.label,width=Math.max(70,textWidth(label,9));
+  const spots=[[0,24],[0,-34],[0,52],[0,-58],[70,24],[-70,24],[0,80],[100,50],[-100,50]];
+  let chosen;
+  for(const [dx,dy] of spots){const box={x:Math.min(1196-width,Math.max(4,point[0]+dx-width/2)),y:Math.min(770,Math.max(4,point[1]+dy-14)),w:width,h:17};if(!occupied.some(o=>box.x<o.x+o.w+4&&box.x+box.w+4>o.x&&box.y<o.y+o.h+4&&box.y+box.h+4>o.y)){chosen=box;break;}}
+  chosen ||= {x:point[0]-width/2,y:point[1]+10,w:width,h:17};occupied.push(chosen);
+  const x=chosen.x+width/2,y=chosen.y+12;
+  return `<g class="map-territory-feedback" data-territory-effect="${esc(t.id)}" transform="translate(${x},${y})"><path d="M${point[0]-x} ${point[1]-y}L0 0"/><rect x="${-width/2}" y="-12" width="${width}" height="17" rx="3"/><text text-anchor="middle" y="0">${esc(label)}</text></g>`;
+ }).join('');
+ return territories?`<g class="map-feedback-layer" pointer-events="none">${territories}</g>`:'';
 }

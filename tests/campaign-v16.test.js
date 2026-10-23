@@ -59,7 +59,7 @@ test('old engine20 preserves its former stationing and resumes/replays identical
 });
 test('small map pins have bounded screen size at all zoom levels and combatants do not stack together at the battle site',()=>{
  assert.equal(UNIT_CARD_WIDTH,32);assert.equal(UNIT_CARD_HEIGHT,54);assert.equal(UNIT_PIN_OFFSET,35);
- for(const scale of [.1,.25,.5,1,1.5,3,8]){const width=UNIT_CARD_WIDTH*scale*mapUnitScale(scale);assert(width>=24-.001&&width<=80+.001);}
+ for(const scale of [.1,.25,.5,1,1.5,3,8]){const width=UNIT_CARD_WIDTH*scale*mapUnitScale(scale);assert(width>=28.8-.001&&width<=96+.001);}
  const m=(id,combatSide)=>({territory:{id:'same'},person:{id},country:{id},role:'general',combatSide}),stack=stackUnits([m('a','attack'),m('b','defense'),m('c',null)]);assert(stack.every(v=>v.stackCount===1&&v.stackOffset===0));
 });
 test('battle presentation uses the original two map cards and no circular duplicate faces; all modifiers including zeros are visible',()=>{

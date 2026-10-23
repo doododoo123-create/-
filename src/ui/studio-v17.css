@@ -18,7 +18,6 @@
 .round-relocation.is-moving circle{animation:relocation-endpoint 1s ease-in-out infinite}
 @keyframes relocation-endpoint{50%{opacity:.15}}
 .game-skin .map-unit-position[data-selected=true] .map-unit-token{outline:1.5px solid white;outline-offset:2px}
-.game-skin .atlas-scroll.combat-focused .map-unit-position:not(.unit-engaged):not([data-selected=true]):not([data-ghost=true]) .map-unit-token{opacity:.72}
 .game-skin .round-stalemate .front-line{stroke-width:2;vector-effect:non-scaling-stroke}
 .game-skin .round-stalemate .front-shadow{stroke-width:3.5;vector-effect:non-scaling-stroke}
 /* 280 -> 336px; typography, die and spacing grow by the same 1.2 factor. */

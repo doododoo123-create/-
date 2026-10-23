@@ -1,3 +1,4 @@
+import { royalRoleForScene } from './royal-presentation.js';
 import { renderSeasonAnnouncement } from './season-view.js';
 import { renderChoiceReel } from './choice-reel.js';
 import { sideBonus, renderObserverBonuses, renderObserverScore, veteranStars } from './combat-view.js';
@@ -45,12 +46,17 @@ export function renderJudgmentOverlay({world,playback}) {
 
     note=result?battle.winner===null?'무승부':battle.takenCells.length?`${battle.winner===battle.actor?'점령':'역점령'} ${battle.takenCells.length}`:'영토 유지':'';
     return `<aside class="map-judgment is-duel is-compact-duel is-v16-duel is-v17-duel" data-event="${esc(event.type)}" data-phase="${state.phase}" aria-label="${esc(battle.territoryName)} 전투 판정"><header class="mini-combat-header"><span>${esc(battle.territoryName)}</span>${battle.defendersTotal>1?`<small>${battle.wave}/${battle.defendersTotal}</small>`:''}</header>${body}${note?`<p class="mini-combat-result">${esc(note)}</p>`:''}</aside>`;
+  }else if(royalRoleForScene(scene,record)==='minister'&&scene.kind!=='reel'){
+    const person=judgmentPerson(frame,nation,'minister'),score=record.domesticScore,showDie=scene.kind==='roll'||result;
+    const value=scene.kind==='roll'?scene.value:score?.raw,bonus=scene.kind==='roll'?scene.bonus||0:score?.ability||0;
+    const die=showDie?renderDie(value,scene.faces||10,scene.kind==='roll'?phase:'locked',event.type==='supply_roll'?'지휘한도 증가':'내정 판정',bonus):'';
+    return `<aside class="map-judgment is-royal-die" data-nation="${esc(nation?.id||'')}" data-anchor-role="minister" data-event="${esc(event.type)}" data-phase="${state.phase}" style="--nation:${nation?.color||'#fff'}" aria-label="${esc(nation?.name||'')} 승상 판정"><div class="royal-choice-heading">${esc(nation?.name||'')} · 승상</div>${die}${judgmentTraits(person,'minister',nation)}${result?`<p class="royal-result">${event.success?'내정 성공':'내정 실패'}</p>`:''}</aside>`;
   }else if(event.type==='hold'){
     const person=judgmentPerson(frame,nation,'general',event.slot);
     body=`<div class="judgment-single refusal-person">${judgmentPortrait(person,nation,'general')}</div><p class="dispatch-refusal">출정 거부</p>`;
   }else if(scene.kind==='reel'){
     const role=event.role||'king';
-    return `<aside class="map-judgment is-royal-choice" data-nation="${esc(nation?.id||'')}" data-event="${esc(event.type)}" data-phase="${state.phase}" style="--nation:${nation?.color||'#fff'}" aria-label="${esc(nation?.name||'')} ${role==='king'?'국왕':'승상'} 선택"><div class="royal-choice-heading">${esc(nation?.name||'')} · ${role==='king'?'국왕':'승상'}</div>${renderChoiceReel(scene,phase,playback.sceneProgress,{rowHeight:32})}</aside>`;
+    return `<aside class="map-judgment is-royal-choice" data-anchor-role="${role}" data-nation="${esc(nation?.id||'')}" data-event="${esc(event.type)}" data-phase="${state.phase}" style="--nation:${nation?.color||'#fff'}" aria-label="${esc(nation?.name||'')} ${role==='king'?'국왕':'승상'} 선택"><div class="royal-choice-heading">${esc(nation?.name||'')} · ${role==='king'?'국왕':'승상'}</div>${renderChoiceReel(scene,phase,playback.sceneProgress,{rowHeight:32})}</aside>`;
   }else if(['round_end','roster','waiting','finish','elimination'].includes(event.type)){
     note=event.type==='round_end'?'각 지역에서 병력을 생산합니다.':event.detail;
   }else{

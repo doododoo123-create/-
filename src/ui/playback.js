@@ -8,7 +8,6 @@ export function makeTurnScenes(record,before) {
   if(record.seasonStart??record.turn===1){const calendar=calendarAtRound(record.round);scenes.push({id:'season-'+record.round,kind:'season',event:{type:'season',index:-1,round:record.round,...calendar},title:calendar.label,worldBefore:before,worldAfter:before,camps});}
   for(const event of record.events) {
     const frame=record.frames?.[event.index]||{before,after:before};
-    if(event.type==='round_end')scenes.push({id:'round-settle',kind:'round-settle',event:{type:'round_settle',index:event.index-.5},title:'한 바퀴의 영토 확정',worldBefore:frame.before,worldAfter:frame.before,camps});
     const motion=record.movements?.find(m=>m.eventIndex===event.index);
     if(motion){scenes.push({id:`move-${event.index}`,kind:'movement',event,battleIndex:event.battleIndex,title:motion.moves.some(m=>m.kind==='redeploy')?'생존 지휘관 재배치':'지휘관 출정·복귀',worldBefore:frame.before,worldAfter:frame.before,campsBefore:camps,camps:motion.camps,moves:motion.moves});camps=motion.camps;}
     if(event.type==='expedition_roll')continue;

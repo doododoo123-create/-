@@ -71,7 +71,7 @@ test('old engine22 histories retain their former retreats while new nearby retre
 test('combat sites contain only revealed real battles and persist through other nations until the season boundary',()=>{
  const r=fixture18(),n=nextTurn(r,war18()),record=n.history[0],scenes=makeTurnScenes(record,r.world),start={record,before:r.world,scenes,index:0,phase:'holding',roundRecords:[]};assert.deepEqual(roundCampaign(r.world,start).battleSites,[]);
  const done=roundCampaign(n.world,completedRoundPresentation(n));assert.deepEqual(done.battleSites,[{territoryId:'tile-4',count:1}]);assert(renderAtlas(n.world,{presentation:completedRoundPresentation(n)}).includes('data-battle-site="tile-4"'));
- const after=nextTurn(n,domestic18),p=new TurnPlayback();p.load(after.history[1],n.world,after.world,false,after.history);assert.equal(roundCampaign(n.world,p.state).battleSites.length,1);p.finish();assert.equal(roundCampaign(after.world,p.state).battleSites.length,0);
+ const after=nextTurn(n,domestic18),p=new TurnPlayback();p.load(after.history[1],n.world,after.world,false,after.history);assert.equal(roundCampaign(n.world,p.state).battleSites.length,1);p.finish();assert.equal(roundCampaign(after.world,p.state).battleSites.length,1);const next=nextTurn(after,domestic18);p.load(next.history.at(-1),after.world,next.world,false,next.history);assert.equal(p.scene.kind,'season');assert.equal(roundCampaign(after.world,p.state).battleSites.length,0);
 });
 test('battle results and per-general losses are together above cards, while duplicate floating combat-loss boxes are absent',()=>{
  const r=fixture18(),n=nextTurn(r,war18()),record=n.history[0],scene=makeTurnScenes(record,r.world).find(s=>s.kind==='apply'&&s.event.type==='resolve'),snapshot=JSON.stringify(n),html=renderAtlas(scene.worldBefore,{presentation:{record,scenes:[scene],index:0,phase:'holding',effectStage:'outcome'}});
@@ -83,8 +83,8 @@ test('king and minister choices use a compact ruler-anchored reel without duplic
  for(const type of ['king','minister']){p.state.index=p.state.scenes.findIndex(s=>s.event.type===type);p.state.phase='rolling';const html=renderJudgmentOverlay({world:p.scene.worldBefore,playback:p});assert(html.includes('is-royal-choice'));assert(html.includes('data-nation="a"'));assert(!html.includes('judgment-person'));assert(html.includes('data-choice="'+type+'"'));}
 });
 test('zoom genuinely grows pins and side placement follows the attacking territory rather than fixed left/right roles',()=>{
- const widths=[.25,.5,1,2,3,5].map(s=>32*s*mapUnitScale(s));assert(widths.every(v=>v>=24&&v<=80));assert(widths[3]>widths[2]);assert(widths[5]>widths[3]);
- assert(duelDirection([200,100],[100,100]).x>0);assert(duelDirection([0,100],[100,100]).x<0);assert.equal(duelDirection([100,0],[100,100]).axis,'vertical');assert.equal(duelDirection([100,0],[100,100],true).axis,'diagonal');
+ const widths=[.25,.5,1,2,3,5].map(s=>32*s*mapUnitScale(s));assert(widths.every(v=>v>=28.8-1e-9&&v<=96+1e-9));assert(widths[3]>widths[2]);assert(widths[5]>widths[3]);
+ assert(duelDirection([200,100],[100,100]).x>0);assert(duelDirection([0,100],[100,100]).x<0);assert.equal(duelDirection([100,0],[100,100]).axis,'horizontal');assert.equal(duelDirection([100,0],[100,100],true).axis,'horizontal');
 });
 test('camera following and its checkbox are gone while existing manual view state remains intact',()=>{
  const camera=new MapCamera(),view=camera.view('simulation');Object.assign(view,{x:333,y:222,zoom:2});const before={...view};camera.follow({state:{record:{turn:1}},scene:{}});camera.follow({state:{record:{turn:99}},scene:{}});assert.deepEqual(view,before);assert(!mapZoomControls('simulation').includes('camera-follow'));assert(!mapZoomControls('simulation').includes('국가 중심 고정'));

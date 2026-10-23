@@ -1,4 +1,4 @@
-# 구조 · Studio v0.18.0 / 계절·전장 후퇴·지도 관전
+# 구조 · Studio v0.19.0 / 좌우 전투·계절 전선·카드 피드백
 
 ## 데이터와 엔진
 
@@ -299,3 +299,18 @@ engine18은17 저장의 지휘한도/손실/home 복귀를 그대로 보존하�
 - MapCamera.follow는 더 이상 시점을 이동하지 않는다. 자동 고정 컨트롤을 제거했으며 기존 드래그/방향키/줌과 과거 재생 전후 수동 카메라 복원을 유지한다. placeRoyalChoice는 지도 왕 카드의 실제 화면 위치 위에 작은 선택창을 놓고 창 자체만 화면 안으로 보정한다.
 - unitBattleResult는 결과 적용 장면에서 기록된 개별 손실/승패를 반환한다. atlas-view는 카드 위 손실·결과·역할을 표시하고 map-effects는 같은 전투의 별도 병력 손실 박스를 제외한다. 패배 카드를 회색으로 만들되 손실 글자까지 회색 필터로 지우지 않는다. 전사/임관·충원 효과와 모든 주사위 보정/판정 전 비공개를 유지한다.
 - 엔진23은22 이하 저장에서 nearbyRetreat 누락값만 false로 고정한다. actual v0.17.0 저장의 과거 전투/이동과 이후 상태/RNG를 대조한다. 새 화면은 이전 역사에도 적용할 수 있으나 실제 근처 후퇴 규칙은 새 실행에만 적용한다.
+
+
+## v0.19 화면 구성과 계절 상태
+
+엔진23·세계/실행 저장 형식·전투/이동 규칙은 변경하지 않는다. `battle-presentation.js`는 지도 카드 크기를 이전의1.2배로 계산하고 영토의 reference 기준점으로 좌우 순서만 선택한다. 두 전투 카드는 같은 화면 y좌표를 사용하며 쌍 전체를 화면 안으로 보정한다. 실제 station/position/표시 앵커는 그대로다.
+
+`round-campaign.js`의 summary와 finished 상태는 현재 차례의 사건을 모두 공개한 것으로 처리한다. 기존 summary의 event.index 누락으로 limit가−1이 되어 그 차례의 빗금이 사라지던 문제를 수정했다. round_end/finish에서 효과를 지우지 않으며 새 round 첫 record의 season 장면에서 같은 round의 과거 기록만 사용해 자동으로 비운다. 별도의 round-settle 장면은 생성하지 않는다.
+
+`sharedFrontSegments`는 겹친 공유 선분을 반환하고 기존 `sharedFrontPath`는 이를 경로 문자열로 변환한다. geometry의 셀 배열 인덱스 쌍으로 캐시하여 id가 없는 격자 셀도 구분한다. `season-front.js`는 공개된 captures/battleSites와 현재 적대 공유 경계의 교집합을 그린다. 안쪽 법선은 pointInShape로 확인하고 선/빗살을 해당 영토에 클리핑한다. 캐시는 geometry 수명에 맞춘 WeakMap이며 그래프나 국경 계산에 영향을 주지 않는다.
+
+`royal-presentation.js`는 승상 선택/주사위/결과 반영 중에만 지도 왕 옆 임시 승상 카드를 추가하도록 지시한다. `camera-focus.js`는 data-anchor-role에 따라 왕 또는 승상 카드 위에200px 창을 배치한다. 실제 world.people에 인물을 추가하지 않으며 화면 카드 역할 minister는 지도 부대의 군사 기능과 분리한다.
+
+`map-effects.js`는 기존의 전후 차이 계산을 유지하고 unitFeedback/renderUnitFeedback으로 각 카드의 로컬 좌표 안에 텍스트를 넣는다. 줌·포갬·실제 이동에 함께 붙으며 7px 이름과8px 변화 텍스트의 비율을 유지한다. 별도의 큰 map-unit-feedback 박스는 생성하지 않는다. 두 전투자의 결과는 약한 회색 wash+중앙 결과 글자와 위쪽 손실로 나누고, 승리 테두리만 빨강으로 점멸한다.
+
+`studio-v19.css`가 최종 표시 규칙이다. 두 단일 HTML에 동일한 기능을 포함하고 모바일 프로필은 지도 자원/렌더링만 다르다. `campaign-v19.test.js`와 `studio_v19_smoke.py`가 끊김·전선·카드·승상·양쪽 배포본을 검증한다.

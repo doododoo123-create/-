@@ -25,8 +25,8 @@ export function placeCompactDuel(){
  if(attack&&defense){const ax=Number(attack.dataset.combatScreenX),dx=Number(defense.dataset.combatScreenX),first=Math.abs(ax-dx)>10?ax<dx:Number(attack.dataset.combatScreenY)<Number(defense.dataset.combatScreenY);pane.style.setProperty('--attack-order',first?'0':'1');pane.style.setProperty('--defense-order',first?'1':'0');}
 }
 export function placeRoyalChoice(){
- const root=globalThis.document?.querySelector?.('.map-stage'),pane=root?.querySelector('.is-royal-choice');if(!pane)return;
- const king=[...root.querySelectorAll('.map-unit-position[data-unit-role="king"]')].find(c=>c.dataset.country===pane.dataset.nation),card=king?.querySelector('foreignObject');if(!card)return;
+ const root=globalThis.document?.querySelector?.('.map-stage'),pane=root?.querySelector('.is-royal-choice,.is-royal-die');if(!pane)return;
+ const role=pane.dataset.anchorRole||'king',unit=[...root.querySelectorAll('.map-unit-position')].find(c=>c.dataset.unitRole===role&&c.dataset.country===pane.dataset.nation),card=unit?.querySelector('foreignObject');if(!card)return;
  const r=root.getBoundingClientRect(),b=card.getBoundingClientRect(),width=pane.offsetWidth,height=pane.offsetHeight;
  const left=Math.max(8,Math.min(r.width-width-8,b.x+b.width/2-r.x-width/2));
  let top=b.y-r.y-height-8;if(top<8)top=b.bottom-r.y+8;

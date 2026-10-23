@@ -41,7 +41,7 @@ test('only the two current duel participants gain battle borders and victory/def
  const engaged=scene.worldBefore.people.filter(p=>unitBattling(scene,record,p));assert.equal(engaged.length,2);assert(engaged.some(p=>p.id===battle.attackerPersonId));assert(engaged.some(p=>p.id===battle.defenderPersonId));
  const render=s=>renderAtlas(s.worldAfter,{presentation:{record,scenes:[s],index:0,phase:'holding',speed:1,sceneProgress:.4}});
  const html=render(scene);assert.equal((html.match(/class="unit-battle-glow"/g)||[]).length,2);assert(!html.includes('>전투 발생</text>'));assert(html.includes('data-combat-side="attack"'));
- const result=scenes.find(s=>s.kind==='apply'&&s.event?.type==='resolve'&&s.battleIndex===battle.index),resolved=render(result);assert(resolved.includes('y="-46">승리</text>'));assert(resolved.includes('y="-46">패배</text>'));assert.equal((resolved.match(/class="unit-battle-glow"/g)||[]).length,1);assert(resolved.includes('unit-loss-label'));
+ const result=scenes.find(s=>s.kind==='apply'&&s.event?.type==='resolve'&&s.battleIndex===battle.index),resolved=render(result);assert(resolved.includes('y="2">승리</text>'));assert(resolved.includes('y="2">패배</text>'));assert.equal((resolved.match(/class="unit-battle-glow"/g)||[]).length,1);assert(resolved.includes('unit-loss-label'));
  const settled=renderAtlas(result.worldAfter,{presentation:{record,scenes:[result],index:0,phase:'settled'}});assert(!settled.includes('unit-status-label victory'));assert(!settled.includes('unit-status-label defeat'));assert.equal(JSON.stringify(run),snapshot);
  const effects=mapEffects(result).units.filter(e=>e.type==='army');assert(effects.length);assert(effects.every(e=>e.delta<0&&e.tone==='negative'&&e.label.endsWith('만명')));
 });

@@ -10,16 +10,19 @@ export function completedRoundPresentation(run){
 export function roundCampaign(world,presentation){
  const record=presentation?.record,empty={captures:new Map(),routes:[],fronts:[],movements:[],battleSites:[],baseOwners:new Map(),settled:true};
  if(!record)return empty;
- const scene=presentation.scenes?.[presentation.index],events=record.events||[],roundEnd=events.find(e=>e.type==='round_end');
- if(presentation.finished&&(roundEnd||record.result)||scene&&((roundEnd&&scene.event?.index>=roundEnd.index)||scene.event?.type==='finish'))return empty;
+ const scene=presentation.scenes?.[presentation.index],events=record.events||[];
+ // A summary has no event index: it still contains every revealed result of this turn.
+ // Keep season effects through production and the inter-turn pause. The next round's
+ // first record naturally starts with an empty history at its season announcement.
+ const complete=!!presentation.finished||scene?.kind==='summary';
  const past=(presentation.roundRecords||[]).filter(r=>r.round===record.round&&r.turn<record.turn),records=[...past,record];
  const before=presentation.before||record.frames?.[0]?.before;
  const baseOwners=new Map((before||world).territories.map(t=>[t.id,t.ownerId]));
  if(!before)for(const c of [...(record.changes||[])].reverse())baseOwners.set(c.territoryId,c.from);
  for(const r of [...past].reverse())for(const c of [...(r.changes||[])].reverse())baseOwners.set(c.territoryId,c.from);
  const captures=new Map(),routes=[],fronts=new Map(),movements=[],lanes=new Map(),battleSites=new Map();
- const limit=presentation.finished?Infinity:scene?.event?.index??-1;
- const applied=r=>r!==record||presentation.finished;
+ const limit=complete?Infinity:scene?.event?.index??-1;
+ const applied=r=>r!==record||complete;
  for(const r of records){
   for(const motion of r.movements||[])for(const m of motion.moves)if(applied(r)||motion.eventIndex<limit||motion.eventIndex===limit&&(scene?.kind!=='movement'||['retreat','redeploy'].includes(m.kind)))movements.push({...m,key:`${r.turn}:${motion.eventIndex}:${m.personId}`});
   for(const b of r.battles||[]){
@@ -49,13 +52,13 @@ export function roundCampaign(world,presentation){
  }
  const owned=new Map(world.territories.map(t=>[t.id,t.ownerId]));
  for(const [id,c] of captures)if(owned.get(id)!==c.ownerId)captures.delete(id);
- const target=events.find(e=>e.type==='war_target'&&(e.index<limit||presentation.finished||e.index===limit&&['locked','departing'].includes(presentation.phase)));
+ const target=events.find(e=>e.type==='war_target'&&(e.index<limit||complete||e.index===limit&&['locked','departing'].includes(presentation.phase)));
  return {captures,routes,movements,battleSites:[...battleSites.values()],actorId:record.actorId,opponentId:target?.targetId,fronts:[...fronts.values()].filter(f=>owned.get(f.fromId)!==owned.get(f.toId)),baseOwners,settled:false};
 }
 const frontPathCache=new WeakMap();
-export function sharedFrontPath(geometry,a,b){
- if(!a||!b)return '';
- if(!frontPathCache.has(geometry))frontPathCache.set(geometry,new Map());const cache=frontPathCache.get(geometry),key=[a.id,b.id].sort().join(':');if(cache.has(key))return cache.get(key);
+export function sharedFrontSegments(geometry,a,b){
+ if(!a||!b)return [];
+ if(!frontPathCache.has(geometry))frontPathCache.set(geometry,new Map());const cache=frontPathCache.get(geometry),key=[geometry.cells.indexOf(a),geometry.cells.indexOf(b)].sort((x,y)=>x-y).join(':');if(cache.has(key))return cache.get(key);
  const paths=[];
  for(const ringA of [cellPoints(a),...(a.holes||[])])for(let i=0;i<ringA.length;i++){
   const p=ringA[i],q=ringA[(i+1)%ringA.length],dx=q[0]-p[0],dy=q[1]-p[1],length=Math.hypot(dx,dy);if(!length)continue;
@@ -63,11 +66,12 @@ export function sharedFrontPath(geometry,a,b){
    const r=ringB[j],s=ringB[(j+1)%ringB.length];
    if(Math.abs(dx*(r[1]-p[1])-dy*(r[0]-p[0]))/length>.015||Math.abs(dx*(s[1]-p[1])-dy*(s[0]-p[0]))/length>.015)continue;
    const at=v=>((v[0]-p[0])*dx+(v[1]-p[1])*dy)/(length*length),lo=Math.max(0,Math.min(at(r),at(s))),hi=Math.min(1,Math.max(at(r),at(s)));
-   if(hi-lo>.0001)paths.push(`M${p[0]+lo*dx},${p[1]+lo*dy} L${p[0]+hi*dx},${p[1]+hi*dy}`);
+   if(hi-lo>.0001)paths.push([[p[0]+lo*dx,p[1]+lo*dy],[p[0]+hi*dx,p[1]+hi*dy]]);
   }
  }
- const path=paths.join(' ');cache.set(key,path);return path;
+ cache.set(key,paths);return paths;
 }
+export function sharedFrontPath(geometry,a,b){return sharedFrontSegments(geometry,a,b).map(([p,q])=>`M${p} L${q}`).join(' ');}
 export function campaignHatchDefs(world){return world.countries.map((c,i)=>`<pattern id="round-hatch-${i}" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(28)"><path d="M0 0V4" fill="none" stroke="${c.color}" stroke-width="1.4"/><path d="M1 0V4" fill="none" stroke="#000" stroke-opacity=".3" stroke-width=".35"/></pattern>`).join('');}
 export function renderRoundCaptures(world,geometry,campaign){return `<g class="round-captures" pointer-events="none">${[...campaign.captures.values()].map(c=>{const i=world.territories.findIndex(t=>t.id===c.territoryId),owner=world.countries.findIndex(n=>n.id===c.ownerId);return `<path class="round-captured-territory" data-round-capture="${esc(c.territoryId)}" data-capture-owner="${esc(c.ownerId)}" d="${geometry.cells[i].path}" fill="url(#round-hatch-${owner})" fill-rule="evenodd" stroke="${world.countries[owner]?.color||'#fff'}" stroke-width="1.5"/>`;}).join('')}</g>`;}
 export function renderRoundRoutes(world,geometry,campaign,options={}){

@@ -40,7 +40,7 @@ test('failed domestic action has a single zero-change notice and no troop or upg
 });
 test('fullscreen contains only the map at rest and after completion; results vanish before effects',()=>{
  const f=domestic(1),player=new TurnPlayback();const ready=renderMapStage({world:f.before,run:null,playback:player});assert.ok(!ready.includes('map-judgment'));assert.ok(!ready.includes('map-stage-sidebar'));assert.ok(!ready.includes('visual-nation-card'));assert.ok(!ready.includes('<button type="button"'));
- player.load(f.run.history[0],f.before,f.run.world,false);while(player.scene.kind!=='result')player.step();assert.ok(renderJudgmentOverlay({world:player.displayWorld,playback:player}).includes('judgment-person'));
+ player.load(f.run.history[0],f.before,f.run.world,false);while(player.scene.kind!=='result')player.step();assert.ok(renderJudgmentOverlay({world:player.displayWorld,playback:player}).includes('is-royal-die'));
  const old=player.displayWorld;player.step();assert.equal(player.state.phase,'departing');assert.equal(player.displayWorld,old);player.step();assert.equal(player.scene.kind,'apply');assert.equal(renderJudgmentOverlay({world:player.displayWorld,playback:player}),'');assert.ok(mapEffects(player.scene).units.length>0);
  player.finish();assert.equal(renderJudgmentOverlay({world:player.displayWorld,playback:player}),'');
 });

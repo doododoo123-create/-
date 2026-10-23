@@ -841,7 +841,6 @@ html[data-performance=mobile] .battle-emblem,html[data-performance=mobile] .camp
 .atlas-scroll[data-detail=wide] .mountain-markers{opacity:.4}
 .atlas-scroll[data-detail=regional] .observer-country-labels,.atlas-scroll[data-detail=battle] .observer-country-labels,.atlas-scroll[data-detail=all] .observer-country-labels,.atlas-scroll[data-detail=editor] .observer-country-labels{display:none}
 .atlas-scroll[data-detail=all] .atlas-name,.atlas-scroll[data-detail=all] .map-unit-position{visibility:visible}
-.combat-focused .map-unit-position:not(.unit-engaged){opacity:.60}
 .combat-focused .atlas-name:not(.name-incident){opacity:.48}
 .unit-engaged .unit-focal-body{transform:scale(1.12);transform-box:fill-box;transform-origin:50% 100%}
 .unit-combat-role{font:800 13px 'Malgun Gothic',sans-serif;fill:white;stroke:#061016;stroke-width:3px;paint-order:stroke}
@@ -1023,7 +1022,6 @@ html[data-performance=mobile] .battle-emblem,html[data-performance=mobile] .camp
 .round-relocation.is-moving circle{animation:relocation-endpoint 1s ease-in-out infinite}
 @keyframes relocation-endpoint{50%{opacity:.15}}
 .game-skin .map-unit-position[data-selected=true] .map-unit-token{outline:1.5px solid white;outline-offset:2px}
-.game-skin .atlas-scroll.combat-focused .map-unit-position:not(.unit-engaged):not([data-selected=true]):not([data-ghost=true]) .map-unit-token{opacity:.72}
 .game-skin .round-stalemate .front-line{stroke-width:2;vector-effect:non-scaling-stroke}
 .game-skin .round-stalemate .front-shadow{stroke-width:3.5;vector-effect:non-scaling-stroke}
 /* 280 -> 336px; typography, die and spacing grow by the same 1.2 factor. */
@@ -1082,6 +1080,38 @@ html[data-performance=mobile] .battle-emblem,html[data-performance=mobile] .camp
 html[data-performance=mobile] .unit-defeat{animation-name:v18-defeat;filter:none!important}
 .unit-defeat .map-unit-token{filter:grayscale(1)}
 @keyframes v18-defeat{0%,25%,50%,75%,100%{opacity:.6}12.5%,37.5%,62.5%,87.5%{opacity:1}}
+</style>
+  <style>/* Card size and all local notices share one zoom transform. */
+.game-skin .atlas-map .atlas-name{font-size:9.6px;stroke-width:1.8px!important}
+.game-skin .atlas-map .atlas-name.name-incident{font-size:12px;stroke-width:2.2px!important}
+.game-skin .atlas-scroll.combat-focused .map-unit-position:not(.unit-engaged),
+.game-skin .atlas-scroll.combat-focused .map-unit-position:not(.unit-engaged) .map-unit-token{opacity:1}
+.game-skin .unit-feedback-text,.game-skin .unit-loss-label,.game-skin .march-label,.game-skin .unit-combat-role,.game-skin .unit-status-label{font:800 8px/1.2 'Malgun Gothic',sans-serif;fill:#fff;stroke:#000;stroke-width:1.7px;paint-order:stroke;stroke-linejoin:round;pointer-events:none}
+.game-skin .unit-status-label.death{fill:#ff3038}.game-skin .unit-status-label.appointment{fill:#39ff73}
+.game-skin .unit-status-label.victory{fill:#ff263d}.game-skin .unit-status-label.defeat,.game-skin .unit-status-label.draw{fill:#fff}
+.unit-result-wash{fill:#46505a;fill-opacity:.32;pointer-events:none}
+.game-skin .unit-victory .map-unit-token,.game-skin .unit-defeat .map-unit-token{filter:grayscale(.55) brightness(.9)}
+/* Keep loss, role and centered result labels stable while only the card border pulses. */
+.game-skin .unit-victory,.game-skin .unit-defeat,html[data-performance=mobile] .unit-victory,html[data-performance=mobile] .unit-defeat{animation:none;opacity:1;filter:none!important}
+.game-skin .unit-victory .unit-battle-glow{animation:commander-engaged var(--outcome-time,1.8s) linear both;animation-delay:var(--outcome-delay,0s)}
+.game-skin .unit-defeat .map-unit-token{animation:v19-defeat-card var(--outcome-time,1.8s) linear both;animation-delay:var(--outcome-delay,0s)}
+@keyframes v19-defeat-card{0%,25%,50%,75%,100%{opacity:.72}12.5%,37.5%,62.5%,87.5%{opacity:1}}
+.playback-paused .unit-defeat .map-unit-token{animation-play-state:paused}
+.map-unit-position[data-unit-role=minister]>.unit-duel-layout{transform:translate(var(--minister-offset-x,45px),0)}
+.map-unit-position[data-unit-role=minister] .unit-pin-tip{display:none}
+.game-skin .map-unit-token .minister-role{font-size:7px;color:#fff}
+.game-skin .map-stage .map-judgment.is-royal-die{width:200px;min-width:0;max-width:calc(100% - 16px);padding:6px 8px;transform:none;border:1px solid var(--nation);border-radius:5px;background:#091620f5;box-shadow:0 2px 8px #0008;animation:none}
+.game-skin .is-royal-die .judgment-feature{font-size:9px;line-height:1.3;margin:3px 0}
+.game-skin .is-royal-die .visual-die-block{width:58px;max-width:58px;margin:3px auto}
+.game-skin .is-royal-die .attached-die{width:46px;height:46px}
+.game-skin .is-royal-die .die-caption{font-size:9px}.game-skin .is-royal-die .die-equation{font-size:9px}
+.game-skin .is-royal-die .die-number{font-size:23px}
+.game-skin .is-royal-die .royal-result{font-size:10px;margin:3px 0;text-align:center;color:#fff}
+.season-front path{fill:none;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.season-front-shadow{stroke:#03080b;stroke-width:4}
+.season-front-color{stroke-width:2.2}
+.game-skin .map-territory-feedback text{font-size:9px}
+@media(prefers-reduced-motion:reduce){.game-skin .unit-defeat .map-unit-token{animation:none!important}}
 </style>
   <script>(() => {
 'use strict';
@@ -1601,16 +1631,19 @@ function completedRoundPresentation(run){
 function roundCampaign(world,presentation){
  const record=presentation?.record,empty={captures:new Map(),routes:[],fronts:[],movements:[],battleSites:[],baseOwners:new Map(),settled:true};
  if(!record)return empty;
- const scene=presentation.scenes?.[presentation.index],events=record.events||[],roundEnd=events.find(e=>e.type==='round_end');
- if(presentation.finished&&(roundEnd||record.result)||scene&&((roundEnd&&scene.event?.index>=roundEnd.index)||scene.event?.type==='finish'))return empty;
+ const scene=presentation.scenes?.[presentation.index],events=record.events||[];
+ // A summary has no event index: it still contains every revealed result of this turn.
+ // Keep season effects through production and the inter-turn pause. The next round's
+ // first record naturally starts with an empty history at its season announcement.
+ const complete=!!presentation.finished||scene?.kind==='summary';
  const past=(presentation.roundRecords||[]).filter(r=>r.round===record.round&&r.turn<record.turn),records=[...past,record];
  const before=presentation.before||record.frames?.[0]?.before;
  const baseOwners=new Map((before||world).territories.map(t=>[t.id,t.ownerId]));
  if(!before)for(const c of [...(record.changes||[])].reverse())baseOwners.set(c.territoryId,c.from);
  for(const r of [...past].reverse())for(const c of [...(r.changes||[])].reverse())baseOwners.set(c.territoryId,c.from);
  const captures=new Map(),routes=[],fronts=new Map(),movements=[],lanes=new Map(),battleSites=new Map();
- const limit=presentation.finished?Infinity:scene?.event?.index??-1;
- const applied=r=>r!==record||presentation.finished;
+ const limit=complete?Infinity:scene?.event?.index??-1;
+ const applied=r=>r!==record||complete;
  for(const r of records){
   for(const motion of r.movements||[])for(const m of motion.moves)if(applied(r)||motion.eventIndex<limit||motion.eventIndex===limit&&(scene?.kind!=='movement'||['retreat','redeploy'].includes(m.kind)))movements.push({...m,key:`${r.turn}:${motion.eventIndex}:${m.personId}`});
   for(const b of r.battles||[]){
@@ -1640,13 +1673,13 @@ function roundCampaign(world,presentation){
  }
  const owned=new Map(world.territories.map(t=>[t.id,t.ownerId]));
  for(const [id,c] of captures)if(owned.get(id)!==c.ownerId)captures.delete(id);
- const target=events.find(e=>e.type==='war_target'&&(e.index<limit||presentation.finished||e.index===limit&&['locked','departing'].includes(presentation.phase)));
+ const target=events.find(e=>e.type==='war_target'&&(e.index<limit||complete||e.index===limit&&['locked','departing'].includes(presentation.phase)));
  return {captures,routes,movements,battleSites:[...battleSites.values()],actorId:record.actorId,opponentId:target?.targetId,fronts:[...fronts.values()].filter(f=>owned.get(f.fromId)!==owned.get(f.toId)),baseOwners,settled:false};
 }
 const frontPathCache=new WeakMap();
-function sharedFrontPath(geometry,a,b){
- if(!a||!b)return '';
- if(!frontPathCache.has(geometry))frontPathCache.set(geometry,new Map());const cache=frontPathCache.get(geometry),key=[a.id,b.id].sort().join(':');if(cache.has(key))return cache.get(key);
+function sharedFrontSegments(geometry,a,b){
+ if(!a||!b)return [];
+ if(!frontPathCache.has(geometry))frontPathCache.set(geometry,new Map());const cache=frontPathCache.get(geometry),key=[geometry.cells.indexOf(a),geometry.cells.indexOf(b)].sort((x,y)=>x-y).join(':');if(cache.has(key))return cache.get(key);
  const paths=[];
  for(const ringA of [cellPoints(a),...(a.holes||[])])for(let i=0;i<ringA.length;i++){
   const p=ringA[i],q=ringA[(i+1)%ringA.length],dx=q[0]-p[0],dy=q[1]-p[1],length=Math.hypot(dx,dy);if(!length)continue;
@@ -1654,11 +1687,12 @@ function sharedFrontPath(geometry,a,b){
    const r=ringB[j],s=ringB[(j+1)%ringB.length];
    if(Math.abs(dx*(r[1]-p[1])-dy*(r[0]-p[0]))/length>.015||Math.abs(dx*(s[1]-p[1])-dy*(s[0]-p[0]))/length>.015)continue;
    const at=v=>((v[0]-p[0])*dx+(v[1]-p[1])*dy)/(length*length),lo=Math.max(0,Math.min(at(r),at(s))),hi=Math.min(1,Math.max(at(r),at(s)));
-   if(hi-lo>.0001)paths.push(`M${p[0]+lo*dx},${p[1]+lo*dy} L${p[0]+hi*dx},${p[1]+hi*dy}`);
+   if(hi-lo>.0001)paths.push([[p[0]+lo*dx,p[1]+lo*dy],[p[0]+hi*dx,p[1]+hi*dy]]);
   }
  }
- const path=paths.join(' ');cache.set(key,path);return path;
+ cache.set(key,paths);return paths;
 }
+function sharedFrontPath(geometry,a,b){return sharedFrontSegments(geometry,a,b).map(([p,q])=>`M${p} L${q}`).join(' ');}
 function campaignHatchDefs(world){return world.countries.map((c,i)=>`<pattern id="round-hatch-${i}" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(28)"><path d="M0 0V4" fill="none" stroke="${c.color}" stroke-width="1.4"/><path d="M1 0V4" fill="none" stroke="#000" stroke-opacity=".3" stroke-width=".35"/></pattern>`).join('');}
 function renderRoundCaptures(world,geometry,campaign){return `<g class="round-captures" pointer-events="none">${[...campaign.captures.values()].map(c=>{const i=world.territories.findIndex(t=>t.id===c.territoryId),owner=world.countries.findIndex(n=>n.id===c.ownerId);return `<path class="round-captured-territory" data-round-capture="${esc(c.territoryId)}" data-capture-owner="${esc(c.ownerId)}" d="${geometry.cells[i].path}" fill="url(#round-hatch-${owner})" fill-rule="evenodd" stroke="${world.countries[owner]?.color||'#fff'}" stroke-width="1.5"/>`;}).join('')}</g>`;}
 function renderRoundRoutes(world,geometry,campaign,options={}){
@@ -3267,8 +3301,8 @@ function placeCompactDuel(){
  if(attack&&defense){const ax=Number(attack.dataset.combatScreenX),dx=Number(defense.dataset.combatScreenX),first=Math.abs(ax-dx)>10?ax<dx:Number(attack.dataset.combatScreenY)<Number(defense.dataset.combatScreenY);pane.style.setProperty('--attack-order',first?'0':'1');pane.style.setProperty('--defense-order',first?'1':'0');}
 }
 function placeRoyalChoice(){
- const root=globalThis.document?.querySelector?.('.map-stage'),pane=root?.querySelector('.is-royal-choice');if(!pane)return;
- const king=[...root.querySelectorAll('.map-unit-position[data-unit-role="king"]')].find(c=>c.dataset.country===pane.dataset.nation),card=king?.querySelector('foreignObject');if(!card)return;
+ const root=globalThis.document?.querySelector?.('.map-stage'),pane=root?.querySelector('.is-royal-choice,.is-royal-die');if(!pane)return;
+ const role=pane.dataset.anchorRole||'king',unit=[...root.querySelectorAll('.map-unit-position')].find(c=>c.dataset.unitRole===role&&c.dataset.country===pane.dataset.nation),card=unit?.querySelector('foreignObject');if(!card)return;
  const r=root.getBoundingClientRect(),b=card.getBoundingClientRect(),width=pane.offsetWidth,height=pane.offsetHeight;
  const left=Math.max(8,Math.min(r.width-width-8,b.x+b.width/2-r.x-width/2));
  let top=b.y-r.y-height-8;if(top<8)top=b.bottom-r.y+8;
@@ -3334,38 +3368,32 @@ function arrangeUnits(units){
 // src/ui/battle-presentation.js
 
 function mapUnitScale(screenScale,zoom=screenScale){
- const width=Math.max(24,Math.min(80,UNIT_CARD_WIDTH*Math.pow(zoom,.6)));
+ const width=1.2*Math.max(24,Math.min(80,UNIT_CARD_WIDTH*Math.pow(zoom,.6)));
  return width/(UNIT_CARD_WIDTH*screenScale);
 }
-function duelDirection(origin,target,short=false){
- const dx=origin[0]-target[0],dy=origin[1]-target[1],length=Math.hypot(dx,dy)||1;
- const vertical=Math.abs(dy)>Math.abs(dx)*1.2;
- return {x:dx/length||(!dy?-1:0),y:dy/length,axis:vertical?(short?'diagonal':'vertical'):'horizontal'};
+function duelDirection(origin,target){
+ // Territory coordinates choose order only; both cards always sit on the same horizontal row.
+ return {x:origin[0]<target[0]-.01?-1:origin[0]>target[0]+.01?1:-1,y:0,axis:'horizontal'};
 }
 function fitMapUnits(element){
  const svg=element.querySelector('.atlas-map'),matrix=svg?.getScreenCTM?.();if(!matrix)return;
  const scale=Math.hypot(matrix.a,matrix.b);if(!Number.isFinite(scale)||scale<=0)return;
- const bounds=element.getBoundingClientRect(),zoom=Number(element.dataset.zoom)||1,ordinaryWidth=UNIT_CARD_WIDTH*scale*mapUnitScale(scale,zoom),width=Math.min(80,Math.max(40,ordinaryWidth*1.2));
+ const bounds=element.getBoundingClientRect(),zoom=Number(element.dataset.zoom)||1,ordinaryWidth=UNIT_CARD_WIDTH*scale*mapUnitScale(scale,zoom),width=Math.min(96,Math.max(48,ordinaryWidth*1.2));
  svg.style.setProperty('--unit-display-scale',String(mapUnitScale(scale,zoom)));
  svg.style.setProperty('--duel-display-scale',String(width/(UNIT_CARD_WIDTH*scale)));
+ svg.style.setProperty('--minister-offset-x',`${ordinaryWidth*1.25/scale}px`);
  svg.style.setProperty('--battle-icon-scale',String(14/(20*scale)));
  svg.style.setProperty('--battle-site-scale',String(1/scale));
  svg.style.setProperty('--battle-label-offset',`${20/scale}px`);
  const ring=svg.querySelector('.battle-emblem .target-ring'),campaign=svg.querySelector('.map-campaign');if(!ring||!campaign)return;
- const r=ring.getBoundingClientRect(),center=[r.x+r.width/2,r.y+r.height/2],inverse=matrix.inverse(),raw=(campaign.dataset.attackOrigin||'0,0').split(',').map(Number),from=new DOMPoint(...raw).matrixTransform(matrix);
- const direction=duelDirection([from.x,from.y],center,bounds.height<500),half=width*54/64,hasLoss=!!svg.querySelector('.unit-loss-label'),top=(hasLoss?68:43)*width/32;
- svg.dataset.duelAxis=direction.axis;
+ const r=ring.getBoundingClientRect(),center=[r.x+r.width/2,r.y+r.height/2],inverse=matrix.inverse(),raw=(campaign.dataset.attackOrigin||'0,0').split(',').map(Number),target=(campaign.dataset.targetReference||'0,0').split(',').map(Number);
+ const direction=duelDirection(raw,target),half=width*54/64,hasLoss=!!svg.querySelector('.unit-loss-label'),top=(hasLoss?53:43)*width/32;
+ svg.dataset.duelAxis='horizontal';
+ // Clamp the whole pair together, preserving both horizontal alignment and card order.
+ const pairHalf=width+24,cx=Math.max(bounds.left+pairHalf+8,Math.min(bounds.right-pairHalf-8,center[0]));
+ const cy=Math.max(bounds.top+top+8,Math.min(bounds.bottom-half-8,center[1]));
  for(const card of svg.querySelectorAll('.map-unit-position[data-combat-side]')){
-  const side=card.dataset.combatSide,sign=side==='attack'?1:-1;
-  let x,y;
-  if(direction.axis==='vertical'){
-   const up=direction.y*sign<0;x=center[0]+direction.x*sign*width*.3;y=center[1]+(up?-half-24:top+24);
-  }else{
-   const sx=direction.x?Math.sign(direction.x): -1;x=center[0]+sx*sign*(width/2+24);
-   y=center[1]+(direction.axis==='diagonal'?Math.sign(direction.y)*sign*23:direction.y*sign*18);
-  }
-  x=Math.max(bounds.left+width/2+8,Math.min(bounds.right-width/2-8,x));
-  y=Math.max(bounds.top+top+8,Math.min(bounds.bottom-half-8,y));
+  const side=card.dataset.combatSide,sign=side==='attack'?1:-1,x=cx+direction.x*sign*(width/2+24),y=cy;
   const point=new DOMPoint(x,y).matrixTransform(inverse);
   svg.style.setProperty(`--battle-${side}-x`,`${point.x-Number(card.dataset.mapX)}px`);
   svg.style.setProperty(`--battle-${side}-y`,`${point.y-Number(card.dataset.mapY)}px`);
@@ -3515,6 +3543,62 @@ const portraitLabel = key => Object.hasOwn(LEADER_PORTRAITS,key)?`${key.startsWi
 const portraitChoices = () => [...Object.keys(LEADER_PORTRAITS),...Object.keys(GENERAL_PORTRAITS)];
 
 
+// src/ui/season-front.js
+
+
+
+
+
+// Revealed incidents only. These decorative teeth never create adjacency or combat rules.
+const seasonFrontCache=new WeakMap();
+function frontTeeth(geometry,a,b){
+ if(!seasonFrontCache.has(geometry))seasonFrontCache.set(geometry,new Map());
+ const cache=seasonFrontCache.get(geometry),key=`${geometry.cells.indexOf(a)}:${geometry.cells.indexOf(b)}`;if(cache.has(key))return cache.get(key);
+ const shape={points:cellPoints(a),holes:a.holes||[]},lines=[],teeth=[];
+ for(const [p,q] of sharedFrontSegments(geometry,a,b)){
+  const dx=q[0]-p[0],dy=q[1]-p[1],length=Math.hypot(dx,dy);if(length<.1)continue;
+  let nx=-dy/length,ny=dx/length;
+  const mid=[(p[0]+q[0])/2,(p[1]+q[1])/2];
+  if(!pointInShape([mid[0]+nx*.2,mid[1]+ny*.2],shape)){nx=-nx;ny=-ny;}
+  const offset=1.8,start=[p[0]+nx*offset,p[1]+ny*offset],end=[q[0]+nx*offset,q[1]+ny*offset];
+  lines.push(`M${start} L${end}`);
+  const count=Math.max(1,Math.floor(length/9));
+  for(let i=0;i<count;i++){
+   const t=(i+.5)/count,base=[start[0]+dx*t,start[1]+dy*t],tip=[base[0]+nx*4.5,base[1]+ny*4.5];
+   if(pointInShape(base,shape)&&pointInShape(tip,shape))teeth.push({from:base,to:tip});
+  }
+ }
+ const value={line:lines.join(' '),teeth};cache.set(key,value);return value;
+}
+function seasonFronts(world,geometry,campaign){
+ const affected=new Set([...campaign.captures.keys(),...(campaign.battleSites||[]).map(s=>s.territoryId)]),index=new Map(world.territories.map((t,i)=>[t.id,i])),fronts=[];
+ for(const id of affected){
+  const a=world.territories[index.get(id)];if(!a?.ownerId)continue;
+  for(const b of neighbors(world,a)){
+   if(!b.ownerId||b.ownerId===a.ownerId)continue;
+   const cell=geometry.cells[index.get(id)],opposite=geometry.cells[index.get(b.id)],drawing=frontTeeth(geometry,cell,opposite);
+   if(drawing.line)fronts.push({territoryId:id,neighborId:b.id,countryId:a.ownerId,cell,...drawing});
+  }
+ }
+ return fronts;
+}
+function renderSeasonFronts(world,geometry,campaign){
+ const fronts=seasonFronts(world,geometry,campaign);if(!fronts.length)return '';
+ return `<g class="season-fronts" pointer-events="none">${fronts.map((f,i)=>{const d=f.line+' '+f.teeth.map(t=>`M${t.from} L${t.to}`).join(' '),clip=`season-front-clip-${i}`,color=world.countries.find(c=>c.id===f.countryId)?.color||'#fff';return `<g class="season-front" data-front-territory="${esc(f.territoryId)}" data-front-neighbor="${esc(f.neighborId)}" data-front-owner="${esc(f.countryId)}"><defs><clipPath id="${clip}"><path d="${f.cell.path}" clip-rule="evenodd"/></clipPath></defs><g clip-path="url(#${clip})"><path class="season-front-shadow" d="${d}"/><path class="season-front-color" d="${d}" style="stroke:${color}"/></g></g>`;}).join('')}</g>`;
+}
+
+
+// src/ui/royal-presentation.js
+// Temporary minister presence is display-only; it has no army, station or engine slot.
+function royalRoleForScene(scene,record){
+ if(!scene||['season','summary','movement','round-settle'].includes(scene.kind))return null;
+ const event=scene.event||{};
+ if(scene.kind==='reel')return event.type==='minister'?'minister':'king';
+ if(record?.type==='domestic'&&['domestic_roll','supply_roll','resolve'].includes(event.type))return 'minister';
+ return null;
+}
+
+
 // src/ui/unit-outcomes.js
 // Visual effects read recorded outcomes; they never infer or change a battle result.
 function unitBattling(scene,record,person){
@@ -3544,7 +3628,7 @@ function unitBattleResult(scene,record,person){
 
 // Keep the bundle tip on the label anchor. Back cards expose only a narrow right edge.
 function stackUnits(markers,{focus={},battle=null,scene=null,record=null}={}){
- const groups=new Map();for(const marker of markers){const id=marker.combatSide?'duel:'+marker.combatSide:marker.territory.id;if(!groups.has(id))groups.set(id,[]);groups.get(id).push(marker);}
+ const groups=new Map();for(const marker of markers){const id=marker.role==='minister'?'minister:'+marker.country.id:marker.combatSide?'duel:'+marker.combatSide:marker.territory.id;if(!groups.has(id))groups.set(id,[]);groups.get(id).push(marker);}
  const output=[];
  for(const [id,group] of groups){
   const active=group.find(m=>m.ghost)||group.find(m=>unitOutcome(scene,record,m.person)==='appointment')||group.find(m=>scene?.kind==='movement'&&scene.moves?.some(v=>v.personId===m.person?.id))
@@ -3720,31 +3804,27 @@ function mapEffects(scene,stage=null,record=null) {
   return output;
 }
 
-function renderMapEffects(effects,geometry,world,currentMarkers,beforeMarkers=[]) {
-  const same=(m,e)=>m.country.id===e.countryId&&m.role===e.role&&(e.role==='king'||m.person?.slot===e.slot);
-  const stacks=new Map(),occupied=[];
-  const textWidth=(text,size)=>[...text].reduce((n,c)=>n+(/[가-힣]/.test(c)?size:size*.58),0)+20;
-  const labels=effects.units.filter(e=>!['death','appointment'].includes(e.type)).map(e=>{
-    const marker=currentMarkers.find(m=>same(m,e))||beforeMarkers.find(m=>same(m,e));if(!marker)return '';
-    const key=`${e.countryId}:${e.role}:${e.slot}`,row=stacks.get(key)||0;stacks.set(key,row+1);
-    const width=Math.min(300,Math.max(74,textWidth(e.label,17)));
-    const candidates=[[0,-70-row*29],[0,-99-row*29],[0,-128-row*29],[width*.6,-70-row*29],[-width*.6,-70-row*29],[0,-157-row*29]];
-    const places=candidates.map(([dx,dy])=>({x:Math.min(1200-width/2-4,Math.max(width/2+4,marker.point[0]+dx)),y:Math.max(28,marker.point[1]+dy)}));
-    const {x,y}=places.find(p=>!occupied.some(o=>p.x-width/2<o.x+o.w+4&&p.x+width/2+4>o.x&&p.y-22<o.y+o.h+4&&p.y+4>o.y))||places.at(-1);
-    occupied.push({x:x-width/2,y:y-22,w:width,h:26});
-    return `<g class="map-unit-feedback ${e.tone}" data-effect="${e.type}" data-country="${esc(e.countryId)}" data-role="${e.role}" data-slot="${e.slot??''}" data-delta="${e.delta}" transform="translate(${x},${y})"><path d="M${marker.point[0]-x} ${marker.point[1]-40-y} L0 4"/><rect x="${-width/2}" y="-22" width="${width}" height="26" rx="5"/><text text-anchor="middle" y="-4">${esc(e.label)}</text></g>`;
-  }).join('');
-  const territories=effects.territories.map(e=>{
-    const t=world.territories.find(t=>t.id===e.territoryId);if(!t)return '';
-    const point=territoryCell(world,geometry,t).center,label=e.label.length>17?e.label.slice(0,14)+'… 점령':e.label,width=Math.max(90,textWidth(label,13));
-    const spots=[[0,24],[0,-34],[0,52],[0,-58],[70,24],[-70,24],[0,80],[100,50],[-100,50]];
-    let chosen;
-    for(const [dx,dy] of spots){const box={x:Math.min(1196-width,Math.max(4,point[0]+dx-width/2)),y:Math.min(770,Math.max(4,point[1]+dy-14)),w:width,h:21};if(!occupied.some(o=>box.x<o.x+o.w+4&&box.x+box.w+4>o.x&&box.y<o.y+o.h+4&&box.y+box.h+4>o.y)){chosen=box;break;}}
-    chosen ||= {x:point[0]-width/2,y:point[1]+10,w:width,h:21};occupied.push(chosen);
-    const x=chosen.x+width/2,y=chosen.y+14;
-    return `<g class="map-territory-feedback" data-territory-effect="${esc(t.id)}" transform="translate(${x},${y})"><path d="M${point[0]-x} ${point[1]-y}L0 0"/><rect x="${-width/2}" y="-14" width="${width}" height="21" rx="4"/><text text-anchor="middle" y="1">${esc(label)}</text></g>`;
-  }).join('');
-  return labels||territories?`<g class="map-feedback-layer" pointer-events="none">${territories}${labels}</g>`:'';
+// Feedback lives inside the recipient card's zoom/stack transform, not in world-sized boxes.
+function unitFeedback(effects,marker){
+ return effects.units.filter(e=>!['death','appointment'].includes(e.type)&&marker.country.id===e.countryId&&marker.role===e.role&&(e.role==='king'||marker.person?.slot===e.slot));
+}
+function renderUnitFeedback(entries,{combatSide=false,hasLoss=false,hasStatus=false}={}){
+ const start=hasLoss?-55:combatSide||hasStatus?-46:-36;
+ return entries.map((e,i)=>`<text class="unit-feedback-text" data-effect="${e.type}" data-country="${esc(e.countryId)}" data-role="${e.role}" data-slot="${e.slot??''}" data-delta="${e.delta}" text-anchor="middle" y="${start-i*10}">${esc(e.label)}</text>`).join('');
+}
+function renderMapEffects(effects,geometry,world){
+ const occupied=[],textWidth=(text,size)=>[...text].reduce((n,c)=>n+(/[가-힣]/.test(c)?size:size*.58),0)+20;
+ const territories=effects.territories.map(e=>{
+  const t=world.territories.find(t=>t.id===e.territoryId);if(!t)return '';
+  const point=territoryCell(world,geometry,t).center,label=e.label.length>17?e.label.slice(0,14)+'… 점령':e.label,width=Math.max(70,textWidth(label,9));
+  const spots=[[0,24],[0,-34],[0,52],[0,-58],[70,24],[-70,24],[0,80],[100,50],[-100,50]];
+  let chosen;
+  for(const [dx,dy] of spots){const box={x:Math.min(1196-width,Math.max(4,point[0]+dx-width/2)),y:Math.min(770,Math.max(4,point[1]+dy-14)),w:width,h:17};if(!occupied.some(o=>box.x<o.x+o.w+4&&box.x+box.w+4>o.x&&box.y<o.y+o.h+4&&box.y+box.h+4>o.y)){chosen=box;break;}}
+  chosen ||= {x:point[0]-width/2,y:point[1]+10,w:width,h:17};occupied.push(chosen);
+  const x=chosen.x+width/2,y=chosen.y+12;
+  return `<g class="map-territory-feedback" data-territory-effect="${esc(t.id)}" transform="translate(${x},${y})"><path d="M${point[0]-x} ${point[1]-y}L0 0"/><rect x="${-width/2}" y="-12" width="${width}" height="17" rx="3"/><text text-anchor="middle" y="0">${esc(label)}</text></g>`;
+ }).join('');
+ return territories?`<g class="map-feedback-layer" pointer-events="none">${territories}</g>`:'';
 }
 
 
@@ -3760,6 +3840,7 @@ function renderOcean(coast){return `<g class="ocean-scenery" pointer-events="non
 
 
 // src/ui/atlas-view.js
+
 
 
 
@@ -3810,7 +3891,9 @@ function renderAtlas(world,{selected,observe=false,showNames=true,presentation=n
   const effectStage=presentation?.effectStage;
   const effects=mapEffects(presentation?.phase==='settled'?null:scene,effectStage,record),captured=new Set(effects.territories.map(e=>e.territoryId));
   const camps=scene?.camps||world.visualCamps||{};
-  const markers=unitMarkers(world,geometry,camps),landmarks=observerLandmarks(world),incidents=incidentTerritories(world,scene,battleVisible?battle:null);
+  const markers=unitMarkers(world,geometry,camps),royalRole=royalRoleForScene(scene,record);
+  if(royalRole==='minister'){const king=markers.find(m=>m.role==='king'&&m.country.id===(scene.event?.nationId||record.actorId)),person=world.people.find(p=>p.role==='minister'&&p.countryId===king?.country.id);if(king&&person)markers.push({...king,person,role:'minister',troops:null});}
+  const landmarks=observerLandmarks(world),incidents=incidentTerritories(world,scene,battleVisible?battle:null);
   if(presentation?.phase!=='settled'&&scene?.kind==='apply'&&scene.event?.type==='death'&&scene.worldBefore){
     const entry=record.events.find(e=>e.type==='territory'&&e.battleIndex===scene.battleIndex),fallback=record.frames?.[entry?.index]?.before;
     for(const source of [scene.worldBefore,fallback].filter(Boolean))for(const m of unitMarkers(source,geometry,scene.camps||{}))if(m.role==='general'&&m.country.id===scene.event.nationId&&m.person.slot===scene.event.slot&&!markers.some(n=>n.person?.id===m.person.id))markers.push({...m,ghost:true});
@@ -3831,7 +3914,7 @@ ${illustrated?`<image class="terrain-art" href="${TERRAIN_ART}" x="0" y="0" widt
     </g><g class="atlas-cells">${world.territories.map(t=>{const g=territoryCell(world,geometry,t),c=findCountry(world,t.ownerId),base=campaign.captures.has(t.id)?findCountry(world,campaign.baseOwners.get(t.id)):c;return `<g class="atlas-cell ${linkedIds.includes(t.id)?'linked-territory':''}" data-territory="${esc(t.id)}" data-owner="${esc(t.ownerId||'')}" ${observe?'data-observe="true"':''} tabindex="0" role="button" title="${esc(t.name)} · ${esc(c?.name||'무주지')}" aria-label="${esc(t.name)} · ${esc(c?.name||'무주지')}"><path class="territory atlas-territory ${!observe&&selected===t.id?'selected':''} ${battleVisible&&t.id===battle.territoryId?'battle-target':''} ${captured.has(t.id)?'captured':''}" d="${g.path}" fill-rule="evenodd" style="--nation:${base?.color||'#b6b9a9'}"/><title>${esc(t.name)} · ${esc(c?.name||'무주지')}</title></g>`;}).join('')}</g>
     ${renderRoundCaptures(world,geometry,campaign)}
     ${!illustrated?`<g class="atlas-terrain" clip-path="url(#continent-clip)" pointer-events="none">${geometry.cells.flatMap((g,i)=>{if(visualHash(i,4)<.58)return [];const [x,y]=g.center;const mountain=visualHash(i,5)>.5;return [`<g transform="translate(${x-18},${y+12})" opacity=".15" stroke="#364d36" stroke-width="1.6" fill="none">${mountain?'<path d="m-12 4 12-19L12 4M-3-9l3 4 4-3m5 11 10-16 12 16"/>':'<path d="m-8 4 8-18L8 4Zm8 0v7m8-4 7-15 7 15m-7 0v6"/>'}</g>`];}).join('')}<path class="atlas-river" d="M245 190C380 290 245 368 440 400S640 615 804 669M838 192C800 350 715 394 600 432S426 533 370 640"/></g>`:''}
-    ${!editing?renderOperationalFront(world,geometry,campaign,sharedFrontPath):''}<g class="country-outlines" pointer-events="none">${outlines.map(e=>`<g clip-path="url(#${e.clipId})" data-border-owner="${esc(e.ownerId||'neutral')}"><path d="${e.path}" fill="none" stroke="#111e20" stroke-width="8"/><path class="country-border-color" d="${e.path}" fill="none" stroke="${findCountry(world,e.ownerId)?.color||'#c5bb96'}" stroke-width="5.5"/></g>`).join('')}</g><path class="commander-border" d="${regions}" fill="none"/>
+    <g class="country-outlines" pointer-events="none">${outlines.map(e=>`<g clip-path="url(#${e.clipId})" data-border-owner="${esc(e.ownerId||'neutral')}"><path d="${e.path}" fill="none" stroke="#111e20" stroke-width="8"/><path class="country-border-color" d="${e.path}" fill="none" stroke="${findCountry(world,e.ownerId)?.color||'#c5bb96'}" stroke-width="5.5"/></g>`).join('')}</g><path class="commander-border" d="${regions}" fill="none"/>${!editing?renderSeasonFronts(world,geometry,campaign):''}
     ${showNames&&!editing?renderCountryLabels(landmarks):''}
     ${showNames?`<g class="atlas-labels" pointer-events="none">${world.territories.map(t=>{const p=mapAnchor(world,t.id,'label',geometry);return `<text x="${p[0]}" y="${p[1]+5}" text-anchor="middle" class="atlas-name ${landmarks.capitals.has(t.id)||incidents.has(t.id)?'name-key':''} ${incidents.has(t.id)?'name-incident':''} ${battleVisible&&t.id===battle.territoryId&&Math.hypot(p[0]-battlePoint[0],p[1]-battlePoint[1])<30?'name-battle-site':''}" data-territory-label="${esc(t.id)}">${esc(vectorPlate?t.name.replace(/^영지 (\d+)$/,'$1'):t.name)}</text>`;}).join('')}</g>`:''}
     <g class="station-leaders" pointer-events="none">${showUnits?markers.filter(m=>Math.hypot(m.anchorPoint[0]-m.point[0],m.anchorPoint[1]-m.point[1]-UNIT_PIN_OFFSET)>.001).map(m=>`<path d="M${m.anchorPoint} L${m.point[0]},${m.point[1]+UNIT_PIN_OFFSET}"/><circle cx="${m.anchorPoint[0]}" cy="${m.anchorPoint[1]}" r="3" style="stroke:${m.country.color}"/>`).join(''):''}</g>
@@ -3840,16 +3923,16 @@ ${illustrated?`<image class="terrain-art" href="${TERRAIN_ART}" x="0" y="0" widt
     ${renderRoundRoutes(world,geometry,campaign,{scene,progress:presentation?.movementProgress||0,selectedPersonId:focusedPerson,speed:presentation?.speed||1})}
     <g class="country-tokens">${stackUnits(showUnits?markers.map(m=>({...m,combatSide:battleVisible&&m.role==='general'?(m.country.id===battle.actorId&&m.person.slot===battle.slot?'attack':!battle.automatic&&m.country.id===battle.defenderId&&m.person.slot===battle.defenseSlot?'defense':null):null})):[],{focus:stackFocus,battle,scene,record}).map(({country,person,territory,point,role,troops,ghost,stackOffset,stackCount,stackFront,combatSide})=>{
       const outcome=presentation?.phase==='settled'?'':unitOutcome(scene,record,person),battleResult=presentation?.phase==='settled'?null:unitBattleResult(scene,record,person),battling=battleVisible&&unitBattling(scene,record,person),name=displayName(person,country.name),motion=scene?.kind==='movement'&&scene.moves?.find(m=>m.personId===person?.id);
-      const engaged=!!combatSide;
+      const engaged=!!combatSide,feedback=unitFeedback(effects,{country,person,role}),resultText=battleResult?({victory:'승리',defeat:'패배',draw:'무승부'})[battleResult.result]:'';
       const keyUnit=engaged||motion||ghost||outcome||effects.units.some(e=>e.countryId===country.id&&e.role===role&&(role==='king'||e.slot===person?.slot))||role==='king'||focusedCountry===country.id||landmarks.frontier.has(territory.id);
       const visualOrigin=motion?.visualFromId?mapAnchor(world,motion.visualFromId,'battle',geometry):null;
       const origin=visualOrigin?[visualOrigin[0],visualOrigin[1]-12-UNIT_PIN_OFFSET]:motion?unitMarkers(world,geometry,scene.campsBefore).find(m=>m.person?.id===person.id)?.point:null;
       const waypoints=motion&&motion.kind!=='redeploy'&&origin?[origin,...motion.path.slice(1,-1).map(id=>(()=>{const p=mapAnchor(world,id,'station',geometry);return [p[0],p[1]-12-UNIT_PIN_OFFSET];})()),point]:null;
       const relative=waypoints?.map(p=>[p[0]-point[0],p[1]-point[1]]),motionStyle=relative?`offset-path:path('M${relative.map(p=>p.join(',')).join(' L')}');--march-time:${1.6/(presentation?.speed||1)}s;--march-delay:${-1.6*(presentation?.movementProgress||0)/(presentation?.speed||1)}s`:motion?.kind==='redeploy'?`--march-time:${1.6/(presentation?.speed||1)}s;--march-delay:${-1.6*(presentation?.movementProgress||0)/(presentation?.speed||1)}s`:'';
-      return `<g class="map-unit-position ${engaged?'unit-engaged':''} ${keyUnit?'unit-key':''}" transform="translate(${point})" data-map-x="${point[0]}" data-map-y="${point[1]}" ${combatSide?`data-combat-side="${combatSide}"`:''} data-person="${esc(person?.id||country.id)}" data-country="${esc(country.id)}" data-unit-role="${role}" data-selected="${focusedPerson===person?.id}" data-camp="${esc(territory.id)}" data-outcome="${outcome}" data-stack-count="${stackCount}" data-stack-front="${stackFront}" ${ghost?'data-ghost="true"':''}><g class="unit-duel-layout"><g class="${motion?(motion.kind==='redeploy'?'unit-redeploy':'unit-marching'):''} ${outcome?'unit-outcome unit-'+outcome:''} ${battling?'unit-battling':''}" style="${motionStyle}${outcome||battling?`;--outcome-time:${1.8/(presentation?.speed||1)}s;--outcome-delay:${-1.8*(presentation?.sceneProgress||0)/(presentation?.speed||1)}s`:''}"><g class="unit-display-scale"><g transform="translate(${stackOffset},0)" class="unit-stack-card"><g class="unit-focal-body">${stackFront?`<path class="unit-pin-tip" d="M-12 25 L0 35 L12 25" style="--nation:${country.color}"/>`:''}<foreignObject x="${-UNIT_CARD_WIDTH/2}" y="${-UNIT_CARD_HEIGHT/2}" width="${UNIT_CARD_WIDTH}" height="${UNIT_CARD_HEIGHT+4}"><div xmlns="http://www.w3.org/1999/xhtml" class="token-wrap"><button class="map-unit-token ${focusedCountry===country.id?'focused':''} ${battleVisible&&country.id===battle.actorId&&person?.slot===battle.slot?'attacking':''}" data-role="${role}" data-slot="${person?.slot??''}" data-action="${stackCount>1?'cycle-stack':role==='general'?'focus-unit':'focus-country'}" data-id="${esc(stackCount>1?territory.id:role==='general'?person.id:country.id)}" style="--nation:${country.color}" title="${esc(name)} · ${role==='king'?'수도 예비병':`장군 주둔군 / 한도 ${person.capacity}만 / ${person.connected?'수도 연결':'단절'}`} ${troops}만${person?.stranded?' · 퇴각 불가':''}${stackCount>1?' · 클릭하여 포갠 카드 넘기기':''}" aria-label="${esc(name)} · 병력 ${troops}만"><span class="token-portraits">${portraitImage(person,country,role)}</span><span class="token-copy"><b>${role==='king'?'<i class="king-crown" aria-label="국왕">👑</i>':''}<span>${esc(name)}</span>${role==='general'&&person?.wins>=3?`<i class="veteran-stars" aria-label="${person.wins}승">${'★'.repeat(Math.min(3,Math.floor(person.wins/3)))}</i>`:''}</b><strong><small>병력</small> ${format(troops)}<span>만</span></strong></span></button></div></foreignObject>${battling||outcome==='victory'?'<rect class="unit-battle-glow" x="-18" y="-29" width="36" height="58" rx="5" pointer-events="none"/>':''}${['death','appointment'].includes(outcome)?`<rect class="unit-status-wash ${outcome}" x="-16" y="-27" width="32" height="58" rx="4" pointer-events="none"/>`:''}${combatSide?`<text class="unit-combat-role" text-anchor="middle" y="-34">${combatSide==='attack'?'공격':'수비'}</text>`:''}${battleResult?`<text class="unit-loss-label" data-battle-loss="${battleResult.loss}" text-anchor="middle" y="-59">-${format(battleResult.loss)}만명</text>`:''}${outcome?`<text class="unit-status-label ${outcome}" data-effect="${outcome}" text-anchor="middle" y="${battleResult?-46:-34}">${({death:'사망',appointment:'임관',victory:'승리',defeat:'패배'})[outcome]}</text>`:''}${battleResult?.result==='draw'?'<text class="unit-status-label draw" text-anchor="middle" y="-46">무승부</text>':''}</g></g></g>${motion?`<text class="march-label" text-anchor="middle" y="-34">${motion.kind==='return'?'복귀 · 방어':motion.kind==='relief'?'구원 · 방어':motion.kind==='retreat'?'퇴각':motion.kind==='redeploy'?'재배치':motion.kind==='home'?'담당지 복귀':motion.kind==='occupation'?'점령지 진입':motion.kind==='recovery'?'주둔지 복귀':'출정'}</text>`:''}</g></g></g>`;
+      return `<g class="map-unit-position ${engaged?'unit-engaged':''} ${keyUnit?'unit-key':''}" transform="translate(${point})" data-map-x="${point[0]}" data-map-y="${point[1]}" ${combatSide?`data-combat-side="${combatSide}"`:''} data-person="${esc(person?.id||country.id)}" data-country="${esc(country.id)}" data-unit-role="${role}" data-selected="${focusedPerson===person?.id}" data-camp="${esc(territory.id)}" data-outcome="${outcome}" data-stack-count="${stackCount}" data-stack-front="${stackFront}" ${ghost?'data-ghost="true"':''}><g class="unit-duel-layout"><g class="${motion?(motion.kind==='redeploy'?'unit-redeploy':'unit-marching'):''} ${outcome?'unit-outcome unit-'+outcome:''} ${battling?'unit-battling':''}" style="${motionStyle}${outcome||battling?`;--outcome-time:${1.8/(presentation?.speed||1)}s;--outcome-delay:${-1.8*(presentation?.sceneProgress||0)/(presentation?.speed||1)}s`:''}"><g class="unit-display-scale"><g transform="translate(${stackOffset},0)" class="unit-stack-card"><g class="unit-focal-body">${stackFront?`<path class="unit-pin-tip" d="M-12 25 L0 35 L12 25" style="--nation:${country.color}"/>`:''}<foreignObject x="${-UNIT_CARD_WIDTH/2}" y="${-UNIT_CARD_HEIGHT/2}" width="${UNIT_CARD_WIDTH}" height="${UNIT_CARD_HEIGHT+4}"><div xmlns="http://www.w3.org/1999/xhtml" class="token-wrap"><button class="map-unit-token ${focusedCountry===country.id?'focused':''} ${battleVisible&&country.id===battle.actorId&&person?.slot===battle.slot?'attacking':''}" data-role="${role}" data-slot="${person?.slot??''}" data-action="${stackCount>1?'cycle-stack':role==='general'?'focus-unit':'focus-country'}" data-id="${esc(stackCount>1?territory.id:role==='general'?person.id:country.id)}" style="--nation:${country.color}" title="${esc(name)} · ${role==='minister'?'승상':role==='king'?'수도 예비병':`장군 주둔군 / 한도 ${person.capacity}만 / ${person.connected?'수도 연결':'단절'}`}${role==='minister'?'':` ${troops}만`}${person?.stranded?' · 퇴각 불가':''}${stackCount>1?' · 클릭하여 포갠 카드 넘기기':''}" aria-label="${esc(name)}${role==='minister'?' · 승상':` · 병력 ${troops}만`}"><span class="token-portraits">${portraitImage(person,country,role)}</span><span class="token-copy"><b>${role==='king'?'<i class="king-crown" aria-label="국왕">👑</i>':''}<span>${esc(name)}</span>${role==='general'&&person?.wins>=3?`<i class="veteran-stars" aria-label="${person.wins}승">${'★'.repeat(Math.min(3,Math.floor(person.wins/3)))}</i>`:''}</b>${role==='minister'?'<strong class="minister-role">승상</strong>':`<strong><small>병력</small> ${format(troops)}<span>만</span></strong>`}</span></button></div></foreignObject>${battling||outcome==='victory'?'<rect class="unit-battle-glow" x="-18" y="-29" width="36" height="58" rx="5" pointer-events="none"/>':''}${['death','appointment'].includes(outcome)?`<rect class="unit-status-wash ${outcome}" x="-16" y="-27" width="32" height="58" rx="4" pointer-events="none"/>`:''}${combatSide?`<text class="unit-combat-role" text-anchor="middle" y="-34">${combatSide==='attack'?'공격':'수비'}</text>`:''}${battleResult?`<rect class="unit-result-wash" x="-16" y="-27" width="32" height="58" rx="4" pointer-events="none"/><text class="unit-status-label ${battleResult.result} unit-result-label" data-effect="${battleResult.result}" text-anchor="middle" y="2">${resultText}</text><text class="unit-loss-label" data-battle-loss="${battleResult.loss}" text-anchor="middle" y="${combatSide?-46:-36}">-${format(battleResult.loss)}만명</text>`:''}${['death','appointment'].includes(outcome)?`<text class="unit-status-label ${outcome}" data-effect="${outcome}" text-anchor="middle" y="-36">${outcome==='death'?'사망':'임관'}</text>`:''}${renderUnitFeedback(feedback,{combatSide,hasLoss:!!battleResult,hasStatus:['death','appointment'].includes(outcome)})}${motion?`<text class="march-label" text-anchor="middle" y="${-36-feedback.length*10}">${motion.kind==='return'?'복귀 · 방어':motion.kind==='relief'?'구원 · 방어':motion.kind==='retreat'?'퇴각':motion.kind==='redeploy'?'재배치':motion.kind==='home'?'담당지 복귀':motion.kind==='occupation'?'점령지 진입':motion.kind==='recovery'?'주둔지 복귀':'출정'}</text>`:''}</g></g></g></g></g></g>`;
     }).join('')}</g>
-    ${battleVisible&&battlePoint?`<g class="map-campaign" data-attack-origin="${mapAnchor(world,battle.fromId,'reference',geometry)}" pointer-events="none"><path class="battle-location-leader" d="M${targetPoint} L${battlePoint}"/>${battleEmblem(battlePoint,markers,battle.territoryName)}</g>`:''}
-    ${renderMapEffects(effects,geometry,world,markers,scene?.worldBefore?unitMarkers(scene.worldBefore,geometry):[])}
+    ${battleVisible&&battlePoint?`<g class="map-campaign" data-attack-origin="${mapAnchor(world,battle.fromId,'reference',geometry)}" data-target-reference="${mapAnchor(world,battle.territoryId,'reference',geometry)}" pointer-events="none"><path class="battle-location-leader" d="M${targetPoint} L${battlePoint}"/>${battleEmblem(battlePoint,markers,battle.territoryName)}</g>`:''}
+    ${renderMapEffects(effects,geometry,world)}
     ${!vectorPlate?`<g class="map-compass" transform="translate(1115 98)" fill="none" stroke="#345962" opacity=".65"><circle r="27"/><path d="M0-38V38M-38 0H38m-12-12L12 12M-12 12 12-12"/><path d="M0-24 7 9 0 5-7 9Z" fill="#345962"/><text y="-46" text-anchor="middle" fill="#345962" stroke="none">N</text></g>`:''}
     ${editing?renderMapDraft(draft,draftMode):''}
     ${editing&&selected?`<g class="map-edit-anchors">${[['reference','기준','#fff'],['label','이름','#81d8ff'],['station','경로','#8ef3ba'],['battle','전투','#ff9b92']].map(([key,label,color],i)=>{const p=mapAnchor(world,selected,key,geometry);return `<g data-map-anchor="${key}" transform="translate(${p})" style="--anchor-color:${color}"><circle r="${6+i*3}"/><path d="M-10 0H10M0-10V10"/><text x="12" y="${-16-i*13}">${label}</text></g>`;}).join('')}</g>`:''}
@@ -4012,7 +4095,6 @@ function makeTurnScenes(record,before) {
   if(record.seasonStart??record.turn===1){const calendar=calendarAtRound(record.round);scenes.push({id:'season-'+record.round,kind:'season',event:{type:'season',index:-1,round:record.round,...calendar},title:calendar.label,worldBefore:before,worldAfter:before,camps});}
   for(const event of record.events) {
     const frame=record.frames?.[event.index]||{before,after:before};
-    if(event.type==='round_end')scenes.push({id:'round-settle',kind:'round-settle',event:{type:'round_settle',index:event.index-.5},title:'한 바퀴의 영토 확정',worldBefore:frame.before,worldAfter:frame.before,camps});
     const motion=record.movements?.find(m=>m.eventIndex===event.index);
     if(motion){scenes.push({id:`move-${event.index}`,kind:'movement',event,battleIndex:event.battleIndex,title:motion.moves.some(m=>m.kind==='redeploy')?'생존 지휘관 재배치':'지휘관 출정·복귀',worldBefore:frame.before,worldAfter:frame.before,campsBefore:camps,camps:motion.camps,moves:motion.moves});camps=motion.camps;}
     if(event.type==='expedition_roll')continue;
@@ -4095,6 +4177,7 @@ class TurnPlayback {
 
 
 
+
 const judgmentSign=n=>n>0?`+${n}`:String(n||0);
 function judgmentVisible(playback){
   const scene=playback.scene;
@@ -4133,12 +4216,17 @@ function renderJudgmentOverlay({world,playback}) {
 
     note=result?battle.winner===null?'무승부':battle.takenCells.length?`${battle.winner===battle.actor?'점령':'역점령'} ${battle.takenCells.length}`:'영토 유지':'';
     return `<aside class="map-judgment is-duel is-compact-duel is-v16-duel is-v17-duel" data-event="${esc(event.type)}" data-phase="${state.phase}" aria-label="${esc(battle.territoryName)} 전투 판정"><header class="mini-combat-header"><span>${esc(battle.territoryName)}</span>${battle.defendersTotal>1?`<small>${battle.wave}/${battle.defendersTotal}</small>`:''}</header>${body}${note?`<p class="mini-combat-result">${esc(note)}</p>`:''}</aside>`;
+  }else if(royalRoleForScene(scene,record)==='minister'&&scene.kind!=='reel'){
+    const person=judgmentPerson(frame,nation,'minister'),score=record.domesticScore,showDie=scene.kind==='roll'||result;
+    const value=scene.kind==='roll'?scene.value:score?.raw,bonus=scene.kind==='roll'?scene.bonus||0:score?.ability||0;
+    const die=showDie?renderDie(value,scene.faces||10,scene.kind==='roll'?phase:'locked',event.type==='supply_roll'?'지휘한도 증가':'내정 판정',bonus):'';
+    return `<aside class="map-judgment is-royal-die" data-nation="${esc(nation?.id||'')}" data-anchor-role="minister" data-event="${esc(event.type)}" data-phase="${state.phase}" style="--nation:${nation?.color||'#fff'}" aria-label="${esc(nation?.name||'')} 승상 판정"><div class="royal-choice-heading">${esc(nation?.name||'')} · 승상</div>${die}${judgmentTraits(person,'minister',nation)}${result?`<p class="royal-result">${event.success?'내정 성공':'내정 실패'}</p>`:''}</aside>`;
   }else if(event.type==='hold'){
     const person=judgmentPerson(frame,nation,'general',event.slot);
     body=`<div class="judgment-single refusal-person">${judgmentPortrait(person,nation,'general')}</div><p class="dispatch-refusal">출정 거부</p>`;
   }else if(scene.kind==='reel'){
     const role=event.role||'king';
-    return `<aside class="map-judgment is-royal-choice" data-nation="${esc(nation?.id||'')}" data-event="${esc(event.type)}" data-phase="${state.phase}" style="--nation:${nation?.color||'#fff'}" aria-label="${esc(nation?.name||'')} ${role==='king'?'국왕':'승상'} 선택"><div class="royal-choice-heading">${esc(nation?.name||'')} · ${role==='king'?'국왕':'승상'}</div>${renderChoiceReel(scene,phase,playback.sceneProgress,{rowHeight:32})}</aside>`;
+    return `<aside class="map-judgment is-royal-choice" data-anchor-role="${role}" data-nation="${esc(nation?.id||'')}" data-event="${esc(event.type)}" data-phase="${state.phase}" style="--nation:${nation?.color||'#fff'}" aria-label="${esc(nation?.name||'')} ${role==='king'?'국왕':'승상'} 선택"><div class="royal-choice-heading">${esc(nation?.name||'')} · ${role==='king'?'국왕':'승상'}</div>${renderChoiceReel(scene,phase,playback.sceneProgress,{rowHeight:32})}</aside>`;
   }else if(['round_end','roster','waiting','finish','elimination'].includes(event.type)){
     note=event.type==='round_end'?'각 지역에서 병력을 생산합니다.':event.detail;
   }else{
@@ -4345,7 +4433,7 @@ function render() {
   renderApp($('#app'), `
     <aside class="sidebar">
       <a class="brand" href="#" data-page="overview" aria-label="사국쟁패 Studio 세계 개요"><span class="brand-symbol">${icon('compass', 29)}</span><span><strong>사국쟁패</strong><small>HISTORY STUDIO</small></span></a>
-      <div class="workspace-label">WORKSPACE <span>v0.18.0${mobileProfile()?' · 경량판':' · 일반판'}</span></div>
+      <div class="workspace-label">WORKSPACE <span>v0.19.0${mobileProfile()?' · 경량판':' · 일반판'}</span></div>
       <button class="world-switch" data-action="world-meta"><span class="world-icon">${icon('globe', 19)}</span><span><b>${esc(world.name)}</b><small>나의 세계 · 편집 가능</small></span>${icon('edit', 13)}</button>
       <div class="nav-label">세계 만들기</div>
       <nav aria-label="주요 메뉴">${Object.entries(pages).slice(0, 4).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}<div class="nav-label nav-second">역사 관찰하기</div>${Object.entries(pages).slice(4).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}</nav>
@@ -4356,7 +4444,7 @@ function render() {
       <main id="main-content" class="${ui.page === 'simulation' ? 'simulation-page' : ''} ${playback.state&&!playback.playing&&!playback.complete?'playback-paused':''}" tabindex="-1">
         ${pageHeading()}
         ${ui.page === 'overview' ? overview() : ui.page === 'countries' ? countriesPage() : ui.page === 'people' ? peoplePage() : ui.page === 'map' ? mapPage() : ui.page === 'simulation' ? simulationPage() : rulesPage()}
-        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.18.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
+        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.19.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
       </main>
     </div>`);
   mapCamera.restore();if(ui.page==='simulation')mapCamera.follow(playback);
