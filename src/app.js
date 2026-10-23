@@ -31,7 +31,7 @@ const $ = selector => document.querySelector(selector);
 let initialError = '';
 let world;
 try { world = vividWorld(prepareV13World(loadWorld(localStorage) || createContinent160World())); } catch (error) { world = createDemoWorld(); initialError = error.message + ' 시작 예제를 표시합니다. 기존 저장 데이터는 덮어쓰지 않았습니다.'; }
-const ui = { page: 'overview', selected: world.territories[0]?.id, paint: false, brush: world.countries[0]?.id || '', countryFilter: '', roleFilter: '', search: '', showNames: true, recording: false, mapFullscreen:false, seed: '20261017', speed: 1, mapStyle: 'atlas', editorView:'atlas', focusedCountry: null, historyOffset:0, replayLoading:false,stackFocus:{} };
+const ui = { page: 'overview', selected: world.territories[0]?.id, paint: false, brush: world.countries[0]?.id || '', countryFilter: '', roleFilter: '', search: '', showNames: true, recording: false, mapFullscreen:false, seed: '20261017', speed: 1, mapStyle: 'atlas', editorView:'atlas', focusedCountry: null, focusedPerson:null, historyOffset:0, replayLoading:false,stackFocus:{} };
 const mapCamera=new MapCamera();
 try{if(localStorage.getItem('saguk-studio.viewer-detail')==='all')mapCamera.detailMode='all';}catch{}
 const mapGenerator=new MapGenerator({getWorld:()=>world,apply:next=>{mapEditor.draft=null;mapEditor.mode='select';mapCamera.resetAll();mapEditor.save(next);},notify});
@@ -86,11 +86,11 @@ function render() {
   document.title = `${world.name} · 사국쟁패 Studio${mobileProfile()?' 모바일 경량판':''}`;
   document.body.classList.toggle('map-stage-open',ui.mapFullscreen);
   $('#app').className = ui.mapFullscreen?'map-fullscreen':ui.recording ? 'recording-mode' : '';
-  if(ui.mapFullscreen){renderApp($('#app'),renderMapStage({world:playback.displayWorld||run?.world||previewWorld(world),run,playback,auto,speed:ui.speed,showNames:ui.showNames,focusedCountry:ui.focusedCountry,stackFocus:ui.stackFocus}));mapCamera.restore();mapCamera.follow(playback);return;}
+  if(ui.mapFullscreen){renderApp($('#app'),renderMapStage({world:playback.displayWorld||run?.world||previewWorld(world),run,playback,auto,speed:ui.speed,showNames:ui.showNames,focusedCountry:ui.focusedCountry,focusedPerson:ui.focusedPerson,stackFocus:ui.stackFocus}));mapCamera.restore();mapCamera.follow(playback);return;}
   renderApp($('#app'), `
     <aside class="sidebar">
       <a class="brand" href="#" data-page="overview" aria-label="사국쟁패 Studio 세계 개요"><span class="brand-symbol">${icon('compass', 29)}</span><span><strong>사국쟁패</strong><small>HISTORY STUDIO</small></span></a>
-      <div class="workspace-label">WORKSPACE <span>v0.16.0${mobileProfile()?' · 경량판':' · 일반판'}</span></div>
+      <div class="workspace-label">WORKSPACE <span>v0.17.0${mobileProfile()?' · 경량판':' · 일반판'}</span></div>
       <button class="world-switch" data-action="world-meta"><span class="world-icon">${icon('globe', 19)}</span><span><b>${esc(world.name)}</b><small>나의 세계 · 편집 가능</small></span>${icon('edit', 13)}</button>
       <div class="nav-label">세계 만들기</div>
       <nav aria-label="주요 메뉴">${Object.entries(pages).slice(0, 4).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}<div class="nav-label nav-second">역사 관찰하기</div>${Object.entries(pages).slice(4).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}</nav>
@@ -101,7 +101,7 @@ function render() {
       <main id="main-content" class="${ui.page === 'simulation' ? 'simulation-page' : ''} ${playback.state&&!playback.playing&&!playback.complete?'playback-paused':''}" tabindex="-1">
         ${pageHeading()}
         ${ui.page === 'overview' ? overview() : ui.page === 'countries' ? countriesPage() : ui.page === 'people' ? peoplePage() : ui.page === 'map' ? mapPage() : ui.page === 'simulation' ? simulationPage() : rulesPage()}
-        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.16.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
+        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.17.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
       </main>
     </div>`);
   mapCamera.restore();if(ui.page==='simulation')mapCamera.follow(playback);
@@ -126,7 +126,7 @@ function mapPanel(data, editing = false, simulation = false) {
   if (!editing && (ui.mapStyle === 'atlas'||data.mapKind==='free')) {
     data=previewWorld(data);
     const presentation = simulation&&playback.state ? {...playback.state,speed:ui.speed,movementProgress:playback.movementProgress,sceneProgress:playback.sceneProgress} : simulation?completedRoundPresentation(run):null;
-    return `<section class="panel map-panel atlas-panel"><div class="panel-head"><div><span class="eyebrow">ATLAS OF YOUR WORLD</span><h2>${esc(data.name)} <span class="tiny-badge">대륙 전도</span></h2></div><div class="map-panel-actions">${mapZoomControls(simulation?'simulation':'overview')}${button('map-fullscreen','지도 전체화면','expand','outline', 'title="전체화면: Space 한 단계 · Enter 한 턴 · A 자동/정지 · S 턴 결과 · Esc 닫기"')}<label class="map-view-select">지도 표시<select id="map-style" aria-label="지도 표시 방식"><option value="atlas" selected>대륙형</option><option value="grid">격자형</option></select></label></div></div>${renderAtlas(data, {selected: ui.selected, observe: simulation, showNames: ui.showNames, presentation, focusedCountry: ui.focusedCountry,stackFocus:ui.stackFocus})}<div class="atlas-map-note"><span>${icon('sword',14)} 국왕: 수도 예비병 · 장군: 개별 주둔군 · 화살표: 전투 경로</span><span>${data.mapKind==='free'?'직접 설정한 인접 관계':data.mapKind==='v11'?'원본 지도 인접 관계':'상하좌우 인접 관계'}</span></div><div class="map-legend">${data.countries.map(c => `<span>${dot(c.color)}${esc(c.name)}</span>`).join('')}</div>${!simulation ? `<div class="map-panel-footer"><span>영토를 선택해 정보를 확인하세요.</span><button class="text-button" data-page="map">지도 편집하기 ${icon('arrow', 15)}</button></div>` : ''}</section>`;
+    return `<section class="panel map-panel atlas-panel"><div class="panel-head"><div><span class="eyebrow">ATLAS OF YOUR WORLD</span><h2>${esc(data.name)} <span class="tiny-badge">대륙 전도</span></h2></div><div class="map-panel-actions">${mapZoomControls(simulation?'simulation':'overview')}${button('map-fullscreen','지도 전체화면','expand','outline', 'title="전체화면: Space 한 단계 · Enter 한 턴 · A 자동/정지 · S 턴 결과 · Esc 닫기"')}<label class="map-view-select">지도 표시<select id="map-style" aria-label="지도 표시 방식"><option value="atlas" selected>대륙형</option><option value="grid">격자형</option></select></label></div></div>${renderAtlas(data, {selected: ui.selected, observe: simulation, showNames: ui.showNames, presentation, focusedCountry: ui.focusedCountry,focusedPerson:ui.focusedPerson,stackFocus:ui.stackFocus})}<div class="atlas-map-note"><span>${icon('sword',14)} 국왕: 수도 예비병 · 장군: 개별 주둔군 · 굵은 화살표: 공격 · 점선: 이동 · ↩: 퇴각</span><span>${data.mapKind==='free'?'직접 설정한 인접 관계':data.mapKind==='v11'?'원본 지도 인접 관계':'상하좌우 인접 관계'}</span></div><div class="map-legend">${data.countries.map(c => `<span>${dot(c.color)}${esc(c.name)}</span>`).join('')}</div>${!simulation ? `<div class="map-panel-footer"><span>영토를 선택해 정보를 확인하세요.</span><button class="text-button" data-page="map">지도 편집하기 ${icon('arrow', 15)}</button></div>` : ''}</section>`;
   }
 
   const last = simulation ? run?.history.at(-1) : null;
@@ -302,8 +302,9 @@ const actions = {
   'auto': () => { if(!replaySession&&run?.result&&playback.complete)return; if (auto || playback.playing || replaySession?.playing) { stop(); render(); } else startAuto(); },
   'scene-step': async () => { if(ui.replayLoading)return;stop();if(playback.complete){if(replaySession){if(replaySession.turn>=replaySession.endTurn)return;await loadHistoryTurn(replaySession.turn+1,false);}else beginTurn(false);}playback.playGroup();render(); },
   'scene-skip': () => { if(ui.replayLoading)return;const continuing=!!replaySession?.playing;stop();if(replaySession)replaySession.playing=continuing;playback.finish();render(); },
-  'cycle-stack':id=>{const data=playback.displayWorld||run?.world||previewWorld(world),people=data.people.filter(p=>p.active&&p.alive&&p.role==='general'&&(playback.scene?.camps?.[p.id]?.territoryId||data.visualCamps?.[p.id]?.territoryId||p.positionId||p.stationId)===id);for(const c of data.countries.filter(c=>c.capitalId===id))people.unshift(data.people.find(p=>p.role==='king'&&p.countryId===c.id)||{id:'king-marker:'+c.id,countryId:c.id});const current=Math.max(0,people.findIndex(p=>p.id===ui.stackFocus[id]));const selected=people[(current+1)%people.length];if(!selected)return;Object.defineProperty(ui.stackFocus,id,{value:selected.id,enumerable:true,writable:true,configurable:true});ui.focusedCountry=selected.countryId;render();},
-  'focus-country': id => { ui.focusedCountry=id; render(); },
+  'cycle-stack':id=>{const data=playback.displayWorld||run?.world||previewWorld(world),people=data.people.filter(p=>p.active&&p.alive&&p.role==='general'&&(playback.scene?.camps?.[p.id]?.territoryId||data.visualCamps?.[p.id]?.territoryId||p.positionId||p.stationId)===id);for(const c of data.countries.filter(c=>c.capitalId===id))people.unshift(data.people.find(p=>p.role==='king'&&p.countryId===c.id)||{id:'king-marker:'+c.id,countryId:c.id});const current=Math.max(0,people.findIndex(p=>p.id===ui.stackFocus[id]));const selected=people[(current+1)%people.length];if(!selected)return;Object.defineProperty(ui.stackFocus,id,{value:selected.id,enumerable:true,writable:true,configurable:true});ui.focusedCountry=selected.countryId;ui.focusedPerson=selected.id;render();},
+  'focus-country': id => { ui.focusedCountry=id;ui.focusedPerson=null; render(); },
+  'focus-unit': id=>{const data=playback.displayWorld||run?.world||previewWorld(world),person=data.people.find(p=>p.id===id);if(!person)return;ui.focusedCountry=person.countryId;ui.focusedPerson=ui.focusedPerson===id?null:id;render();},
   'new-run': newRunDialog,
   'replay-run': () => {if(replaySession)returnFromReplay();stop();if(!run)return;const next=createRun(run.initialWorld,run.seed);playback.reset();mapCamera.followKey=null;ui.historyOffset=0;run=next;saveRun(localStorage,run);render();notify('같은 시작 세계와 시드로 처음부터 재생합니다.');},
   'reset-rules': () => {if(confirm('규칙 설정을 첨부 원본 v11 기본값으로 복원할까요?')){const next=clone(world);next.rules={...clone(DEFAULT_RULES),...clone(MAP_SCALE_DEFAULTS),seaSupply:false,battleMode:'v11',baseCapacity:20,commandReform:false};next.people.forEach(p=>{if(p.role==='general')p.ability=Math.sign(p.ability)*2;});updateWorld(next);}},

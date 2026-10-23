@@ -1,5 +1,5 @@
 import { cellPoints, mapAnchor } from '../model/cartography-geometry.js';
-import { battleRoute } from './battle-map.js';
+import { renderCampaignRoutes } from './campaign-routes.js';
 import { esc } from './icons.js';
 
 // Only revealed events are read. This round-long display never changes engine ownership or RNG.
@@ -33,14 +33,14 @@ export function roundCampaign(world,presentation){
     const fromId=moving?.fromId||person?.positionId||person?.stationId||(side==='attack'?b.fromId:b.territoryId);
     if(side==='defense'&&fromId===b.territoryId)continue;
     const laneKey=`${side}:${fromId}:${b.territoryId}`,lane=lanes.get(laneKey)||0;lanes.set(laneKey,lane+1);
-    routes.push({key:`${r.turn}-${b.index}-${side}`,side,countryId,fromId,toId:b.territoryId,lane,active:r===record&&scene?.battleIndex===b.index&&presentation.phase!=='settled'});
+    routes.push({key:`${r.turn}-${b.index}-${side}`,side,countryId,fromId,frontId:b.fromId,personId:person?.id||(side==='attack'?b.attackerPersonId:b.defenderPersonId),toId:b.territoryId,lane,active:r===record&&scene?.battleIndex===b.index&&presentation.phase!=='settled'});
    }
    const resolved=applied(r)||resolve&&(resolve.index<limit||resolve.index===limit&&scene?.kind==='apply'&&(presentation.phase==='settled'||['territory','growth','all'].includes(presentation.effectStage)));
    if(!resolved)continue;
    for(const id of b.takenTerritoryIds||[])captures.set(id,{territoryId:id,ownerId:b.captureOwner===b.target?b.defenderId:b.actorId,baseOwnerId:baseOwners.get(id)});
    if(b.captureOwner===b.target&&b.takenTerritoryIds?.length){
     const toId=b.takenTerritoryIds[0],laneKey=`defense:${b.territoryId}:${toId}`,lane=lanes.get(laneKey)||0;lanes.set(laneKey,lane+1);
-    routes.push({key:`${r.turn}-${b.index}-counter`,side:'defense',countryId:b.defenderId,fromId:b.territoryId,toId,lane,active:r===record&&scene?.battleIndex===b.index&&presentation.phase!=='settled'});
+    routes.push({key:`${r.turn}-${b.index}-counter`,side:'defense',counterattack:true,countryId:b.defenderId,personId:b.defenderPersonId,fromId:b.territoryId,toId,lane,active:r===record&&scene?.battleIndex===b.index&&presentation.phase!=='settled'});
    }
    const key=[b.fromId,b.territoryId].sort().join('|');
    if(b.winner===null)fronts.set(key,{fromId:b.fromId,toId:b.territoryId});else fronts.delete(key);
@@ -48,7 +48,8 @@ export function roundCampaign(world,presentation){
  }
  const owned=new Map(world.territories.map(t=>[t.id,t.ownerId]));
  for(const [id,c] of captures)if(owned.get(id)!==c.ownerId)captures.delete(id);
- return {captures,routes,movements,fronts:[...fronts.values()].filter(f=>owned.get(f.fromId)!==owned.get(f.toId)),baseOwners,settled:false};
+ const target=events.find(e=>e.type==='war_target'&&(e.index<limit||presentation.finished||e.index===limit&&['locked','departing'].includes(presentation.phase)));
+ return {captures,routes,movements,actorId:record.actorId,opponentId:target?.targetId,fronts:[...fronts.values()].filter(f=>owned.get(f.fromId)!==owned.get(f.toId)),baseOwners,settled:false};
 }
 const frontPathCache=new WeakMap();
 export function sharedFrontPath(geometry,a,b){
@@ -68,15 +69,6 @@ export function sharedFrontPath(geometry,a,b){
 }
 export function campaignHatchDefs(world){return world.countries.map((c,i)=>`<pattern id="round-hatch-${i}" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(28)"><path d="M0 0V4" fill="none" stroke="${c.color}" stroke-width="1.4"/><path d="M1 0V4" fill="none" stroke="#000" stroke-opacity=".3" stroke-width=".35"/></pattern>`).join('');}
 export function renderRoundCaptures(world,geometry,campaign){return `<g class="round-captures" pointer-events="none">${[...campaign.captures.values()].map(c=>{const i=world.territories.findIndex(t=>t.id===c.territoryId),owner=world.countries.findIndex(n=>n.id===c.ownerId);return `<path class="round-captured-territory" data-round-capture="${esc(c.territoryId)}" data-capture-owner="${esc(c.ownerId)}" d="${geometry.cells[i].path}" fill="url(#round-hatch-${owner})" fill-rule="evenodd" stroke="${world.countries[owner]?.color||'#fff'}" stroke-width="1.5"/>`;}).join('')}</g>`;}
-export function renderRoundRoutes(world,geometry,campaign){
- const country=id=>world.countries.find(c=>c.id===id);
- const routes=campaign.routes.map(r=>battleRoute(mapAnchor(world,r.fromId,'station',geometry),mapAnchor(world,r.toId,'battle',geometry),r.side,country(r.countryId)?.color,{id:r.key,lane:r.lane,active:r.active})).join('');
- const frontLines=campaign.fronts.map(f=>{const a=geometry.cells[world.territories.findIndex(t=>t.id===f.fromId)],b=geometry.cells[world.territories.findIndex(t=>t.id===f.toId)],d=sharedFrontPath(geometry,a,b);return d?`<g class="round-stalemate" data-front-from="${esc(f.fromId)}" data-front-to="${esc(f.toId)}"><path class="front-shadow" d="${d}"/><path class="front-line" d="${d}"/></g>`:'';}).join('');
- const marches=campaign.movements.map(m=>{
-  const retreat=['retreat','redeploy'].includes(m.kind),points=m.path.map(id=>mapAnchor(world,id,'station',geometry)).filter(Boolean);if(points.length<2||m.fromId===m.toId)return '';
-  const d=`M${points.map(p=>p.join(',')).join(' L')}`,color=country(m.countryId)?.color||'#fff',marker='retreat-'+m.key.replace(/[^a-zA-Z0-9_-]/g,'-');
-  if(!retreat)return `<path class="round-march ${esc(m.kind)}" data-round-move="${esc(m.key)}" style="stroke:${color}" d="${d}"/>`;
-  return `<g class="round-retreat ${m.kind==='redeploy'?'relocation':''}" data-retreat-from="${esc(m.fromId)}" data-retreat-to="${esc(m.toId)}" data-retreat-person="${esc(m.personId)}"><title>${m.kind==='redeploy'?'경로 없는 재배치':'패배 후 퇴각'}</title><defs><marker id="${marker}" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="10" markerHeight="10" markerUnits="userSpaceOnUse" orient="auto"><path d="M1 1 11 6 1 11 4 6Z" fill="${color}" stroke="#071116" stroke-width="1"/></marker></defs><path class="retreat-shadow" d="${d}"/><path class="retreat-arrow" style="stroke:${color}" d="${d}" marker-end="url(#${marker})"/></g>`;
- }).join('');
- return `<g class="round-campaign-history" pointer-events="none">${marches}${routes}${frontLines}</g>`;
+export function renderRoundRoutes(world,geometry,campaign,options={}){
+ return renderCampaignRoutes(world,geometry,campaign,{frontPath:sharedFrontPath,...options});
 }

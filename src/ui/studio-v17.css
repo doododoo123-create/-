@@ -1,0 +1,47 @@
+/* Operational map: short engagements, temporary marches, distinct retreats. */
+.game-skin .round-captures{opacity:.4}
+.game-skin .atlas-territory{stroke-opacity:.36}
+.operational-front path{fill:none;stroke:#fff;stroke-width:11;stroke-opacity:.22;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.game-skin .round-campaign-history .campaign-route{stroke-width:3.8;stroke-dasharray:none;vector-effect:non-scaling-stroke}
+.game-skin .round-campaign-history .campaign-route-shadow{stroke-width:5;stroke:#071116;stroke-opacity:.7;vector-effect:non-scaling-stroke}
+.game-skin .round-campaign-history .past-route{opacity:.28}
+.game-skin .round-campaign-history .past-route .campaign-route{stroke-width:2.3}
+.game-skin .round-campaign-history .past-route .campaign-route-shadow{stroke-width:3.4}
+.operation-arrow{pointer-events:stroke}
+.operation-count,.retreat-symbol{fill:#fff;stroke:#071116;stroke-width:3;paint-order:stroke;text-anchor:middle;font-size:9px;font-weight:800;pointer-events:none}
+.game-skin .round-march{stroke-width:1.5;stroke-dasharray:2 5;stroke-linecap:round;opacity:.65;vector-effect:non-scaling-stroke}
+.operation-movement.is-selected .round-march{opacity:.4}
+.march-progress-dot{offset-rotate:0deg;offset-distance:100%;animation:commander-march var(--march-time,1.6s) var(--march-delay,0s) linear both;transform-box:view-box;stroke:#fff;stroke-width:1;vector-effect:non-scaling-stroke}
+.round-retreat .retreat-arrow{stroke-width:1.8;stroke-dasharray:7 5;opacity:.5;vector-effect:non-scaling-stroke}
+.retreat-symbol{font-size:11px;opacity:.8}
+.round-relocation circle{fill:none;stroke-width:2;stroke-dasharray:2 3;opacity:.6;vector-effect:non-scaling-stroke}
+.round-relocation.is-moving circle{animation:relocation-endpoint 1s ease-in-out infinite}
+@keyframes relocation-endpoint{50%{opacity:.15}}
+.game-skin .map-unit-position[data-selected=true] .map-unit-token{outline:1.5px solid white;outline-offset:2px}
+.game-skin .atlas-scroll.combat-focused .map-unit-position:not(.unit-engaged):not([data-selected=true]):not([data-ghost=true]) .map-unit-token{opacity:.72}
+.game-skin .round-stalemate .front-line{stroke-width:2;vector-effect:non-scaling-stroke}
+.game-skin .round-stalemate .front-shadow{stroke-width:3.5;vector-effect:non-scaling-stroke}
+/* 280 -> 336px; typography, die and spacing grow by the same 1.2 factor. */
+.game-skin .map-stage .map-judgment.is-compact-duel.is-v17-duel{width:336px;padding:7.2px 9.6px;max-width:calc(100% - 16px)}
+.game-skin .is-v17-duel .mini-combat-header{font-size:10.8px;margin-bottom:3.6px}
+.game-skin .is-v17-duel .mini-combat-header small{font-size:9.6px}
+.game-skin .is-v17-duel .judgment-duel{gap:7.2px}
+.game-skin .is-v17-duel .judgment-side{padding-top:3.6px}
+.game-skin .is-v17-duel .mini-fighter-name{font-size:12px;line-height:16.8px}
+.game-skin .is-v17-duel .mini-fighter-name>small,.game-skin .is-v17-duel .mini-fighter-name .veteran-stars{font-size:9.6px}
+.game-skin .is-v17-duel .mini-score-roll{gap:8.4px}
+.game-skin .is-v17-duel .mini-score-roll .visual-die-block{flex-basis:43.2px;width:43.2px;max-width:43.2px}
+.game-skin .is-v17-duel .mini-score-roll .visual-die.attached-die{width:43.2px;height:43.2px}
+.game-skin .is-v17-duel .attached-die>small{font-size:7.2px}
+.game-skin .is-v17-duel .attached-die.custom-die-value .die-number{font-size:21.6px}
+.game-skin .is-v17-duel .observer-score{min-width:74.4px}
+.game-skin .is-v17-duel .observer-score>span{font-size:8.4px;line-height:12px}
+.game-skin .is-v17-duel .observer-score>strong{font-size:25.2px;line-height:26.4px}
+.game-skin .is-v17-duel .observer-score>small{font-size:8.4px;line-height:13.2px}
+.game-skin .is-v17-duel .observer-bonuses{gap:2.4px;margin-top:4.8px;font-size:10.8px;line-height:14.4px}
+.game-skin .is-v17-duel .mini-bonus-total{font-size:10.8px;line-height:16.8px;margin-top:2.4px}
+.game-skin .is-v17-duel .mini-combat-result{margin-top:3.6px;font-size:10.8px;line-height:1.2}
+@media(prefers-reduced-motion:reduce){.round-relocation.is-moving circle{animation:none}}
+
+.playback-paused .march-progress-dot{animation-play-state:paused}
+@media(prefers-reduced-motion:reduce){.march-progress-dot{animation:none}}

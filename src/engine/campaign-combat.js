@@ -4,6 +4,7 @@ import { applyHomeRetreat } from './retreat-home.js';
 import { chooseFrontier } from './frontier.js';
 import { combatBonuses, combatCasualties, roundedTroops } from '../model/combat-rules.js';
 import { counterCaptureLimit, counterCapture } from './counterattack.js';
+import { returnEmptyCommanders, defeatedAttackPosition } from './battlefield-movement.js';
 
 // New campaign rules are isolated from the original v11 / v0.8 turn algorithm.
 export function resolveCampaign(ctx){
@@ -90,6 +91,14 @@ export function resolveCampaign(ctx){
    else if(b.counterCaptureLimit)b.summary=d.name+' 방어 대승 · 역점령 가능한 영토 없음';
    emit('resolve',b.summary,automatic?'병력 손실 없음':`공격 ${b.attack.army} → ${a.troops}만 / 방어 ${b.defense.army} → ${d.troops}만`,{battleIndex:index,success:b.winner===actor},true);
    deathCheck(b,a,d,wave);
+   if(rules.battlefieldRecovery){
+    if(b.winner!==actor&&a.alive&&a.troops>0){
+     const path=defeatedAttackPosition(s,Atlas,actor,a,cellId,route.from),moves=[];
+     move(actor,a,path,'retreat',moves);
+     if(moves.length)emit('retreat',a.name+' · 전선 잔류','싸운 적 영토와 맞닿은 자국 전선으로 물러났어.',{nation:actor,slot:a.slot,role:'general',battleIndex:index,moves},true);
+    }
+    returnEmptyCommanders(s,Atlas,h.capitalCell,emit,undefined,index);
+   }
    if(finalWin||b.counterCaptureLimit&&b.takenCells.length){
     // Only displaced survivors retreat; older campaigns keep their recorded blocked-route rules.
     for(const nation of [actor,opponent])for(const g of s.countries[nation].generals)if(g.active&&g.alive&&Number.isInteger(g.position)&&s.cells[g.position].owner!==nation&&h.lands(s,nation))retreat(nation,g,index);
@@ -103,7 +112,7 @@ export function resolveCampaign(ctx){
      }
     }
    }
-   if(!finalWin&&b.winner===actor&&d.alive){
+   if(!finalWin&&b.winner===actor&&d.alive&&(!rules.battlefieldRecovery||d.troops>0)){
     const paths=fieldPaths(s,Atlas,opponent,d.position),homePath=paths.get(d.station);
     if(homePath&&homePath.length>1){const retreatMoves=[];move(opponent,d,homePath,'retreat',retreatMoves);emit('retreat',d.name+' 퇴각','남은 수비대가 이어서 방어해.',{nation:opponent,slot:d.slot,role:'general',battleIndex:index,moves:retreatMoves},true);}
    }

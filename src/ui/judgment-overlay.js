@@ -42,7 +42,7 @@ export function renderJudgmentOverlay({world,playback}) {
     body=`<div class="judgment-duel">${side('attack',true)}<span class="judgment-vs">⚔</span>${side('defense',false)}</div>`;
 
     note=result?battle.winner===null?'무승부':battle.takenCells.length?`${battle.winner===battle.actor?'점령':'역점령'} ${battle.takenCells.length}`:'영토 유지':'';
-    return `<aside class="map-judgment is-duel is-compact-duel is-v16-duel" data-event="${esc(event.type)}" data-phase="${state.phase}" aria-label="${esc(battle.territoryName)} 전투 판정"><header class="mini-combat-header"><span>${esc(battle.territoryName)}</span>${battle.defendersTotal>1?`<small>${battle.wave}/${battle.defendersTotal}</small>`:''}</header>${body}${note?`<p class="mini-combat-result">${esc(note)}</p>`:''}</aside>`;
+    return `<aside class="map-judgment is-duel is-compact-duel is-v16-duel is-v17-duel" data-event="${esc(event.type)}" data-phase="${state.phase}" aria-label="${esc(battle.territoryName)} 전투 판정"><header class="mini-combat-header"><span>${esc(battle.territoryName)}</span>${battle.defendersTotal>1?`<small>${battle.wave}/${battle.defendersTotal}</small>`:''}</header>${body}${note?`<p class="mini-combat-result">${esc(note)}</p>`:''}</aside>`;
   }else if(event.type==='hold'){
     const person=judgmentPerson(frame,nation,'general',event.slot);
     body=`<div class="judgment-single refusal-person">${judgmentPortrait(person,nation,'general')}</div><p class="dispatch-refusal">출정 거부</p>`;

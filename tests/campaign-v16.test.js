@@ -37,7 +37,7 @@ test('a stationary resident creates no defense arrow, while a returning defender
 test('surviving defenders leave a directed path from the lost province to their recorded destination, including route-free relocation',()=>{
  for(const strong of [false,true]){
   const r=fixture16(),n=nextTurn(r,attack16(strong?{'attack:0':30}:{})),record=n.history[0],move=record.movements.flatMap(m=>m.moves).find(m=>m.personId==='b0'&&['retreat','redeploy'].includes(m.kind));assert(move);assert.equal(move.fromId,'tile-4');assert.notEqual(move.toId,move.fromId);
-  const c=roundCampaign(n.world,completedRoundPresentation(n)),html=renderRoundRoutes(n.world,geometryFor(n.world),c);assert(html.includes(`data-retreat-from="tile-4" data-retreat-to="${move.toId}"`));assert(html.includes('marker-end="url(#retreat-'));if(move.kind==='redeploy')assert(html.includes('round-retreat relocation'));
+  const c=roundCampaign(n.world,completedRoundPresentation(n)),html=renderRoundRoutes(n.world,geometryFor(n.world),c);if(move.kind==='redeploy'){assert(html.includes(`data-relocation-from="tile-4" data-relocation-to="${move.toId}"`));assert(!html.includes('round-retreat relocation'));}else{assert(html.includes(`data-retreat-from="tile-4" data-retreat-to="${move.toId}"`));assert(html.includes('marker-end="url(#retreat-'));}
  }
 });
 test('retreat arrows become visible at the start of their movement without showing later routes',()=>{

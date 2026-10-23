@@ -3,6 +3,7 @@ import { scaledProduction, requiredReserve } from '../model/map-scale.js';
 import { commandCapacity, commandRegionSlots } from './command-reform.js';
 import { homeRetreatDestination, applyHomeRetreat } from './retreat-home.js';
 import { resolveCampaign } from './campaign-combat.js';
+import { returnEmptyCommanders } from './battlefield-movement.js';
 import { reinforcementRoom, retreatPath } from './campaign-logistics.js';
 import { fieldPaths } from './field-command.js';
 import { expeditionRoute, expeditionChance, fieldDefense } from './field-command.js';
@@ -283,6 +284,7 @@ function prepareTurn(input,controls){
  function emit(type,title,detail,data,frame){const e={type,title,detail:detail||'',actor,...(data||{})};if(frame)e.view=snapshot(s);events.push(e);return e;}
  function appoint(){for(const g of me.generals){if(!g.active||g.alive||g.waited<3)continue;const raw=die('successor:'+g.slot),ability=raw<=2?-2:raw>=9?2:0,commandBonus=raw>=7&&raw<=8?1:0;g.generation++;const family=['서','강','유','백','영','현','사'][actor]||NATIONS[actor].kingName.slice(0,1),given=['연','진','현','윤','우','찬','겸','하','율','원'];g.name=family+given[(g.slot+g.generation*3)%10]+'·'+(g.slot+1)+'대'+g.generation;g.ability=modern?ability*2:ability;if(modern)g.wins=0;g.commandBonus=commandBonus;g.feature=raw<=2?'미숙형':raw<=6?'균형형':raw<=8?'통솔형':'명장형';g.alive=true;g.troops=0;g.waited=0;g.appointed=true;if(field)g.position=g.station;if(advanced)g.stranded=false;emit('appointment',g.name+' 후임 부임','자국 3턴 대기 완료 · 병력 0만명 · 다음 배분부터 충원',{nation:actor,slot:g.slot,role:'general',roll:raw,faces:10},true);}}
  appoint();
+ if(advanced&&V11_RULES.battlefieldRecovery)returnEmptyCommanders(s,Atlas,capitalCell,emit);
  const reserveBefore=me.reserve,allocated=distribute(s,actor),refilled=allocated.reduce((n,v)=>n+v,0);
  if(refilled)emit('resupply','자국 턴 시작 · 수도 병력 보충','수도방위군 '+reserveBefore+' → '+me.reserve+'만명 · 장군에게 '+refilled+'만명 배분 · 수도 최소 '+minimumReserveFor(s,actor)+'만명 유지',{nation:actor,role:'king',allocated,reserveBefore,reserveAfter:me.reserve,refilled},true);
  record.actionBefore=stats(s);
@@ -362,8 +364,9 @@ function prepareTurn(input,controls){
   if(changes.length||battles.some(b=>b.takenCell!==undefined))emit('roster','지휘 구역 재편',changes.join(' · ')||'현재 영지 수에 맞춰 담당 구역을 정리했어.',{},true);
   const captured=battles.reduce((n,b)=>n+(b.captureOwner===opponent?0:b.takenCells.length),0),lost=battles.reduce((n,b)=>n+(b.captureOwner===opponent?b.takenCells.length:0),0);record.summary=s.countries[opponent].short+' 원정 · 장군 '+battles.length+'회 공격 · 영지 +'+captured+(lost?' / 역점령 −'+lost:'')+(battles.some(b=>b.automatic)?' · 자동 점령 포함':'');
  }
+ if(advanced&&V11_RULES.battlefieldRecovery)returnEmptyCommanders(s,Atlas,capitalCell,emit);
  if(advanced&&(V11_RULES.commandReform?kind==='domestic':!battles.some(b=>!b.automatic))){
-  const moves=[];for(const g of me.generals){if(!g.active||!g.alive)continue;const path=fieldPaths(s,Atlas,actor,g.position).get(g.station);if(path&&path.length>1){moves.push({nation:actor,slot:g.slot,generation:g.generation,kind:'home',from:g.position,to:g.station,path});g.position=g.station;g.stranded=false;}}
+  const moves=[];for(const g of me.generals){if(!g.active||!g.alive||V11_RULES.battlefieldRecovery&&g.troops===0)continue;const path=fieldPaths(s,Atlas,actor,g.position).get(g.station);if(path&&path.length>1){moves.push({nation:actor,slot:g.slot,generation:g.generation,kind:'home',from:g.position,to:g.station,path});g.position=g.station;g.stranded=false;}}
   if(moves.length)emit('home_return','전투 없는 턴 · 담당 주둔지 복귀','열린 자국 육지 경로를 따라 복귀해.',{nation:actor,moves},true);
  }
  record.actionAfter=stats(s);
