@@ -1,3 +1,4 @@
+import { captureArrival } from './movement-scenes.js';
 import { cellPoints, mapAnchor } from '../model/cartography-geometry.js';
 import { renderCampaignRoutes } from './campaign-routes.js';
 import { esc } from './icons.js';
@@ -8,7 +9,7 @@ export function completedRoundPresentation(run){
  return {record,scenes:[],index:0,finished:true,roundRecords:run.history.filter(r=>r.round===record.round&&r.turn<record.turn)};
 }
 export function roundCampaign(world,presentation){
- const record=presentation?.record,empty={captures:new Map(),routes:[],fronts:[],movements:[],battleSites:[],baseOwners:new Map(),settled:true};
+ const record=presentation?.record,empty={captures:new Map(),routes:[],fronts:[],movements:[],battleSites:[],pendingCaptures:new Map(),baseOwners:new Map(),settled:true};
  if(!record)return empty;
  const scene=presentation.scenes?.[presentation.index],events=record.events||[];
  // A summary has no event index: it still contains every revealed result of this turn.
@@ -20,27 +21,31 @@ export function roundCampaign(world,presentation){
  const baseOwners=new Map((before||world).territories.map(t=>[t.id,t.ownerId]));
  if(!before)for(const c of [...(record.changes||[])].reverse())baseOwners.set(c.territoryId,c.from);
  for(const r of [...past].reverse())for(const c of [...(r.changes||[])].reverse())baseOwners.set(c.territoryId,c.from);
- const captures=new Map(),routes=[],fronts=new Map(),movements=[],lanes=new Map(),battleSites=new Map();
+ const captures=new Map(),routes=[],fronts=new Map(),movements=[],lanes=new Map(),battleSites=new Map(),pendingCaptures=new Map();
  const limit=complete?Infinity:scene?.event?.index??-1;
  const applied=r=>r!==record||complete;
  for(const r of records){
   for(const motion of r.movements||[])for(const m of motion.moves)if(applied(r)||motion.eventIndex<limit||motion.eventIndex===limit&&(scene?.kind!=='movement'||['retreat','redeploy'].includes(m.kind)))movements.push({...m,key:`${r.turn}:${motion.eventIndex}:${m.personId}`});
   for(const b of r.battles||[]){
    const event=r.events.find(e=>e.type==='territory'&&e.battleIndex===b.index),resolve=r.events.find(e=>e.type==='resolve'&&e.battleIndex===b.index);
-   const revealed=applied(r)||event&&(event.index<limit||event.index===limit&&scene?.kind!=='movement');
+   const revealed=applied(r)||event&&(event.index<limit||event.index===limit&&(scene?.kind!=='movement'||scene?.revealedRoutes?.length));
    if(!revealed)continue;
    if(!b.automatic){const site=battleSites.get(b.territoryId)||{territoryId:b.territoryId,count:0};site.count++;battleSites.set(b.territoryId,site);}
    const frame=r.frames?.[event?.index]?.before,motion=r.movements?.find(m=>m.eventIndex===event?.index);
    for(const [side,countryId,slot] of [['attack',b.actorId,b.slot],['defense',b.defenderId,b.defenseSlot]]){
     if(side==='defense'&&b.automatic)continue;
+    if(r===record&&event?.index===limit&&scene?.revealedRoutes&&!scene.revealedRoutes.includes(side))continue;
     const moving=motion?.moves.find(m=>m.countryId===countryId&&m.slot===slot),person=frame?.people.find(p=>p.role==='general'&&p.countryId===countryId&&p.slot===slot);
     const fromId=moving?.fromId||person?.positionId||person?.stationId||(side==='attack'?b.fromId:b.territoryId);
     if(side==='defense'&&fromId===b.territoryId)continue;
     const laneKey=`${side}:${fromId}:${b.territoryId}`,lane=lanes.get(laneKey)||0;lanes.set(laneKey,lane+1);
-    routes.push({key:`${r.turn}-${b.index}-${side}`,side,countryId,fromId,frontId:b.fromId,personId:person?.id||(side==='attack'?b.attackerPersonId:b.defenderPersonId),toId:b.territoryId,lane,active:r===record&&scene?.battleIndex===b.index&&presentation.phase!=='settled'});
+    const path=moving?.path?.length?[...moving.path]:[fromId];if(path.at(-1)!==b.territoryId)path.push(b.territoryId);
+    routes.push({key:`${r.turn}-${b.index}-${side}`,path,side,countryId,fromId,frontId:b.fromId,personId:person?.id||(side==='attack'?b.attackerPersonId:b.defenderPersonId),toId:b.territoryId,lane,active:r===record&&scene?.battleIndex===b.index&&presentation.phase!=='settled'});
    }
    const resolved=applied(r)||resolve&&(resolve.index<limit||resolve.index===limit&&scene?.kind==='apply'&&(presentation.phase==='settled'||['territory','growth','all'].includes(presentation.effectStage)));
    if(!resolved)continue;
+   const arrival=captureArrival(r,b),arrived=applied(r)||!arrival||arrival.index<limit||arrival.index===limit&&scene?.kind!=='movement';
+   if(!arrived){for(const id of b.takenTerritoryIds||[])pendingCaptures.set(id,{ownerId:b.captureOwner===b.target?b.actorId:b.defenderId});continue;}
    for(const id of b.takenTerritoryIds||[])captures.set(id,{territoryId:id,ownerId:b.captureOwner===b.target?b.defenderId:b.actorId,baseOwnerId:baseOwners.get(id)});
    if(b.captureOwner===b.target&&b.takenTerritoryIds?.length){
     const toId=b.takenTerritoryIds[0],laneKey=`defense:${b.territoryId}:${toId}`,lane=lanes.get(laneKey)||0;lanes.set(laneKey,lane+1);
@@ -51,9 +56,9 @@ export function roundCampaign(world,presentation){
   }
  }
  const owned=new Map(world.territories.map(t=>[t.id,t.ownerId]));
- for(const [id,c] of captures)if(owned.get(id)!==c.ownerId)captures.delete(id);
+ for(const [id,c] of captures)if(owned.get(id)!==c.ownerId&&!pendingCaptures.has(id))captures.delete(id);
  const target=events.find(e=>e.type==='war_target'&&(e.index<limit||complete||e.index===limit&&['locked','departing'].includes(presentation.phase)));
- return {captures,routes,movements,battleSites:[...battleSites.values()],actorId:record.actorId,opponentId:target?.targetId,fronts:[...fronts.values()].filter(f=>owned.get(f.fromId)!==owned.get(f.toId)),baseOwners,settled:false};
+ return {captures,pendingCaptures,routes,movements,battleSites:[...battleSites.values()],actorId:record.actorId,opponentId:target?.targetId,fronts:[...fronts.values()].filter(f=>owned.get(f.fromId)!==owned.get(f.toId)),baseOwners,settled:false};
 }
 const frontPathCache=new WeakMap();
 export function sharedFrontSegments(geometry,a,b){

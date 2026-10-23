@@ -1,3 +1,4 @@
+import { capitalFall } from './capital-fall.js';
 import { expeditionRoute, expeditionChance, fieldPaths } from './field-command.js';
 import { campaignDefenders, movementFatigue, retreatPath } from './campaign-logistics.js';
 import { applyHomeRetreat } from './retreat-home.js';
@@ -82,6 +83,7 @@ export function resolveCampaign(ctx){
     a.troops=roundedTroops(a.troops-b.losses.attack.amount,rules);d.troops=roundedTroops(d.troops-b.losses.defense.amount,rules);
     if(b.winner!==null){const winner=b.winner===actor?a:d;winner.wins++;b.victorWins=winner.wins;}
    }
+   const capitalsBefore=s.countries.map(c=>h.capitalCell(s,c.id)),ownersBefore=s.cells.map(c=>c.owner);
    const finalWin=b.winner===actor&&wave===queue.length-1;
    b.captureLimit=finalWin?h.conquestLimit(b):0;
    if(finalWin){b.takenCells=capture(b);b.takenCell=cellId;recent.push(...b.takenCells);}
@@ -89,6 +91,7 @@ export function resolveCampaign(ctx){
     b.captureOwner=b.winner===opponent?opponent:actor;b.counterCaptureLimit=counterCaptureLimit(b,rules);
     if(b.counterCaptureLimit){b.takenCells=counterCapture(s,Atlas,b,rules);if(b.takenCells.length)b.takenCell=b.takenCells[0];}
    }
+   const fallenCapital=capitalFall(s,Atlas,b,rules,capitalsBefore,ownersBefore);
    h.syncArmy(me);h.syncArmy(other);b.after={attack:a.troops,defense:d.troops};
    b.summary=b.winner===actor?(finalWin?a.name+' 승리 · 영지 '+b.takenCells.length+'개 점령':a.name+' 승리 · 다음 수비대와 계속 전투'):b.winner===opponent?d.name+' 방어 성공 · 영지 유지':'무승부 · 영지 유지';
    if(b.counterCaptureLimit&&b.takenCells.length)b.summary=d.name+' 방어 대승 · 역점령 '+b.takenCells.length+'개';
@@ -124,6 +127,7 @@ export function resolveCampaign(ctx){
     const paths=fieldPaths(s,Atlas,opponent,d.position),homePath=paths.get(d.station);
     if(homePath&&homePath.length>1){const retreatMoves=[];move(opponent,d,homePath,'retreat',retreatMoves);emit('retreat',d.name+' 퇴각','남은 수비대가 이어서 방어해.',{nation:opponent,slot:d.slot,role:'general',battleIndex:index,moves:retreatMoves},true);}
    }
+   if(fallenCapital)emit('capital_fall',s.countries[fallenCapital.nation].name+' 수도 함락',s.countries[fallenCapital.captor].name+' 점령 · 수도 인접 영토 '+fallenCapital.extraCells.length+'개 추가 점령',{...fallenCapital,battleIndex:index},false);
    for(const c of s.countries)if(h.lands(s,c.id)===0&&ctx.livingBefore.has(c.id)){
     ctx.livingBefore.delete(c.id);c.reserve=0;c.generals.forEach(g=>{g.troops=0;g.position=null;g.stranded=false;});h.syncArmy(c);s.capitals[c.id]=null;emit('elimination',c.name+' 멸망','영지를 모두 잃었어.',{target:c.id},true);
    }

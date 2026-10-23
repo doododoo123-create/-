@@ -59,11 +59,11 @@ test('old engine21 saves pin the former movement rules; new movement events repl
 });
 test('operations start at the actual frontier, merge repeated assaults and never create a stationary defense arrow or short-distance loop',()=>{
  const routes=[0,1,2].map(i=>({key:String(i),side:'attack',countryId:'a',fromId:'tile-0',frontId:'tile-3',toId:'tile-4',personId:'a0',active:i===2}));routes.push({side:'defense',countryId:'b',fromId:'tile-4',toId:'tile-4'});
- const groups=groupedOperations({routes});assert.equal(groups.length,1);assert.equal(groups[0].fromId,'tile-3');assert.equal(groups[0].count,3);assert(groups[0].active);
+ const groups=groupedOperations({routes});assert.equal(groups.length,1);assert.equal(groups[0].fromId,'tile-0');assert.equal(groups[0].count,3);assert(groups[0].active);
  const svg=battleRoute([100,100],[110,100],'attack','#ff0000',{id:'near'}),d=svg.match(/class="campaign-route-shadow" d="([^"]+)"/)[1];assert(!d.includes('C'));const numbers=[...d.matchAll(/-?\d+(?:\.\d+)?/g)].map(v=>Number(v[0]));assert(numbers.every(v=>v>=98&&v<=111));
 });
 test('ordinary marches are visible only while moving or selected, and route-free redeployment has endpoints without an enemy-crossing line',()=>{
- const r=fixture17(),world=r.world,geometry=geometryFor(world),m={key:'march',personId:'a0',countryId:'a',kind:'outbound',fromId:'tile-1',toId:'tile-3',path:['tile-1','tile-2','tile-3']},c={routes:[],fronts:[],movements:[m]},o={frontPath:()=>''};
+ const r=fixture17(),world=r.world,geometry=geometryFor(world),m={key:'march',personId:'a0',countryId:'a',kind:'home',fromId:'tile-1',toId:'tile-3',path:['tile-1','tile-2','tile-3']},c={routes:[],fronts:[],movements:[m]},o={frontPath:()=>''};
  assert(!renderCampaignRoutes(world,geometry,c,o).includes('data-round-move'));
  assert(renderCampaignRoutes(world,geometry,c,{...o,selectedPersonId:'a0'}).includes('is-selected'));
  const live=renderCampaignRoutes(world,geometry,c,{...o,scene:{kind:'movement',moves:[m]},progress:.5});assert(live.includes('march-progress-dot'));assert.equal((live.match(/data-round-move/g)||[]).length,1);assert(!live.includes('marker-end'));

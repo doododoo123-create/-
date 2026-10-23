@@ -1,4 +1,4 @@
-# 구조 · Studio v0.19.0 / 좌우 전투·계절 전선·카드 피드백
+# 구조 · Studio v0.20.0 / 순차 이동·로컬 알림·수도 병합
 
 ## 데이터와 엔진
 
@@ -24,13 +24,13 @@
 
 세계 파일: `{kind:'saguk-studio-world',version:2,world}`. 버전 1도 읽어 스키마 2로 변환합니다. 이전 편집 이름·소유권·초상화를 보존하고 단순 규칙을 v11 기본값으로 교체합니다. 기존 내장 세계는 원본 지도 및 후보 명부를 복원합니다. `saguk-studio.world.v1` 키를 계속 사용하며 이전 원본은 `.before-v11` 키에 백업합니다.
 
-완료 턴 저장: `{kind:'saguk-studio-run',version:1,engineVersion:'studio-v11-23',seed,initialWorld,engineState,history}`. 키는 `saguk-studio.completed-run.v11`입니다. 매 턴 연출 완료/건너뛰기 때만 저장합니다. 복구 시 원본 상태 검증, 시드 일치, 턴 기록 수와 판정을 검사합니다. 새 세계/세계 가져오기는 진행을 비웁니다. 새 실행과 재현은 초기 상태를 저장합니다.
+완료 턴 저장: `{kind:'saguk-studio-run',version:1,engineVersion:'studio-v11-24',seed,initialWorld,engineState,history}`. 키는 `saguk-studio.completed-run.v11`입니다. 매 턴 연출 완료/건너뛰기 때만 저장합니다. 복구 시 원본 상태 검증, 시드 일치, 턴 기록 수와 판정을 검사합니다. 새 세계/세계 가져오기는 진행을 비웁니다. 새 실행과 재현은 초기 상태를 저장합니다.
 
 역사 내보내기는 시작 세계·전체 기록·최종 상태를 별도 JSON으로 보관합니다. 역사 가져오기는 아직 없습니다. 데이터는 외부로 전송하지 않습니다. 저장 용량 부족은 화면으로 알리고 파일 내보내기를 안내합니다.
 
 ## 화면·배포·확장
 
-`atlas-view.js`는 원본 다각형·국경·장군 담당구역·실제 주둔군을 그립니다. 사용자 격자에는 `map-geometry.js`를 사용합니다. 장수 50종·새 왕/승상 20종과 이전 호환 초상화는 내장 이미지로 인터넷 요청 없이 동작합니다. 사용자 문자열은 이스케이프합니다.
+`atlas-view.js`는 원본 다각형·국경·장군 담당구역·실제 주둔군을 그립니다. 사용자 격자에는 `map-geometry.js`를 사용합니다. 장수70종·왕/승상20종과 이전 호환 초상화는 내장 이미지로 인터넷 요청 없이 동작합니다. 사용자 문자열은 이스케이프합니다.
 
 `app.js`는 편집·조작·저장·연출 연결만 맡습니다. 시작 세계와 실행을 분리하여 편집이 현재 실행에 끼어들지 않게 합니다. 관리자 개입은 이후 검증된 상태 변경과 별도 사건으로 추가합니다.
 
@@ -314,3 +314,15 @@ engine18은17 저장의 지휘한도/손실/home 복귀를 그대로 보존하�
 `map-effects.js`는 기존의 전후 차이 계산을 유지하고 unitFeedback/renderUnitFeedback으로 각 카드의 로컬 좌표 안에 텍스트를 넣는다. 줌·포갬·실제 이동에 함께 붙으며 7px 이름과8px 변화 텍스트의 비율을 유지한다. 별도의 큰 map-unit-feedback 박스는 생성하지 않는다. 두 전투자의 결과는 약한 회색 wash+중앙 결과 글자와 위쪽 손실로 나누고, 승리 테두리만 빨강으로 점멸한다.
 
 `studio-v19.css`가 최종 표시 규칙이다. 두 단일 HTML에 동일한 기능을 포함하고 모바일 프로필은 지도 자원/렌더링만 다르다. `campaign-v19.test.js`와 `studio_v19_smoke.py`가 끊김·전선·카드·승상·양쪽 배포본을 검증한다.
+
+
+## v0.20 순차 장면과 수도 함락
+
+- 엔진24·세계schema2/실행version1을 사용한다. simulation 복구는23 이하의 누락 capitalFallAnnexation을 false로 고정하며 원래 역사/시드/이후 계산을 유지한다. 새 기본값만 true다.
+- engine/capital-fall.js는 전투 직전 수도/소유국 스냅샷의 직접 육지 이웃을 병합하고 battle.capitalFall 및 takenCells를 기록한다. 이전 수도로 연쇄하지 않고 추가 RNG를 쓰지 않는다. campaign-combat의 기존 생존자 재배치·멸망 처리를 거치며 승자의 점령지 이동 뒤 capital_fall 사건을 넣는다.
+- movement-scenes.js는 기록된 moves를 한 장수씩 나눠 캠프 복사본과 route/arrival 장면을 생성한다. 엔진 실제 position/station은 변경하지 않는다. round-campaign의 revealedRoutes가 공격/수비 공개 시점을 구분하고 전체 실제 경로를 campaign-routes/battle-map에 전달한다.
+- pendingCaptures는 승자 도착 전 화면 소유국/국경만 보류한다. arrival 이후 같은 계절의 대각 빗금이 나타난다. 표시 마스킹은 계산 상태에 역주입하지 않는다. 점령/이동 기록이 이미 있는 구버전 역사에도 적용한다.
+- local-notices.js는 사건별 카드/역할/slot을 결정한다. map-effects의 전후 병력 차이 계산은 유지하며 장군·왕·임시 승상 카드 안에 notice를 넣는다. judgment-overlay의 전역 공지는 계절/멸망/수도함락으로 제한한다. map-stage에 자동 진행 버튼과 검사용 장면 속성을 둔다.
+- score-accumulation.js는 원래 눈금+각 부호 있는 보정을 계산하고 같은 다이스 자리에서 숫자를 교체한다. playback의 merging index와 sceneProgress로 단계별 비행을 복원한다. pause/배속/역사 재생은 같은 시계이며 0/상쇄 보정·음수·60초과를 지원한다. 최종 점수 검증은 엔진 기록과 대조한다.
+- studio-v20.css를 두 판의 마지막 스타일로 포함한다. 90장의 원본384×576 JPEG를 data URL로 내장한다. general 선택키는070까지이며 이전 키와 자동 기존 얼굴은 보존하고 신규 후임에051~070을 사용한다. 이전 WebP50장은 출처 보존용이며 새 번들에는 넣지 않는다.
+- campaign-v20.test.js, make-v20-fixture.mjs, studio_v20_smoke.py가 두 판의 이동 순서·보류 점령·로컬 공지·합산 시계·수도 병합·오프라인을 검증한다. 현재 경기와 과거 재생을 분리하고 저장을 수정하지 않는다.

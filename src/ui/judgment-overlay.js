@@ -1,3 +1,4 @@
+import { renderAccumulatingDie, scoreBonusItems } from './score-accumulation.js';
 import { royalRoleForScene } from './royal-presentation.js';
 import { renderSeasonAnnouncement } from './season-view.js';
 import { renderChoiceReel } from './choice-reel.js';
@@ -11,7 +12,7 @@ import {renderDie} from './die-view.js';
 const judgmentSign=n=>n>0?`+${n}`:String(n||0);
 export function judgmentVisible(playback){
   const scene=playback.scene;
-  return !!(playback.state&&!playback.complete&&!(playback.groupDone&&!playback.playing)&&scene&& !['apply','summary','movement','round-settle'].includes(scene.kind)&&scene.event?.type!=='territory');
+  return !!(playback.state&&!playback.complete&&!(playback.groupDone&&!playback.playing)&&scene&& !['apply','summary','movement','route','arrival','round-settle'].includes(scene.kind)&&scene.event?.type!=='territory');
 }
 function judgmentPerson(world,country,role,slot){return countryPeople(world,country?.id).find(p=>p.role===role&&(role!=='general'||p.slot===slot));}
 function judgmentPortrait(person,country,role,army=null){return `<figure class="judgment-person" style="--nation:${country?.color||'#c0b698'}"><div class="framed-portrait">${portraitImage(person,country,role)}</div><figcaption><strong>${esc(displayName(person,ROLES[role]))}${role==='general'?veteranStars(person):''}</strong><small>${role==='general'?`병력 ${army??person?.troops??0}만`:esc(country?.name||'')+' · '+ROLES[role]}</small></figcaption></figure>`;}
@@ -23,6 +24,9 @@ export function renderJudgmentOverlay({world,playback}) {
   if(!judgmentVisible(playback))return '';
   const state=playback.state,scene=playback.scene,event=scene.event||{},record=state.record;
   if(scene.kind==='season')return renderSeasonAnnouncement(scene);
+  if(['elimination','capital_fall'].includes(event.type))return `<aside class="global-history-notice" data-notice="${event.type}" aria-live="polite"><strong>${esc(displayEventText(event.title))}</strong><small>${esc(displayEventText(event.detail))}</small></aside>`;
+  if(!['roll','reel','result'].includes(scene.kind))return '';
+  if(scene.kind==='result'&&!record.battles[scene.battleIndex])return '';
   const phase=state.phase==='departing'?'locked':state.phase;
   world=vividWorld(world);
   const frame=vividWorld(event.type==='appointment'?scene.worldAfter===scene.worldBefore?record.frames?.[event.index]?.after||world:scene.worldAfter:scene.worldBefore||world);
@@ -38,8 +42,8 @@ export function renderJudgmentOverlay({world,playback}) {
       const person=judgmentPerson(frame,country,'general',attack?battle.slot:battle.defenseSlot);
       const current=event.type===(attack?'attack_roll':'defense_roll'),seen=result||attack&&event.type==='defense_roll';
       const visible=seen||current&&phase==='locked';
-      const die=battle.automatic?'<span class="judgment-auto">—</span>':renderDie(current||seen?info.raw:null,battle.sides||30,current?phase:seen?'locked':'waiting',attack?'⚔':'🛡',sideBonus(info),{rawFace:true});
-      return `<div class="judgment-side ${key}" style="--nation:${country?.color||'#fff'}"><div class="mini-fighter-name">${attack?'⚔':'🛡'} ${esc(displayName(person,info.name))}${veteranStars({...person,wins:info.wins??person?.wins})}<small>병력 ${info.army}만</small></div><div class="mini-score-roll">${die}${battle.automatic?'':renderObserverScore(info,visible)}</div>${renderObserverBonuses(info,{all:true})}<div class="mini-bonus-total">보정 합계 ${judgmentSign(sideBonus(info))}</div></div>`;
+      const die=battle.automatic?'<span class="judgment-auto">—</span>':renderAccumulatingDie(current||seen?info.raw:null,battle.sides||30,current?phase:seen?'locked':'waiting',attack?'⚔':'🛡',scoreBonusItems(info),{mergeIndex:state.mergeIndex||0,progress:playback.sceneProgress,speed:typeof playback.speed==='function'?playback.speed():state.speed||1});
+      return `<div class="judgment-side ${key}" style="--nation:${country?.color||'#fff'}"><div class="mini-fighter-name">${attack?'⚔':'🛡'} ${esc(displayName(person,info.name))}${veteranStars({...person,wins:info.wins??person?.wins})}<small>병력 ${info.army}만</small></div><div class="mini-score-roll">${die}</div>${renderObserverBonuses(info,{all:true})}<div class="mini-bonus-total">보정 합계 ${judgmentSign(sideBonus(info))}</div></div>`;
 
     };
     body=`<div class="judgment-duel">${side('attack',true)}<span class="judgment-vs">⚔</span>${side('defense',false)}</div>`;
@@ -49,8 +53,11 @@ export function renderJudgmentOverlay({world,playback}) {
   }else if(royalRoleForScene(scene,record)==='minister'&&scene.kind!=='reel'){
     const person=judgmentPerson(frame,nation,'minister'),score=record.domesticScore,showDie=scene.kind==='roll'||result;
     const value=scene.kind==='roll'?scene.value:score?.raw,bonus=scene.kind==='roll'?scene.bonus||0:score?.ability||0;
-    const die=showDie?renderDie(value,scene.faces||10,scene.kind==='roll'?phase:'locked',event.type==='supply_roll'?'지휘한도 증가':'내정 판정',bonus):'';
+    const die=showDie?renderAccumulatingDie(value,scene.faces||10,scene.kind==='roll'?phase:'locked',event.type==='supply_roll'?'지휘한도 증가':'내정 판정',scene.bonusItems||scoreBonusItems(null,bonus),{mergeIndex:state.mergeIndex||0,progress:playback.sceneProgress,speed:typeof playback.speed==='function'?playback.speed():state.speed||1}):'';
     return `<aside class="map-judgment is-royal-die" data-nation="${esc(nation?.id||'')}" data-anchor-role="minister" data-event="${esc(event.type)}" data-phase="${state.phase}" style="--nation:${nation?.color||'#fff'}" aria-label="${esc(nation?.name||'')} 승상 판정"><div class="royal-choice-heading">${esc(nation?.name||'')} · 승상</div>${die}${judgmentTraits(person,'minister',nation)}${result?`<p class="royal-result">${event.success?'내정 성공':'내정 실패'}</p>`:''}</aside>`;
+  }else if(event.type==='death_roll'){
+    const person=judgmentPerson(frame,nation,'general',event.slot);
+    return `<aside class="map-judgment is-royal-die" data-anchor-role="general" data-anchor-slot="${event.slot}" data-nation="${esc(nation.id)}" data-event="death_roll"><div class="royal-choice-heading">${esc(displayName(person))} · 전사 판정</div>${renderAccumulatingDie(scene.value,10,phase,'1~3 전사 / 4~10 생존',[])}</aside>`;
   }else if(event.type==='hold'){
     const person=judgmentPerson(frame,nation,'general',event.slot);
     body=`<div class="judgment-single refusal-person">${judgmentPortrait(person,nation,'general')}</div><p class="dispatch-refusal">출정 거부</p>`;

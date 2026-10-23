@@ -13,7 +13,7 @@ import {UNIT_CARD_WIDTH,UNIT_CARD_HEIGHT,UNIT_PIN_OFFSET} from '../src/ui/unit-l
 import {stackUnits} from '../src/ui/unit-stack.js';
 
 function fixture16(){
- const w=blankWorld({rows:3,cols:4});Object.assign(w.rules,{seaSupply:false,baseCapacity:20,territoryArmyLimit:100,expeditionChances:[100,100,100,100,100,100]});
+ const w=blankWorld({rows:3,cols:4});Object.assign(w.rules,{capitalFallAnnexation:false,seaSupply:false,baseCapacity:20,territoryArmyLimit:100,expeditionChances:[100,100,100,100,100,100]});
  w.countries=['a','b'].map((id,i)=>({id,name:id,color:i?'#006bff':'#ff2028',troops:45,recruitment:0,personality:'balanced'}));
  w.people=w.countries.flatMap(c=>[{id:'king-'+c.id,countryId:c.id,name:c.id+'왕',role:'king',ability:0,personality:'balanced'},...Array.from({length:3},(_,slot)=>({id:c.id+slot,countryId:c.id,name:c.id+slot,role:'general',ability:0,personality:'balanced',slot}))]);
  w.territories.forEach((t,i)=>t.ownerId=i<4?'a':'b');w.cartography={version:1,style:'classic',opacity:.3,background:null,polygons:{},links:Array.from({length:11},(_,i)=>['tile-'+i,'tile-'+(i+1)])};

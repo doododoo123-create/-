@@ -42,6 +42,7 @@ export function observerDuration(scene,record,phase,reduced=false){
  if(phase==='departing')return reduced?80:240;
  if(scene.kind==='season')return reduced?500:1500;
  if(scene.kind==='round-settle')return reduced?100:1200;
+ if(scene.kind==='route'||scene.kind==='arrival')return reduced?80:420;
  if(scene.kind==='movement')return reduced?100:1600;
  if(phase==='rolling')return reduced?80:900;
  if(phase==='raw'||phase==='merging')return 500;

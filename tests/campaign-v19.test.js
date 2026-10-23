@@ -66,13 +66,13 @@ test('minister has a temporary real-portrait card only during its own choices, j
   assert.equal(html.includes('data-unit-role="minister"'),expected);
   if(expected){const id=scene.worldBefore.people.find(p=>p.countryId===record.actorId&&p.role==='minister').id;assert(html.includes(`data-person="${id}"`));assert(!html.includes('null만'));assert(!html.includes('undefined만'));}
   p.state.index=index;p.state.phase='locked';const overlay=renderJudgmentOverlay({world:scene.worldBefore,playback:p});
-  if(expected&&scene.kind!=='apply'){assert(overlay.includes('data-anchor-role="minister"'));assert(!overlay.includes('judgment-person'));}
+  if(expected&&['roll','reel'].includes(scene.kind)){assert(overlay.includes('data-anchor-role="minister"'));assert(!overlay.includes('judgment-person'));}
  }
  assert.equal(JSON.stringify(n),snapshot);
 });
 test('army gains and upgrades are attached to each actual recipient card with precise recorded values and no detached boxes',()=>{
- const r=createRun(createReferenceWorld(),777),n=nextTurn(r,{rolls:{king:1,minister:1,domestic:10}}),record=n.history[0],scenes=makeTurnScenes(record,r.world),index=scenes.findIndex(s=>s.kind==='apply'&&s.event.type==='resolve'),scene=scenes[index],effects=mapEffects(scene),html=renderAtlas(scene.worldAfter,{presentation:{record,scenes,index,phase:'holding'}});
- const gains=effects.units.filter(e=>e.type==='army');assert(gains.length>0);assert.equal((html.match(/class="unit-feedback-text"/g)||[]).length,effects.units.length);assert(!html.includes('class="map-unit-feedback'));
+ const r=createRun(createReferenceWorld(),777),n=nextTurn(r,{rolls:{king:1,minister:1,domestic:10}}),record=n.history[0],scenes=makeTurnScenes(record,r.world),index=scenes.findIndex(s=>s.kind==='apply'&&s.event.type==='resolve'),scene=scenes[index],effects=mapEffects(scene,null,record),html=renderAtlas(scene.worldAfter,{presentation:{record,scenes,index,phase:'holding'}});
+ const gains=effects.units.filter(e=>e.type==='army');assert(gains.length>0);assert.equal((html.match(/class="unit-feedback-text /g)||[]).length,effects.units.length);assert(!html.includes('class="map-unit-feedback'));
  for(const e of gains){const person=scene.worldAfter.people.find(p=>p.countryId===e.countryId&&p.role===e.role&&(e.role==='king'||p.slot===e.slot));assert(unitFeedback(effects,{country:{id:e.countryId},person,role:e.role}).includes(e));assert(html.includes(`data-delta="${e.delta}"`));}
 });
 test('both battle results appear in the center of washed cards while each exact loss remains above and future rolls reveal no outcome',()=>{

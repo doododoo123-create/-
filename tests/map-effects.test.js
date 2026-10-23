@@ -21,7 +21,7 @@ test('production and supply upgrades never masquerade as an immediate troop incr
 test('capital resupply conserves troops and is announced only after the central judgment',()=>{
  let r=createRun(createDemoWorld(),7);r.engineState.countries[0].reserve+=5;r.engineState.countries[0].army+=5;r.world=projectWorld(r.initialWorld,r.engineState);
  const after=nextTurn(r,{rolls:{king:1,minister:1,domestic:1}}),scenes=makeTurnScenes(after.history[0],r.world),focus=scenes.find(s=>s.event?.type==='resupply'&&s.kind!=='apply'),apply=scenes.find(s=>s.event?.type==='resupply'&&s.kind==='apply');
- assert.equal(focus.worldAfter.countries[0].reserve,10);assert.equal(apply.worldAfter.countries[0].reserve,5);assert.equal(mapEffects(focus).units.length,0);
+ assert.equal(focus.worldAfter.countries[0].reserve,10);assert.equal(apply.worldAfter.countries[0].reserve,5);assert.equal(mapEffects(focus).units.filter(e=>e.type!=='notice').length,0);
  const army=mapEffects(apply).units.filter(e=>e.type==='army');assert.equal(army.reduce((n,e)=>n+e.delta,0),0);assert.equal(army.find(e=>e.role==='king').delta,-5);assert.equal(army.filter(e=>e.role==='general').reduce((n,e)=>n+e.delta,0),5);
 });
 test('battle feedback uses the two actual units and only the currently captured territories',()=>{
@@ -39,8 +39,8 @@ test('failed domestic action has a single zero-change notice and no troop or upg
  const effects=mapEffects(applied(domestic(1,1)));assert.deepEqual(effects.units.map(e=>[e.type,e.delta,e.label]),[['unchanged',0,'+0만 · 변화 없음']]);
 });
 test('fullscreen contains only the map at rest and after completion; results vanish before effects',()=>{
- const f=domestic(1),player=new TurnPlayback();const ready=renderMapStage({world:f.before,run:null,playback:player});assert.ok(!ready.includes('map-judgment'));assert.ok(!ready.includes('map-stage-sidebar'));assert.ok(!ready.includes('visual-nation-card'));assert.ok(!ready.includes('<button type="button"'));
- player.load(f.run.history[0],f.before,f.run.world,false);while(player.scene.kind!=='result')player.step();assert.ok(renderJudgmentOverlay({world:player.displayWorld,playback:player}).includes('is-royal-die'));
+ const f=domestic(1),player=new TurnPlayback();const ready=renderMapStage({world:f.before,run:null,playback:player});assert.ok(!ready.includes('map-judgment'));assert.ok(!ready.includes('map-stage-sidebar'));assert.ok(!ready.includes('visual-nation-card'));assert.ok(ready.includes('map-play-toggle'));
+ player.load(f.run.history[0],f.before,f.run.world,false);while(player.scene.kind!=='result')player.step();assert.equal(renderJudgmentOverlay({world:player.displayWorld,playback:player}),'');assert(mapEffects(player.scene,null,f.run.history[0]).units.some(e=>e.role==='minister'&&e.type==='notice'));
  const old=player.displayWorld;player.step();assert.equal(player.state.phase,'departing');assert.equal(player.displayWorld,old);player.step();assert.equal(player.scene.kind,'apply');assert.equal(renderJudgmentOverlay({world:player.displayWorld,playback:player}),'');assert.ok(mapEffects(player.scene).units.length>0);
  player.finish();assert.equal(renderJudgmentOverlay({world:player.displayWorld,playback:player}),'');
 });

@@ -1,3 +1,5 @@
+import { movementScenes } from './movement-scenes.js';
+import { scoreBonusItems } from './score-accumulation.js';
 import { calendarAtRound } from '../model/calendar.js';
 import { choiceFor } from './choice-reel.js';
 import { applicationSteps, applicationWorld, observerDuration } from './observer-flow.js';
@@ -9,7 +11,7 @@ export function makeTurnScenes(record,before) {
   for(const event of record.events) {
     const frame=record.frames?.[event.index]||{before,after:before};
     const motion=record.movements?.find(m=>m.eventIndex===event.index);
-    if(motion){scenes.push({id:`move-${event.index}`,kind:'movement',event,battleIndex:event.battleIndex,title:motion.moves.some(m=>m.kind==='redeploy')?'생존 지휘관 재배치':'지휘관 출정·복귀',worldBefore:frame.before,worldAfter:frame.before,campsBefore:camps,camps:motion.camps,moves:motion.moves});camps=motion.camps;}
+    if(motion||event.type==='territory'){const steps=movementScenes(event,frame,motion,camps);scenes.push(...steps.scenes);camps=steps.camps;}
     if(event.type==='expedition_roll')continue;
     const start=scenes.length;
     const roll=record.rolls[event.rollIndex];
@@ -20,6 +22,7 @@ export function makeTurnScenes(record,before) {
       title:attempt<attempts.length-1?'전쟁 대상 없음 · 국왕 주사위 다시 굴림':event.type==='king'?'국왕의 행동 선택':event.type==='minister'?'승상의 내정 선택':event.type==='war_target'?'공격 국가 선택':event.type==='expedition_roll'?'지휘관의 출전 판정':event.title,
       lockedTitle:attempt<attempts.length-1?'공격 가능한 국가가 없어 재판정':event.title,
       detail:event.detail,worldBefore:frame.before,worldAfter:frame.before,
+      bonusItems:scoreBonusItems(event.side,event.type==='domestic_roll'?event.ability:0),
       bonus:event.side?(event.side.bonus??event.side.ability+event.side.armyBonus):event.type==='domestic_roll'?event.ability:0,
     }));
     else scenes.push({id:`${event.type}-${event.index}`,kind:event.type==='resolve'?'result':'focus',role:event.role,event,battleIndex:event.battleIndex,title:event.title,detail:event.detail,worldBefore:frame.before,worldAfter:frame.before});
@@ -54,12 +57,12 @@ export class TurnPlayback {
   advance(){
     if(!this.state||this.state.finished)return;this.clearTimer();
     if(this.scene.kind==='apply'&&this.state.effectStage){const steps=applicationSteps(this.scene,this.state.record),index=steps.indexOf(this.state.effectStage);if(index<steps.length-1){this.state.effectStage=steps[index+1];this.remaining=this.duration();this.onChange();if(this.state.playing)this.arm();return;}}
-    if(this.state.phase==='rolling')this.state.phase=this.scene.bonus?'raw':'locked';
-    else if(this.state.phase==='raw')this.state.phase='merging';
-    else if(this.state.phase==='merging')this.state.phase='locked';
+    if(this.state.phase==='rolling')this.state.phase=this.scene.bonusItems?.some(i=>i.value)||this.scene.bonus?'raw':'locked';
+    else if(this.state.phase==='raw'){this.state.phase='merging';this.state.mergeIndex=0;}
+    else if(this.state.phase==='merging'){const count=this.scene.bonusItems?.filter(i=>i.value).length||1;if((this.state.mergeIndex||0)<count-1)this.state.mergeIndex++;else this.state.phase='locked';}
     else if(this.state.phase!=='departing'&&this.state.scenes[this.state.index+1]?.kind==='apply')this.state.phase='departing';
     else if(this.groupEnd===this.state.index&&this.state.index<this.state.scenes.length-1){this.state.playing=false;this.groupDone=true;if(this.scene.kind==='apply')this.state.phase='settled';this.onChange();return;}
-    else if(this.state.index<this.state.scenes.length-1){this.state.index++;this.state.phase=['roll','reel'].includes(this.scene.kind)?'rolling':'holding';this.state.effectStage=this.scene.kind==='apply'?applicationSteps(this.scene,this.state.record)[0]:null;}
+    else if(this.state.index<this.state.scenes.length-1){this.state.index++;this.state.mergeIndex=0;this.state.phase=['roll','reel'].includes(this.scene.kind)?'rolling':'holding';this.state.effectStage=this.scene.kind==='apply'?applicationSteps(this.scene,this.state.record)[0]:null;}
     else{this.state.finished=true;this.state.playing=false;this.onChange();this.onFinish();return;}
     this.remaining=this.duration();this.onChange();if(this.state.playing)this.arm();
   }

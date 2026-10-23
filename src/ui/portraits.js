@@ -7,7 +7,7 @@ export function generalPortraitKey(person,country){
   const roster=/^general-(\d+)-(\d+)$/.exec(person?.id||'');
   if(roster)return `general-${String((Number(roster[1])*5+Number(roster[2]))%50+1).padStart(3,'0')}`;
   let hash=0;for(const char of String(person?.id||`${country?.id||person?.countryId}:${person?.slot??0}:${person?.generation??0}`))hash=(Math.imul(hash,31)+char.charCodeAt(0))>>>0;
-  return `general-${String(hash%50+1).padStart(3,'0')}`;
+  return `general-${String((person?.generation>0?50+hash%20:hash%50)+1).padStart(3,'0')}`;
 }
 export function defaultPortraitKey(countryId, role = 'king') {
   const preset = /^nation-(\d)$/.exec(countryId || '');

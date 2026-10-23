@@ -16,7 +16,7 @@ export function placeCompactDuel(){
  const root=globalThis.document?.querySelector?.('.map-stage'),pane=root?.querySelector('.is-compact-duel'),ring=root?.querySelector('.battle-emblem .target-ring');
  if(!pane||!ring)return;
  const r=root.getBoundingClientRect(),b=ring.getBoundingClientRect(),width=pane.offsetWidth,height=pane.offsetHeight;
- const cards=[...root.querySelectorAll('.map-unit-position[data-combat-side]')],boxes=[b,...cards.flatMap(c=>[...c.querySelectorAll('foreignObject,.unit-combat-role,.unit-status-label,.unit-loss-label')].map(e=>e.getBoundingClientRect()))].map(v=>({x:v.x-r.x-5,y:v.y-r.y-5,width:v.width+10,height:v.height+10}));
+ const cards=[...root.querySelectorAll('.map-unit-position[data-combat-side]')],control=root.querySelector('.map-play-toggle')?.getBoundingClientRect(),boxes=[b,...(control?[control]:[]),...cards.flatMap(c=>[...c.querySelectorAll('foreignObject,.unit-combat-role,.unit-status-label,.unit-loss-label,.unit-feedback-text')].map(e=>e.getBoundingClientRect()))].map(v=>({x:v.x-r.x-5,y:v.y-r.y-5,width:v.width+10,height:v.height+10}));
  const left=Math.min(...boxes.map(v=>v.x)),right=Math.max(...boxes.map(v=>v.x+v.width)),top=Math.min(...boxes.map(v=>v.y)),bottom=Math.max(...boxes.map(v=>v.y+v.height)),x=b.x+b.width/2-r.x,y=b.y+b.height/2-r.y;
  const candidates=[[x-width/2,top-height-8],[x-width/2,bottom+8],[left-width-8,y-height/2],[right+8,y-height/2],[8,8],[r.width-width-8,8],[8,r.height-height-8],[r.width-width-8,r.height-height-8]].map(([px,py],i)=>({x:Math.max(8,Math.min(r.width-width-8,px)),y:Math.max(8,Math.min(r.height-height-8,py)),width,height,i}));
  const chosen=candidates.map(p=>({...p,overlap:boxes.reduce((n,v)=>n+paneOverlap(p,v),0)})).sort((a,b)=>a.overlap-b.overlap||a.i-b.i)[0];
@@ -26,10 +26,11 @@ export function placeCompactDuel(){
 }
 export function placeRoyalChoice(){
  const root=globalThis.document?.querySelector?.('.map-stage'),pane=root?.querySelector('.is-royal-choice,.is-royal-die');if(!pane)return;
- const role=pane.dataset.anchorRole||'king',unit=[...root.querySelectorAll('.map-unit-position')].find(c=>c.dataset.unitRole===role&&c.dataset.country===pane.dataset.nation),card=unit?.querySelector('foreignObject');if(!card)return;
+ const role=pane.dataset.anchorRole||'king',unit=[...root.querySelectorAll('.map-unit-position')].find(c=>c.dataset.unitRole===role&&c.dataset.country===pane.dataset.nation&&(role!=='general'||c.querySelector('.map-unit-token')?.dataset.slot===pane.dataset.anchorSlot)),card=unit?.querySelector('foreignObject');if(!card)return;
  const r=root.getBoundingClientRect(),b=card.getBoundingClientRect(),width=pane.offsetWidth,height=pane.offsetHeight;
  const left=Math.max(8,Math.min(r.width-width-8,b.x+b.width/2-r.x-width/2));
  let top=b.y-r.y-height-8;if(top<8)top=b.bottom-r.y+8;
+ const control=root.querySelector('.map-play-toggle')?.getBoundingClientRect();if(control&&left+width>control.left-r.left&&left<control.right-r.left&&top<control.bottom-r.top)top=control.bottom-r.top+8;
  pane.style.left=`${left}px`;pane.style.top=`${Math.max(8,Math.min(r.height-height-8,top))}px`;
 }
 export function cameraExtent(width=1200,height=800){const ratio=Math.max(.1,width/height);return ratio<1.5?[1200,1200/ratio]:[800*ratio,800];}

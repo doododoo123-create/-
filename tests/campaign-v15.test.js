@@ -84,7 +84,7 @@ test('capture hatch appears only at the territory step and persists into the nex
  const before=counterFixture(),r=nextTurn(before,war15(4)),record=r.history[0],scenes=makeTurnScenes(record,before.world),index=scenes.findIndex(s=>s.kind==='apply'&&s.event.type==='resolve'),snapshot=JSON.stringify(r);
  const state={record,before:before.world,scenes,index,phase:'holding',effectStage:'outcome',roundRecords:[]};assert.equal(roundCampaign(scenes[index].worldBefore,state).captures.size,0);
  state.effectStage='troops';assert.equal(roundCampaign(scenes[index].worldBefore,state).captures.size,0);
- state.effectStage='territory';const campaign=roundCampaign(scenes[index].worldAfter,state);assert.equal(campaign.captures.get('tile-3').ownerId,'b');assert.equal(campaign.baseOwners.get('tile-3'),'a');
+ state.effectStage='territory';assert.equal(roundCampaign(scenes[index].worldAfter,state).captures.size,0);state.index=scenes.findIndex(s=>s.kind==='arrival');const campaign=roundCampaign(scenes[state.index].worldAfter,state);assert.equal(campaign.captures.get('tile-3').ownerId,'b');assert.equal(campaign.baseOwners.get('tile-3'),'a');
  const later={turn:2,round:record.round,actorId:'b',events:[],battles:[],changes:[]},next={record:later,before:r.world,scenes:[{kind:'focus',event:{index:0,type:'king'}}],index:0,roundRecords:[record]};
  assert.equal(roundCampaign(r.world,next).captures.size,1);assert(roundCampaign(r.world,next).routes.length>=2);
  later.events=[{type:'round_end',index:1}];next.scenes=[{kind:'round-settle',event:{index:.5,type:'round_settle'}}];assert.equal(roundCampaign(r.world,next).captures.size,1);
@@ -112,7 +112,7 @@ test('camera framing uses the acting nation and all visible borders without futu
  const p=new TurnPlayback();p.load(record,r0.world,r.world,false);p.state.index=index;
  const html=renderJudgmentOverlay({world:scene.worldBefore,playback:p});assert(html.includes('is-compact-duel'));assert(!html.includes('judgment-side-label'));assert(!html.includes(`data-score-visible="true"`));
  const map=renderAtlas(scene.worldBefore,{presentation:{...p.state,effectStage:null}});assert(!map.includes('전투 발생'));assert(map.includes('unit-combat-role'));assert(map.includes('>공격</text>'));assert(map.includes('>수비</text>'));assert(map.includes('data-combat-side="attack"'));
- p.state.index=scenes.findIndex(s=>s.kind==='apply'&&s.event.type==='resolve');p.state.effectStage='territory';assert(renderAtlas(r.world,{presentation:p.state}).includes('data-round-capture="tile-3"'));
+ p.state.index=scenes.findIndex(s=>s.kind==='arrival');assert(renderAtlas(r.world,{presentation:p.state}).includes('data-round-capture="tile-3"'));
 });
 test('an actual seven-country round retains earlier captures in a later nation and clears when the next season starts',()=>{
  const w=createContinent160World();w.countries.forEach(c=>c.troops=50);let r=createRun(w,123),captured=false,seen=false;

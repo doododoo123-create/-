@@ -65,7 +65,9 @@ test('choices become deterministic reels, dispatch rolls stay in the log and onl
  assert(record.rolls.some(r=>r.type==='expedition_roll'&&r.sides===100));assert(!scenes.some(s=>s.event?.type==='expedition_roll'));
  for(const type of ['king','war_target'])assert(scenes.some(s=>s.event?.type===type&&s.kind==='reel'));
  const player=new TurnPlayback();player.load(record,run.world,n.world,false);player.state.index=scenes.findIndex(s=>s.event?.type==='hold');player.state.phase='holding';
- for(const html of [renderJudgmentOverlay({world:run.world,playback:player}),renderArena({world:run.world,run:n,playback:player})]){assert(html.includes('출정 거부'));assert(html.includes('병력'));assert(html.includes('data-portrait-key'));assert(!html.includes('data-die-sides'));}
+ assert.equal(renderJudgmentOverlay({world:run.world,playback:player}),'');
+ assert(renderAtlas(player.scene.worldBefore,{presentation:player.state}).includes('출정 거부'));
+ const arena=renderArena({world:run.world,run:n,playback:player});assert(arena.includes('출정 거부'));assert(arena.includes('병력'));assert(arena.includes('data-portrait-key'));assert(!arena.includes('data-die-sides'));
  const domestic=nextTurn(run,{rolls:{king:1,minister:10,domestic:10,supply_gain:1}});assert(makeTurnScenes(domestic.history[0],run.world).some(s=>s.event?.type==='minister'&&s.kind==='reel'));assert.equal(JSON.stringify(n),saved);
 });
 test('combat portrait captions use recorded starting troops and stars; route stroke and head match each country',()=>{

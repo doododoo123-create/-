@@ -7,8 +7,7 @@ import { esc } from './icons.js';
 export function groupedOperations(campaign){
  const groups=new Map();
  for(const r of campaign.routes){
-  if(r.side!=='attack'&&!r.counterattack)continue;
-  const fromId=r.frontId||r.fromId,key=[r.countryId,fromId,r.toId].join(':');if(fromId===r.toId)continue;
+  const fromId=r.fromId,key=[r.countryId,r.side,(r.path||[fromId,r.toId]).join('>')].join(':');if(fromId===r.toId)continue;
   if(!groups.has(key))groups.set(key,{...r,fromId,key,count:0,active:false,people:new Set()});
   const g=groups.get(key);g.count++;g.active||=r.active;if(r.personId)g.people.add(r.personId);
  }
@@ -29,15 +28,15 @@ export function renderCampaignRoutes(world,geometry,campaign,{frontPath,scene,pr
   const from=anchor(r.fromId,'reference'),to=anchor(r.toId,'battle');if(!from||!to)return '';
   const names=[...r.people].map(id=>world.people.find(p=>p.id===id)?.name).filter(Boolean).join(' · '),label=`${country(r.countryId)?.name||''} · ${names} · 이 구간 ${r.count}회 전투`;
   const count=r.count>1?`<text class="operation-count" x="${(from[0]+to[0])/2}" y="${(from[1]+to[1])/2-7}">×${r.count}</text>`:'';
-  return `<g class="operation-arrow" data-operation-from="${esc(r.fromId)}" data-operation-to="${esc(r.toId)}" data-operation-count="${r.count}"><title>${esc(label)}</title>${battleRoute(from,to,'attack',country(r.countryId)?.color,{id:r.key,active:r.active})}${count}</g>`;
+  return `<g class="operation-arrow" data-operation-from="${esc(r.fromId)}" data-operation-to="${esc(r.toId)}" data-operation-count="${r.count}"><title>${esc(label)}</title>${battleRoute(from,to,r.side,country(r.countryId)?.color,{id:r.key,active:r.active,points:(r.path||[r.fromId,r.toId]).map((id,i,a)=>anchor(id,i===a.length-1?'battle':'station'))})}${count}</g>`;
  }).join('');
  const fronts=campaign.fronts.map(f=>{
   const cell=id=>geometry.cells[world.territories.findIndex(t=>t.id===id)],d=frontPath(geometry,cell(f.fromId),cell(f.toId));
   return d?`<g class="round-stalemate" data-front-from="${esc(f.fromId)}" data-front-to="${esc(f.toId)}"><path class="front-shadow" d="${d}"/><path class="front-line" d="${d}"/></g>`:'';
  }).join('');
  const moving=scene?.kind==='movement'?scene.moves||[]:[],shown=new Map();
- for(const m of campaign.movements)if(['retreat','redeploy'].includes(m.kind)||selectedPersonId===m.personId)shown.set(m.key,m);
- for(const m of moving)shown.set(`live:${m.personId}`,{...m,key:`live:${m.personId}`,live:true});
+ for(const m of campaign.movements)if(['retreat','redeploy'].includes(m.kind)||selectedPersonId===m.personId&&!['outbound','return','relief'].includes(m.kind))shown.set(m.key,m);
+ for(const m of moving)if(!['outbound','return','relief'].includes(m.kind))shown.set(`live:${m.personId}`,{...m,key:`live:${m.personId}`,live:true});
  const liveIds=new Set(moving.map(m=>m.personId)),dedup=new Set();
  const marches=[...shown.values()].map(m=>{
   if(!m.live&&liveIds.has(m.personId))return '';

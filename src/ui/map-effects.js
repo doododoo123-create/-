@@ -1,3 +1,4 @@
+import { localNotices } from './local-notices.js';
 import { territoryCell } from '../model/cartography-geometry.js';
 import { displayEventText } from './display-names.js';
 import {esc} from './icons.js';
@@ -7,7 +8,7 @@ const effectKey=p=>`${p.countryId}:${p.slot}`;
 const effectSign=n=>n>0?`+${n}`:`−${Math.abs(n)}`;
 export function mapEffects(scene,stage=null,record=null) {
   const output={units:[],territories:[],announcement:''};
-  if(scene?.kind!=='apply'||!scene.worldBefore||!scene.worldAfter)return output;
+  if(scene?.kind!=='apply'||!scene.worldBefore||!scene.worldAfter){output.units=localNotices(scene,record,scene?.worldAfter);return output;}
   const before=scene.worldBefore,after=scene.worldAfter,event=scene.event||{};
   const oldCountries=new Map(before.countries.map(c=>[c.id,c]));
   const oldGenerals=new Map(before.people.filter(p=>p.role==='general').map(p=>[effectKey(p),p]));
@@ -48,16 +49,17 @@ export function mapEffects(scene,stage=null,record=null) {
   }
   const battle=record?.battles?.[scene.battleIndex];
   if(event.type==='resolve'&&battle&&!battle.automatic)output.units=output.units.filter(e=>!(e.type==='army'&&e.role==='general'&&((e.countryId===battle.actorId&&e.slot===battle.slot)||(e.countryId===battle.defenderId&&e.slot===battle.defenseSlot))));
+  output.units.push(...localNotices(scene,record,after));output.announcement='';
   return output;
 }
 
 // Feedback lives inside the recipient card's zoom/stack transform, not in world-sized boxes.
 export function unitFeedback(effects,marker){
- return effects.units.filter(e=>!['death','appointment'].includes(e.type)&&marker.country.id===e.countryId&&marker.role===e.role&&(e.role==='king'||marker.person?.slot===e.slot));
+ return effects.units.filter(e=>!['death','appointment'].includes(e.type)&&marker.country.id===e.countryId&&marker.role===e.role&&(e.role!=='general'||marker.person?.slot===e.slot));
 }
 export function renderUnitFeedback(entries,{combatSide=false,hasLoss=false,hasStatus=false}={}){
  const start=hasLoss?-55:combatSide||hasStatus?-46:-36;
- return entries.map((e,i)=>`<text class="unit-feedback-text" data-effect="${e.type}" data-country="${esc(e.countryId)}" data-role="${e.role}" data-slot="${e.slot??''}" data-delta="${e.delta}" text-anchor="middle" y="${start-i*10}">${esc(e.label)}</text>`).join('');
+ return entries.map((e,i)=>`<text class="unit-feedback-text ${e.type==='notice'?'unit-local-notice':''} ${e.tone==='refusal'?'is-refusal':''}" data-effect="${e.type}" data-notice-kind="${e.noticeKind||''}" data-country="${esc(e.countryId)}" data-role="${e.role}" data-slot="${e.slot??''}" data-delta="${e.delta}" text-anchor="middle" y="${start-i*10}">${esc(e.label)}</text>`).join('');
 }
 export function renderMapEffects(effects,geometry,world){
  const occupied=[],textWidth=(text,size)=>[...text].reduce((n,c)=>n+(/[가-힣]/.test(c)?size:size*.58),0)+20;

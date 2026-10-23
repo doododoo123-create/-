@@ -12,7 +12,7 @@ export function battleRoute(from,to,side,color,options={}){
   const angle=Math.atan2(dy,dx)+Math.atan(offset/65),padding=Math.min(8,length*.12);
   const start=[from[0]+dx/length*padding,from[1]+dy/length*padding],end=[to[0]-Math.cos(angle)*padding,to[1]-Math.sin(angle)*padding];
   const bend=Math.min(8,length*.08)+offset,middle=[(start[0]+end[0])/2-dy/length*bend,(start[1]+end[1])/2+dx/length*bend];
-  const d=`M${start} Q${middle} ${end}`;
+  const d=options.points?.length>2?`M${options.points.map(p=>p.join(',')).join(' L')}`:`M${start} Q${middle} ${end}`;
   const marker=options.id?`route-head-${String(options.id).replace(/[^a-zA-Z0-9_-]/g,'-')}`:`${side}-head`;
   return `<g class="campaign-route-pair ${options.active===false?'past-route':'active-route'}" ${options.id?`data-round-route="${esc(options.id)}"`:''}>${options.id?`<defs><marker id="${marker}" viewBox="0 0 14 14" refX="11" refY="7" markerWidth="3.4" markerHeight="3.4" markerUnits="strokeWidth" orient="auto"><path d="M1 1 12 7 1 13 4 7Z" fill="${color||'#fff'}" style="fill:${color||'#fff'}" stroke="#071116" stroke-width=".7"/></marker></defs>`:''}<path class="campaign-route-shadow" d="${d}"/><path class="campaign-route ${side}" style="stroke:${color||'#fff'}" d="${d}" fill="none" marker-end="url(#${marker})"/></g>`;
 }
