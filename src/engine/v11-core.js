@@ -360,7 +360,7 @@ function prepareTurn(input,controls){
    if(aliveIds(s).length===1){finish(s,'conquest');break;}
   }
   const changes=reconcile(s);
-  if(homeRetreat)for(const c of s.countries)for(const g of c.generals)if(g.active&&g.alive&&g.position!==g.station&&!s.cells.some(cell=>cell.owner===c.id&&cell.commander===g.slot)){const placement=applyHomeRetreat(s,Atlas,c.id,g,capitalCell(s,c.id));if(placement)emit('retreat',g.name+' · 수도 인근 재배치','담당 영지가 없는 생존 지휘관은 병력과 전적을 유지하고 수도 인근에 배치해.',{nation:c.id,slot:g.slot,role:'general',moves:placement.moves,stranded:false,destination:placement.to,reason:placement.reason,relocation:placement.relocation},true);}
+  if(homeRetreat&&!V11_RULES.nearbyRetreat)for(const c of s.countries)for(const g of c.generals)if(g.active&&g.alive&&g.position!==g.station&&!s.cells.some(cell=>cell.owner===c.id&&cell.commander===g.slot)){const placement=applyHomeRetreat(s,Atlas,c.id,g,capitalCell(s,c.id));if(placement)emit('retreat',g.name+' · 수도 인근 재배치','담당 영지가 없는 생존 지휘관은 병력과 전적을 유지하고 수도 인근에 배치해.',{nation:c.id,slot:g.slot,role:'general',moves:placement.moves,stranded:false,destination:placement.to,reason:placement.reason,relocation:placement.relocation},true);}
   if(changes.length||battles.some(b=>b.takenCell!==undefined))emit('roster','지휘 구역 재편',changes.join(' · ')||'현재 영지 수에 맞춰 담당 구역을 정리했어.',{},true);
   const captured=battles.reduce((n,b)=>n+(b.captureOwner===opponent?0:b.takenCells.length),0),lost=battles.reduce((n,b)=>n+(b.captureOwner===opponent?b.takenCells.length:0),0);record.summary=s.countries[opponent].short+' 원정 · 장군 '+battles.length+'회 공격 · 영지 +'+captured+(lost?' / 역점령 −'+lost:'')+(battles.some(b=>b.automatic)?' · 자동 점령 포함':'');
  }

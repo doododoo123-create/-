@@ -1,3 +1,4 @@
+import { renderSeasonAnnouncement } from './season-view.js';
 import { renderChoiceReel } from './choice-reel.js';
 import { sideBonus, renderObserverBonuses, renderObserverScore, veteranStars } from './combat-view.js';
 import { vividWorld } from './palette.js';
@@ -20,6 +21,7 @@ function judgmentTraits(person,role,country){
 export function renderJudgmentOverlay({world,playback}) {
   if(!judgmentVisible(playback))return '';
   const state=playback.state,scene=playback.scene,event=scene.event||{},record=state.record;
+  if(scene.kind==='season')return renderSeasonAnnouncement(scene);
   const phase=state.phase==='departing'?'locked':state.phase;
   world=vividWorld(world);
   const frame=vividWorld(event.type==='appointment'?scene.worldAfter===scene.worldBefore?record.frames?.[event.index]?.after||world:scene.worldAfter:scene.worldBefore||world);
@@ -47,8 +49,8 @@ export function renderJudgmentOverlay({world,playback}) {
     const person=judgmentPerson(frame,nation,'general',event.slot);
     body=`<div class="judgment-single refusal-person">${judgmentPortrait(person,nation,'general')}</div><p class="dispatch-refusal">출정 거부</p>`;
   }else if(scene.kind==='reel'){
-    const role=event.role||'king',person=judgmentPerson(frame,nation,role,event.slot);
-    body=`<div class="judgment-single">${judgmentPortrait(person,nation,role)}${renderChoiceReel(scene,phase,playback.sceneProgress)}</div>`;
+    const role=event.role||'king';
+    return `<aside class="map-judgment is-royal-choice" data-nation="${esc(nation?.id||'')}" data-event="${esc(event.type)}" data-phase="${state.phase}" style="--nation:${nation?.color||'#fff'}" aria-label="${esc(nation?.name||'')} ${role==='king'?'국왕':'승상'} 선택"><div class="royal-choice-heading">${esc(nation?.name||'')} · ${role==='king'?'국왕':'승상'}</div>${renderChoiceReel(scene,phase,playback.sceneProgress,{rowHeight:32})}</aside>`;
   }else if(['round_end','roster','waiting','finish','elimination'].includes(event.type)){
     note=event.type==='round_end'?'각 지역에서 병력을 생산합니다.':event.detail;
   }else{

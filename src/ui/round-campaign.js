@@ -8,7 +8,7 @@ export function completedRoundPresentation(run){
  return {record,scenes:[],index:0,finished:true,roundRecords:run.history.filter(r=>r.round===record.round&&r.turn<record.turn)};
 }
 export function roundCampaign(world,presentation){
- const record=presentation?.record,empty={captures:new Map(),routes:[],fronts:[],movements:[],baseOwners:new Map(),settled:true};
+ const record=presentation?.record,empty={captures:new Map(),routes:[],fronts:[],movements:[],battleSites:[],baseOwners:new Map(),settled:true};
  if(!record)return empty;
  const scene=presentation.scenes?.[presentation.index],events=record.events||[],roundEnd=events.find(e=>e.type==='round_end');
  if(presentation.finished&&(roundEnd||record.result)||scene&&((roundEnd&&scene.event?.index>=roundEnd.index)||scene.event?.type==='finish'))return empty;
@@ -17,7 +17,7 @@ export function roundCampaign(world,presentation){
  const baseOwners=new Map((before||world).territories.map(t=>[t.id,t.ownerId]));
  if(!before)for(const c of [...(record.changes||[])].reverse())baseOwners.set(c.territoryId,c.from);
  for(const r of [...past].reverse())for(const c of [...(r.changes||[])].reverse())baseOwners.set(c.territoryId,c.from);
- const captures=new Map(),routes=[],fronts=new Map(),movements=[],lanes=new Map();
+ const captures=new Map(),routes=[],fronts=new Map(),movements=[],lanes=new Map(),battleSites=new Map();
  const limit=presentation.finished?Infinity:scene?.event?.index??-1;
  const applied=r=>r!==record||presentation.finished;
  for(const r of records){
@@ -26,6 +26,7 @@ export function roundCampaign(world,presentation){
    const event=r.events.find(e=>e.type==='territory'&&e.battleIndex===b.index),resolve=r.events.find(e=>e.type==='resolve'&&e.battleIndex===b.index);
    const revealed=applied(r)||event&&(event.index<limit||event.index===limit&&scene?.kind!=='movement');
    if(!revealed)continue;
+   if(!b.automatic){const site=battleSites.get(b.territoryId)||{territoryId:b.territoryId,count:0};site.count++;battleSites.set(b.territoryId,site);}
    const frame=r.frames?.[event?.index]?.before,motion=r.movements?.find(m=>m.eventIndex===event?.index);
    for(const [side,countryId,slot] of [['attack',b.actorId,b.slot],['defense',b.defenderId,b.defenseSlot]]){
     if(side==='defense'&&b.automatic)continue;
@@ -49,7 +50,7 @@ export function roundCampaign(world,presentation){
  const owned=new Map(world.territories.map(t=>[t.id,t.ownerId]));
  for(const [id,c] of captures)if(owned.get(id)!==c.ownerId)captures.delete(id);
  const target=events.find(e=>e.type==='war_target'&&(e.index<limit||presentation.finished||e.index===limit&&['locked','departing'].includes(presentation.phase)));
- return {captures,routes,movements,actorId:record.actorId,opponentId:target?.targetId,fronts:[...fronts.values()].filter(f=>owned.get(f.fromId)!==owned.get(f.toId)),baseOwners,settled:false};
+ return {captures,routes,movements,battleSites:[...battleSites.values()],actorId:record.actorId,opponentId:target?.targetId,fronts:[...fronts.values()].filter(f=>owned.get(f.fromId)!==owned.get(f.toId)),baseOwners,settled:false};
 }
 const frontPathCache=new WeakMap();
 export function sharedFrontPath(geometry,a,b){

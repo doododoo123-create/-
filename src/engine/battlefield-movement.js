@@ -28,3 +28,27 @@ export function defeatedAttackPosition(state,atlas,nation,g,target,launch){
  candidates.sort((a,b)=>Number(b===launch)-Number(a===launch)||paths.get(a).length-paths.get(b).length||a-b);
  return candidates.length?paths.get(candidates[0]):null;
 }
+
+// Distances use the adjacency graph, never editable drawing coordinates or RNG.
+export function territoryDistances(atlas,start){
+ const distances=new Map();if(!Number.isInteger(start)||!atlas.cells[start])return distances;
+ distances.set(start,0);const queue=[start];
+ for(let i=0;i<queue.length;i++)for(const id of atlas.cells[queue[i]].neighbors)if(!distances.has(id)){distances.set(id,distances.get(queue[i])+1);queue.push(id);}
+ return distances;
+}
+export function nearbyRetreatDestination(state,atlas,nation,g,battlefield,threat){
+ const own=state.cells.filter(c=>c.owner===nation).map(c=>c.id);if(!own.length)return null;
+ const adjacent=atlas.cells[battlefield]?.neighbors.filter(id=>state.cells[id].owner===nation)||[];
+ const distance=territoryDistances(atlas,battlefield),danger=territoryDistances(atlas,threat),paths=recoveryPaths(state,atlas,nation,g.position);
+ const away=own.filter(id=>id!==battlefield),candidates=adjacent.length?adjacent:away.length?away:own;
+ candidates.sort((a,b)=>(adjacent.length?0:(distance.get(a)??Infinity)-(distance.get(b)??Infinity))||Number(b===g.position)-Number(a===g.position)||(danger.get(b)??0)-(danger.get(a)??0)||(paths.get(a)?.length??Infinity)-(paths.get(b)?.length??Infinity)||a-b);
+ const to=candidates[0];return {to,path:paths.get(to)||null,encircled:!adjacent.length};
+}
+export function moveToNearbyRetreat(state,atlas,nation,g,battlefield,threat){
+ if(!g.active||!g.alive||g.troops<=0)return null;
+ const destination=nearbyRetreatDestination(state,atlas,nation,g,battlefield,threat);if(!destination)return null;
+ const from=g.position,{to,path,encircled}=destination;
+ const move={nation,slot:g.slot,generation:g.generation,kind:path?'retreat':'redeploy',from,to,path:path||[from,to],battlefieldFrom:battlefield,presentationOnly:from===to,encircled};
+ g.position=to;g.stranded=false;
+ return {moves:[move],to,encircled,relocation:!path};
+}

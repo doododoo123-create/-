@@ -1,3 +1,4 @@
+import { renderSeasonAnnouncement } from './season-view.js';
 import { renderChoiceReel } from './choice-reel.js';
 import { sideBonus, renderCombatBonuses, veteranStars } from './combat-view.js';
 import { vividWorld } from './palette.js';
@@ -12,6 +13,7 @@ function character(person,country,role,compact=false,army=null) {
 }
 export function renderArena({world,run,playback,showControls=true}) {
   const state=playback?.state,record=state?.record,scene=playback?.scene,event=scene?.event;
+  if(scene?.kind==='season')return `<section class="panel arena-panel season-panel" data-event="season" data-scene="${scene.id}">${renderSeasonAnnouncement(scene)}<p>${esc(scene.title)}</p>${showControls?`<div class="arena-controls"><button class="button outline" data-action="scene-step">${icon('chevron',15)}한 단계</button><button class="button subtle" data-action="scene-skip">턴 결과 바로 보기 ${icon('arrow',14)}</button></div>`:''}</section>`;
   const frame=vividWorld(scene?.worldBefore||world);
   const actor=findCountry(frame,record?.actorId)||findCountry(frame,run?.schedule[run.scheduleIndex])||frame.countries.find(c=>landCount(frame,c.id)>0)||frame.countries[0];
   const nation=findCountry(frame,event?.nationId)||actor;

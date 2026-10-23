@@ -85,6 +85,7 @@ export function validateWorld(source) {
   const combat={...clone(ADDITIVE_COMBAT_DEFAULTS),...r};
   if(typeof combat.occupationAdvance!=='boolean')fail('점령 후 지휘관 전진 설정을 확인해 주세요.');rules.occupationAdvance=combat.occupationAdvance;
   if(typeof combat.battlefieldRecovery!=='boolean')fail('전투 후 주둔·병력 0 복귀 설정을 확인해 주세요.');rules.battlefieldRecovery=combat.battlefieldRecovery;
+  if(typeof combat.nearbyRetreat!=='boolean')fail('전장 인근 후퇴 설정을 확인해 주세요.');rules.nearbyRetreat=combat.nearbyRetreat;
   rules.capitalReserveLimit=combat.capitalReserveLimit===null?null:number(combat.capitalReserveLimit,'수도 최대 예비병',1,10000);
   if(typeof combat.defenderCounterattack!=='boolean')fail('방어 역점령 설정을 확인해 주세요.');rules.defenderCounterattack=combat.defenderCounterattack;
   rules.counterCaptureThresholds=array(combat.counterCaptureThresholds,'방어 역점령 점수차',2).map(v=>number(v,'역점령 점수차',1,1000));

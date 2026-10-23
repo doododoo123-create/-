@@ -1,9 +1,11 @@
+import { calendarAtRound } from '../model/calendar.js';
 import { choiceFor } from './choice-reel.js';
 import { applicationSteps, applicationWorld, observerDuration } from './observer-flow.js';
 // Presentation reads committed engine events. Its clock never consumes game randomness.
 export const leadGeneral = (world,id) => world.people.find(p=>p.countryId===id&&p.role==='general'&&p.active&&p.alive)||null;
 export function makeTurnScenes(record,before) {
   const scenes=[];let camps=record.campsBefore||before.visualCamps||{};
+  if(record.seasonStart??record.turn===1){const calendar=calendarAtRound(record.round);scenes.push({id:'season-'+record.round,kind:'season',event:{type:'season',index:-1,round:record.round,...calendar},title:calendar.label,worldBefore:before,worldAfter:before,camps});}
   for(const event of record.events) {
     const frame=record.frames?.[event.index]||{before,after:before};
     if(event.type==='round_end')scenes.push({id:'round-settle',kind:'round-settle',event:{type:'round_settle',index:event.index-.5},title:'한 바퀴의 영토 확정',worldBefore:frame.before,worldAfter:frame.before,camps});

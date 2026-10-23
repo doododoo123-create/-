@@ -11,13 +11,26 @@ export function nationFraming(world,id,viewport={width:1200,height:800}){
  const [w,h]=cameraExtent(viewport.width,viewport.height);
  return {x:center[0],y:center[1],zoom:Math.max(.5,Math.min(3.2,w*.88/(2*rx),h*.86/(2*ry)))};
 }
+const paneOverlap=(a,b)=>Math.max(0,Math.min(a.x+a.width,b.x+b.width)-Math.max(a.x,b.x))*Math.max(0,Math.min(a.y+a.height,b.y+b.height)-Math.max(a.y,b.y));
 export function placeCompactDuel(){
  const root=globalThis.document?.querySelector?.('.map-stage'),pane=root?.querySelector('.is-compact-duel'),ring=root?.querySelector('.battle-emblem .target-ring');
  if(!pane||!ring)return;
- const r=root.getBoundingClientRect(),b=ring.getBoundingClientRect(),width=pane.offsetWidth,height=pane.offsetHeight,x=b.x+b.width/2-r.x;
- const left=Math.max(8,Math.min(r.width-width-8,x-width/2));
- const above=b.y+b.height/2-r.y-42-height-10,top=above>=8?above:Math.min(r.height-height-8,b.y+b.height/2-r.y+42+10);
- pane.style.left=`${left}px`;pane.style.top=`${Math.max(8,top)}px`;
+ const r=root.getBoundingClientRect(),b=ring.getBoundingClientRect(),width=pane.offsetWidth,height=pane.offsetHeight;
+ const cards=[...root.querySelectorAll('.map-unit-position[data-combat-side]')],boxes=[b,...cards.flatMap(c=>[...c.querySelectorAll('foreignObject,.unit-combat-role,.unit-status-label,.unit-loss-label')].map(e=>e.getBoundingClientRect()))].map(v=>({x:v.x-r.x-5,y:v.y-r.y-5,width:v.width+10,height:v.height+10}));
+ const left=Math.min(...boxes.map(v=>v.x)),right=Math.max(...boxes.map(v=>v.x+v.width)),top=Math.min(...boxes.map(v=>v.y)),bottom=Math.max(...boxes.map(v=>v.y+v.height)),x=b.x+b.width/2-r.x,y=b.y+b.height/2-r.y;
+ const candidates=[[x-width/2,top-height-8],[x-width/2,bottom+8],[left-width-8,y-height/2],[right+8,y-height/2],[8,8],[r.width-width-8,8],[8,r.height-height-8],[r.width-width-8,r.height-height-8]].map(([px,py],i)=>({x:Math.max(8,Math.min(r.width-width-8,px)),y:Math.max(8,Math.min(r.height-height-8,py)),width,height,i}));
+ const chosen=candidates.map(p=>({...p,overlap:boxes.reduce((n,v)=>n+paneOverlap(p,v),0)})).sort((a,b)=>a.overlap-b.overlap||a.i-b.i)[0];
+ pane.style.left=`${chosen.x}px`;pane.style.top=`${chosen.y}px`;
+ const attack=cards.find(c=>c.dataset.combatSide==='attack'),defense=cards.find(c=>c.dataset.combatSide==='defense');
+ if(attack&&defense){const ax=Number(attack.dataset.combatScreenX),dx=Number(defense.dataset.combatScreenX),first=Math.abs(ax-dx)>10?ax<dx:Number(attack.dataset.combatScreenY)<Number(defense.dataset.combatScreenY);pane.style.setProperty('--attack-order',first?'0':'1');pane.style.setProperty('--defense-order',first?'1':'0');}
+}
+export function placeRoyalChoice(){
+ const root=globalThis.document?.querySelector?.('.map-stage'),pane=root?.querySelector('.is-royal-choice');if(!pane)return;
+ const king=[...root.querySelectorAll('.map-unit-position[data-unit-role="king"]')].find(c=>c.dataset.country===pane.dataset.nation),card=king?.querySelector('foreignObject');if(!card)return;
+ const r=root.getBoundingClientRect(),b=card.getBoundingClientRect(),width=pane.offsetWidth,height=pane.offsetHeight;
+ const left=Math.max(8,Math.min(r.width-width-8,b.x+b.width/2-r.x-width/2));
+ let top=b.y-r.y-height-8;if(top<8)top=b.bottom-r.y+8;
+ pane.style.left=`${left}px`;pane.style.top=`${Math.max(8,Math.min(r.height-height-8,top))}px`;
 }
 export function cameraExtent(width=1200,height=800){const ratio=Math.max(.1,width/height);return ratio<1.5?[1200,1200/ratio]:[800*ratio,800];}
 export function battleFraming(scene,record,viewport={width:1200,height:800}){

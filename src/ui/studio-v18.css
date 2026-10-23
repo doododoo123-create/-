@@ -1,0 +1,31 @@
+.season-announcement{position:fixed;left:50%;top:44%;transform:translate(-50%,-50%);z-index:80;display:flex;flex-direction:column;align-items:center;gap:10px;min-width:230px;max-width:calc(100vw - 32px);padding:22px 42px;border:1px solid #d5e7dc;border-radius:7px;background:#08151eee;box-shadow:0 8px 30px #0008;pointer-events:none;color:#fff;text-align:center}
+.season-announcement strong{font:700 27px/1.4 'Malgun Gothic',sans-serif;white-space:nowrap;text-shadow:0 2px 3px #000}
+.season-symbol{font-size:34px;line-height:1;color:#a8efb8}.season-1 .season-symbol{color:#ffd66c}.season-2 .season-symbol{color:#ffad67}.season-3 .season-symbol{color:#9ddcff}
+.game-skin .battle-swords{stroke:#ff263d;stroke-width:3}.game-skin .battle-swords-outline{stroke:#16090d;stroke-width:5.5}
+.game-skin .battle-emblem .target-ring{stroke:#ff4455;fill:#270e1433}
+.battle-site-icon{transform:scale(var(--battle-site-scale,1));transform-origin:0 0}
+.battle-site-icon circle{fill:#251019e6;stroke:#ff334b;stroke-width:1.3}.battle-site-icon path{fill:none;stroke:#ff394f;stroke-width:2.3;stroke-linecap:round}.battle-site-icon text{font-size:8px;font-weight:800;fill:#fff;stroke:#000;stroke-width:2;paint-order:stroke}
+.game-skin .round-campaign-history .past-route{opacity:.86}
+.game-skin .round-campaign-history .past-route .campaign-route{stroke-width:3.2}
+.game-skin .round-campaign-history .past-route .campaign-route-shadow{stroke-width:4.4}
+.game-skin .round-march,.operation-movement.is-selected .round-march{opacity:.85}
+.game-skin .round-retreat .campaign-route{stroke-width:3.2;stroke-dasharray:none}
+.game-skin .round-retreat .campaign-route-shadow{stroke-width:4.4}
+.unit-combat-role,.unit-loss-label{fill:#fff;stroke:#000;stroke-width:2.5;paint-order:stroke;stroke-linejoin:round;font-family:'Malgun Gothic',sans-serif;font-size:7.5px;font-weight:800;pointer-events:none}
+.unit-loss-label{fill:#ff4252;font-size:8px}
+.game-skin .unit-status-label{font-size:8.5px;stroke:#000;stroke-width:2.5;paint-order:stroke;pointer-events:none}
+.game-skin .unit-status-label.victory{fill:#ff263d}.game-skin .unit-status-label.defeat,.game-skin .unit-status-label.draw{fill:#d3d9e1}
+.game-skin .unit-battle-glow{stroke:#ff243c}
+@keyframes commander-engaged{0%,25%,50%,75%,100%{opacity:1;stroke:#ff243c}12.5%,37.5%,62.5%,87.5%{opacity:.3;stroke:#ff8590}}
+@keyframes commander-victory{0%,25%,50%,75%{filter:brightness(1.2) drop-shadow(0 0 5px #ff243c)}12.5%,37.5%,62.5%,87.5%,100%{filter:brightness(1)}}
+.game-skin .map-stage .map-judgment.is-royal-choice{width:200px;min-width:0;max-width:calc(100% - 16px);padding:6px 8px;transform:none;border:1px solid var(--nation);border-radius:5px;background:#091620f5;box-shadow:0 2px 8px #0008;animation:none}
+.royal-choice-heading{font-size:10px;line-height:15px;text-align:center;color:#fff;border-bottom:1px solid var(--nation);padding-bottom:3px;margin-bottom:3px}
+.game-skin .is-royal-choice .choice-reel{min-width:0;gap:4px;margin:0;padding:0;justify-content:center}
+.game-skin .is-royal-choice .choice-window{height:32px;min-width:130px}.game-skin .is-royal-choice .choice-item{height:32px;line-height:32px;min-height:32px;font-size:16px;padding:0 3px}
+.game-skin .is-royal-choice .choice-pointer{font-size:11px}
+.is-compact-duel .judgment-side.attack{order:var(--attack-order,0)}.is-compact-duel .judgment-side.defense{order:var(--defense-order,1)}
+/* Gray the defeated portrait/card, keeping its loss and role labels legible. */
+.game-skin .unit-defeat{animation-name:v18-defeat;filter:none!important}
+html[data-performance=mobile] .unit-defeat{animation-name:v18-defeat;filter:none!important}
+.unit-defeat .map-unit-token{filter:grayscale(1)}
+@keyframes v18-defeat{0%,25%,50%,75%,100%{opacity:.6}12.5%,37.5%,62.5%,87.5%{opacity:1}}

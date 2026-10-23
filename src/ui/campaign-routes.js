@@ -42,13 +42,13 @@ export function renderCampaignRoutes(world,geometry,campaign,{frontPath,scene,pr
  const marches=[...shown.values()].map(m=>{
   if(!m.live&&liveIds.has(m.personId))return '';
   const key=[m.kind,m.countryId,m.fromId,m.toId].join(':');if(dedup.has(key)&&!m.live)return '';dedup.add(key);
-  const points=m.path.map(id=>anchor(id)).filter(Boolean);if(points.length<2||m.fromId===m.toId)return '';
+  const visualFrom=m.visualFromId||m.fromId,visualPath=m.visualFromId?[visualFrom,m.toId]:m.path;
+  const points=visualPath.map((id,i)=>anchor(id,i===0&&m.visualFromId?'battle':'station')).filter(Boolean);if(points.length<2||visualFrom===m.toId)return '';
   const color=country(m.countryId)?.color||'#fff',person=world.people.find(p=>p.id===m.personId),label=esc(person?.name||'지휘관');
   if(m.kind==='redeploy')return `<g class="round-relocation ${m.live?'is-moving':''}" data-relocation-from="${esc(m.fromId)}" data-relocation-to="${esc(m.toId)}"><title>${label} · 경로 없는 재배치</title>${[points[0],points.at(-1)].map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="7" style="stroke:${color}"/>`).join('')}</g>`;
   const d=`M${points.map(p=>p.join(',')).join(' L')}`;
   if(m.kind==='retreat'){
-   const marker='retreat-'+m.key.replace(/[^a-zA-Z0-9_-]/g,'-'),end=points.at(-1);
-   return `<g class="round-retreat" data-retreat-from="${esc(m.fromId)}" data-retreat-to="${esc(m.toId)}" data-retreat-person="${esc(m.personId)}"><title>${label} · 퇴각</title><defs><marker id="${marker}" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="3" markerHeight="3" markerUnits="strokeWidth" orient="auto"><path d="M1 1 11 6 1 11 4 6Z" fill="${color}" stroke="#071116" stroke-width=".8"/></marker></defs><path class="retreat-arrow" style="stroke:${color}" d="${d}" marker-end="url(#${marker})"/><text class="retreat-symbol" x="${end[0]+8}" y="${end[1]-8}">↩</text></g>`;
+   return `<g class="round-retreat" data-retreat-from="${esc(visualFrom)}" data-retreat-actual-from="${esc(m.fromId)}" data-retreat-to="${esc(m.toId)}" data-retreat-person="${esc(m.personId)}"><title>${label} · 후퇴</title>${battleRoute(points[0],points.at(-1),'attack',color,{id:'retreat-'+m.key,active:true})}</g>`;
   }
   let dot='';
   if(m.live){

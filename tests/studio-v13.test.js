@@ -34,14 +34,14 @@ test('experience points grow only at 3/6/9 victories and stop at +3, independent
  const w=createContinent160World();for(const value of [0,1.5,101]){const bad=clone(w);bad.rules.experienceWinStep=value;assert.throws(()=>validateWorld(bad));}
  const html=renderRulesEditor(w.rules);assert(html.includes('name="experienceWinStep" value="3"'));const entries=[...html.matchAll(/<input[^>]*name="([^"]+)"[^>]*value="([^"]*)"/g)].map(m=>[m[1],m[2]]);const form=new Map(entries);assert.equal(rulesFromForm(form,w.rules).experienceWinStep,3);
 });
-test('only the two current duel participants gain gold battle borders and victory/defeat labels follow recorded results',()=>{
+test('only the two current duel participants gain battle borders and victory/defeat labels follow recorded results',()=>{
  let run=createRun(createContinent160World(),777),before,record;
  for(let i=0;i<40;i++){before=run.world;run=nextTurn(run);record=run.history.at(-1);if(record.battles.some(b=>!b.automatic&&b.winner!==null&&(b.losses.attack.amount+b.losses.defense.amount)>0))break;}
  const snapshot=JSON.stringify(run),battle=record.battles.find(b=>!b.automatic&&b.winner!==null&&(b.losses.attack.amount+b.losses.defense.amount)>0);assert(battle);const scenes=makeTurnScenes(record,before),scene=scenes.find(s=>s.battleIndex===battle.index&&s.event?.type==='attack_roll');assert(scene);
  const engaged=scene.worldBefore.people.filter(p=>unitBattling(scene,record,p));assert.equal(engaged.length,2);assert(engaged.some(p=>p.id===battle.attackerPersonId));assert(engaged.some(p=>p.id===battle.defenderPersonId));
  const render=s=>renderAtlas(s.worldAfter,{presentation:{record,scenes:[s],index:0,phase:'holding',speed:1,sceneProgress:.4}});
  const html=render(scene);assert.equal((html.match(/class="unit-battle-glow"/g)||[]).length,2);assert(!html.includes('>전투 발생</text>'));assert(html.includes('data-combat-side="attack"'));
- const result=scenes.find(s=>s.kind==='apply'&&s.event?.type==='resolve'&&s.battleIndex===battle.index),resolved=render(result);assert(resolved.includes('y="-34">승</text>'));assert(resolved.includes('y="-34">패</text>'));assert(!resolved.includes('class="unit-battle-glow"'));
+ const result=scenes.find(s=>s.kind==='apply'&&s.event?.type==='resolve'&&s.battleIndex===battle.index),resolved=render(result);assert(resolved.includes('y="-46">승리</text>'));assert(resolved.includes('y="-46">패배</text>'));assert.equal((resolved.match(/class="unit-battle-glow"/g)||[]).length,1);assert(resolved.includes('unit-loss-label'));
  const settled=renderAtlas(result.worldAfter,{presentation:{record,scenes:[result],index:0,phase:'settled'}});assert(!settled.includes('unit-status-label victory'));assert(!settled.includes('unit-status-label defeat'));assert.equal(JSON.stringify(run),snapshot);
  const effects=mapEffects(result).units.filter(e=>e.type==='army');assert(effects.length);assert(effects.every(e=>e.delta<0&&e.tone==='negative'&&e.label.endsWith('만명')));
 });

@@ -14,3 +14,9 @@ export function unitOutcome(scene,record,person){
  const attack=person.countryId===b.actorId&&person.slot===b.slot,defense=person.countryId===b.defenderId&&person.slot===b.defenseSlot;
  if(!attack&&!defense)return '';return b.winner===(attack?b.actor:b.target)?'victory':'defeat';
 }
+export function unitBattleResult(scene,record,person){
+ if(!person||person.role!=='general'||scene?.kind!=='apply'||scene.event?.type!=='resolve')return null;
+ const b=record?.battles?.[scene.battleIndex];if(!b||b.automatic)return null;
+ const side=person.countryId===b.actorId&&person.slot===b.slot?'attack':person.countryId===b.defenderId&&person.slot===b.defenseSlot?'defense':null;
+ if(!side)return null;return {loss:b.losses?.[side]?.amount||0,result:b.winner===null?'draw':b.winner===(side==='attack'?b.actor:b.target)?'victory':'defeat'};
+}

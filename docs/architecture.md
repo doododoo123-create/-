@@ -1,4 +1,4 @@
-# 구조 · Studio v0.14.0 / 관전 정보·전투 구도·결과 단계
+# 구조 · Studio v0.18.0 / 계절·전장 후퇴·지도 관전
 
 ## 데이터와 엔진
 
@@ -24,7 +24,7 @@
 
 세계 파일: `{kind:'saguk-studio-world',version:2,world}`. 버전 1도 읽어 스키마 2로 변환합니다. 이전 편집 이름·소유권·초상화를 보존하고 단순 규칙을 v11 기본값으로 교체합니다. 기존 내장 세계는 원본 지도 및 후보 명부를 복원합니다. `saguk-studio.world.v1` 키를 계속 사용하며 이전 원본은 `.before-v11` 키에 백업합니다.
 
-완료 턴 저장: `{kind:'saguk-studio-run',version:1,engineVersion:'studio-v11-22',seed,initialWorld,engineState,history}`. 키는 `saguk-studio.completed-run.v11`입니다. 매 턴 연출 완료/건너뛰기 때만 저장합니다. 복구 시 원본 상태 검증, 시드 일치, 턴 기록 수와 판정을 검사합니다. 새 세계/세계 가져오기는 진행을 비웁니다. 새 실행과 재현은 초기 상태를 저장합니다.
+완료 턴 저장: `{kind:'saguk-studio-run',version:1,engineVersion:'studio-v11-23',seed,initialWorld,engineState,history}`. 키는 `saguk-studio.completed-run.v11`입니다. 매 턴 연출 완료/건너뛰기 때만 저장합니다. 복구 시 원본 상태 검증, 시드 일치, 턴 기록 수와 판정을 검사합니다. 새 세계/세계 가져오기는 진행을 비웁니다. 새 실행과 재현은 초기 상태를 저장합니다.
 
 역사 내보내기는 시작 세계·전체 기록·최종 상태를 별도 JSON으로 보관합니다. 역사 가져오기는 아직 없습니다. 데이터는 외부로 전송하지 않습니다. 저장 용량 부족은 화면으로 알리고 파일 내보내기를 안내합니다.
 
@@ -287,3 +287,15 @@ engine18은17 저장의 지휘한도/손실/home 복귀를 그대로 보존하�
 - `ui/round-campaign.js`는 공개 범위와 round 시작 소유권을 추출한다. `ui/campaign-routes.js`는 표시용 공세 묶음/활성 공유 전선/선택된 일반 행군/퇴각/재배치 양 끝을 렌더링한다. 공세의 출발은 긴 행군의 fromId가 아닌 실제 battle.fromId이며, 카드의 CSS 전투 배치를 경로에 쓰지 않는다. 아직 선택 연출이 끝나지 않은 상대국도 전선으로 미리 표시하지 않는다.
 - `battle-map.js`의 곡선은 양 끝을 실제 출발/목표 사이에 두고 짧은 거리의 고리 분기를 제거했다. 화살촉은 국가색을 유지한다. `studio-v17.css`는 선 굵기·불투명도·행군 점·선택 테두리와336px 판정창을 분리 관리한다. moving dot은 기록된 path의 CSS offset-path로 움직이고 정지·배속·동작 줄이기를 따른다.
 - `app.js`의 focusedPerson은 일시적인 관찰 선택이다. 저장 세계·시드·판정에 쓰지 않고 같은 카드를 다시 선택하면 경로를 숨긴다. 포갠 카드의 넘기기는 유지한다. 별도 상시 패널은 추가하지 않는다.
+
+
+## v0.18 계절·근거리 후퇴·공간 배치
+
+- `model/calendar.js`는 round만으로 연도/계절을 계산한다. `simulation.nextTurn`은 입력 scheduleIndex가0인 기록에 seasonStart를 붙인다. 엔진의 난수나 계절 생산 보정을 추가하지 않는다. `playback.makeTurnScenes`는 그 국가의 첫 사건 앞에 season 장면을 삽입한다. `season-view.js`가 팝업을 표시하며 일반 관전의 기존 단계/건너뛰기 버튼도 유지한다.
+- `battlefield-movement.js`의 nearbyRetreatDestination/moveToNearbyRetreat는 실제 인접 그래프로 양측 패자의 근처 후퇴를 선택한다. `campaign-combat.js`는 전사 판정 이후, 다음 수비대 이전에 실행한다. 본거지 복귀 우선 로직과 전쟁 종료 후 지역 없는 양의 병력 장군의 수도 재배치를 새 분기에서 비활성화한다. 병력0 복귀는 별도 함수이며 이전 규칙 분기를 보존한다.
+- 실제 이동은 기존 from/to/path, 후퇴 연출 시작은 별도 battlefieldFrom→visualFromId로 기록한다. 현재 위치가 이미 인접 전선이면 presentationOnly:true, path:[현재위치]로 실제 이동이 없음을 명시한다. command-movement와 atlas-view는 기록된 실제 주둔과 연출 시작점을 구분한다. replayFingerprint는 원래 이동 사건을 포함하므로 새 연출도 정확히 대조된다.
+- `round-campaign`은 공개된 비자동 전투만 battleSites로 합친다. `battle-map.renderBattleSites`는 작은 붉은 고정 흔적을 그리며 현 전투 큰 아이콘과 중복하지 않는다. `campaign-routes`는 후퇴에도 기존 battleRoute 실선/국가색 화살촉을 사용하고 별도 ↩ 문자를 없앴다. 경로 없는 재배치는 양 끝만 표시한다.
+- `battle-presentation`은 카메라 zoom에 따라24~80px 카드 너비를 계산하고 실제 출발 영토에서 전장으로 향하는 방향을 화면 좌표로 변환해 양측 카드를 놓는다. 작은 가로 화면의 세로 전선은 대각선으로 표현한다. 핀 앵커/실제 position을 변경하지 않는다. camera-focus는 판정창 후보 위치를 카드/역할/손실 글자와 비교해 겹침이 가장 적은 위치를 선택하며 다이스 열 순서도 카드 방향에 맞춘다.
+- MapCamera.follow는 더 이상 시점을 이동하지 않는다. 자동 고정 컨트롤을 제거했으며 기존 드래그/방향키/줌과 과거 재생 전후 수동 카메라 복원을 유지한다. placeRoyalChoice는 지도 왕 카드의 실제 화면 위치 위에 작은 선택창을 놓고 창 자체만 화면 안으로 보정한다.
+- unitBattleResult는 결과 적용 장면에서 기록된 개별 손실/승패를 반환한다. atlas-view는 카드 위 손실·결과·역할을 표시하고 map-effects는 같은 전투의 별도 병력 손실 박스를 제외한다. 패배 카드를 회색으로 만들되 손실 글자까지 회색 필터로 지우지 않는다. 전사/임관·충원 효과와 모든 주사위 보정/판정 전 비공개를 유지한다.
+- 엔진23은22 이하 저장에서 nearbyRetreat 누락값만 false로 고정한다. actual v0.17.0 저장의 과거 전투/이동과 이후 상태/RNG를 대조한다. 새 화면은 이전 역사에도 적용할 수 있으나 실제 근처 후퇴 규칙은 새 실행에만 적용한다.

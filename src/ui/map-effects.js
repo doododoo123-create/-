@@ -46,6 +46,8 @@ export function mapEffects(scene,stage=null,record=null) {
     if(stage!=='territory')output.territories=[];
     output.announcement=displayEventText(applicationNotice(scene,record,stage));
   }
+  const battle=record?.battles?.[scene.battleIndex];
+  if(event.type==='resolve'&&battle&&!battle.automatic)output.units=output.units.filter(e=>!(e.type==='army'&&e.role==='general'&&((e.countryId===battle.actorId&&e.slot===battle.slot)||(e.countryId===battle.defenderId&&e.slot===battle.defenseSlot))));
   return output;
 }
 

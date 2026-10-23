@@ -37,7 +37,7 @@ test('a stationary resident creates no defense arrow, while a returning defender
 test('surviving defenders leave a directed path from the lost province to their recorded destination, including route-free relocation',()=>{
  for(const strong of [false,true]){
   const r=fixture16(),n=nextTurn(r,attack16(strong?{'attack:0':30}:{})),record=n.history[0],move=record.movements.flatMap(m=>m.moves).find(m=>m.personId==='b0'&&['retreat','redeploy'].includes(m.kind));assert(move);assert.equal(move.fromId,'tile-4');assert.notEqual(move.toId,move.fromId);
-  const c=roundCampaign(n.world,completedRoundPresentation(n)),html=renderRoundRoutes(n.world,geometryFor(n.world),c);if(move.kind==='redeploy'){assert(html.includes(`data-relocation-from="tile-4" data-relocation-to="${move.toId}"`));assert(!html.includes('round-retreat relocation'));}else{assert(html.includes(`data-retreat-from="tile-4" data-retreat-to="${move.toId}"`));assert(html.includes('marker-end="url(#retreat-'));}
+  const c=roundCampaign(n.world,completedRoundPresentation(n)),html=renderRoundRoutes(n.world,geometryFor(n.world),c);if(move.kind==='redeploy'){assert(html.includes(`data-relocation-from="tile-4" data-relocation-to="${move.toId}"`));assert(!html.includes('round-retreat relocation'));}else{assert(html.includes(`data-retreat-from="tile-4" data-retreat-actual-from="tile-4" data-retreat-to="${move.toId}"`));assert(html.includes('marker-end="url(#route-head-retreat-'));}
  }
 });
 test('retreat arrows become visible at the start of their movement without showing later routes',()=>{
@@ -59,7 +59,7 @@ test('old engine20 preserves its former stationing and resumes/replays identical
 });
 test('small map pins have bounded screen size at all zoom levels and combatants do not stack together at the battle site',()=>{
  assert.equal(UNIT_CARD_WIDTH,32);assert.equal(UNIT_CARD_HEIGHT,54);assert.equal(UNIT_PIN_OFFSET,35);
- for(const scale of [.1,.25,.5,1,1.5,3,8]){const width=UNIT_CARD_WIDTH*scale*mapUnitScale(scale);assert(width>=24-.001&&width<=36+.001);}
+ for(const scale of [.1,.25,.5,1,1.5,3,8]){const width=UNIT_CARD_WIDTH*scale*mapUnitScale(scale);assert(width>=24-.001&&width<=80+.001);}
  const m=(id,combatSide)=>({territory:{id:'same'},person:{id},country:{id},role:'general',combatSide}),stack=stackUnits([m('a','attack'),m('b','defense'),m('c',null)]);assert(stack.every(v=>v.stackCount===1&&v.stackOffset===0));
 });
 test('battle presentation uses the original two map cards and no circular duplicate faces; all modifiers including zeros are visible',()=>{

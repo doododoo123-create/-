@@ -9,7 +9,7 @@ function recordedFieldMovements(record,before,after){
   const battle=record.battles[event.battleIndex],frame=record.frames[event.index];
   const moves=(event.moves||battle?.moves||[]).map(m=>{
    const countryId=before.countries[m.nation].id,person=frame.before.people.find(p=>p.role==='general'&&p.countryId===countryId&&p.slot===m.slot&&p.generation===m.generation);
-   return person?{personId:person.id,countryId,slot:m.slot,kind:m.kind,fromId:before.territories[m.from].id,toId:before.territories[m.to].id,path:m.path.map(i=>before.territories[i].id)}:null;
+   return person?{personId:person.id,countryId,slot:m.slot,kind:m.kind,...(Number.isInteger(m.battlefieldFrom)?{visualFromId:before.territories[m.battlefieldFrom].id,presentationOnly:!!m.presentationOnly,encircled:!!m.encircled}:{}),fromId:before.territories[m.from].id,toId:before.territories[m.to].id,path:m.path.map(i=>before.territories[i].id)}:null;
   }).filter(Boolean);
   if(moves.length){const camps=fieldCamps(frame.after);for(const m of moves)Object.defineProperty(camps,m.personId,{value:{territoryId:m.toId,homeId:frame.after.people.find(p=>p.id===m.personId)?.stationId},enumerable:true,writable:true,configurable:true});record.movements.push({eventIndex:event.index,battleIndex:event.battleIndex,moves,camps});}
  }

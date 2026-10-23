@@ -4,7 +4,7 @@ import { applyHomeRetreat } from './retreat-home.js';
 import { chooseFrontier } from './frontier.js';
 import { combatBonuses, combatCasualties, roundedTroops } from '../model/combat-rules.js';
 import { counterCaptureLimit, counterCapture } from './counterattack.js';
-import { returnEmptyCommanders, defeatedAttackPosition } from './battlefield-movement.js';
+import { returnEmptyCommanders, defeatedAttackPosition, moveToNearbyRetreat } from './battlefield-movement.js';
 
 // New campaign rules are isolated from the original v11 / v0.8 turn algorithm.
 export function resolveCampaign(ctx){
@@ -17,6 +17,10 @@ export function resolveCampaign(ctx){
  };
  const retreat=(nation,g,battleIndex)=>{
   if(!g.active||!g.alive||!Number.isInteger(g.position))return;
+  if(rules.nearbyRetreat&&g.troops>0){
+   const battle=battles[battleIndex],placement=moveToNearbyRetreat(s,Atlas,nation,g,battle?.cellId??g.position,nation===actor?battle?.cellId:battle?.from);
+   if(placement)emit('retreat',g.name+' · 전장 인근 후퇴',placement.encircled?'인접 자국 영토가 없어 전장에서 가장 가까운 자국 영토로 재배치했어.':'전투 영토 바로 옆 자국 영토로 후퇴했어.',{nation,slot:g.slot,role:'general',battleIndex,...placement},true);return;
+  }
   if(rules.retreatMode==='home'){const placement=applyHomeRetreat(s,Atlas,nation,g,h.capitalCell(s,nation));if(!placement)return;emit('retreat',g.name+(placement.reason==='capital'?' · 수도 인근 재배치':' · 본인 영지 복귀'),placement.reason==='capital'?'남은 담당 영지가 없어 수도 인근의 자국 영토에 배치했어.':'육지 경로 유무와 관계없이 남은 본인 담당 영지로 복귀했어.',{nation,slot:g.slot,role:'general',battleIndex,moves:placement.moves,stranded:false,destination:placement.to,reason:placement.reason,relocation:placement.relocation},true);return;}
   const path=retreatPath(s,Atlas,nation,g),moves=[];
   if(path){move(nation,g,path,'retreat',moves);g.stranded=false;}
@@ -91,8 +95,12 @@ export function resolveCampaign(ctx){
    else if(b.counterCaptureLimit)b.summary=d.name+' 방어 대승 · 역점령 가능한 영토 없음';
    emit('resolve',b.summary,automatic?'병력 손실 없음':`공격 ${b.attack.army} → ${a.troops}만 / 방어 ${b.defense.army} → ${d.troops}만`,{battleIndex:index,success:b.winner===actor},true);
    deathCheck(b,a,d,wave);
+   if(rules.nearbyRetreat){
+    if(a.alive&&a.troops>0&&b.winner!==actor)retreat(actor,a,index);
+    if(d.alive&&d.troops>0&&b.winner===actor&&!automatic)retreat(opponent,d,index);
+   }
    if(rules.battlefieldRecovery){
-    if(b.winner!==actor&&a.alive&&a.troops>0){
+    if(!rules.nearbyRetreat&&b.winner!==actor&&a.alive&&a.troops>0){
      const path=defeatedAttackPosition(s,Atlas,actor,a,cellId,route.from),moves=[];
      move(actor,a,path,'retreat',moves);
      if(moves.length)emit('retreat',a.name+' · 전선 잔류','싸운 적 영토와 맞닿은 자국 전선으로 물러났어.',{nation:actor,slot:a.slot,role:'general',battleIndex:index,moves},true);
@@ -112,7 +120,7 @@ export function resolveCampaign(ctx){
      }
     }
    }
-   if(!finalWin&&b.winner===actor&&d.alive&&(!rules.battlefieldRecovery||d.troops>0)){
+   if(!rules.nearbyRetreat&&!finalWin&&b.winner===actor&&d.alive&&(!rules.battlefieldRecovery||d.troops>0)){
     const paths=fieldPaths(s,Atlas,opponent,d.position),homePath=paths.get(d.station);
     if(homePath&&homePath.length>1){const retreatMoves=[];move(opponent,d,homePath,'retreat',retreatMoves);emit('retreat',d.name+' 퇴각','남은 수비대가 이어서 방어해.',{nation:opponent,slot:d.slot,role:'general',battleIndex:index,moves:retreatMoves},true);}
    }

@@ -23,7 +23,7 @@ test('recorded real battles trigger winner/loser effects only at result applicat
  const html=renderAtlas(scene.worldAfter,{presentation:{record,scenes:[scene],index:0,phase:'holding',speed:2,sceneProgress:.5}});assert(html.includes('unit-victory'));assert(html.includes('unit-defeat'));assert(html.includes('--outcome-delay:-0.45s'));assert.equal(JSON.stringify(r),snapshot);
 });
 test('death retains a temporary red-flashing ghost even when the commander loses their last owned territory, then removes it',()=>{
- const w=createReferenceWorld();Object.assign(w.rules,structuredClone(PRE_REFORM_COMBAT));w.rules.armyBands=structuredClone(LEGACY_ARMY_BANDS);w.rules.retreatMode='blocked';let r=createRun(w,1),before,record,scene;
+ const w=createReferenceWorld();Object.assign(w.rules,structuredClone(PRE_REFORM_COMBAT));w.rules.armyBands=structuredClone(LEGACY_ARMY_BANDS);w.rules.retreatMode='blocked';w.rules.nearbyRetreat=false;let r=createRun(w,1),before,record,scene;
  for(let i=0;i<200&&!scene&&!r.result;i++){before=r.world;r=nextTurn(r);record=r.history.at(-1);scene=makeTurnScenes(record,before).find(s=>s.kind==='apply'&&s.event.type==='death');}
  assert(scene,'a real death event must occur');const html=renderAtlas(scene.worldAfter,{presentation:{record,scenes:[scene],index:0,phase:'holding',sceneProgress:0}});assert(html.includes('data-ghost="true"'));assert(html.includes('unit-death'));
  const settled=renderAtlas(scene.worldAfter,{presentation:{record,scenes:[scene],index:0,phase:'settled'}});assert(!settled.includes('data-ghost="true"'));
