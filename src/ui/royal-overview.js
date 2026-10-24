@@ -1,0 +1,18 @@
+import { esc,format } from './icons.js';
+import { displayName,displayEventText } from './display-names.js';
+import { portraitImage } from './portraits.js';
+import { PERSONALITIES,MINISTER_STYLES,landCount } from '../model/world.js';
+export function publicRoyalEvents(person,history,presentation){
+ const scene=presentation?.scenes?.[presentation.index],turn=presentation?.record?.turn??Infinity,complete=!presentation||presentation.finished||scene?.kind==='summary',limit=complete?Infinity:scene?.event?.index??-1,rows=[];
+ for(const record of history||[])if(record.turn<=turn&&record.actorId===person.countryId)for(const event of record.events||[]){
+  if(record.turn===turn&&(event.index>limit||event.index===limit&&!complete&&!['locked','departing','settled'].includes(presentation.phase)&&!['result','apply'].includes(scene?.kind)))continue;
+  if(person.role==='king'&&['king','war_target'].includes(event.type)||person.role==='minister'&&record.type==='domestic'&&event.type==='resolve')rows.push({record,event,replayable:record.turn<turn||complete});
+ }
+ return rows;
+}
+export function renderRoyalOverview({world,person,history,presentation,popover}){
+ const c=world.countries.find(c=>c.id===person.countryId),king=person.role==='king',rows=publicRoyalEvents(person,history,presentation),strategyEvent=rows.filter(r=>r.event.type==='war_target'&&r.event.strategy).at(-1)?.event.strategy,strategy=strategyEvent||c?.strategy;
+ const nation=id=>typeof id==='number'?world.countries[id]?.name||'없음':world.countries.find(c=>c.id===id)?.name||'없음';
+ const facts=king?[['국가',c?.name||'없음'],['성향',PERSONALITIES[person.personality||c?.personality]],['수도',world.territories.find(t=>t.id===c?.capitalId)?.name||'없음'],['영토 / 총병력',`${landCount(world,c?.id)}개 / ${format(c?.troops||0)}만`],['수도 예비병',`${format(c?.reserve||0)}만`],['이관 대기 병력',`${format(c?.reorganization||0)}만`],['주공 목표',nation(strategy?.primaryId??strategy?.primary)],['임시 대응',nation(strategy?.temporaryId??strategy?.temporary)]]:[['국가',c?.name||'없음'],['정책 성향',MINISTER_STYLES[person.ministerStyle]||'균형형'],['내정 능력',`${person.ability>=0?'+':''}${person.ability||0}`],['내정 성공 / 실패',`${rows.filter(r=>r.event.success).length} / ${rows.filter(r=>!r.event.success).length}`],['추가 충원',`${format(c?.recruitment||0)}만 / 계절`],['누적 보급 강화',`+${format(c?.supplyBonus||0)}만`]];
+ return `<aside class="commander-overview ${popover?'commander-popover':''}" data-commander-overview="${esc(person.id)}" data-person-role="${person.role}" style="--nation:${c?.color||'#fff'}" aria-label="${esc(displayName(person))} ${king?'국왕':'승상'} 상세"><header>${portraitImage(person,c,person.role)}<div><h2>${king?'👑 ':''}${esc(displayName(person))}</h2><p>${esc(c?.name||'무소속')} · ${king?'국왕':'승상'}</p></div><button type="button" class="commander-close" data-action="close-commander" aria-label="인물 상세 닫기">×</button></header><dl class="commander-facts">${facts.map(([k,v])=>`<div><dt>${k}</dt><dd>${esc(v||'없음')}</dd></div>`).join('')}</dl>${person.feature?`<p>${esc(person.feature)}</p>`:''}${king&&strategy?.reason?`<p class="strategy-reason">${esc(strategy.reason)}</p>`:''}<h3>${king?'최근 명령':'최근 정책 결과'} · ${Math.min(5,rows.length)}회</h3>${rows.length?rows.slice(-5).reverse().map(({record,event,replayable})=>`<button type="button" class="commander-battle-link" data-action="commander-replay" data-id="${record.turn}" ${replayable?'':'disabled'}>${record.turn}차례 · ${esc(displayEventText(event.title))}${event.reason?`<small>${esc(event.reason)}</small>`:''}</button>`).join(''):'<p>이 시점까지 공개된 기록이 없습니다.</p>'}</aside>`;
+}

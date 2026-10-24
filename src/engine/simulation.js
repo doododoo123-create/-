@@ -4,7 +4,7 @@ import { clone,validateWorld,landCount,countryPeople,neighbors } from '../model/
 import { V11_ATLAS,V11_NATIONS } from '../data/v11-preset.js';
 import { seaSupplyPorts } from '../model/sea-supply.js';
 import { createV11Engine } from './v11-core.js';
-export const ENGINE_VERSION='studio-v11-24';
+export const ENGINE_VERSION='studio-v11-25';
 const engineCache=new WeakMap();
 export const livingCountries=world=>world.countries.filter(c=>landCount(world,c.id)>0);
 export function numericSeed(seed){const text=String(seed??123456).trim();if(!/^\d+$/.test(text)||Number(text)>4294967295)throw new Error('원본과 같은 난수를 사용하려면 시드를 0~4294967295 정수로 입력해 주세요.');return Number(text)>>>0;}
@@ -29,7 +29,7 @@ export function engineFor(definition){
 }
 export function projectWorld(definition,state,providedEngine=null){
   const {engine,ids,territoryIds}=providedEngine||engineFor(definition);
-  const countries=definition.countries.map((base,i)=>{const c=state.countries[i];return {...base,troops:c.army,reserve:c.reserve,recruitment:c.extraRecruitment,supplyBonus:c.supplyBonus,ownTurns:c.ownTurns,capitalId:territoryIds[engine.capitalCell(state,i)]||null,...(definition.rules.advancedCampaign&&definition.rules.fieldCommand&&definition.rules.battleMode==='additive30'?{armyLimit:engine.lands(state,i)*definition.rules.territoryArmyLimit,reinforcementRoom:Math.max(0,engine.lands(state,i)*definition.rules.territoryArmyLimit-c.army)}:{}),commanders:c.generals.filter(g=>g.active&&g.alive).length,...(c.initialUnassigned?{initialUnassigned:c.initialUnassigned}:{})};});
+  const countries=definition.countries.map((base,i)=>{const c=state.countries[i];return {...base,troops:c.army,reserve:c.reserve,recruitment:c.extraRecruitment,supplyBonus:c.supplyBonus,ownTurns:c.ownTurns,capitalId:territoryIds[engine.capitalCell(state,i)]||null,...(definition.rules.advancedCampaign&&definition.rules.fieldCommand&&definition.rules.battleMode==='additive30'?{armyLimit:engine.lands(state,i)*definition.rules.territoryArmyLimit,reinforcementRoom:Math.max(0,engine.lands(state,i)*definition.rules.territoryArmyLimit-c.army)}:{}),...(c.reorganization!==undefined?{reorganization:c.reorganization}:{}),...(c.strategy?{strategy:{...clone(c.strategy),primaryId:ids[c.strategy.primary]||null,temporaryId:ids[c.strategy.temporary]||null}}:{}),commanders:c.generals.filter(g=>g.active&&g.alive).length,...(c.initialUnassigned?{initialUnassigned:c.initialUnassigned}:{})};});
   const people=[];
   for(let i=0;i<countries.length;i++){
     const configured=countryPeople(definition,ids[i]);people.push(...configured.filter(p=>p.role!=='general'));
@@ -74,8 +74,9 @@ export function nextTurn(input,controls){
 export function casualty(own,enemy,rate){const base=rate*100;if(!own||!enemy||!base)return 0;const n=own*base*enemy*2,d=(own+enemy)*100;return Math.min(own,Math.max(1,Math.floor((n*2+d)/(d*2))));}
 export function borderTargets(world,id){return world.territories.filter(t=>t.ownerId!==id&&neighbors(world,t).some(n=>n.ownerId===id));}
 export function restoreRun(data){
-  if(![ENGINE_VERSION,'studio-v11-23','studio-v11-22','studio-v11-21','studio-v11-20','studio-v11-19','studio-v11-18','studio-v11-17','studio-v11-16','studio-v11-15','studio-v11-14','studio-v11-13','studio-v11-12','studio-v11-11'].includes(data?.engineVersion))throw new Error('현재 v11 엔진과 다른 실행 저장입니다.');
+  if(![ENGINE_VERSION,'studio-v11-24','studio-v11-23','studio-v11-22','studio-v11-21','studio-v11-20','studio-v11-19','studio-v11-18','studio-v11-17','studio-v11-16','studio-v11-15','studio-v11-14','studio-v11-13','studio-v11-12','studio-v11-11'].includes(data?.engineVersion))throw new Error('현재 v11 엔진과 다른 실행 저장입니다.');
   const source=clone(data.initialWorld),revision=Number(data.engineVersion.split('-').at(-1));
+  if(revision<25&&source?.rules)for(const key of ['continuousCampaign','routDeath','strategicTargets'])source.rules[key]??=false;
   if(revision<24&&source?.rules)source.rules.capitalFallAnnexation??=false;
   if(revision<23&&source?.rules)source.rules.nearbyRetreat??=false;
   if(revision<22&&source?.rules)source.rules.battlefieldRecovery??=false;

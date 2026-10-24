@@ -83,6 +83,8 @@ export function validateWorld(source) {
   const scale={...MAP_SCALE_DEFAULTS,...r};for(const [key,label,min,max,integer]of [['territoriesPerCommander','장군당 담당 영토',1,12,true],['productionDivisor','생산 영토 묶음',1,10,true],['distanceScale','이동 거리 환산',1,3,false]])rules[key]=number(scale[key],label,min,max,integer);
   if(typeof scale.adaptiveReserve!=='boolean')fail('소국 수도 예비병 설정을 확인해 주세요.');rules.adaptiveReserve=scale.adaptiveReserve;
   const combat={...clone(ADDITIVE_COMBAT_DEFAULTS),...r};
+  for(const key of ['continuousCampaign','routDeath','strategicTargets']){if(typeof combat[key]!=='boolean')fail('새 연속 원정 설정을 확인해 주세요.');rules[key]=combat[key];}
+  for(const [key,min,max] of [['unopposedCaptureLimit',1,3],['routDeathChance',0,100],['strategyCommitment',1,20],['strategyStall',1,20],['strategyWeakLands',1,100],['strategyEmergencyLoss',1,100],['strategyResponseOrders',1,20],['strategySwitchMargin',0,100]])rules[key]=number(combat[key],key,min,max);
   if(typeof combat.occupationAdvance!=='boolean')fail('점령 후 지휘관 전진 설정을 확인해 주세요.');rules.occupationAdvance=combat.occupationAdvance;
   if(typeof combat.battlefieldRecovery!=='boolean')fail('전투 후 주둔·병력 0 복귀 설정을 확인해 주세요.');rules.battlefieldRecovery=combat.battlefieldRecovery;
   if(typeof combat.capitalFallAnnexation!=='boolean')fail('수도 함락 인접 점령 설정을 확인해 주세요.');rules.capitalFallAnnexation=combat.capitalFallAnnexation;

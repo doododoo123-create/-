@@ -1,6 +1,7 @@
 // Pure combat calculations. Troops are expressed in ten-thousands, precise to one soldier.
 export const LEGACY_ARMY_BANDS=Object.freeze([[1.25,4],[1.5,10],[2,16],[3,21],[5,25],[10,27],[20,28]]);
 export const ADDITIVE_COMBAT_DEFAULTS=Object.freeze({
+ continuousCampaign:false,routDeath:false,strategicTargets:false,unopposedCaptureLimit:3,routDeathChance:10,strategyCommitment:3,strategyStall:3,strategyWeakLands:7,strategyEmergencyLoss:4,strategyResponseOrders:2,strategySwitchMargin:15,
  battleMode:'additive30',combatSides:30,experiencePerWin:1,experienceWinStep:3,experienceCap:3,mountainBonus:8,
  retreatMode:'home',advancedCampaign:true,territoryArmyLimit:10,fatigueStep:4,fatiguePenalty:2,supplyGainRange:[1,3],
  capitalReserveLimit:10,defenderCounterattack:true,counterCaptureThresholds:[20,40],

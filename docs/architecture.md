@@ -1,4 +1,4 @@
-# 구조 · Studio v0.21.0 / 전장 접근·점령 전진·지휘관 개요
+# 구조 · Studio v0.22.0 / 연속 진격·전략 목표·점령 전선
 
 ## 데이터와 엔진
 
@@ -24,7 +24,7 @@
 
 세계 파일: `{kind:'saguk-studio-world',version:2,world}`. 버전 1도 읽어 스키마 2로 변환합니다. 이전 편집 이름·소유권·초상화를 보존하고 단순 규칙을 v11 기본값으로 교체합니다. 기존 내장 세계는 원본 지도 및 후보 명부를 복원합니다. `saguk-studio.world.v1` 키를 계속 사용하며 이전 원본은 `.before-v11` 키에 백업합니다.
 
-완료 턴 저장: `{kind:'saguk-studio-run',version:1,engineVersion:'studio-v11-24',seed,initialWorld,engineState,history}`. 키는 `saguk-studio.completed-run.v11`입니다. 매 턴 연출 완료/건너뛰기 때만 저장합니다. 복구 시 원본 상태 검증, 시드 일치, 턴 기록 수와 판정을 검사합니다. 새 세계/세계 가져오기는 진행을 비웁니다. 새 실행과 재현은 초기 상태를 저장합니다.
+완료 턴 저장: `{kind:'saguk-studio-run',version:1,engineVersion:'studio-v11-25',seed,initialWorld,engineState,history}`. 키는 `saguk-studio.completed-run.v11`입니다. 매 턴 연출 완료/건너뛰기 때만 저장합니다. 복구 시 원본 상태 검증, 시드 일치, 턴 기록 수와 판정을 검사합니다. 새 세계/세계 가져오기는 진행을 비웁니다. 새 실행과 재현은 초기 상태를 저장합니다.
 
 역사 내보내기는 시작 세계·전체 기록·최종 상태를 별도 JSON으로 보관합니다. 역사 가져오기는 아직 없습니다. 데이터는 외부로 전송하지 않습니다. 저장 용량 부족은 화면으로 알리고 파일 내보내기를 안내합니다.
 
@@ -341,3 +341,17 @@ engine18은17 저장의 지휘한도/손실/home 복귀를 그대로 보존하�
 - adjacentDuelPlacement는 카드 쌍의 실제 화면 사각형 바로 위/아래 후보만 사용한다. 재생 버튼은 충돌 검사 대상이며 카드 쌍 bounds에는 넣지 않는다. 다이스 회전/점수 합산 코드는 유지한다. 승상 숫자 위치만 studio-v21.css에서 분리 수정한다.
 - commander-overview는 정확한 personId별 공개 resolve만 집계한다. turn/event.index로 미래 기록과 미판정 전투를 차단하며 후임은 다른 ID로 구분한다. inspectedPerson은 일반 강조 선택과 별도로 유지한다. fullscreen 팝업은 명시적 클릭 때만 열며 기존 상시 패널을 복구하지 않는다. 주요 전투 버튼은 기존 replay-turn 경로로 읽기 전용 재생한다.
 - fullscreen +/-는 공통 setPlaybackSpeed를 거쳐 정지/재개 및 연출 남은 시간을 보존한다. 방향키/휠은 기존 카메라를 사용한다. v21 CSS를 두 번들의 마지막에 포함한다. campaign-v21.test.js와 studio_v21_smoke.py가 모듈/브라우저 동작을 검사한다.
+
+## v0.22 연속 진격·전략·움직이는 전선
+
+`model/campaign-v22.js`는 신규 Studio 세계와 명시적 새 규칙 버튼만 활성화하는 설정 묶음이다. 모델의 누락 기본값은 false이며 engine25는24 이하 저장에 누락된 세 기능을 false로 고정한다. 기존 데이터 팩토리·원본 예제는 당시 설정을 유지한다. 화면 규칙은 `ui/campaign-settings-view.js`로 분리했다.
+
+- `engine/continuous-campaign.js`: 기존 campaign-combat와 별도 분기. 하나의 공세는 방향별 예산·점령 목록·수도 함락 목록·실제 이동 누적·패배한 생애 키 집합을 가진다. 적의 수비 대승은 방향을 뒤집는 새 과제로 연결하며 실제 전투/발령/후퇴/점령/수도 함락을 기존 사건 형식으로 기록한다. 신규 수비가 모두 격파된 뒤 점령하며 연속 무방비 영토는 하나의 takenCells 기록으로 묶어 순차 연출한다. 수도 인접 특별 진격도 확인 과제이며 수비를 우회하지 않는다.
+- `engine/advance-defenders.js`: 양수 병력의 현지/담당자 복귀/구원 가능한 수비 대기열. `nation:slot:generation`이 같은 공세에서 패했다면 제외한다. 따라서 역공격을 한 번으로 잘라내지 않아도 반복 전투가 유한하게 끝난다.
+- `engine/campaign-deaths.js`: 실점령 수가 아닌 세계의3칸 점령 점수 차로 대패 판정. 전멸 판정과 배타적으로 시드 주사위를 한 번 소비한다. `campaign-survivors.js`는 잔여 병력을 reorganization에 보존하고 한도 안에서 이관한다. 국가 totalArmy·충원 가능량·투영 데이터·유효성 검사도 재편 풀을 포함한다. 실제 전투 손실과 이관 표시는 구분한다.
+- `engine/strategic-targets.js`: 주공/임시 대응·명령 횟수·정체·이전 소유권 기준선·수도 공격국·평가 이유를 국가 strategy에 저장한다. 첫 목표/평가 동점만 엔진 RNG를 쓰고 단순히 공격받았다는 이유로 주공을 늘리지 않는다. 과거 재생/저장 복원도 같은 기준선으로 계산한다.
+- `ui/front-segments.js`, `front-wave.js`: 실제 공유 경계로부터 영토 내부의 거리장을 만들고 매 프레임 동일 임계값으로 빗금 채움과 곡선 전선을 생성한다. 육지 다각형/내부 물 링으로 클립하며 편집 데이터·계산 상태를 수정하지 않는다. 거리장은 경계 객체·진입지별 캐시이며 현재 진행 영토만 애니메이션한다. 국경의 구/신 마스크도 같은 곡선을 사용한다. 순차 진행과 계절 강조/확정은 기존 재생 시계로 정지·배속·건너뛰기를 따른다.
+- `ui/royal-overview.js`: 국왕/승상에 맞는 요약과 공개된 사건만 조회한다. 장군 개요의 동일 팝업/선택/재생 기능을 재사용한다. 세 역할의 초상은96×128px,작은 세로 화면은88×118px이다.
+- `assets/text-boxes`, `scripts/text-box-art.mjs`, `data/text-box-art.js`, `ui/textures.js`, `studio-v22.css`: 첨부 WebP6장 원본을 CSS변수와 SVG 패턴으로 공유한다. 데이터 문자열을 요소마다 중복 내장하지 않고 단일 HTML에 한 번 보관한다. 지도 배경과 규칙/능력치는 변경하지 않는다.
+
+기존 원본/engine24와의 호환 분기는 유지한다. 신규 계산과 화면 변경은 별도 테스트·실제 엔진25 기록 재생으로 검증한다. [v0.22 검증](validation-v0.22.md).

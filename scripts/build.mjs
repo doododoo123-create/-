@@ -1,3 +1,4 @@
+import { syncTextBoxArt } from './text-box-art.mjs';
 // Minimal bundling for this dependency-free application. The modular source is authoritative.
 // Only local named ESM imports and direct named exports are supported intentionally.
 import { readFile, writeFile, mkdir, cp } from 'node:fs/promises';
@@ -9,6 +10,7 @@ import { syncKitIcons } from './ui-kit.mjs';
 import { syncGeneralPortraits } from './general-portraits.mjs';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 await syncStudioArt(root);
+await syncTextBoxArt(root);
 await syncKitIcons(root);
 await syncGeneralPortraits(root);
 const mobileMeta=JSON.parse(await readFile(resolve(root,'assets/maps/continent_160.mobile.json'),'utf8'));
@@ -43,6 +45,7 @@ const v14Css=await readFile(resolve(root,'src/ui/studio-v14.css'),'utf8');
 const v15Css=await readFile(resolve(root,'src/ui/studio-v15.css'),'utf8');
 const v20Css=await readFile(resolve(root,'src/ui/studio-v20.css'),'utf8');
 const v21Css=await readFile(resolve(root,'src/ui/studio-v21.css'),'utf8');
+const v22Css=await readFile(resolve(root,'src/ui/studio-v22.css'),'utf8');
 const v19Css=await readFile(resolve(root,'src/ui/studio-v19.css'),'utf8');
 const v18Css=await readFile(resolve(root,'src/ui/studio-v18.css'),'utf8');
 const v17Css=await readFile(resolve(root,'src/ui/studio-v17.css'),'utf8');
@@ -82,6 +85,7 @@ html = html.replace('<link rel="stylesheet" href="./src/ui/style.css">', `<style
   .replace('<link rel="stylesheet" href="./src/ui/studio-v19.css">', `<style>${v19Css}</style>`)
   .replace('<link rel="stylesheet" href="./src/ui/studio-v20.css">', `<style>${v20Css}</style>`)
   .replace('<link rel="stylesheet" href="./src/ui/studio-v21.css">', `<style>${v21Css}</style>`)
+  .replace('<link rel="stylesheet" href="./src/ui/studio-v22.css">', `<style>${v22Css}</style>`)
   .replace('href="./favicon.svg"', `href="data:image/svg+xml;base64,${favicon}"`);
 const dist = resolve(root, 'dist');
 await mkdir(dist, { recursive: true });

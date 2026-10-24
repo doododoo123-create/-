@@ -57,7 +57,7 @@ export function renderJudgmentOverlay({world,playback}) {
     return `<aside class="map-judgment is-royal-die" data-nation="${esc(nation?.id||'')}" data-anchor-role="minister" data-event="${esc(event.type)}" data-phase="${state.phase}" style="--nation:${nation?.color||'#fff'}" aria-label="${esc(nation?.name||'')} 승상 판정"><div class="royal-choice-heading">${esc(nation?.name||'')} · 승상</div>${die}${judgmentTraits(person,'minister',nation)}${result?`<p class="royal-result">${event.success?'내정 성공':'내정 실패'}</p>`:''}</aside>`;
   }else if(event.type==='death_roll'){
     const person=judgmentPerson(frame,nation,'general',event.slot);
-    return `<aside class="map-judgment is-royal-die" data-anchor-role="general" data-anchor-slot="${event.slot}" data-nation="${esc(nation.id)}" data-event="death_roll"><div class="royal-choice-heading">${esc(displayName(person))} · 전사 판정</div>${renderAccumulatingDie(scene.value,10,phase,'1~3 전사 / 4~10 생존',[])}</aside>`;
+    return `<aside class="map-judgment is-royal-die" data-anchor-role="general" data-anchor-slot="${event.slot}" data-nation="${esc(nation.id)}" data-event="death_roll"><div class="royal-choice-heading">${esc(displayName(person))} · 전사 판정</div>${renderAccumulatingDie(scene.value,scene.faces||10,phase,event.reason==='rout'?`대패 · ${event.threshold} 이하 전사`:'1~3 전사 / 4~10 생존',[])}</aside>`;
   }else if(event.type==='hold'){
     const person=judgmentPerson(frame,nation,'general',event.slot);
     body=`<div class="judgment-single refusal-person">${judgmentPortrait(person,nation,'general')}</div><p class="dispatch-refusal">출정 거부</p>`;

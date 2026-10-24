@@ -28,7 +28,7 @@ export function mapEffects(scene,stage=null,record=null) {
   for(const key of new Set([...oldGenerals.keys(),...nextGenerals.keys()])){
     const prev=oldGenerals.get(key),next=nextGenerals.get(key),p=next||prev;
     const delta=(next?.troops??0)-(prev?.troops??0);
-    if(delta)add(p.countryId,'general',p.slot,'army',delta,`${event.type==='roster'?'이관 ':event.type==='resupply'?'배분 ':''}${effectSign(delta)}만명`,delta>0?'positive':event.type==='roster'?'transfer':'negative');
+    if(delta)add(p.countryId,'general',p.slot,'army',delta,`${event.type==='death'&&event.survivors?'이관 ':event.type==='roster'?'이관 ':event.type==='resupply'?'배분 ':''}${effectSign(delta)}만명`,delta>0?'positive':event.type==='roster'?'transfer':'negative');
     const capacity=(next?.capacity??0)-(prev?.capacity??0);
     if(capacity&&next?.active&&next?.alive&&event.type==='resolve')add(p.countryId,'general',p.slot,'capacity',capacity,`한도 ${effectSign(capacity)}만`,'upgrade');
     const experience=next&&prev?observedExperience(next,after.rules)-observedExperience(prev,before.rules):0;

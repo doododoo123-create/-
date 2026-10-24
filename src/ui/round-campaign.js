@@ -1,3 +1,4 @@
+import { frontSegments } from './front-segments.js';
 import { neighbors } from '../model/world.js';
 import { captureArrival } from './movement-scenes.js';
 import { cellPoints, mapAnchor } from '../model/cartography-geometry.js';
@@ -50,7 +51,7 @@ export function roundCampaign(world,presentation){
    const arrival=captureArrival(r,b),arrived=applied(r)||(!arrival?scene?.kind==='capture'||resolve.index<limit:arrival.index<limit||arrival.index===limit&&!['movement','arrival'].includes(scene?.kind));
    if(!arrived){for(const id of b.takenTerritoryIds||[])pendingCaptures.set(id,{ownerId:b.captureOwner===b.target?b.actorId:b.defenderId});continue;}
    const taken=b.takenTerritoryIds||[];
-   for(const [i,id] of taken.entries()){const to=world.territories.find(t=>t.id===id),prior=taken.slice(0,i),origin=i===0?(b.captureOwner===b.target?b.territoryId:b.fromId):prior.find(v=>{const t=world.territories.find(t=>t.id===v);return t&&neighbors(world,t).some(n=>n.id===to?.id);})||taken[0];captures.set(id,{territoryId:id,fromId:origin,ownerId:b.captureOwner===b.target?b.defenderId:b.actorId,baseOwnerId:baseOwners.get(id),fromOwnerId:b.captureOwner===b.target?b.actorId:b.defenderId,previousCapture:r===record&&scene?.kind==='capture'&&scene.battleIndex===b.index?captures.get(id):undefined,revealing:r===record&&scene?.kind==='capture'&&scene.battleIndex===b.index});}
+   for(const [i,id] of taken.entries()){const to=world.territories.find(t=>t.id===id),prior=taken.slice(0,i),origin=i===0?(b.captureOwner===b.target?b.territoryId:b.fromId):prior.find(v=>{const t=world.territories.find(t=>t.id===v);return t&&neighbors(world,t).some(n=>n.id===to?.id);})||taken[0];captures.set(id,{territoryId:id,fromId:origin,ownerId:b.captureOwner===b.target?b.defenderId:b.actorId,baseOwnerId:baseOwners.get(id),fromOwnerId:b.captureOwner===b.target?b.actorId:b.defenderId,sequenceIndex:i,sequenceCount:taken.length,previousCapture:r===record&&scene?.kind==='capture'&&scene.battleIndex===b.index?captures.get(id):undefined,revealing:r===record&&scene?.kind==='capture'&&scene.battleIndex===b.index});}
    if(b.captureOwner===b.target&&b.takenTerritoryIds?.length){
     const toId=b.takenTerritoryIds[0],laneKey=`defense:${b.territoryId}:${toId}`,lane=lanes.get(laneKey)||0;lanes.set(laneKey,lane+1);
     routes.push({key:`${r.turn}-${b.index}-counter`,side:'defense',counterattack:true,countryId:b.defenderId,personId:b.defenderPersonId,fromId:b.territoryId,toId,lane,army:b.defense?.army||0,active:r===record&&scene?.battleIndex===b.index&&presentation.phase!=='settled'});
@@ -64,24 +65,9 @@ export function roundCampaign(world,presentation){
  const target=events.find(e=>e.type==='war_target'&&(e.index<limit||complete||e.index===limit&&['locked','departing'].includes(presentation.phase)));
  return {captures,pendingCaptures,routes,movements,battleSites:[...battleSites.values()],actorId:record.actorId,opponentId:target?.targetId,fronts:[...fronts.values()].filter(f=>owned.get(f.fromId)!==owned.get(f.toId)),baseOwners,settled:false};
 }
-const frontPathCache=new WeakMap();
-export function sharedFrontSegments(geometry,a,b){
- if(!a||!b)return [];
- if(!frontPathCache.has(geometry))frontPathCache.set(geometry,new Map());const cache=frontPathCache.get(geometry),key=[geometry.cells.indexOf(a),geometry.cells.indexOf(b)].sort((x,y)=>x-y).join(':');if(cache.has(key))return cache.get(key);
- const paths=[];
- for(const ringA of [cellPoints(a),...(a.holes||[])])for(let i=0;i<ringA.length;i++){
-  const p=ringA[i],q=ringA[(i+1)%ringA.length],dx=q[0]-p[0],dy=q[1]-p[1],length=Math.hypot(dx,dy);if(!length)continue;
-  for(const ringB of [cellPoints(b),...(b.holes||[])])for(let j=0;j<ringB.length;j++){
-   const r=ringB[j],s=ringB[(j+1)%ringB.length];
-   if(Math.abs(dx*(r[1]-p[1])-dy*(r[0]-p[0]))/length>.015||Math.abs(dx*(s[1]-p[1])-dy*(s[0]-p[0]))/length>.015)continue;
-   const at=v=>((v[0]-p[0])*dx+(v[1]-p[1])*dy)/(length*length),lo=Math.max(0,Math.min(at(r),at(s))),hi=Math.min(1,Math.max(at(r),at(s)));
-   if(hi-lo>.0001)paths.push([[p[0]+lo*dx,p[1]+lo*dy],[p[0]+hi*dx,p[1]+hi*dy]]);
-  }
- }
- cache.set(key,paths);return paths;
-}
+export function sharedFrontSegments(geometry,a,b){return frontSegments(geometry,a,b);}
 export function sharedFrontPath(geometry,a,b){return sharedFrontSegments(geometry,a,b).map(([p,q])=>`M${p} L${q}`).join(' ');}
-export function campaignHatchDefs(world){return world.countries.map((c,i)=>`<pattern id="round-hatch-${i}" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(28)"><path d="M0 0V4" fill="none" stroke="${c.color}" stroke-width="1.4"/><path d="M1 0V4" fill="none" stroke="#000" stroke-opacity=".3" stroke-width=".35"/></pattern>`).join('');}
+export function campaignHatchDefs(world){return world.countries.map((c,i)=>`<pattern id="round-hatch-${i}" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(28)"><path d="M0 0V4" fill="none" stroke="${c.color}" stroke-width="2.2"/><path d="M1 0V4" fill="none" stroke="#000" stroke-opacity=".55" stroke-width=".5"/></pattern>`).join('');}
 export function renderRoundCaptures(world,geometry,campaign){return `<g class="round-captures" pointer-events="none">${[...campaign.captures.values()].map(c=>{const i=world.territories.findIndex(t=>t.id===c.territoryId),owner=world.countries.findIndex(n=>n.id===c.ownerId);return `${c.previousCapture?`<path class="round-prior-capture" d="${geometry.cells[i].path}" fill="url(#round-hatch-${world.countries.findIndex(n=>n.id===c.previousCapture.ownerId)})" fill-rule="evenodd" stroke="${world.countries.find(n=>n.id===c.previousCapture.ownerId)?.color||'#fff'}" stroke-width="1.5" mask="url(#capture-flow-${i}-remaining)"/>`:''}<path class="round-captured-territory" data-round-capture="${esc(c.territoryId)}" data-capture-owner="${esc(c.ownerId)}" ${captureLayerAttributes(c,i,campaign)} d="${geometry.cells[i].path}" fill="url(#round-hatch-${owner})" fill-rule="evenodd" stroke="${world.countries[owner]?.color||'#fff'}" stroke-width="1.5"/>`;}).join('')}</g>`;}
 export function renderRoundRoutes(world,geometry,campaign,options={}){
  return renderCampaignRoutes(world,geometry,campaign,{frontPath:sharedFrontPath,...options});

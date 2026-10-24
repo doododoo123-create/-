@@ -1,0 +1,20 @@
+/* Supplied textures are shared data URLs; none is drawn over the map itself. */
+.game-skin .map-stage .map-judgment,.game-skin .arena-panel{background-image:var(--texture-battle);background-size:384px}
+.game-skin .map-stage .map-judgment.is-royal-choice,.game-skin .map-stage .map-judgment.is-royal-die{background-image:var(--texture-domestic)}
+.game-skin .global-history-notice{background-image:var(--texture-war);background-size:384px}
+.game-skin .history-entry{background-image:var(--texture-history);background-size:384px}
+.commander-overview{background-image:var(--texture-person);background-size:384px}
+.commander-overview[data-person-role=king]{background-image:var(--texture-info)}
+.commander-overview[data-person-role=minister]{background-image:var(--texture-domestic)}
+.commander-overview header img{width:96px;height:128px;object-position:50% 20%;flex-shrink:0}
+.commander-popover{width:330px}.commander-overview header>div{min-width:0}.commander-overview h2{overflow-wrap:anywhere}
+.commander-facts dd{overflow-wrap:anywhere}.strategy-reason{padding:7px;background:#07121ba8;border-left:3px solid var(--nation)}
+.game-skin .bonus-flight{background-image:var(--texture-battle);background-size:192px}
+.round-captured-territory,.round-prior-capture{fill-opacity:1}
+.moving-front-shadow,.moving-front-color{stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.moving-front-shadow{stroke:#071118;stroke-width:7}.moving-front-color{stroke-width:4}
+.settlement-highlight{fill-opacity:.22;stroke-width:5;vector-effect:non-scaling-stroke;filter:drop-shadow(0 0 3px #fff)}
+.game-skin .battle-site-icon{transform:scale(calc(var(--battle-site-scale,1) * 1.5))}
+.game-skin .battle-icon-scale{transform:scale(calc(var(--battle-icon-scale,1) * 1.3))}
+@media(max-width:480px){.commander-popover{width:300px}.commander-overview header img{width:88px;height:118px}}
+@media(prefers-reduced-motion:reduce){.settlement-highlight{filter:none}}

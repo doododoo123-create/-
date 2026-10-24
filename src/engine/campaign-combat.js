@@ -1,4 +1,6 @@
 import { capitalFall } from './capital-fall.js';
+import { campaignDeath } from './campaign-deaths.js';
+import { initializeStrategy } from './strategic-targets.js';
 import { expeditionRoute, expeditionChance, fieldPaths } from './field-command.js';
 import { campaignDefenders, movementFatigue, retreatPath } from './campaign-logistics.js';
 import { applyHomeRetreat } from './retreat-home.js';
@@ -30,6 +32,7 @@ export function resolveCampaign(ctx){
  };
  const deathCheck=(b,a,d,wave)=>{
   const loser=b.automatic||b.winner===null?null:b.winner===actor?d:a;
+  if(rules.routDeath){if(loser)campaignDeath(ctx,b,loser,b.winner===actor?opponent:actor,wave?':'+wave:'');return;}
   if(!loser||loser.troops!==0)return;
   const nation=b.winner===actor?opponent:actor,value=die('death:'+a.slot+(wave?':'+wave:'')),died=value<=3;
   emit('death_roll',loser.name+' 전사 판정','1~3 전사 / 4~10 생존',{battleIndex:b.index,nation,slot:loser.slot,role:'general',roll:value,faces:10,died});
@@ -67,6 +70,7 @@ export function resolveCampaign(ctx){
    if(!automatic)move(opponent,d,entry.path,entry.kind,moves);
    const b={index,assaultId,wave:wave+1,defendersTotal:defense.queue.length,actor,target:opponent,slot,defenseSlot:d.slot,regionSlot:home.slot,returnBlocked:defense.blocked,relief:entry.kind==='relief',cellId,from:route.from,candidates:[...candidates],distance:route.distance,moves,
     attack:{id:actor,slot,name:a.name,ability:a.ability,army:a.troops},defense:{id:opponent,slot:d.slot,name:automatic?'방어 병력 없음':d.name,ability:d.ability,army:automatic?0:d.troops},automatic,winner:null,takenCells:[]};battles.push(b);
+   if(rules.strategicTargets&&cellId===h.capitalCell(s,opponent)){const strategy=initializeStrategy(s,opponent);if(!strategy.capitalAttackers.includes(actor))strategy.capitalAttackers.push(actor);}
    emit('territory',a.name+'의 공격 · '+(automatic?'무방비 영지':`${wave+1}/${queue.length}차 방어`),automatic?'전투 가능한 현지·복귀·구원 지휘관 없음':d.name+' 순차 방어',{nation:actor,slot,role:'general',battleIndex:index,candidates,cellId,pair:{from:route.from,to:cellId},target:opponent},true);
    if(automatic){b.winner=actor;emit('battle_auto','방어 불능 · 자동 점령','해당 영토 1개만 점령해.',{battleIndex:index});}
    else{

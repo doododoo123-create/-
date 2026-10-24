@@ -7,7 +7,7 @@ import { applicationSteps, applicationWorld, observerDuration } from './observer
 export const leadGeneral = (world,id) => world.people.find(p=>p.countryId===id&&p.role==='general'&&p.active&&p.alive)||null;
 export function makeTurnScenes(record,before,history=[]) {
   const scenes=[];let camps=record.campsBefore||before.visualCamps||{};
-  if(record.seasonStart??record.turn===1){const calendar=calendarAtRound(record.round);scenes.push({id:'season-'+record.round,kind:'season',event:{type:'season',index:-1,round:record.round,...calendar},title:calendar.label,worldBefore:before,worldAfter:before,camps});if(history.some(r=>r.round===record.round-1))scenes.push({id:'settle-'+record.round,kind:'round-settle',event:{type:'season_settle',index:-1},title:'지난 계절 점령지 확정',worldBefore:before,worldAfter:before,camps});}
+  if(record.seasonStart??record.turn===1){const calendar=calendarAtRound(record.round);scenes.push({id:'season-'+record.round,kind:'season',event:{type:'season',index:-1,round:record.round,...calendar},title:calendar.label,worldBefore:before,worldAfter:before,camps});if(history.some(r=>r.round===record.round-1))scenes.push({id:'settle-'+record.round,kind:'round-settle',settlementCount:new Set(history.filter(r=>r.round===record.round-1).flatMap(r=>(r.changes||[]).map(c=>c.territoryId))).size,event:{type:'season_settle',index:-1},title:'지난 계절 점령지 확정',worldBefore:before,worldAfter:before,camps});}
   for(const event of record.events) {
     const frame=record.frames?.[event.index]||{before,after:before};
     const motion=record.movements?.find(m=>m.eventIndex===event.index);
