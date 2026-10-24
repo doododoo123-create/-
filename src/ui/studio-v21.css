@@ -1,0 +1,23 @@
+/* Approved v21 presentation changes; battle math and the supplied dice reel are unchanged. */
+.card-label-background{fill:#07121bec;stroke:#8b9caa;stroke-width:.5}
+.game-skin .unit-result-label{font-size:9px}
+.game-skin .clock-marching{animation:none!important;offset-path:none!important;offset-distance:0;transform-box:view-box}
+.clock-formation{transform-box:view-box}
+.game-skin .round-campaign-history .campaign-route-pair .campaign-route,.game-skin .round-campaign-history .campaign-route-pair.past-route .campaign-route,.game-skin .round-retreat .campaign-route-pair .campaign-route{stroke-width:var(--army-width,3.8px)}
+.game-skin .round-campaign-history .campaign-route-pair .campaign-route-shadow,.game-skin .round-campaign-history .campaign-route-pair.past-route .campaign-route-shadow,.game-skin .round-retreat .campaign-route-pair .campaign-route-shadow{stroke-width:var(--army-shadow,5.4px)}
+.game-skin .is-royal-die .accumulating-die .attached-die:not(.rolling) .die-number{top:9%;font-size:24px}
+.game-skin .map-stage .is-compact-duel{transform-origin:top left}
+.capture-settle-fill{pointer-events:none}
+.map-speed-status{position:absolute;z-index:91;right:14px;top:50px;padding:4px 8px;background:#071621e8;border-radius:4px;color:white;font-size:12px;pointer-events:none;animation:speed-hint 1.3s linear both}
+@keyframes speed-hint{0%,75%{opacity:1}100%{opacity:0;visibility:hidden}}
+.commander-overview{background:#0b1b27;color:#fff;border:1px solid var(--nation,#93a8b4);border-radius:7px;padding:14px;min-width:0}
+.commander-overview header{display:flex;gap:10px;align-items:center;position:relative;padding-right:25px}
+.commander-overview header img{width:48px;height:64px;object-fit:cover;object-position:50% 20%;border:2px solid var(--nation);border-radius:4px}
+.commander-overview h2{font-size:17px;margin:0 0 4px;color:#fff}.commander-overview p{margin:4px 0;font-size:12px;color:#d4e4ed}
+.commander-close{position:absolute;right:0;top:0;border:0;background:none;color:#fff;font-size:20px;cursor:pointer}
+.commander-facts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0;font-size:12px}.commander-facts div{padding:7px;background:#142a38;border-radius:4px}.commander-facts dt{color:#adbfcb;font-size:10px}.commander-facts dd{margin:4px 0 0}
+.commander-overview h3{font-size:13px;margin:12px 0 7px}.commander-battle-link{display:block;width:100%;text-align:left;border:1px solid #375161;background:#102631;color:#fff;border-radius:3px;padding:6px;margin:5px 0;font-size:11px;cursor:pointer}.commander-battle-link small{display:block;color:#b8ceda;margin-top:3px}
+.commander-stack-list{display:flex;flex-wrap:wrap;gap:4px}.commander-stack-list button{font-size:11px;background:#173747;border:1px solid #547081;color:white;padding:4px 6px;border-radius:3px;cursor:pointer}
+.commander-popover{position:absolute;z-index:95;left:12px;bottom:12px;width:290px;max-width:calc(100% - 24px);max-height:calc(100% - 65px);overflow:auto;box-shadow:0 6px 24px #0008}
+.commander-overview-slot{margin:12px 0}
+@media(max-width:480px){.commander-popover{width:270px}.commander-facts{gap:5px;margin:8px 0}}

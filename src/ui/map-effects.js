@@ -1,3 +1,4 @@
+import { cardLabel } from './card-label.js';
 import { localNotices } from './local-notices.js';
 import { territoryCell } from '../model/cartography-geometry.js';
 import { displayEventText } from './display-names.js';
@@ -59,7 +60,7 @@ export function unitFeedback(effects,marker){
 }
 export function renderUnitFeedback(entries,{combatSide=false,hasLoss=false,hasStatus=false}={}){
  const start=hasLoss?-55:combatSide||hasStatus?-46:-36;
- return entries.map((e,i)=>`<text class="unit-feedback-text ${e.type==='notice'?'unit-local-notice':''} ${e.tone==='refusal'?'is-refusal':''}" data-effect="${e.type}" data-notice-kind="${e.noticeKind||''}" data-country="${esc(e.countryId)}" data-role="${e.role}" data-slot="${e.slot??''}" data-delta="${e.delta}" text-anchor="middle" y="${start-i*10}">${esc(e.label)}</text>`).join('');
+ return entries.map((e,i)=>cardLabel(e.label,{y:start-i*10,size:e.type==='notice'?9:8,classes:`unit-feedback-text ${e.type==='notice'?'unit-local-notice':''} ${e.tone==='refusal'?'is-refusal':''}`,attributes:`data-effect="${e.type}" data-notice-kind="${e.noticeKind||''}" data-country="${esc(e.countryId)}" data-role="${e.role}" data-slot="${e.slot??''}" data-delta="${e.delta}"`})).join('');
 }
 export function renderMapEffects(effects,geometry,world){
  const occupied=[],textWidth=(text,size)=>[...text].reduce((n,c)=>n+(/[가-힣]/.test(c)?size:size*.58),0)+20;

@@ -1,4 +1,4 @@
-# 구조 · Studio v0.20.0 / 순차 이동·로컬 알림·수도 병합
+# 구조 · Studio v0.21.0 / 전장 접근·점령 전진·지휘관 개요
 
 ## 데이터와 엔진
 
@@ -326,3 +326,18 @@ engine18은17 저장의 지휘한도/손실/home 복귀를 그대로 보존하�
 - score-accumulation.js는 원래 눈금+각 부호 있는 보정을 계산하고 같은 다이스 자리에서 숫자를 교체한다. playback의 merging index와 sceneProgress로 단계별 비행을 복원한다. pause/배속/역사 재생은 같은 시계이며 0/상쇄 보정·음수·60초과를 지원한다. 최종 점수 검증은 엔진 기록과 대조한다.
 - studio-v20.css를 두 판의 마지막 스타일로 포함한다. 90장의 원본384×576 JPEG를 data URL로 내장한다. general 선택키는070까지이며 이전 키와 자동 기존 얼굴은 보존하고 신규 후임에051~070을 사용한다. 이전 WebP50장은 출처 보존용이며 새 번들에는 넣지 않는다.
 - campaign-v20.test.js, make-v20-fixture.mjs, studio_v20_smoke.py가 두 판의 이동 순서·보류 점령·로컬 공지·합산 시계·수도 병합·오프라인을 검증한다. 현재 경기와 과거 재생을 분리하고 저장을 수정하지 않는다.
+
+
+## v0.21 연속 동작과 인물 조회
+
+엔진/모델/저장 소스는 변경하지 않으며 엔진24를 유지한다. 새로운 presentationOnly 접근은 기록 moves를 복사하여 읽을 뿐 실제 engineState에 쓰지 않는다.
+
+- movement-scenes: readySides/formationSide로 공격 접근→공격 정렬→수비 접근→수비 정렬을 구분한다. 원래 공격자의 자국 전선 도착 실제 위치는 camps에 유지한다. 화면만 적 전투 지점에 접근하며 제자리 수비는 정렬만 생성한다. 기록된 점령 이동 뒤 arrival/capture를 넣고, 점령 이동 없는 과거 기록도 resolve 뒤 capture로 표시한다.
+- operation-geometry: 실제 이동 영토 경로와 목표 지점을 화면 선분으로 바꾸고 공유 육지 구간마다 인물별 순번을 부여해 별도 선을 만든다. 같은 인물의 반복만 groupedOperations로 묶는다. 병력은 당시 전투 시작 army를 사용해 선/외곽/화살촉 굵기에 반영한다.
+- map-animation: TurnPlayback의 movementProgress/sceneProgress를 읽는 requestAnimationFrame 하나로 핀 위치/화살표 끝/formation/영토 clip rect를 갱신한다. 매 프레임 전체 지도를 다시 만들지 않으며 정지/렌더 교체 시 프레임을 취소한다. MapCamera 업데이트에도 같은 진행률을 다시 적용한다. CSS 핀 기준35와 화면 배율을 구분한다.
+- capture-transition: 진입 영토→목표의 축으로 다각형을 투영해 clip/mask를 만든다. capture 장면에서 옛/새 국경과 빗금을 같은 진행률로 공개하고, 재점령은 previousCapture를 남은 마스크에 유지한다. clip은 정확한 영토 path에 적용하며 바다/다른 영토를 칠하지 않는다.
+- previousRoundRecords는 다음 계절 공지 동안 이전 표시를 재구성한다. 이어지는 round-settle에서 원래 바탕색과 빗금을 남은 마스크로 줄이고 실제 새 국가색을 진행 clip에 채운다. 완료 후 새 계절의 빈 흔적으로 시작한다. 저장에 중간 애니메이션을 추가하지 않으며 과거 기록도 같은 순서로 재구성한다.
+- card-label은 SVG 배경+텍스트를 카드의 확대/포갬 변환 안에 생성한다. 최상단 순서 정렬은 ordinary→engaged→moving으로 안정 정렬하며 비참여 카드의 밝기/포갬을 바꾸지 않는다.
+- adjacentDuelPlacement는 카드 쌍의 실제 화면 사각형 바로 위/아래 후보만 사용한다. 재생 버튼은 충돌 검사 대상이며 카드 쌍 bounds에는 넣지 않는다. 다이스 회전/점수 합산 코드는 유지한다. 승상 숫자 위치만 studio-v21.css에서 분리 수정한다.
+- commander-overview는 정확한 personId별 공개 resolve만 집계한다. turn/event.index로 미래 기록과 미판정 전투를 차단하며 후임은 다른 ID로 구분한다. inspectedPerson은 일반 강조 선택과 별도로 유지한다. fullscreen 팝업은 명시적 클릭 때만 열며 기존 상시 패널을 복구하지 않는다. 주요 전투 버튼은 기존 replay-turn 경로로 읽기 전용 재생한다.
+- fullscreen +/-는 공통 setPlaybackSpeed를 거쳐 정지/재개 및 연출 남은 시간을 보존한다. 방향키/휠은 기존 카메라를 사용한다. v21 CSS를 두 번들의 마지막에 포함한다. campaign-v21.test.js와 studio_v21_smoke.py가 모듈/브라우저 동작을 검사한다.

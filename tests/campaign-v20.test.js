@@ -41,10 +41,10 @@ test('disabling capital annexation retains regular capture and consumes the same
 test('defensive counterattack also triggers the old attacking capital ring exactly once and does not spread to its relocated capital',()=>{
  const r=fixture20({capital:3}),controls=clone(war20);controls.rolls['attack:0']=1;controls.rolls['defense:0']=30;const n=nextTurn(r,controls),b=n.history[0].battles[0];assert.equal(b.winner,b.target);assert.equal(b.capitalFall.nation,0);assert.equal(b.capitalFall.capital,3);for(const i of [1,2,3])assert.equal(n.world.territories[i].ownerId,'b');assert.equal(n.world.territories[0].ownerId,'a');assert.equal(n.world.countries[0].capitalId,'tile-0');assert.equal(n.history[0].events.filter(e=>e.type==='capital_fall').length,1);
 });
-test('attack movement and completed arrow precede defense movement and its arrow, with no simultaneous camp teleport or premature route',()=>{
+test('attack movement and formation precede defense movement and formation, with a live arrow for each march',()=>{
  const r=fixture20(),n=nextTurn(r,war20),p=present20(r,n),stages=p.scenes.filter(s=>s.event?.type==='territory'&&s.battleIndex===0),kinds=stages.map(s=>s.kind+':'+(s.movementSide||s.revealedRoutes?.join('+')||''));assert.deepEqual(kinds.slice(0,4),['movement:attack','route:attack','movement:defense','route:attack+defense']);
  const a=stages[0],d=stages[2];assert.equal(a.moves.length,1);assert.equal(a.moves[0].countryId,'a');assert(!a.camps.b0||a.camps.b0.territoryId==='tile-7');assert.equal(d.moves[0].countryId,'b');assert.equal(d.camps.a0.territoryId,'tile-3');
- for(const [i,want] of [[0,[]],[1,['attack']],[2,['attack']],[3,['attack','defense']]]){p.index=p.scenes.indexOf(stages[i]);assert.deepEqual(roundCampaign(stages[i].worldBefore,p).routes.map(v=>v.side),want);}
+ for(const [i,want] of [[0,['attack']],[1,['attack']],[2,['attack','defense']],[3,['attack','defense']]]){p.index=p.scenes.indexOf(stages[i]);assert.deepEqual(roundCampaign(stages[i].worldBefore,p).routes.map(v=>v.side),want);}
 });
 test('a resident defender has neither an invented movement nor a stationary defense arrow',()=>{
  const r=fixture20({resident:true}),n=nextTurn(r,war20),p=present20(r,n);assert(!p.scenes.some(s=>s.event?.type==='territory'&&s.movementSide==='defense'));assert(!roundCampaign(n.world,completedRoundPresentation(n)).routes.some(v=>v.side==='defense'&&!v.counterattack));
@@ -52,7 +52,7 @@ test('a resident defender has neither an invented movement nor a stationary defe
 test('occupation hatching waits until the recorded winning commander finishes entering, with old color preserved during transit',()=>{
  const r=fixture20(),n=nextTurn(r,war20),p=present20(r,n),arrival=p.scenes.findIndex(s=>s.kind==='arrival'&&s.battleIndex===0);assert(arrival>0);
  for(let index=0;index<arrival;index++){p.index=index;const s=p.scenes[index],world=s.kind==='apply'?applicationWorld(s,'territory'):s.worldAfter,c=roundCampaign(world,{...p,effectStage:'territory'});assert(!c.captures.has('tile-4'),s.id);if(c.pendingCaptures.has('tile-4'))assert.equal(c.pendingCaptures.get('tile-4').ownerId,'b');}
- p.index=arrival;assert.equal(p.scenes[arrival].camps.a0.territoryId,'tile-4');assert.deepEqual([...roundCampaign(p.scenes[arrival].worldAfter,p).captures.keys()].sort(),['tile-4','tile-5','tile-6']);
+ p.index=arrival;assert.equal(p.scenes[arrival].camps.a0.territoryId,'tile-4');assert.equal(roundCampaign(p.scenes[arrival].worldAfter,p).captures.size,0);p.index=arrival+1;assert.equal(p.scenes[p.index].kind,'capture');assert.deepEqual([...roundCampaign(p.scenes[p.index].worldAfter,p).captures.keys()].sort(),['tile-4','tile-5','tile-6']);
 });
 test('the complete attack path starts at the commander real departure and uses one solid style through the frontier to the enemy',()=>{
  const r=fixture20(),n=nextTurn(r,war20),c=roundCampaign(n.world,completedRoundPresentation(n)),route=c.routes.find(r=>r.side==='attack');assert.equal(route.fromId,'tile-0');assert.equal(route.path.at(-1),'tile-4');assert(route.path.includes('tile-3'));const svg=renderRoundRoutes(n.world,geometryFor(n.world),c);assert(svg.includes('data-operation-from="tile-0"'));assert(svg.includes('campaign-route attack'));assert(!svg.includes('class="round-march outbound'));

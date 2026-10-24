@@ -80,11 +80,11 @@ test('counterattack losses, captures, retreat and RNG survive save/replay withou
  for(let i=0;i<12&&!r.result;i++)r=nextTurn(r,i%2?domestic15:{rolls:{king:10,'expedition:0':1,'attack:0':1,'defense:0':30}});
  const saved=JSON.stringify(r),restored=restoreRun(JSON.parse(saved));for(const record of r.history){const rebuilt=await replayTurn(restored,record.turn);assert.deepEqual(rebuilt.record.changes,record.changes);assert.deepEqual(rebuilt.record.battles,record.battles);}assert.equal(JSON.stringify(r),saved);
 });
-test('capture hatch appears only at the territory step and persists into the next nation through round production',()=>{
+test('capture hatch appears only at the capture sweep after arrival and persists into the next nation through round production',()=>{
  const before=counterFixture(),r=nextTurn(before,war15(4)),record=r.history[0],scenes=makeTurnScenes(record,before.world),index=scenes.findIndex(s=>s.kind==='apply'&&s.event.type==='resolve'),snapshot=JSON.stringify(r);
  const state={record,before:before.world,scenes,index,phase:'holding',effectStage:'outcome',roundRecords:[]};assert.equal(roundCampaign(scenes[index].worldBefore,state).captures.size,0);
  state.effectStage='troops';assert.equal(roundCampaign(scenes[index].worldBefore,state).captures.size,0);
- state.effectStage='territory';assert.equal(roundCampaign(scenes[index].worldAfter,state).captures.size,0);state.index=scenes.findIndex(s=>s.kind==='arrival');const campaign=roundCampaign(scenes[state.index].worldAfter,state);assert.equal(campaign.captures.get('tile-3').ownerId,'b');assert.equal(campaign.baseOwners.get('tile-3'),'a');
+ state.effectStage='territory';assert.equal(roundCampaign(scenes[index].worldAfter,state).captures.size,0);state.index=scenes.findIndex(s=>s.kind==='capture');const campaign=roundCampaign(scenes[state.index].worldAfter,state);assert.equal(campaign.captures.get('tile-3').ownerId,'b');assert.equal(campaign.baseOwners.get('tile-3'),'a');
  const later={turn:2,round:record.round,actorId:'b',events:[],battles:[],changes:[]},next={record:later,before:r.world,scenes:[{kind:'focus',event:{index:0,type:'king'}}],index:0,roundRecords:[record]};
  assert.equal(roundCampaign(r.world,next).captures.size,1);assert(roundCampaign(r.world,next).routes.length>=2);
  later.events=[{type:'round_end',index:1}];next.scenes=[{kind:'round-settle',event:{index:.5,type:'round_settle'}}];assert.equal(roundCampaign(r.world,next).captures.size,1);
@@ -112,15 +112,15 @@ test('camera framing uses the acting nation and all visible borders without futu
  const p=new TurnPlayback();p.load(record,r0.world,r.world,false);p.state.index=index;
  const html=renderJudgmentOverlay({world:scene.worldBefore,playback:p});assert(html.includes('is-compact-duel'));assert(!html.includes('judgment-side-label'));assert(!html.includes(`data-score-visible="true"`));
  const map=renderAtlas(scene.worldBefore,{presentation:{...p.state,effectStage:null}});assert(!map.includes('전투 발생'));assert(map.includes('unit-combat-role'));assert(map.includes('>공격</text>'));assert(map.includes('>수비</text>'));assert(map.includes('data-combat-side="attack"'));
- p.state.index=scenes.findIndex(s=>s.kind==='arrival');assert(renderAtlas(r.world,{presentation:p.state}).includes('data-round-capture="tile-3"'));
+ p.state.index=scenes.findIndex(s=>s.kind==='capture');assert(renderAtlas(r.world,{presentation:p.state}).includes('data-round-capture="tile-3"'));
 });
-test('an actual seven-country round retains earlier captures in a later nation and clears when the next season starts',()=>{
+test('an actual seven-country round retains earlier captures in a later nation and settles after the next season announcement',()=>{
  const w=createContinent160World();w.countries.forEach(c=>c.troops=50);let r=createRun(w,123),captured=false,seen=false;
  for(let i=0;i<7;i++){
   const before=r.world;r=nextTurn(r,{rolls:{king:10,'expedition:0':1,'attack:0':30,'defense:0':1}});const record=r.history.at(-1),p=new TurnPlayback();p.load(record,before,r.world,false,r.history);
   if(captured){assert(roundCampaign(before,p.state).captures.size>0);seen=true;}
   if(record.changes.length)captured=true;
-  if(record.events.some(e=>e.type==='round_end')){p.finish();assert(roundCampaign(r.world,p.state).captures.size>0);const start=r.world;r=nextTurn(r,domestic15);p.load(r.history.at(-1),start,r.world,false,r.history);assert.equal(p.scene.kind,'season');assert.equal(roundCampaign(start,p.state).captures.size,0);break;}
+  if(record.events.some(e=>e.type==='round_end')){p.finish();assert(roundCampaign(r.world,p.state).captures.size>0);const start=r.world;r=nextTurn(r,domestic15);p.load(r.history.at(-1),start,r.world,false,r.history);assert.equal(p.scene.kind,'season');assert(roundCampaign(start,p.state).captures.size>0);p.step();assert.equal(p.scene.kind,'round-settle');assert(roundCampaign(start,p.state).settling);p.step();assert.equal(roundCampaign(start,p.state).captures.size,0);break;}
  }
  assert(seen);
 });
