@@ -49,7 +49,7 @@ export function resolveCampaign(ctx){
    const options=s.cells.filter(c=>c.owner===opponent&&taken.some(v=>Atlas.cells[v].neighbors.includes(c.id))
     &&!other.generals.some(g=>g.active&&g.alive&&g.position===c.id)).map(c=>c.id);
    if(!options.length)break;
-   const next=chooseFrontier(s,Atlas,actor,options,{recent:[...recent,...taken],supply:h.connectedSupply},randomInt);take(next);taken.push(next);
+   const next=chooseFrontier(s,Atlas,actor,options,{recent:[...recent,...taken],supply:h.connectedSupply,recoveryPriority:rules.recoveryPriority},randomInt);take(next);taken.push(next);
   }
   return taken;
  };
@@ -57,7 +57,7 @@ export function resolveCampaign(ctx){
   if(s.result)break;const a=me.generals[slot],candidates=h.targets(s,actor,slot,opponent);
   if(!a.alive||!a.troops||a.stranded||!candidates.length){emit('skip',a.name+' 공격 건너뜀',!a.troops?'병력 0만명 · 충원 대기':a.stranded?'퇴각 경로가 막혀 원정 불가':'도달 가능한 맞닿은 영지가 없어.',{nation:actor,slot,role:'general'});continue;}
   const routes=new Map(candidates.map(id=>[id,expeditionRoute(s,Atlas,actor,a,id)]));
-  let cellId=chooseFrontier(s,Atlas,actor,candidates,{paths:new Map([...routes].map(([id,r])=>[id,r.path])),recent,supply:h.connectedSupply},randomInt);
+  let cellId=chooseFrontier(s,Atlas,actor,candidates,{paths:new Map([...routes].map(([id,r])=>[id,r.path])),recent,supply:h.connectedSupply,recoveryPriority:rules.recoveryPriority},randomInt);
   if(ctl.targetCells?.[slot]!==undefined){cellId=ctl.targetCells[slot];if(!candidates.includes(cellId))throw Error('인접하지 않은 대상 영지');}
   const route=routes.get(cellId),chance=expeditionChance(route.distance,rules),roll=die('expedition:'+slot,100),accepted=roll<=chance;
   emit('expedition_roll',a.name+' · '+(accepted?'출전 결정':'주둔 유지'),route.distance+'칸 · 출전 확률 '+chance+'% · D100',{nation:actor,slot,role:'general',roll,faces:100,distance:route.distance,chance,accepted,cellId});
@@ -76,8 +76,8 @@ export function resolveCampaign(ctx){
    else{
     b.sides=rules.combatSides;b.terrain=ctx.terrains?.[cellId]||'plain';
     const suffix=wave?':'+wave:'',av=die('attack:'+slot+suffix,b.sides),dv=die('defense:'+slot+suffix,b.sides);
-    Object.assign(b.attack,{raw:av,wins:a.wins,...combatBonuses(a.troops,d.troops,a.ability,a.wins,'plain',rules),movementEdges:route.path.length-1,fatigueBonus:movementFatigue(route.path.length-1,rules)});
-    Object.assign(b.defense,{raw:dv,wins:d.wins,...combatBonuses(d.troops,a.troops,d.ability,d.wins,b.terrain,rules),movementEdges:entry.path.length-1,fatigueBonus:movementFatigue(entry.path.length-1,rules)});
+    Object.assign(b.attack,{raw:av,wins:a.wins,...(rules.underdogExperience?{underdogWins:a.underdogWins||0}:{}),...combatBonuses(a.troops,d.troops,a.ability,a.wins,'plain',rules,a.underdogWins||0),movementEdges:route.path.length-1,fatigueBonus:movementFatigue(route.path.length-1,rules)});
+    Object.assign(b.defense,{raw:dv,wins:d.wins,...(rules.underdogExperience?{underdogWins:d.underdogWins||0}:{}),...combatBonuses(d.troops,a.troops,d.ability,d.wins,b.terrain,rules,d.underdogWins||0),movementEdges:entry.path.length-1,fatigueBonus:movementFatigue(entry.path.length-1,rules)});
     for(const side of [b.attack,b.defense]){side.bonus+=side.fatigueBonus;side.score=side.raw+side.bonus;}
     b.winner=b.attack.score===b.defense.score?null:b.attack.score>b.defense.score?actor:opponent;
     emit('attack_roll',a.name+' 공격 주사위','이동 피로 포함 최종 점수',{battleIndex:index,nation:actor,slot,role:'general',roll:av,faces:b.sides,side:b.attack});
@@ -85,7 +85,7 @@ export function resolveCampaign(ctx){
     const margin=Math.abs(b.attack.score-b.defense.score);
     b.losses={attack:combatCasualties(a.troops,d.troops,b.winner===actor?'win':b.winner===null?'draw':'loss',margin,rules),defense:combatCasualties(d.troops,a.troops,b.winner===opponent?'win':b.winner===null?'draw':'loss',margin,rules)};
     a.troops=roundedTroops(a.troops-b.losses.attack.amount,rules);d.troops=roundedTroops(d.troops-b.losses.defense.amount,rules);
-    if(b.winner!==null){const winner=b.winner===actor?a:d;winner.wins++;b.victorWins=winner.wins;}
+    if(b.winner!==null){const winner=b.winner===actor?a:d;winner.wins++;if(rules.underdogExperience&&((b.winner===actor?b.attack.army:b.defense.army)<(b.winner===actor?b.defense.army:b.attack.army)))winner.underdogWins=(winner.underdogWins||0)+1;b.victorWins=winner.wins;}
    }
    const capitalsBefore=s.countries.map(c=>h.capitalCell(s,c.id)),ownersBefore=s.cells.map(c=>c.owner);
    const finalWin=b.winner===actor&&wave===queue.length-1;

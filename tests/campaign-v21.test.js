@@ -30,7 +30,7 @@ test('live arrows and commander pins can sample one length-based route at arbitr
  const p=player(),index=p.state.scenes.findIndex(s=>s.movementSide==='attack');p.state.index=index;const c=roundCampaign(p.scene.worldBefore,p.state),op=groupedOperations(c).find(r=>r.moving);assert(op);assert.equal(op.toId,f.record.battles[0].territoryId);assert(op.path.at(-1)===op.toId);const html=renderCampaignRoutes(p.scene.worldBefore,geometry,c);assert(html.includes('data-live-march="true"'));assert(html.includes('data-route-person='));
 });
 test('army width has the current minimum and four bounded bands, and different commanders receive distinct shared-edge routes',()=>{
- assert.deepEqual([0,1,7,8,14,15,20,21,25,1000].map(v=>Number(armyArrowWidth(v).toFixed(2))),[3.8,3.8,3.8,4.94,4.94,6.08,6.08,6.84,6.84,6.84]);
+ assert.deepEqual([0,1,7,8,14,15,20,21,25,1000].map(v=>Number(armyArrowWidth(v).toFixed(2))),[3.8,3.8,3.8,6.46,6.46,9.5,9.5,12.54,12.54,12.54]);
  const ids=f.before.territories.slice(0,3).map(t=>t.id),base={side:'attack',countryId:f.before.countries[0].id,path:ids,fromId:ids[0],toId:ids[2],army:20};const routes=[{...base,key:'a',personId:'a'},{...base,key:'b',personId:'b'},{...base,key:'c',personId:'a'}],grouped=groupedOperations({routes});assert.equal(grouped.length,2);assert.equal(grouped[0].count,2);const g=operationGeometry(f.before,geometry,grouped);assert.notDeepEqual(g[0].points,g[1].points);assert.deepEqual(g[0].points[0],g[1].points[0]);assert.deepEqual(g[0].points.at(-1),g[1].points.at(-1));
  const partial=operationGeometry(f.before,geometry,[routes[0],{...routes[1],path:ids.slice(1),fromId:ids[1]}]);assert.notDeepEqual(partial[0].points.slice(-3,-1),partial[1].points.slice(-3,-1));
 });

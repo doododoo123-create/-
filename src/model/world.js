@@ -1,3 +1,4 @@
+import { validateDeployment,synchronizeDeployment } from './deployment.js';
 import { MAP_SCALE_DEFAULTS, scaledProduction } from './map-scale.js';
 import { ADDITIVE_COMBAT_DEFAULTS, isModernCombat } from './combat-rules.js';
 import { V11_ATLAS, V11_NATIONS, V11_ROSTERS } from '../data/v11-preset.js';
@@ -79,11 +80,12 @@ export function validateWorld(source) {
   if(r.seaSupply!==undefined&&typeof r.seaSupply!=='boolean')fail('해상 보급 설정은 켜기 또는 끄기여야 합니다.');
   const thresholds=object(r.domesticThresholds,'성향별 내정 구간'),losses=object(r.lossRates,'손실률'),weights=object(r.ministerWeights,'승상 행동 확률');
   const rules={mode:'v11',diceSides:10,seaSupply:r.seaSupply??true,domesticThresholds:Object.fromEntries(Object.keys(PERSONALITIES).map(k=>[k,number(thresholds[k],`${PERSONALITIES[k]} 내정 구간`,0,10)])),ministerWeights:Object.fromEntries(Object.keys(MINISTER_STYLES).map(k=>{const a=array(weights[k],'승상 행동 구간',3).map(v=>number(v,'승상 행동 확률',0,10));if(a.length!==3||a.reduce((n,v)=>n+v,0)!==10)fail('각 승상 성향의 세 확률 눈금 합계는 10이어야 합니다.');return [k,a];})),lossRates:Object.fromEntries(['win','tie','loss'].map(k=>[k,number(losses[k],'손실률',0,1,false)]))};
-  for(const [key,label,min,max] of [['successTarget','내정 성공 기준',1,12],['recruitGain','모병 증가량',0,10000],['productionGain','충원 강화 증가량',0,10000],['supplyGain','보급 강화 증가량',0,10000],['baseCapacity','기본 지휘한도',1,10000],['minimumReserve','수도 최소 병력',0,10000],['territoryProduction','영토당 생산',0,10000],['armyAdvantageBonus','병력 우세 보정',0,10],['roundLimit','제한 라운드',1,100]])rules[key]=number(r[key],label,min,max);
+  for(const [key,label,min,max] of [['successTarget','내정 성공 기준',1,12],['recruitGain','모병 증가량',0,10000],['productionGain','충원 강화 증가량',0,10000],['supplyGain','보급 강화 증가량',0,10000],['baseCapacity','기본 지휘한도',1,10000],['minimumReserve','수도 최소 병력',0,10000],['territoryProduction','영토당 생산',0,10000],['armyAdvantageBonus','병력 우세 보정',0,10]])rules[key]=number(r[key],label,min,max);
+  rules.roundLimit=r.roundLimit===null?null:number(r.roundLimit,'제한 라운드',1,100);
   const scale={...MAP_SCALE_DEFAULTS,...r};for(const [key,label,min,max,integer]of [['territoriesPerCommander','장군당 담당 영토',1,12,true],['productionDivisor','생산 영토 묶음',1,10,true],['distanceScale','이동 거리 환산',1,3,false]])rules[key]=number(scale[key],label,min,max,integer);
   if(typeof scale.adaptiveReserve!=='boolean')fail('소국 수도 예비병 설정을 확인해 주세요.');rules.adaptiveReserve=scale.adaptiveReserve;
   const combat={...clone(ADDITIVE_COMBAT_DEFAULTS),...r};
-  for(const key of ['continuousCampaign','routDeath','strategicTargets']){if(typeof combat[key]!=='boolean')fail('새 연속 원정 설정을 확인해 주세요.');rules[key]=combat[key];}
+  for(const key of ['continuousCampaign','routDeath','strategicTargets','recoveryPriority','underdogExperience','frontierReserves']){if(typeof combat[key]!=='boolean')fail('새 연속 원정 설정을 확인해 주세요.');rules[key]=combat[key];}
   for(const [key,min,max] of [['unopposedCaptureLimit',1,3],['routDeathChance',0,100],['strategyCommitment',1,20],['strategyStall',1,20],['strategyWeakLands',1,100],['strategyEmergencyLoss',1,100],['strategyResponseOrders',1,20],['strategySwitchMargin',0,100]])rules[key]=number(combat[key],key,min,max);
   if(typeof combat.occupationAdvance!=='boolean')fail('점령 후 지휘관 전진 설정을 확인해 주세요.');rules.occupationAdvance=combat.occupationAdvance;
   if(typeof combat.battlefieldRecovery!=='boolean')fail('전투 후 주둔·병력 0 복귀 설정을 확인해 주세요.');rules.battlefieldRecovery=combat.battlefieldRecovery;
@@ -115,6 +117,7 @@ export function validateWorld(source) {
   rules.combatLosses=Object.fromEntries(['narrow','clear','major','rout','draw'].map(key=>{const pair=array((combat.combatLosses?.[key]??(key==='major'?ADDITIVE_COMBAT_DEFAULTS.combatLosses.major:undefined)),'전투 손실 기준',2).map(v=>number(v,'손실 비율',0,1,false));if(pair.length!==2)fail('양측 손실 기준을 입력해 주세요.');return [key,pair];}));
   const cartography=validateCartography(input.cartography,territories);
   if(mapKind==='free'&&(!cartography||cartography.links===null||territories.some(t=>!Object.hasOwn(cartography.polygons,t.id))))fail('자유 지도에는 모든 영토의 경계와 인접 연결 목록이 필요합니다.');
-  return {schemaVersion:2,id:text(input.id,'세계 ID',100),name:text(input.name,'세계 이름'),description:optionalText(input.description,300),rows,cols,mapKind,countries,people,territories,rules,...(cartography?{cartography}:{})};
+  const deployment=validateDeployment(input.deployment,countries,people,territories,rules.territoriesPerCommander);
+  return {...(deployment?{deployment}:{}),schemaVersion:2,id:text(input.id,'세계 ID',100),name:text(input.name,'세계 이름'),description:optionalText(input.description,300),rows,cols,mapKind,countries,people,territories,rules,...(cartography?{cartography}:{})};
 }
-export function removeCountry(world,id){const next=clone(world);next.countries=next.countries.filter(c=>c.id!==id);next.people.forEach(p=>{if(p.countryId===id)p.countryId=null;});next.territories.forEach(t=>{if(t.ownerId===id)t.ownerId=null;});return validateWorld(next);}
+export function removeCountry(world,id){const next=clone(world);next.countries=next.countries.filter(c=>c.id!==id);next.people.forEach(p=>{if(p.countryId===id)p.countryId=null;});next.territories.forEach(t=>{if(t.ownerId===id)t.ownerId=null;});return validateWorld(synchronizeDeployment(next,world));}

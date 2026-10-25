@@ -1,7 +1,7 @@
 import { combatBonuses } from '../model/combat-rules.js';
 // Recorded results become a sequence of readable display steps. These previews never enter the engine.
 const observerWorlds=new WeakMap();
-export const observedExperience=(person,rules)=>rules.battleMode==='additive30'?combatBonuses(1,1,0,person?.wins||0,'plain',rules).experienceBonus:0;
+export const observedExperience=(person,rules)=>rules.battleMode==='additive30'?combatBonuses(1,1,0,person?.wins||0,'plain',rules,person?.underdogWins||0).experienceBonus:0;
 export function observerBattle(scene,record){return record?.battles?.[scene?.battleIndex]||null;}
 export function battleConsequence(battle){
  if(!battle)return '';
@@ -27,7 +27,7 @@ export function applicationWorld(scene,step){
  if(step==='outcome')return scene.worldBefore;
  if(!observerWorlds.has(scene))observerWorlds.set(scene,new Map());const cache=observerWorlds.get(scene);if(cache.has(step))return cache.get(step);
  const before=scene.worldBefore,after=scene.worldAfter,old=new Map(before.people.map(p=>[p.id,p])),next=new Map(after.people.map(p=>[p.id,p]));
- const world=step==='troops'?{...before,countries:before.countries.map(c=>{const n=after.countries.find(n=>n.id===c.id);return {...c,troops:n?.troops??c.troops,reserve:n?.reserve??c.reserve};}),people:before.people.map(p=>({...p,troops:next.get(p.id)?.troops??p.troops}))}:{...after,people:after.people.map(p=>({...p,capacity:old.get(p.id)?.capacity??p.capacity,wins:old.get(p.id)?.wins??p.wins}))};
+ const world=step==='troops'?{...before,countries:before.countries.map(c=>{const n=after.countries.find(n=>n.id===c.id);return {...c,troops:n?.troops??c.troops,reserve:n?.reserve??c.reserve};}),people:before.people.map(p=>({...p,troops:next.get(p.id)?.troops??p.troops}))}:{...after,people:after.people.map(p=>({...p,capacity:old.get(p.id)?.capacity??p.capacity,wins:old.get(p.id)?.wins??p.wins,...(p.underdogWins!==undefined?{underdogWins:old.get(p.id)?.underdogWins??p.underdogWins}:{})}))};
  cache.set(step,world);return world;
 }
 export function applicationNotice(scene,record,step){

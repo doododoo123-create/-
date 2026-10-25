@@ -1,0 +1,6 @@
+.deployment-layout{display:grid;grid-template-columns:290px minmax(0,1fr);gap:16px;align-items:start}.deployment-controls{padding:18px}.deployment-controls label{display:block;margin-bottom:14px}.deployment-controls select{width:100%}.deployment-controls dd{margin:4px 0 14px;overflow-wrap:anywhere}.deployment-controls .button{margin-top:10px}.deployment-map{overflow:hidden;min-width:0}.deployment-map .atlas-scroll{min-height:500px}.deployment-map .atlas-cell.linked-territory .atlas-territory{stroke:#fff;stroke-width:3;fill-opacity:.55}.site-swords path{stroke-linecap:round;stroke-linejoin:round}
+@media(max-width:1000px){.deployment-layout{grid-template-columns:1fr}.deployment-controls{display:block}.deployment-map .atlas-scroll{min-height:350px}}
+
+.sidebar{overflow-y:auto}.sidebar>*{flex-shrink:0}.sidebar nav{overflow:visible;flex-shrink:0}
+
+.site-swords .blade{fill:#ff394f;stroke:#100a0d;stroke-width:.7}

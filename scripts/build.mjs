@@ -45,6 +45,7 @@ const v14Css=await readFile(resolve(root,'src/ui/studio-v14.css'),'utf8');
 const v15Css=await readFile(resolve(root,'src/ui/studio-v15.css'),'utf8');
 const v20Css=await readFile(resolve(root,'src/ui/studio-v20.css'),'utf8');
 const v21Css=await readFile(resolve(root,'src/ui/studio-v21.css'),'utf8');
+const v23Css=await readFile(resolve(root,'src/ui/studio-v23.css'),'utf8');
 const v22Css=await readFile(resolve(root,'src/ui/studio-v22.css'),'utf8');
 const v19Css=await readFile(resolve(root,'src/ui/studio-v19.css'),'utf8');
 const v18Css=await readFile(resolve(root,'src/ui/studio-v18.css'),'utf8');
@@ -86,6 +87,7 @@ html = html.replace('<link rel="stylesheet" href="./src/ui/style.css">', `<style
   .replace('<link rel="stylesheet" href="./src/ui/studio-v20.css">', `<style>${v20Css}</style>`)
   .replace('<link rel="stylesheet" href="./src/ui/studio-v21.css">', `<style>${v21Css}</style>`)
   .replace('<link rel="stylesheet" href="./src/ui/studio-v22.css">', `<style>${v22Css}</style>`)
+  .replace('<link rel="stylesheet" href="./src/ui/studio-v23.css">', `<style>${v23Css}</style>`)
   .replace('href="./favicon.svg"', `href="data:image/svg+xml;base64,${favicon}"`);
 const dist = resolve(root, 'dist');
 await mkdir(dist, { recursive: true });

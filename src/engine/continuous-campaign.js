@@ -39,7 +39,7 @@ export function resolveContinuousCampaign(ctx){
   const initial=s.countries[actor].generals[slot],candidates=h.targets(s,actor,slot,opponent);
   if(!live(actor,initial)||!candidates.length){emit('skip',initial.name+' 공격 건너뜀',!initial.troops?'병력 0만명 · 충원 대기':'도달 가능한 접경 영토 없음',{nation:actor,slot,role:'general'});continue;}
   const routes=new Map(candidates.map(id=>[id,expeditionRoute(s,Atlas,actor,initial,id)]));
-  let target=chooseFrontier(s,Atlas,actor,candidates,{paths:new Map([...routes].map(([id,r])=>[id,r.path])),supply:h.connectedSupply},randomInt);
+  let target=chooseFrontier(s,Atlas,actor,candidates,{paths:new Map([...routes].map(([id,r])=>[id,r.path])),supply:h.connectedSupply,recoveryPriority:rules.recoveryPriority},randomInt);
   if(ctl.targetCells?.[slot]!==undefined){target=ctl.targetCells[slot];if(!candidates.includes(target))throw Error('인접하지 않은 대상 영지');}
   const firstRoute=routes.get(target),chance=expeditionChance(firstRoute.distance,rules),roll=die('expedition:'+slot,100);
   emit('expedition_roll',initial.name+' 출전 판정',`목표까지 ${firstRoute.distance}칸 · 출전 확률 ${chance}%`,{nation:actor,slot,role:'general',roll,faces:100,distance:firstRoute.distance,chance,accepted:roll<=chance,cellId:target});
@@ -66,8 +66,8 @@ export function resolveContinuousCampaign(ctx){
     else{
      b.sides=rules.combatSides;b.terrain=ctx.terrains?.[cellId]||'plain';
      const av=die('attack:'+g.slot+suffix,b.sides),dv=die('defense:'+g.slot+suffix,b.sides);
-     Object.assign(b.attack,{raw:av,wins:g.wins,...combatBonuses(g.troops,d.troops,g.ability,g.wins,'plain',rules),movementEdges:root.travel.get(campaignOfficerKey(nation,g))||0});
-     Object.assign(b.defense,{raw:dv,wins:d.wins,...combatBonuses(d.troops,g.troops,d.ability,d.wins,b.terrain,rules),movementEdges:root.travel.get(campaignOfficerKey(enemy,d))||0});
+     Object.assign(b.attack,{raw:av,wins:g.wins,...(rules.underdogExperience?{underdogWins:g.underdogWins||0}:{}),...combatBonuses(g.troops,d.troops,g.ability,g.wins,'plain',rules,g.underdogWins||0),movementEdges:root.travel.get(campaignOfficerKey(nation,g))||0});
+     Object.assign(b.defense,{raw:dv,wins:d.wins,...(rules.underdogExperience?{underdogWins:d.underdogWins||0}:{}),...combatBonuses(d.troops,g.troops,d.ability,d.wins,b.terrain,rules,d.underdogWins||0),movementEdges:root.travel.get(campaignOfficerKey(enemy,d))||0});
      for(const side of [b.attack,b.defense]){side.fatigueBonus=movementFatigue(side.movementEdges,rules);side.bonus+=side.fatigueBonus;side.score=side.raw+side.bonus;}
      b.winner=b.attack.score===b.defense.score?null:b.attack.score>b.defense.score?nation:enemy;
      emit('attack_roll',g.name+' 공격 주사위','실제 이동의 누적 피로 포함',{battleIndex:index,nation,slot:g.slot,role:'general',roll:av,faces:b.sides,side:b.attack});
@@ -75,7 +75,7 @@ export function resolveContinuousCampaign(ctx){
      const margin=Math.abs(b.attack.score-b.defense.score);
      b.losses={attack:combatCasualties(g.troops,d.troops,b.winner===nation?'win':b.winner===null?'draw':'loss',margin,rules),defense:combatCasualties(d.troops,g.troops,b.winner===enemy?'win':b.winner===null?'draw':'loss',margin,rules)};
      g.troops=roundedTroops(g.troops-b.losses.attack.amount,rules);d.troops=roundedTroops(d.troops-b.losses.defense.amount,rules);
-     if(b.winner!==null){const victor=b.winner===nation?g:d,loser=b.winner===nation?d:g,loserNation=b.winner===nation?enemy:nation;victor.wins++;b.victorWins=victor.wins;root.defeated.add(campaignOfficerKey(loserNation,loser));}
+     if(b.winner!==null){const victor=b.winner===nation?g:d,loser=b.winner===nation?d:g,loserNation=b.winner===nation?enemy:nation;victor.wins++;if(rules.underdogExperience){const winningSide=b.winner===nation?b.attack:b.defense,losingSide=b.winner===nation?b.defense:b.attack;if(winningSide.army<losingSide.army)victor.underdogWins=(victor.underdogWins||0)+1;b.victorUnderdogWins=victor.underdogWins||0;}b.victorWins=victor.wins;root.defeated.add(campaignOfficerKey(loserNation,loser));}
     }
     const finalWin=b.winner===nation&&wave===queue.length-1,falls=[];
     if(finalWin){
@@ -94,7 +94,7 @@ export function resolveContinuousCampaign(ctx){
      if(automatic)while(task.budget>0||task.special.length){
       const options=s.cells.filter(c=>c.owner===enemy&&b.takenCells.some(id=>Atlas.cells[id].neighbors.includes(c.id))&&(task.budget>0||task.special.includes(c.id))).map(c=>c.id);
       const open=options.filter(id=>!advanceDefenders(s,Atlas,enemy,id,s.countries[enemy].generals[s.cells[id].commander],radius,root.defeated).queue.length);
-      if(!open.length)break;const next=chooseFrontier(s,Atlas,nation,open,{recent:task.taken,supply:h.connectedSupply},randomInt);take(next);
+      if(!open.length)break;const next=chooseFrontier(s,Atlas,nation,open,{recent:task.taken,supply:h.connectedSupply,recoveryPriority:rules.recoveryPriority},randomInt);take(next);
      }
      b.takenCell=b.takenCells[0];
     }else b.captureLimit=0;
@@ -127,7 +127,7 @@ export function resolveContinuousCampaign(ctx){
    if(!captured||!live(nation,g)||!(task.budget>0||task.special.length)){task=null;continue;}
    const options=s.cells.filter(c=>c.owner===enemy&&(task.budget>0||task.special.includes(c.id))&&Atlas.cells[c.id].neighbors.some(id=>s.cells[id].owner===nation&&task.taken.includes(id))).map(c=>c.id).filter(id=>expeditionRoute(s,Atlas,nation,g,id));
    if(!options.length){task=null;continue;}
-   task.target=chooseFrontier(s,Atlas,nation,options,{recent:task.taken,supply:h.connectedSupply},randomInt);
+   task.target=chooseFrontier(s,Atlas,nation,options,{recent:task.taken,supply:h.connectedSupply,recoveryPriority:rules.recoveryPriority},randomInt);
   }
  }
 }

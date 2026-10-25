@@ -1,3 +1,4 @@
+import { recoveryTerritoryCandidates } from './recovery-priority.js';
 // Rank only legal land-front targets. Shape preferences never bypass defenders or paths.
 export function frontierScores(state,atlas,actor,candidates,{paths=new Map(),recent=[],supply=null}={}){
  const enemySize=id=>supply?supply(state,state.cells[id].owner,id).length:state.cells.filter(c=>c.owner===state.cells[id].owner).length;
@@ -22,7 +23,8 @@ export function frontierScores(state,atlas,actor,candidates,{paths=new Map(),rec
  }).sort((a,b)=>b.score-a.score||a.distance-b.distance||a.id-b.id);
 }
 export function chooseFrontier(state,atlas,actor,candidates,options,randomInt){
- const ranked=frontierScores(state,atlas,actor,candidates,options),best=ranked[0];
+ const available=options?.recoveryPriority?recoveryTerritoryCandidates(state,atlas,actor,candidates):candidates;
+ const ranked=frontierScores(state,atlas,actor,available,options),best=ranked[0];
  if(!best)return null;const ties=ranked.filter(v=>Math.abs(v.score-best.score)<1e-9&&v.distance===best.distance);
  return ties[randomInt(state,ties.length)].id;
 }

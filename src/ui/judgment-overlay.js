@@ -43,7 +43,7 @@ export function renderJudgmentOverlay({world,playback}) {
       const current=event.type===(attack?'attack_roll':'defense_roll'),seen=result||attack&&event.type==='defense_roll';
       const visible=seen||current&&phase==='locked';
       const die=battle.automatic?'<span class="judgment-auto">—</span>':renderAccumulatingDie(current||seen?info.raw:null,battle.sides||30,current?phase:seen?'locked':'waiting',attack?'⚔':'🛡',scoreBonusItems(info),{mergeIndex:state.mergeIndex||0,progress:playback.sceneProgress,speed:typeof playback.speed==='function'?playback.speed():state.speed||1});
-      return `<div class="judgment-side ${key}" style="--nation:${country?.color||'#fff'}"><div class="mini-fighter-name">${attack?'⚔':'🛡'} ${esc(displayName(person,info.name))}${veteranStars({...person,wins:info.wins??person?.wins})}<small>병력 ${info.army}만</small></div><div class="mini-score-roll">${die}</div>${renderObserverBonuses(info,{all:true})}<div class="mini-bonus-total">보정 합계 ${judgmentSign(sideBonus(info))}</div></div>`;
+      return `<div class="judgment-side ${key}" style="--nation:${country?.color||'#fff'}"><div class="mini-fighter-name">${attack?'⚔':'🛡'} ${esc(displayName(person,info.name))}${veteranStars({...person,wins:info.wins??person?.wins,...(info.underdogWins!==undefined?{underdogWins:info.underdogWins}:{})})}<small>병력 ${info.army}만</small></div><div class="mini-score-roll">${die}</div>${renderObserverBonuses(info,{all:true})}<div class="mini-bonus-total">보정 합계 ${judgmentSign(sideBonus(info))}</div></div>`;
 
     };
     body=`<div class="judgment-duel">${side('attack',true)}<span class="judgment-vs">⚔</span>${side('defense',false)}</div>`;

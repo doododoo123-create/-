@@ -1,6 +1,7 @@
 // Pure combat calculations. Troops are expressed in ten-thousands, precise to one soldier.
 export const LEGACY_ARMY_BANDS=Object.freeze([[1.25,4],[1.5,10],[2,16],[3,21],[5,25],[10,27],[20,28]]);
 export const ADDITIVE_COMBAT_DEFAULTS=Object.freeze({
+ recoveryPriority:false,underdogExperience:false,frontierReserves:false,
  continuousCampaign:false,routDeath:false,strategicTargets:false,unopposedCaptureLimit:3,routDeathChance:10,strategyCommitment:3,strategyStall:3,strategyWeakLands:7,strategyEmergencyLoss:4,strategyResponseOrders:2,strategySwitchMargin:15,
  battleMode:'additive30',combatSides:30,experiencePerWin:1,experienceWinStep:3,experienceCap:3,mountainBonus:8,
  retreatMode:'home',advancedCampaign:true,territoryArmyLimit:10,fatigueStep:4,fatiguePenalty:2,supplyGainRange:[1,3],
@@ -21,8 +22,7 @@ export function armyRatioBonus(own,enemy,rules){
  for(const [threshold,score] of rules.armyBands)if(ratio>=threshold)bonus=score;
  return bonus;
 }
-export function combatBonuses(own,enemy,ability,wins,terrain,rules){
- const armyBonus=armyRatioBonus(own,enemy,rules),experienceBonus=Math.min(rules.experienceCap,Math.floor(Math.max(0,wins||0)/(rules.experienceWinStep??1))*rules.experiencePerWin),terrainBonus=terrain==='mountain'?rules.mountainBonus:0;
+export function combatBonuses(own,enemy,ability,wins,terrain,rules,underdogWins=0){ const armyBonus=armyRatioBonus(own,enemy,rules),experienceBonus=Math.min(rules.experienceCap,Math.floor(Math.max(0,(rules.underdogExperience?underdogWins:wins)||0)/(rules.experienceWinStep??1))*rules.experiencePerWin),terrainBonus=terrain==='mountain'?rules.mountainBonus:0;
  return {ability,armyBonus,experienceBonus,terrainBonus,bonus:ability+armyBonus+experienceBonus+terrainBonus};
 }
 export function combatGrade(margin,rules){

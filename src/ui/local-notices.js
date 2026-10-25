@@ -8,6 +8,7 @@ export function localNotices(scene,record,world){
  if(e.type==='skip')add(e.detail?.includes('0만')?'병력 0 · 충원 대기':'출정 불가');
  if(e.type==='retreat')add(e.title?.includes('인근')?'인근 후퇴':e.title?.includes('재배치')?'재배치':'후퇴');
  if(e.type==='empty_return')add(e.reason==='home'?'주둔지 복귀':'수도 복귀');
+ if(e.type==='frontier_reserve')add('전선 대기');
  if(e.type==='occupation')add('점령지 진입');
  if(e.type==='survived')add(e.empty===false?'대패 생존':'생존 · 충원 대기');
  if(e.type==='counteroffensive')add('역공 개시');

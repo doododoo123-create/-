@@ -1,3 +1,4 @@
+import { synchronizeDeployment } from './deployment.js';
 import { clone, newId, neighbors, validateWorld } from './world.js';
 import { defaultCartography, polygonCenter, validatePolygon } from './cartography.js';
 export function freeMapFrom(world,cells){
@@ -21,10 +22,10 @@ export function addFreeTerritory(world,points,ownerId=null){
   const next=clone(world),id=newId('land'),shape=validatePolygon(points);next.territories.push({id,name:`새 영토 ${next.territories.length+1}`,ownerId});
   next.cartography.polygons[id]={points:shape,center:polygonCenter(shape)};
   for(const t of world.territories)if(sharedBoundary(shape,world.cartography.polygons[t.id].points,world.cartography.plate==='continent160'?0.1:0.8))next.cartography.links.push([t.id,id]);
-  return {world:validateWorld(next),id};
+  return {world:validateWorld(synchronizeDeployment(next,world)),id};
 }
 export function removeFreeTerritory(world,id){
-  if(world.territories.length<2)throw new Error('영토는 최소 1개 남겨 주세요.');const next=clone(world);next.territories=next.territories.filter(t=>t.id!==id);delete next.cartography.polygons[id];next.cartography.links=next.cartography.links.filter(p=>!p.includes(id));next.countries.forEach(c=>{if(c.capitalId===id)c.capitalId=null;});return validateWorld(next);
+  if(world.territories.length<2)throw new Error('영토는 최소 1개 남겨 주세요.');const next=clone(world);next.territories=next.territories.filter(t=>t.id!==id);delete next.cartography.polygons[id];next.cartography.links=next.cartography.links.filter(p=>!p.includes(id));next.countries.forEach(c=>{if(c.capitalId===id)c.capitalId=null;});return validateWorld(synchronizeDeployment(next,world));
 }
 export function moveFreeTerritory(world,id,point){
   const next=clone(world),shape=next.cartography.polygons[id],dx=point[0]-shape.center[0],dy=point[1]-shape.center[1];
@@ -33,6 +34,7 @@ export function moveFreeTerritory(world,id,point){
 
 export function generatedWorld(world,shapes,links,background){
   const next=clone(world);next.mapKind='free';next.cartography={...defaultCartography(),background,opacity:.22,polygons:{},links:[]};
+  delete next.deployment;
   next.territories=shapes.map((shape,i)=>{const id=`generated-${i}`;Object.defineProperty(next.cartography.polygons,id,{value:shape,enumerable:true,writable:true,configurable:true});return {id,name:`영토 ${i+1}`,ownerId:null};});
   next.cartography.links=links.map(pair=>pair.map(i=>next.territories[i].id));next.countries.forEach(c=>c.capitalId=null);return validateWorld(next);
 }

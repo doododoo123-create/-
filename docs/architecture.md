@@ -24,7 +24,7 @@
 
 세계 파일: `{kind:'saguk-studio-world',version:2,world}`. 버전 1도 읽어 스키마 2로 변환합니다. 이전 편집 이름·소유권·초상화를 보존하고 단순 규칙을 v11 기본값으로 교체합니다. 기존 내장 세계는 원본 지도 및 후보 명부를 복원합니다. `saguk-studio.world.v1` 키를 계속 사용하며 이전 원본은 `.before-v11` 키에 백업합니다.
 
-완료 턴 저장: `{kind:'saguk-studio-run',version:1,engineVersion:'studio-v11-25',seed,initialWorld,engineState,history}`. 키는 `saguk-studio.completed-run.v11`입니다. 매 턴 연출 완료/건너뛰기 때만 저장합니다. 복구 시 원본 상태 검증, 시드 일치, 턴 기록 수와 판정을 검사합니다. 새 세계/세계 가져오기는 진행을 비웁니다. 새 실행과 재현은 초기 상태를 저장합니다.
+완료 턴 저장: `{kind:'saguk-studio-run',version:1,engineVersion:'studio-v11-26',seed,initialWorld,engineState,history}`. 키는 `saguk-studio.completed-run.v11`입니다. 매 턴 연출 완료/건너뛰기 때만 저장합니다. 복구 시 원본 상태 검증, 시드 일치, 턴 기록 수와 판정을 검사합니다. 새 세계/세계 가져오기는 진행을 비웁니다. 새 실행과 재현은 초기 상태를 저장합니다.
 
 역사 내보내기는 시작 세계·전체 기록·최종 상태를 별도 JSON으로 보관합니다. 역사 가져오기는 아직 없습니다. 데이터는 외부로 전송하지 않습니다. 저장 용량 부족은 화면으로 알리고 파일 내보내기를 안내합니다.
 
@@ -355,3 +355,17 @@ engine18은17 저장의 지휘한도/손실/home 복귀를 그대로 보존하�
 - `assets/text-boxes`, `scripts/text-box-art.mjs`, `data/text-box-art.js`, `ui/textures.js`, `studio-v22.css`: 첨부 WebP6장 원본을 CSS변수와 SVG 패턴으로 공유한다. 데이터 문자열을 요소마다 중복 내장하지 않고 단일 HTML에 한 번 보관한다. 지도 배경과 규칙/능력치는 변경하지 않는다.
 
 기존 원본/engine24와의 호환 분기는 유지한다. 신규 계산과 화면 변경은 별도 테스트·실제 엔진25 기록 재생으로 검증한다. [v0.22 검증](validation-v0.22.md).
+
+## v0.23 수복·초기 배치·역전승·장기 기록
+
+`model/campaign-v23.js`는 신규 세계의 수복/역전승/전선 예비병과 roundLimit:null을 명시 적용한다. engine26은 이전25 이하 저장의 누락 세 스위치를 false로 복원한다. 원본·기존 게임의 난수·주공·일반 승수/가산·유한 종료는 그대로다. 세계schema2/실행version1은 유지한다.
+
+- `engine/recovery-priority.js`: 시작 Atlas.owner를 불변 기준으로 사용한다. 실제 경로가 있는 국가 후보/공격 후보 안에서 수복을 먼저 고르고,불가하면 옛 영토까지의 거리로 합법 접경을 정한다. `strategic-targets`는 recovery 모드 중 기존 primary/temporary를 유지하며 주공 유지/정체 횟수를 소비하지 않는다. 수복 기능은 지속 전략 스위치와 독립이다.
+- `underdogWins`: 새 규칙 장수에만 존재하며 실제 시작 병력의 엄격한 비교로 공격/수비 승리 때 증가한다. 모든 D30 분기와 projection/후임/검증을 연결했다. side에는 판정 전 횟수,victorUnderdogWins에는 결과를 기록한다. combatBonuses는 새 스위치일 때만 해당 값을 쓰고 일반 wins는 지휘한도·통계에 유지한다. 지도/판정/상세와 점수 합산은 같은 자료를 사용한다.
+- `model/deployment.js`, `engine/initial-deployment.js`: 선택적 `{version:1,generals:[{personId,positionId,stationId,territoryIds}]}`를 검증하고 국가/슬롯/영토 숫자 인덱스로 변환한다. 수동 국가의 관할은 모든 자국 영토를 중복 없이 덮으며 크기는 설정한 장군당 담당 수 이하다. 초기 reconcile 뒤·최초 병력 분배 전에 주입한다. 국가별 deploymentLock은 시작 소유 영토 목록이며 동일할 때 수동 regionSlots·주둔지를 보존한다. 소유권 증감 때 해당 lock만 해제한다. ordinary UI 편집은 synchronizeDeployment로 영향받는 배치를 정리한다.
+- `ui/deployment-editor.js`: 별도 시작 배치 페이지. 실제 preview 엔진 결과로 자동안을 만들고 지도 카드/영토 클릭으로 초안을 바꾼다. 저장 시 검증하며 world에만 반영해 현재 run을 바꾸지 않는다. 이름 없는 자동 현역은 편집 가능한 명부로 구체화한다. 왕의 수도와 장군의 현재 위치/복귀 주둔지/관할을 구분한다. 자유 지도·세계 저장에도 같은 ID 자료를 사용한다.
+- `engine/frontier-reserves.js`: 왕 내정 차례의 일반 복귀 전에 관할0/5만 이상 장수를 분기한다. 실제 fieldPaths로 연결된 자국 육지 접경만 후보로 하며 이미 접경이면 유지한다. 자기 관할/새 병력을 만들지 않고 기록된 frontier_reserve 이동으로 남긴다.
+- `storage/run-archive.js`:300차례 이하는 기존 동기 localStorage 실행과 호환한다. 이후128개 단위 사건 묶음을 IndexedDB의 chunks,완료 상태·시드·세계·횟수를 metadata에 같은 transaction으로 기록한다. 이미 완료된 앞 묶음은 다시 쓰지 않고 마지막 묶음/새 묶음만 갱신한다. 작은 localStorage pointer는 transaction 완료 뒤 바꾼다. DB가 같은 실행의 pointer보다 앞서 커밋된 경우 최신 완결 상태로 복원한다. session epoch/직렬 queue와 app의 completedRun 확인으로 새 경기 뒤 늦은 저장을 차단한다. 중간 frames는 저장하지 않고 역사 재생 시 생성한다.
+- `roundLimit:null`: 생성/유효성 검사/증가/종료/저장/화면 전체에서 명시 처리한다. 유한 숫자의 기존 조건은 보존한다. restoreRun의10,000개 인위 상한을 제거하고 차례 수·내용 검증은 유지한다. 화면은 최근100개 기록만 목록으로 보여주며 전체 사건은 보존한다.
+
+`operation-geometry`는 병력별 최대3.3배 화살표와 공유 구간의 최대 굵기에 따른 간격을 계산한다. 전투 흔적은 채운 칼날이 있는 SVG 교차검으로 그려 확대/오프라인을 지원한다. `studio-v23.css`는 배치 화면과 작은 높이에서 스크롤 가능한 메뉴를 제공한다. [v0.23 검증](validation-v0.23.md).

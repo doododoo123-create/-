@@ -1,3 +1,4 @@
+import { recoveryNationCandidates } from './recovery-priority.js';
 import { expeditionRoute } from './field-command.js';
 import { scaledDistance } from '../model/map-scale.js';
 export function initializeStrategy(s,id){
@@ -35,6 +36,9 @@ export function strategicThreats(s,atlas,id,candidates,rules){
 export function selectStrategicTarget(s,atlas,id,candidates,rules,randomInt){
  const t=initializeStrategy(s,id),eligible=candidates.filter(target=>strategicRoutes(s,atlas,id,target).length);
  if(!eligible.length)throw Error('공격 가능한 전략 목표가 없습니다.');
+ const recovery=rules.recoveryPriority?recoveryNationCandidates(s,atlas,id,eligible):[];
+ if(recovery.length){const choice=recovery.length===1?recovery[0]:recovery[randomInt(s,recovery.length)];t.mode='recovery';t.selected=choice.target;t.reason=choice.recoverable?'시작 영토 수복 최우선':'빼앗긴 시작 영토로 진격';return {target:choice.target,primary:t.primary,temporary:t.temporary,reason:t.reason,mode:t.mode,recovery:choice};}
+ if(rules.strategicTargets===false){t.mode=null;t.selected=eligible[randomInt(s,eligible.length)];t.reason='공격 가능한 접경국 무작위 선정';return {target:t.selected,primary:t.primary,temporary:t.temporary,reason:t.reason,mode:null};}
  let reason='주공 공세 유지';
  if(t.primary===null){t.primary=eligible[randomInt(s,eligible.length)];t.committed=0;t.stagnant=0;reason='최초 접경국 무작위 주공 선정';}
  const threats=strategicThreats(s,atlas,id,eligible,rules),current=threats.find(v=>v.target===t.temporary),best=threats[0];
@@ -67,5 +71,5 @@ export function finishStrategicTurn(s,id,kind,beforeOwners,selected,manual=false
 export function validStrategy(s,id){
  const t=s.countries[id].strategy;if(!t)return false;
  const target=n=>n===null||Number.isInteger(n)&&n>=0&&n<s.countries.length&&n!==id;
- return target(t.primary)&&target(t.temporary)&&Number.isInteger(t.temporaryLevel)&&t.temporaryLevel>=0&&t.temporaryLevel<=3&&(t.mode===null||['primary','temporary'].includes(t.mode))&&['committed','stagnant','responseOrders'].every(k=>Number.isSafeInteger(t[k])&&t[k]>=0)&&Array.isArray(t.baselineOwners)&&t.baselineOwners.length===s.cells.length&&t.baselineOwners.every(n=>Number.isInteger(n)&&n>=0&&n<s.countries.length)&&(t.baselineCapital===null||Number.isInteger(t.baselineCapital)&&t.baselineCapital>=0&&t.baselineCapital<s.cells.length)&&Array.isArray(t.capitalAttackers)&&t.capitalAttackers.length<=s.countries.length&&new Set(t.capitalAttackers).size===t.capitalAttackers.length&&t.capitalAttackers.every(n=>n!==null&&target(n))&&typeof t.reason==='string'&&t.reason.length<=200&&Array.isArray(t.scores)&&t.scores.length<=s.countries.length&&t.scores.every(v=>v.target!==null&&target(v.target)&&Number.isFinite(v.score)&&Number.isFinite(v.distance)&&v.distance>=1);
+ return target(t.primary)&&target(t.temporary)&&Number.isInteger(t.temporaryLevel)&&t.temporaryLevel>=0&&t.temporaryLevel<=3&&(t.mode===null||['primary','temporary','recovery'].includes(t.mode))&&['committed','stagnant','responseOrders'].every(k=>Number.isSafeInteger(t[k])&&t[k]>=0)&&Array.isArray(t.baselineOwners)&&t.baselineOwners.length===s.cells.length&&t.baselineOwners.every(n=>Number.isInteger(n)&&n>=0&&n<s.countries.length)&&(t.baselineCapital===null||Number.isInteger(t.baselineCapital)&&t.baselineCapital>=0&&t.baselineCapital<s.cells.length)&&Array.isArray(t.capitalAttackers)&&t.capitalAttackers.length<=s.countries.length&&new Set(t.capitalAttackers).size===t.capitalAttackers.length&&t.capitalAttackers.every(n=>n!==null&&target(n))&&typeof t.reason==='string'&&t.reason.length<=200&&Array.isArray(t.scores)&&t.scores.length<=s.countries.length&&t.scores.every(v=>v.target!==null&&target(v.target)&&Number.isFinite(v.score)&&Number.isFinite(v.distance)&&v.distance>=1);
 }

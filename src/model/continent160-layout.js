@@ -1,3 +1,4 @@
+import { synchronizeDeployment } from './deployment.js';
 import { CONTINENT160_CELLS } from '../data/continent160-map.js';
 import { CONTINENT160_NAMES } from '../data/continent160-names.js';
 import { clone, validateWorld, landCount } from './world.js';
@@ -46,5 +47,6 @@ export function continent160Layout(input){
  for(const c of world.countries){const own=world.territories.filter(t=>t.ownerId===c.id),old=mapAnchor(input,c.capitalId)||[600,400];c.capitalId=own.sort((a,b)=>{const p=world.cartography.polygons[a.id].center,q=world.cartography.polygons[b.id].center;return Math.hypot(p[0]-old[0],p[1]-old[1])-Math.hypot(q[0]-old[0],q[1]-old[1]);})[0]?.id||null;}
  if(world.rules.battleMode==='v11')world.people.forEach(p=>{if(p.role==='general')p.ability*=2;});
  world.rules={...world.rules,...clone(ADDITIVE_COMBAT_DEFAULTS),...clone(CONTINENT160_RULES)};
- return validateWorld(world);
+ const preserved=Object.fromEntries(['recoveryPriority','underdogExperience','frontierReserves','continuousCampaign','routDeath','strategicTargets'].filter(k=>typeof input.rules[k]==='boolean').map(k=>[k,input.rules[k]]));Object.assign(world.rules,preserved);if(input.rules.underdogExperience)for(const key of ['experienceWinStep','experiencePerWin','experienceCap'])world.rules[key]=input.rules[key];
+ return validateWorld(synchronizeDeployment(world,input));
 }
