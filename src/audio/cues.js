@@ -20,16 +20,16 @@ export function presentationSoundCues(state,{speed=1,settings=SOUND_DEFAULTS,dur
   if(e.type==='expedition_roll')return [];
   if(phase==='rolling'&&!fast){
    if(scene.kind==='reel'){
-    if(scene.choice?.options.length>1)for(let i=0;i<4;i++)cue('ui_click',scene.id+':reel:'+i,'ui',{at:actual*i*.22,maxDuration:Math.min(.12,actual/5000),scope:'stage'});
+    if(scene.choice?.options.length>1)for(let i=0;i<4;i++)cue('ui_click',scene.id+':reel:'+i,'ui',{gain:1.5,at:actual*i*.22,maxDuration:Math.min(.12,actual/5000),scope:'stage'});
     if(settings.turnStart&&e.type==='king'&&!(state.scenes||[]).some(s=>s.kind==='season'))cue('turn_start','turn-start','important',{priority:50,maxDuration:.8});
    }else{
     const style=settings.diceStyle,short=actual>=1150,material=['wood','cloth','alternate'].includes(style)&&actual>=300;
     const id=material?(style==='cloth'?'dice_roll_cloth':style==='alternate'&&soundHash(record.turn+':'+scene.id)%2?'dice_roll_wood_alt':'dice_roll'):style==='cup'&&actual>=700?'dice_cup_shake':style==='auto'&&short?'dice_roll_wood_short':actual>=700?'dice_drop_single':'dice_tick';
-    if(style==='ticks'||actual<300||id==='dice_tick'){for(let i=0;i<(actual>=300?3:1);i++)cue('dice_tick',scene.id+':tick:'+i,'dice',{at:actual*i*.28,maxDuration:Math.min(.065,actual/1000),scope:'stage'});}
-    else{const length=SOUND_PACK.find(s=>s.id===id)?.duration||0,offset=material||style==='cup'?Math.max(0,length-actual/1000):0;cue(id,scene.id+':rolling','dice',{offset,sustain:true,scope:'stage',maxDuration:offset+actual/1000,slot:'rolling'});}
+    if(style==='ticks'||actual<300||id==='dice_tick'){for(let i=0;i<(actual>=300?3:1);i++)cue('dice_tick',scene.id+':tick:'+i,'dice',{gain:1.5,at:actual*i*.28,maxDuration:Math.min(.065,actual/1000),scope:'stage'});}
+    else{const length=SOUND_PACK.find(s=>s.id===id)?.duration||0,offset=material||style==='cup'?Math.max(0,length-actual/1000):0;cue(id,scene.id+':rolling','dice',{gain:1.5,offset,sustain:true,scope:'stage',maxDuration:offset+actual/1000,slot:'rolling'});}
    }
   }else if(phase==='raw'&&!fast&&!(['wood','cloth','alternate'].includes(settings.diceStyle)&&rollingDuration/Math.max(.1,speed)>=300))cue(settings.diceStyle==='ticks'?'dice_settle':'dice_land',scene.id+':raw','dice',{scope:'stage',maxDuration:actual/1000});
-  else if(phase==='merging'&&!fast){const item=scene.bonusItems?.filter(i=>i.value)[state.mergeIndex||0];if(item)cue(item.value>0?'bonus_add':'bonus_penalty',scene.id+':merge:'+(state.mergeIndex||0),'dice',{scope:'stage',maxDuration:actual/1000});}
+  else if(phase==='merging'&&!fast){const item=scene.bonusItems?.filter(i=>i.value)[state.mergeIndex||0];if(item)cue(item.value>0?'bonus_add':'bonus_penalty',scene.id+':merge:'+(state.mergeIndex||0),'dice',{...(item.value>0?{gain:1.5}:{}),scope:'stage',maxDuration:actual/1000});}
   else if(phase==='locked'){
    if(scene.kind==='reel'){if(!fast)cue('ui_confirm',scene.id+':choice','ui');}
    else if(scene.bonusItems?.some(i=>i.value)||!(['wood','cloth','alternate'].includes(settings.diceStyle)&&rollingDuration/Math.max(.1,speed)>=300))cue(scene.bonusItems?.some(i=>i.value)?'score_lock':settings.diceStyle==='ticks'?'dice_settle':'dice_land',scene.id+':locked','dice',{maxDuration:fast?.16:undefined});

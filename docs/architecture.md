@@ -385,3 +385,6 @@ engine18은17 저장의 지휘한도/손실/home 복귀를 그대로 보존하�
 수동 배치 잠금이 남은 채 같은 차례에 영토를 잃었다 수복해 한 지휘관에게 상한보다 많은 영토가 모이면 reconcile에서 해당 잠금만 해제하고 기존 재편한다. 이 조건은 종전에 validState가 실패하던 상태이며 기존에 성공적으로 기록한 경기의 주사위 순서를 변경하지 않는다. 엔진26·세계schema2·기록version1을 유지한다.
 
 `audio/loudness.js`의 기본 출력1.5와42개 보정 배율은 `scripts/balance-sounds.py`가 ffmpeg로 스테레오 유효 구간을 측정해 생성한다. 개발 시에만 실행하며 앱과 빌드는 ffmpeg를 요구하지 않는다. 원본 MP3/manifest는 변경하지 않는다. `balance-v25.json`에 해시/측정값을 보관하고 빌드가 원본/실행 보정표와 대조한다. clipGain은 원본volume×보정,master는 사용자volume×1.5다. master 뒤 DynamicsCompressor가 과도한 합산음을 줄인다. 종류별/녹화용/음소거·역사 동기화는 기존 흐름을 유지한다.
+
+
+v0.25.1은 `audio/cues.js`의 파칭코/주사위 rolling과 양수 merging에만 gain1.5를 추가한다. 동일 ui_click을 쓰는 일반 버튼까지 키우지 않도록 음원별 보정표가 아닌 장면 cue에 지정한다. director의 정지/재개도 이 gain을 유지한다. [검증](validation-v0.25.1.md).

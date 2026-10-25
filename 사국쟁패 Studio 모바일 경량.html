@@ -3347,16 +3347,16 @@ function presentationSoundCues(state,{speed=1,settings=SOUND_DEFAULTS,duration=9
   if(e.type==='expedition_roll')return [];
   if(phase==='rolling'&&!fast){
    if(scene.kind==='reel'){
-    if(scene.choice?.options.length>1)for(let i=0;i<4;i++)cue('ui_click',scene.id+':reel:'+i,'ui',{at:actual*i*.22,maxDuration:Math.min(.12,actual/5000),scope:'stage'});
+    if(scene.choice?.options.length>1)for(let i=0;i<4;i++)cue('ui_click',scene.id+':reel:'+i,'ui',{gain:1.5,at:actual*i*.22,maxDuration:Math.min(.12,actual/5000),scope:'stage'});
     if(settings.turnStart&&e.type==='king'&&!(state.scenes||[]).some(s=>s.kind==='season'))cue('turn_start','turn-start','important',{priority:50,maxDuration:.8});
    }else{
     const style=settings.diceStyle,short=actual>=1150,material=['wood','cloth','alternate'].includes(style)&&actual>=300;
     const id=material?(style==='cloth'?'dice_roll_cloth':style==='alternate'&&soundHash(record.turn+':'+scene.id)%2?'dice_roll_wood_alt':'dice_roll'):style==='cup'&&actual>=700?'dice_cup_shake':style==='auto'&&short?'dice_roll_wood_short':actual>=700?'dice_drop_single':'dice_tick';
-    if(style==='ticks'||actual<300||id==='dice_tick'){for(let i=0;i<(actual>=300?3:1);i++)cue('dice_tick',scene.id+':tick:'+i,'dice',{at:actual*i*.28,maxDuration:Math.min(.065,actual/1000),scope:'stage'});}
-    else{const length=SOUND_PACK.find(s=>s.id===id)?.duration||0,offset=material||style==='cup'?Math.max(0,length-actual/1000):0;cue(id,scene.id+':rolling','dice',{offset,sustain:true,scope:'stage',maxDuration:offset+actual/1000,slot:'rolling'});}
+    if(style==='ticks'||actual<300||id==='dice_tick'){for(let i=0;i<(actual>=300?3:1);i++)cue('dice_tick',scene.id+':tick:'+i,'dice',{gain:1.5,at:actual*i*.28,maxDuration:Math.min(.065,actual/1000),scope:'stage'});}
+    else{const length=SOUND_PACK.find(s=>s.id===id)?.duration||0,offset=material||style==='cup'?Math.max(0,length-actual/1000):0;cue(id,scene.id+':rolling','dice',{gain:1.5,offset,sustain:true,scope:'stage',maxDuration:offset+actual/1000,slot:'rolling'});}
    }
   }else if(phase==='raw'&&!fast&&!(['wood','cloth','alternate'].includes(settings.diceStyle)&&rollingDuration/Math.max(.1,speed)>=300))cue(settings.diceStyle==='ticks'?'dice_settle':'dice_land',scene.id+':raw','dice',{scope:'stage',maxDuration:actual/1000});
-  else if(phase==='merging'&&!fast){const item=scene.bonusItems?.filter(i=>i.value)[state.mergeIndex||0];if(item)cue(item.value>0?'bonus_add':'bonus_penalty',scene.id+':merge:'+(state.mergeIndex||0),'dice',{scope:'stage',maxDuration:actual/1000});}
+  else if(phase==='merging'&&!fast){const item=scene.bonusItems?.filter(i=>i.value)[state.mergeIndex||0];if(item)cue(item.value>0?'bonus_add':'bonus_penalty',scene.id+':merge:'+(state.mergeIndex||0),'dice',{...(item.value>0?{gain:1.5}:{}),scope:'stage',maxDuration:actual/1000});}
   else if(phase==='locked'){
    if(scene.kind==='reel'){if(!fast)cue('ui_confirm',scene.id+':choice','ui');}
    else if(scene.bonusItems?.some(i=>i.value)||!(['wood','cloth','alternate'].includes(settings.diceStyle)&&rollingDuration/Math.max(.1,speed)>=300))cue(scene.bonusItems?.some(i=>i.value)?'score_lock':settings.diceStyle==='ticks'?'dice_settle':'dice_land',scene.id+':locked','dice',{maxDuration:fast?.16:undefined});
@@ -5626,7 +5626,7 @@ function render() {
   renderApp($('#app'), `
     <aside class="sidebar">
       <a class="brand" href="#" data-page="overview" aria-label="사국쟁패 Studio 세계 개요"><span class="brand-symbol">${icon('compass', 29)}</span><span><strong>사국쟁패</strong><small>HISTORY STUDIO</small></span></a>
-      <div class="workspace-label">WORKSPACE <span>v0.25.0${mobileProfile()?' · 경량판':' · 일반판'}</span></div>
+      <div class="workspace-label">WORKSPACE <span>v0.25.1${mobileProfile()?' · 경량판':' · 일반판'}</span></div>
       <button class="world-switch" data-action="world-meta"><span class="world-icon">${icon('globe', 19)}</span><span><b>${esc(world.name)}</b><small>나의 세계 · 편집 가능</small></span>${icon('edit', 13)}</button>
       <div class="nav-label">세계 만들기</div>
       <nav aria-label="주요 메뉴">${Object.entries(pages).slice(0, 5).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}<div class="nav-label nav-second">역사 관찰하기</div>${Object.entries(pages).slice(5).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}</nav>
@@ -5638,7 +5638,7 @@ function render() {
         ${pageHeading()}
         ${['overview','deployment'].includes(ui.page)?territoryPresetNotice():''}
         ${ui.page === 'overview' ? overview() : ui.page === 'countries' ? countriesPage() : ui.page === 'people' ? peoplePage() : ui.page === 'map' ? mapPage() : ui.page === 'deployment'?deploymentEditor.view():ui.page === 'simulation' ? simulationPage() : rulesPage()}
-        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.25.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
+        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.25.1</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
       </main>
     </div>`);
   mapCamera.restore();if(ui.page==='simulation')mapCamera.follow(playback);mapAnimation.start($('#app'),playback);
