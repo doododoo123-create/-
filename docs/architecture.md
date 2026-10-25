@@ -1,4 +1,4 @@
-# 구조 · Studio v0.24.0 / 화면에 동기화된 효과음
+# 구조 · Studio v0.25.0 / 새 국경·음량 균형
 
 ## 데이터와 엔진
 
@@ -376,3 +376,12 @@ engine18은17 저장의 지휘한도/손실/home 복귀를 그대로 보존하�
 엔진26·세계schema2·기록version1을 유지합니다. `audio/cues.js`는 현재 공개된 장면·phase·effectStage만 읽어 소리를 선택하고, `audio/director.js`는 TurnPlayback의 정지/재개/장면 전환/역사 방문별 중복을 제어합니다. 렌더링·카메라 이동은 소리를 직접 재생하지 않습니다. `audio/mixer.js`는 사용자 클릭 뒤 Web Audio를 열고 내장 MP3를 필요한 만큼 해독합니다.8MiB LRU 버퍼·최대4개 논리 음성·우선순위·중요 사건 중 다른 종류 음량 감소를 사용합니다. 비동기 해독 중 장면이 지나가거나 음소거되면 재생을 취소합니다.
 
 `audio/settings.js`의 별도 localStorage 키 `saguk-studio.sound.v1`은 세계/경기 내보내기에 포함하지 않습니다. `ui/sound-panel.js`와 `ui/studio-v24.css`가 설정·미리듣기·스피커를 담당합니다. 일반/전체화면 버튼은 같은 설정창을 열며 기존 지도 패널 구성은 유지합니다. `scripts/sound-art.mjs`는 assets/sounds/classic-v2의42개 MP3를 원본 SHA256과 대조한 뒤 data/sound-art.js를 생성합니다. 단일 HTML에는 음원 데이터가 포함되며 외부 음원 요청이 없습니다. [상세 적용표](audio-v0.24.md).
+
+
+## v0.25 시나리오와 음량
+
+`model/territory-preset-v25.js`는 원본160영토 ID별로 승인한 소유권/수도를 정의한다. 사용자 지명 변경과 분리하며 배경·다각형·링크·기존 인물/규칙을 보존한다. `scenarios/continent-v25.js`는 기존 엔진의 초기 배정으로23개 관할·주둔·위치를 얻어 초기 배치 데이터로 저장한다. 기존 `createContinent160World`는 과거 기본판/검증 기준으로 남기며 앱의 신규 기본과 새 세계 만들기만 새 생성기를 사용한다. 기존 저장은 명시적 적용과 새 실행으로 전환한다. 적용과 세션 되돌리기는 현재 경기/기록을 건드리지 않는다.
+
+수동 배치 잠금이 남은 채 같은 차례에 영토를 잃었다 수복해 한 지휘관에게 상한보다 많은 영토가 모이면 reconcile에서 해당 잠금만 해제하고 기존 재편한다. 이 조건은 종전에 validState가 실패하던 상태이며 기존에 성공적으로 기록한 경기의 주사위 순서를 변경하지 않는다. 엔진26·세계schema2·기록version1을 유지한다.
+
+`audio/loudness.js`의 기본 출력1.5와42개 보정 배율은 `scripts/balance-sounds.py`가 ffmpeg로 스테레오 유효 구간을 측정해 생성한다. 개발 시에만 실행하며 앱과 빌드는 ffmpeg를 요구하지 않는다. 원본 MP3/manifest는 변경하지 않는다. `balance-v25.json`에 해시/측정값을 보관하고 빌드가 원본/실행 보정표와 대조한다. clipGain은 원본volume×보정,master는 사용자volume×1.5다. master 뒤 DynamicsCompressor가 과도한 합산음을 줄인다. 종류별/녹화용/음소거·역사 동기화는 기존 흐름을 유지한다.
