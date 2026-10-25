@@ -1,0 +1,13 @@
+import { SOUND_PACK } from '../src/data/sound-art.js';
+import { SoundMixer } from '../src/audio/mixer.js';
+import { normalizeSoundSettings } from '../src/audio/settings.js';
+export class FakeSoundParam{constructor(){this.value=1;this.calls=[];}setValueAtTime(v,t){this.value=v;this.calls.push(['set',v,t]);}linearRampToValueAtTime(v,t){this.value=v;this.calls.push(['ramp',v,t]);}setTargetAtTime(v,t,k){this.value=v;this.calls.push(['target',v,t,k]);}cancelScheduledValues(t){this.calls.push(['cancel',t]);}}
+export function fakeSoundRig({settings={},defer=false,running=true}={}){
+ const clock={ms:0},played=[],sources=[],gains=[],deferred=[],sounds=SOUND_PACK.map((s,i)=>({...s,data:'data:audio/mpeg;base64,'+Buffer.from([i]).toString('base64')}));let factories=0;
+ const context={state:running?'running':'suspended',destination:{},resumeCount:0,get currentTime(){return clock.ms/1000;},async resume(){this.resumeCount++;this.state='running';},createGain(){const node={gain:new FakeSoundParam(),connect(){},disconnect(){}};gains.push(node);return node;},createBufferSource(){const source={buffer:null,connect(){},disconnect(){},start(...args){this.started=args;},stop(...args){this.stopped=args;}};sources.push(source);return source;},decodeAudioData(data){const descriptor=sounds[new Uint8Array(data)[0]],buffer={duration:descriptor.duration,length:Math.ceil(descriptor.duration*44100),numberOfChannels:2};return defer?new Promise(resolve=>deferred.push(()=>resolve(buffer))):Promise.resolve(buffer);}};
+ const mixer=new SoundMixer({sounds,settings:normalizeSoundSettings(settings),contextFactory:()=>{factories++;return context;},now:()=>clock.ms,onPlay:c=>played.push(c)});mixer.prime=()=>{};
+ return {mixer,context,clock,played,sources,gains,deferred,get factories(){return factories;}};
+}
+export function audioState(scene,record={},phase='holding'){return {record:{turn:1,round:1,actorId:'a',type:'war',battles:[],...record},scenes:[{id:'s1',event:{index:0},...scene}],index:0,phase,mergeIndex:0,playing:true,finished:false};}
+export function fakeAudioPlayback(state){return {state,progress:0,ms:900,rate:1,get scene(){return this.state.scenes[this.state.index];},get playing(){return this.state.playing;},get complete(){return this.state.finished;},get sceneProgress(){return this.progress;},speed(){return this.rate;},duration(){return this.ms;},reducedMotion(){return false;}};}
+export const audioFlush=()=>new Promise(resolve=>setImmediate(resolve));

@@ -1,4 +1,4 @@
-# 구조 · Studio v0.22.0 / 연속 진격·전략 목표·점령 전선
+# 구조 · Studio v0.24.0 / 화면에 동기화된 효과음
 
 ## 데이터와 엔진
 
@@ -369,3 +369,10 @@ engine18은17 저장의 지휘한도/손실/home 복귀를 그대로 보존하�
 - `roundLimit:null`: 생성/유효성 검사/증가/종료/저장/화면 전체에서 명시 처리한다. 유한 숫자의 기존 조건은 보존한다. restoreRun의10,000개 인위 상한을 제거하고 차례 수·내용 검증은 유지한다. 화면은 최근100개 기록만 목록으로 보여주며 전체 사건은 보존한다.
 
 `operation-geometry`는 병력별 최대3.3배 화살표와 공유 구간의 최대 굵기에 따른 간격을 계산한다. 전투 흔적은 채운 칼날이 있는 SVG 교차검으로 그려 확대/오프라인을 지원한다. `studio-v23.css`는 배치 화면과 작은 높이에서 스크롤 가능한 메뉴를 제공한다. [v0.23 검증](validation-v0.23.md).
+
+
+## v0.24 오디오
+
+엔진26·세계schema2·기록version1을 유지합니다. `audio/cues.js`는 현재 공개된 장면·phase·effectStage만 읽어 소리를 선택하고, `audio/director.js`는 TurnPlayback의 정지/재개/장면 전환/역사 방문별 중복을 제어합니다. 렌더링·카메라 이동은 소리를 직접 재생하지 않습니다. `audio/mixer.js`는 사용자 클릭 뒤 Web Audio를 열고 내장 MP3를 필요한 만큼 해독합니다.8MiB LRU 버퍼·최대4개 논리 음성·우선순위·중요 사건 중 다른 종류 음량 감소를 사용합니다. 비동기 해독 중 장면이 지나가거나 음소거되면 재생을 취소합니다.
+
+`audio/settings.js`의 별도 localStorage 키 `saguk-studio.sound.v1`은 세계/경기 내보내기에 포함하지 않습니다. `ui/sound-panel.js`와 `ui/studio-v24.css`가 설정·미리듣기·스피커를 담당합니다. 일반/전체화면 버튼은 같은 설정창을 열며 기존 지도 패널 구성은 유지합니다. `scripts/sound-art.mjs`는 assets/sounds/classic-v2의42개 MP3를 원본 SHA256과 대조한 뒤 data/sound-art.js를 생성합니다. 단일 HTML에는 음원 데이터가 포함되며 외부 음원 요청이 없습니다. [상세 적용표](audio-v0.24.md).
