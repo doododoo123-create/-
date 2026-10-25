@@ -1,4 +1,4 @@
-# 구조 · Studio v0.25.0 / 새 국경·음량 균형
+# 구조 · Studio v0.26.0 / 용량 기반 저장·제한 해제·달력
 
 ## 데이터와 엔진
 
@@ -388,3 +388,14 @@ engine18은17 저장의 지휘한도/손실/home 복귀를 그대로 보존하�
 
 
 v0.25.1은 `audio/cues.js`의 파칭코/주사위 rolling과 양수 merging에만 gain1.5를 추가한다. 동일 ui_click을 쓰는 일반 버튼까지 키우지 않도록 음원별 보정표가 아닌 장면 cue에 지정한다. director의 정지/재개도 이 gain을 유지한다. [검증](validation-v0.25.1.md).
+
+
+## v0.26 저장·연속 진행·달력
+
+`storage/run-store.js`의 `runSaveData`는 기존 실행version1 포장을 공유한다. `run-archive.js`는 작은 기록이512Ki문자를 넘거나300개를 넘으면 IndexedDB로 전환하며,그보다 작은 데이터라도 localStorage 쓰기가 거부되면 바로 전환한다. 세션이 전환되면 다시 작은 저장으로 내리지 않는다. 앱 초기 로드에서도 큰 옛 저장을 전환한 뒤 세계를 저장한다. 신규 실행/처음부터 실행도 같은 저장 진입점을 사용한다.
+
+큰 저장소의 metadata와128개 기록 chunks는 한 transaction으로 갱신하고 성공 뒤 작은 pointer를 교체한다. 실패 시 종전 pointer/transaction을 보존하고,같은id의 metadata가 pointer보다 새로우면 복원한다. 큰 저장소가 불가능하면 작은 저장이 실제로 가능한 범위에서만 fallback한다. 실패한 open은 캐시를 비워 재시도하며 취소epoch로 이전 경기가 새 경기를 덮지 않게 한다. 초기0차례도 archive에 저장/복원할 수 있다.
+
+`simulation.removeRunLimit`는 현재 경기의 종료 제한만 null로 바꾸고,이미limit로 끝났다면 생산을 반복하지 않고 round+1/alive schedule/첫 차례로 준비한다. initialWorld와 기존 history를 유지하며 optional `limitRemovedAt`에 현재 완료 차례를 저장한다. 실행version1/엔진26을 유지하고 포장·archive·내보내기·복원이 이 선택적 값을 보존한다. `projectWorld`는 실제 state.roundLimit을 표시한다. `replayTurn`은 기록한 해제 시점 직후에 같은 처리를 해서 과거limit결산과 이후 기록 모두 재현한다. 처음부터 재실행은 해제한 설정으로 시작한다.
+
+전체화면 `map-stage.js`는 현재 playback record의 round,또는 마지막 완료 기록의 round를 calendarAtRound에 전달해 날짜를 출력한다. 실제 엔진은 앞 계절 마지막 차례를 계산하며 다음 round로 미리 넘어가므로 표시 날짜에 엔진의 미래 round를 곧장 쓰지 않는다. 작은 날짜 표시는 화면 좌표이며 카메라와 함께 확대하지 않는다. 속도 안내를 아래로 내려390×844/844×390에서도 재생/소리/날짜/배속이 겹치지 않는다.

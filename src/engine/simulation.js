@@ -37,7 +37,7 @@ export function projectWorld(definition,state,providedEngine=null){
     for(const g of state.countries[i].generals){const original=configured.find(p=>p.role==='general'&&p.slot===g.slot);if(!original&&!g.active&&!g.generation)continue;const station=engine.stationCell(state,i,g.slot),displaced=g.active&&g.alive&&Number.isInteger(g.position)&&state.cells[g.position]?.owner!==i,stranded=!!g.stranded||(definition.rules.retreatMode==='blocked'&&g.stranded!==undefined&&displaced);people.push({...(original||{}),id:g.generation||!original?`officer-${ids[i]}-${g.slot}-${g.generation}`:original.id,countryId:ids[i],name:g.name,role:'general',personality:original?.personality||'balanced',feature:g.feature,ability:g.ability,commandBonus:g.commandBonus,slot:g.slot,troops:g.troops,capacity:engine.capacity(state.countries[i],g),active:g.active,alive:g.alive,waited:g.waited,generation:g.generation,...(g.wins!==undefined?{wins:g.wins}:{}),...(g.underdogWins!==undefined?{underdogWins:g.underdogWins}:{}),...(g.stranded!==undefined?{stranded,displaced}:{}),stationId:territoryIds[station]||null,...(definition.rules.battleMode==='additive30'&&definition.rules.fieldCommand?{positionId:territoryIds[g.position]||null}:{}),connected:g.active&&!stranded&&station!==null?engine.capitalConnected(state,i,g.slot):false,territoryIds:state.cells.filter(t=>t.owner===i&&t.commander===g.slot).map(t=>territoryIds[t.id])});}
   }
   const territories=definition.territories.map((t,i)=>{const cell=state.cells[i],commander=people.find(p=>p.countryId===ids[cell.owner]&&p.role==='general'&&p.slot===cell.commander);return {...t,ownerId:ids[cell.owner],commanderSlot:cell.commander,commanderId:commander?.id||null};});
-  return {...definition,countries,people,territories};
+  return {...definition,rules:{...definition.rules,roundLimit:state.roundLimit},countries,people,territories};
 }
 function resultFor(state,ids){return state.result?{reason:state.result.reason==='conquest'?'unification':'limit',winnerIds:state.result.winners.map(i=>ids[i]),round:state.result.round,turn:state.result.turns}:null;}
 function normalizeRecord(raw,before,after,definition,state,context){
@@ -72,6 +72,16 @@ export function nextTurn(input,controls){
   world.visualCamps=planCommandMovements(record,input.world,world,input.world.visualCamps);if(controls)record.controls=clone(controls);
   return {...input,rng:state.rng,world,engineState:state,round:state.round,turn:state.turns,schedule:state.schedule.map(i=>context.ids[i]),scheduleIndex:state.scheduleIndex,history:[...input.history.map(r=>r.frames?{...r}:r),record],result:resultFor(state,context.ids),referenceRecord:prepared.record};
 }
+// Removing a time limit is a recorded continuation boundary; earlier history keeps its original rules.
+export function removeRunLimit(run){
+ if(run.engineState.roundLimit===null||run.result?.reason==='unification')return run;
+ const context=engineFor(run.initialWorld),state=clone(run.engineState);
+ state.roundLimit=null;
+ if(state.result?.reason==='limit'){state.result=null;state.round++;state.schedule=context.engine.aliveIds(state);state.scheduleIndex=0;}
+ if(!context.engine.validState(state))throw Error('진행 제한을 해제할 수 없는 경기 상태입니다.');
+ const world=projectWorld(run.initialWorld,state,context);if(run.world.visualCamps)world.visualCamps=clone(run.world.visualCamps);
+ return {...run,world,engineState:state,round:state.round,schedule:state.schedule.map(i=>context.ids[i]),scheduleIndex:state.scheduleIndex,result:resultFor(state,context.ids),limitRemovedAt:run.turn,referenceRecord:null};
+}
 export function casualty(own,enemy,rate){const base=rate*100;if(!own||!enemy||!base)return 0;const n=own*base*enemy*2,d=(own+enemy)*100;return Math.min(own,Math.max(1,Math.floor((n*2+d)/(d*2))));}
 export function borderTargets(world,id){return world.territories.filter(t=>t.ownerId!==id&&neighbors(world,t).some(n=>n.ownerId===id));}
 export function restoreRun(data){
@@ -98,7 +108,8 @@ export function restoreRun(data){
   if(!context.engine.validState(state)||state.seed!==numericSeed(data.seed))throw new Error('저장된 경기의 병력·영토·난수 상태가 올바르지 않습니다.');
   if(!Array.isArray(data.history)||data.history.length!==state.turns)throw new Error('저장된 턴 기록이 경기와 일치하지 않습니다.');
   for(let i=0;i<data.history.length;i++){const r=data.history[i];if(r.turn!==i+1||!context.ids.includes(r.actorId)||!Array.isArray(r.rolls)||!Array.isArray(r.battles)||!Array.isArray(r.events)||!r.rolls.every(d=>Number.isInteger(d.value)&&Number.isInteger(d.sides)&&d.value>=1&&d.value<=d.sides))throw new Error('저장된 판정 기록이 올바르지 않습니다.');}
+  if(data.limitRemovedAt!==undefined&&(!Number.isSafeInteger(data.limitRemovedAt)||data.limitRemovedAt<0||data.limitRemovedAt>state.turns||state.roundLimit!==null))throw Error('진행 제한 해제 기록이 올바르지 않습니다.');
   state.history=[];
   const restoredWorld=projectWorld(definition,state,context);restoredWorld.visualCamps=definition.rules.battleMode==='additive30'&&definition.rules.fieldCommand?fieldCamps(restoredWorld):validCamps(restoredWorld,data.history.at(-1)?.campsAfter);
-  return {engineVersion:ENGINE_VERSION,seed:String(state.seed),rng:state.rng,initialWorld:definition,world:restoredWorld,engineState:state,round:state.round,turn:state.turns,schedule:state.schedule.map(i=>context.ids[i]),scheduleIndex:state.scheduleIndex,history:clone(data.history),result:resultFor(state,context.ids),referenceRecord:null};
+  return {engineVersion:ENGINE_VERSION,seed:String(state.seed),rng:state.rng,initialWorld:definition,world:restoredWorld,engineState:state,round:state.round,turn:state.turns,schedule:state.schedule.map(i=>context.ids[i]),scheduleIndex:state.scheduleIndex,history:clone(data.history),...(data.limitRemovedAt!==undefined?{limitRemovedAt:data.limitRemovedAt}:{}),result:resultFor(state,context.ids),referenceRecord:null};
 }
