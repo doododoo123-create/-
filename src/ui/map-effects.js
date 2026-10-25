@@ -12,15 +12,15 @@ export function mapEffects(scene,stage=null,record=null) {
   if(scene?.kind!=='apply'||!scene.worldBefore||!scene.worldAfter){output.units=localNotices(scene,record,scene?.worldAfter);return output;}
   const before=scene.worldBefore,after=scene.worldAfter,event=scene.event||{};
   const oldCountries=new Map(before.countries.map(c=>[c.id,c]));
-  const oldGenerals=new Map(before.people.filter(p=>p.role==='general').map(p=>[effectKey(p),p]));
-  const nextGenerals=new Map(after.people.filter(p=>p.role==='general').map(p=>[effectKey(p),p]));
+  const oldGenerals=new Map(before.people.filter(p=>p.role==='general'||p.role==='king'&&p.slot===-1).map(p=>[effectKey(p),p]));
+  const nextGenerals=new Map(after.people.filter(p=>p.role==='general'||p.role==='king'&&p.slot===-1).map(p=>[effectKey(p),p]));
   const add=(countryId,role,slot,type,delta,label,tone)=>output.units.push({countryId,role,slot,type,delta,label,tone});
   for(const c of after.countries){
     const prev=oldCountries.get(c.id);if(!prev)continue;
     const delta=(c.reserve??0)-(prev.reserve??0);
-    if(delta)add(c.id,'king',null,'army',delta,`수도 ${event.type==='resupply'?'배분 ':event.type==='roster'?'이관 ':''}${effectSign(delta)}만명`,delta>0?'positive':event.type==='resupply'||event.type==='roster'?'transfer':'negative');
+    if(delta&&c.royalTroops===undefined)add(c.id,'king',null,'army',delta,`수도 ${event.type==='resupply'?'배분 ':event.type==='roster'?'이관 ':''}${effectSign(delta)}만명`,delta>0?'positive':event.type==='resupply'||event.type==='roster'?'transfer':'negative');
     const recruitment=c.recruitment-prev.recruitment;
-    if(recruitment)add(c.id,'king',null,'recruitment',recruitment,`매 라운드 충원 ${effectSign(recruitment)}만`,'upgrade');
+    if(recruitment)add(c.id,'king',null,'recruitment',recruitment,c.production?`누적 충원 ${effectSign(recruitment)}만 · 적용 +${c.production.appliedExtra}만`:`매 라운드 충원 ${effectSign(recruitment)}만`,'upgrade');
     const supply=(c.supplyBonus??0)-(prev.supplyBonus??0);
     if(supply)add(c.id,'king',null,'supply',supply,`지휘한도 ${effectSign(supply)}만`,'upgrade');
     if(c.capitalId&&prev.capitalId!==c.capitalId)add(c.id,'king',null,'capital',0,'수도 이전','neutral');
@@ -28,13 +28,13 @@ export function mapEffects(scene,stage=null,record=null) {
   for(const key of new Set([...oldGenerals.keys(),...nextGenerals.keys()])){
     const prev=oldGenerals.get(key),next=nextGenerals.get(key),p=next||prev;
     const delta=(next?.troops??0)-(prev?.troops??0);
-    if(delta)add(p.countryId,'general',p.slot,'army',delta,`${event.type==='death'&&event.survivors?'이관 ':event.type==='roster'?'이관 ':event.type==='resupply'?'배분 ':''}${effectSign(delta)}만명`,delta>0?'positive':event.type==='roster'?'transfer':'negative');
+    if(delta)add(p.countryId,p.role,p.slot,'army',delta,`${event.type==='desertion'?'탈영 ':event.type==='death'&&event.survivors?'이관 ':event.type==='roster'?'이관 ':event.type==='resupply'?'배분 ':''}${effectSign(delta)}만명`,delta>0?'positive':event.type==='roster'?'transfer':'negative');
     const capacity=(next?.capacity??0)-(prev?.capacity??0);
-    if(capacity&&next?.active&&next?.alive&&event.type==='resolve')add(p.countryId,'general',p.slot,'capacity',capacity,`한도 ${effectSign(capacity)}만`,'upgrade');
+    if(capacity&&next?.active&&next?.alive&&event.type==='resolve')add(p.countryId,p.role,p.slot,'capacity',capacity,`한도 ${effectSign(capacity)}만`,'upgrade');
     const experience=next&&prev?observedExperience(next,after.rules)-observedExperience(prev,before.rules):0;
-    if(experience>0&&next.active&&next.alive&&event.type==='resolve')add(p.countryId,'general',p.slot,'experience',experience,`전적 보정 ${effectSign(experience)}점`,'upgrade');
-    if(prev?.alive&&next?.alive===false)add(p.countryId,'general',p.slot,'death',0,'전사','negative');
-    if((next?.generation??0)>(prev?.generation??0))add(p.countryId,'general',p.slot,'appointment',0,'후임 부임','upgrade');
+    if(experience>0&&next.active&&next.alive&&event.type==='resolve')add(p.countryId,p.role,p.slot,'experience',experience,`전적 보정 ${effectSign(experience)}점`,'upgrade');
+    if(prev?.alive&&next?.alive===false)add(p.countryId,p.role,p.slot,'death',0,'전사','negative');
+    if((next?.generation??0)>(prev?.generation??0))add(p.countryId,p.role,p.slot,'appointment',0,'후임 부임','upgrade');
   }
   for(let i=0;i<after.territories.length;i++){
     const t=after.territories[i],prev=before.territories[i];
@@ -49,7 +49,7 @@ export function mapEffects(scene,stage=null,record=null) {
     output.announcement=displayEventText(applicationNotice(scene,record,stage));
   }
   const battle=record?.battles?.[scene.battleIndex];
-  if(event.type==='resolve'&&battle&&!battle.automatic)output.units=output.units.filter(e=>!(e.type==='army'&&e.role==='general'&&((e.countryId===battle.actorId&&e.slot===battle.slot)||(e.countryId===battle.defenderId&&e.slot===battle.defenseSlot))));
+  if(event.type==='resolve'&&battle&&!battle.automatic)output.units=output.units.filter(e=>!(e.type==='army'&&['general','king'].includes(e.role)&&((e.countryId===battle.actorId&&e.slot===battle.slot)||(e.countryId===battle.defenderId&&e.slot===battle.defenseSlot))));
   output.units.push(...localNotices(scene,record,after));output.announcement='';
   return output;
 }
@@ -58,8 +58,8 @@ export function mapEffects(scene,stage=null,record=null) {
 export function unitFeedback(effects,marker){
  return effects.units.filter(e=>!['death','appointment'].includes(e.type)&&marker.country.id===e.countryId&&marker.role===e.role&&(e.role!=='general'||marker.person?.slot===e.slot));
 }
-export function renderUnitFeedback(entries,{combatSide=false,hasLoss=false,hasStatus=false}={}){
- const start=hasLoss?-55:combatSide||hasStatus?-46:-36;
+export function renderUnitFeedback(entries,{combatSide=false,hasLoss=false,hasStatus=false,topY}={}){
+ const start=topY??(hasLoss?-55:combatSide||hasStatus?-46:-36);
  return entries.map((e,i)=>cardLabel(e.label,{y:start-i*10,size:e.type==='notice'?9:8,classes:`unit-feedback-text ${e.type==='notice'?'unit-local-notice':''} ${e.tone==='refusal'?'is-refusal':''}`,attributes:`data-effect="${e.type}" data-notice-kind="${e.noticeKind||''}" data-country="${esc(e.countryId)}" data-role="${e.role}" data-slot="${e.slot??''}" data-delta="${e.delta}"`})).join('');
 }
 export function renderMapEffects(effects,geometry,world){

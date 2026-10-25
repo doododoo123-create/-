@@ -1,0 +1,613 @@
+{
+  "date": "2026-10-25",
+  "scenario": "createContinentV25World() / enableCampaignV27(same world)",
+  "seedFormula": "777 + i * 104729, i=0..31",
+  "engine": "studio-v11-27; baseline has v26 switches false",
+  "cutoffSeasons": 100,
+  "rows": [
+    {
+      "profile": "v26",
+      "seed": 777,
+      "round": 101,
+      "turns": 412,
+      "winner": [],
+      "completed": false
+    },
+    {
+      "profile": "v27",
+      "seed": 777,
+      "round": 83,
+      "turns": 412,
+      "winner": [
+        "적연국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v26",
+      "seed": 105506,
+      "round": 101,
+      "turns": 468,
+      "winner": [],
+      "completed": false
+    },
+    {
+      "profile": "v27",
+      "seed": 105506,
+      "round": 83,
+      "turns": 369,
+      "winner": [
+        "적연국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v26",
+      "seed": 210235,
+      "round": 101,
+      "turns": 552,
+      "winner": [],
+      "completed": false
+    },
+    {
+      "profile": "v27",
+      "seed": 210235,
+      "round": 101,
+      "turns": 305,
+      "winner": [],
+      "completed": false
+    },
+    {
+      "profile": "v26",
+      "seed": 314964,
+      "round": 101,
+      "turns": 602,
+      "winner": [],
+      "completed": false
+    },
+    {
+      "profile": "v27",
+      "seed": 314964,
+      "round": 61,
+      "turns": 308,
+      "winner": [
+        "적연국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v26",
+      "seed": 419693,
+      "round": 101,
+      "turns": 349,
+      "winner": [],
+      "completed": false
+    },
+    {
+      "profile": "v27",
+      "seed": 419693,
+      "round": 81,
+      "turns": 356,
+      "winner": [
+        "적연국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v26",
+      "seed": 524422,
+      "round": 94,
+      "turns": 361,
+      "winner": [
+        "적연국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v27",
+      "seed": 524422,
+      "round": 68,
+      "turns": 235,
+      "winner": [
+        "적연국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v26",
+      "seed": 629151,
+      "round": 101,
+      "turns": 403,
+      "winner": [],
+      "completed": false
+    },
+    {
+      "profile": "v27",
+      "seed": 629151,
+      "round": 72,
+      "turns": 327,
+      "winner": [
+        "현해국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v26",
+      "seed": 733880,
+      "round": 101,
+      "turns": 399,
+      "winner": [],
+      "completed": false
+    },
+    {
+      "profile": "v27",
+      "seed": 733880,
+      "round": 50,
+      "turns": 227,
+      "winner": [
+        "적연국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v26",
+      "seed": 838609,
+      "round": 101,
+      "turns": 344,
+      "winner": [],
+      "completed": false
+    },
+    {
+      "profile": "v27",
+      "seed": 838609,
+      "round": 101,
+      "turns": 441,
+      "winner": [],
+      "completed": false
+    },
+    {
+      "profile": "v26",
+      "seed": 943338,
+      "round": 101,
+      "turns": 477,
+      "winner": [],
+      "completed": false
+    },
+    {
+      "profile": "v27",
+      "seed": 943338,
+      "round": 75,
+      "turns": 210,
+      "winner": [
+        "적연국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v26",
+      "seed": 1048067,
+      "round": 101,
+      "turns": 402,
+      "winner": [],
+      "completed": false
+    },
+    {
+      "profile": "v27",
+      "seed": 1048067,
+      "round": 81,
+      "turns": 263,
+      "winner": [
+        "적연국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v26",
+      "seed": 1152796,
+      "round": 101,
+      "turns": 464,
+      "winner": [],
+      "completed": false
+    },
+    {
+      "profile": "v27",
+      "seed": 1152796,
+      "round": 85,
+      "turns": 278,
+      "winner": [
+        "청람국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v26",
+      "seed": 1257525,
+      "round": 90,
+      "turns": 469,
+      "winner": [
+        "적연국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v27",
+      "seed": 1257525,
+      "round": 40,
+      "turns": 151,
+      "winner": [
+        "적연국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v26",
+      "seed": 1362254,
+      "round": 101,
+      "turns": 403,
+      "winner": [],
+      "completed": false
+    },
+    {
+      "profile": "v27",
+      "seed": 1362254,
+      "round": 58,
+      "turns": 236,
+      "winner": [
+        "적연국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v26",
+      "seed": 1466983,
+      "round": 90,
+      "turns": 361,
+      "winner": [
+        "적연국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v27",
+      "seed": 1466983,
+      "round": 55,
+      "turns": 235,
+      "winner": [
+        "적연국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v26",
+      "seed": 1571712,
+      "round": 101,
+      "turns": 607,
+      "winner": [],
+      "completed": false
+    },
+    {
+      "profile": "v27",
+      "seed": 1571712,
+      "round": 53,
+      "turns": 217,
+      "winner": [
+        "적연국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v26",
+      "seed": 1676441,
+      "round": 84,
+      "turns": 358,
+      "winner": [
+        "적연국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v27",
+      "seed": 1676441,
+      "round": 72,
+      "turns": 276,
+      "winner": [
+        "적연국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v26",
+      "seed": 1781170,
+      "round": 92,
+      "turns": 352,
+      "winner": [
+        "적연국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v27",
+      "seed": 1781170,
+      "round": 101,
+      "turns": 438,
+      "winner": [],
+      "completed": false
+    },
+    {
+      "profile": "v26",
+      "seed": 1885899,
+      "round": 80,
+      "turns": 366,
+      "winner": [
+        "적연국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v27",
+      "seed": 1885899,
+      "round": 87,
+      "turns": 295,
+      "winner": [
+        "적연국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v26",
+      "seed": 1990628,
+      "round": 52,
+      "turns": 191,
+      "winner": [
+        "적연국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v27",
+      "seed": 1990628,
+      "round": 56,
+      "turns": 225,
+      "winner": [
+        "적연국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v26",
+      "seed": 2095357,
+      "round": 101,
+      "turns": 432,
+      "winner": [],
+      "completed": false
+    },
+    {
+      "profile": "v27",
+      "seed": 2095357,
+      "round": 101,
+      "turns": 406,
+      "winner": [],
+      "completed": false
+    },
+    {
+      "profile": "v26",
+      "seed": 2200086,
+      "round": 101,
+      "turns": 419,
+      "winner": [],
+      "completed": false
+    },
+    {
+      "profile": "v27",
+      "seed": 2200086,
+      "round": 66,
+      "turns": 276,
+      "winner": [
+        "적연국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v26",
+      "seed": 2304815,
+      "round": 101,
+      "turns": 464,
+      "winner": [],
+      "completed": false
+    },
+    {
+      "profile": "v27",
+      "seed": 2304815,
+      "round": 57,
+      "turns": 227,
+      "winner": [
+        "적연국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v26",
+      "seed": 2409544,
+      "round": 101,
+      "turns": 502,
+      "winner": [],
+      "completed": false
+    },
+    {
+      "profile": "v27",
+      "seed": 2409544,
+      "round": 41,
+      "turns": 188,
+      "winner": [
+        "적연국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v26",
+      "seed": 2514273,
+      "round": 101,
+      "turns": 445,
+      "winner": [],
+      "completed": false
+    },
+    {
+      "profile": "v27",
+      "seed": 2514273,
+      "round": 65,
+      "turns": 254,
+      "winner": [
+        "적연국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v26",
+      "seed": 2619002,
+      "round": 101,
+      "turns": 494,
+      "winner": [],
+      "completed": false
+    },
+    {
+      "profile": "v27",
+      "seed": 2619002,
+      "round": 101,
+      "turns": 317,
+      "winner": [],
+      "completed": false
+    },
+    {
+      "profile": "v26",
+      "seed": 2723731,
+      "round": 101,
+      "turns": 476,
+      "winner": [],
+      "completed": false
+    },
+    {
+      "profile": "v27",
+      "seed": 2723731,
+      "round": 86,
+      "turns": 292,
+      "winner": [
+        "적연국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v26",
+      "seed": 2828460,
+      "round": 101,
+      "turns": 545,
+      "winner": [],
+      "completed": false
+    },
+    {
+      "profile": "v27",
+      "seed": 2828460,
+      "round": 80,
+      "turns": 320,
+      "winner": [
+        "적연국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v26",
+      "seed": 2933189,
+      "round": 101,
+      "turns": 484,
+      "winner": [],
+      "completed": false
+    },
+    {
+      "profile": "v27",
+      "seed": 2933189,
+      "round": 83,
+      "turns": 280,
+      "winner": [
+        "적연국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v26",
+      "seed": 3037918,
+      "round": 101,
+      "turns": 476,
+      "winner": [],
+      "completed": false
+    },
+    {
+      "profile": "v27",
+      "seed": 3037918,
+      "round": 54,
+      "turns": 269,
+      "winner": [
+        "적연국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v26",
+      "seed": 3142647,
+      "round": 101,
+      "turns": 449,
+      "winner": [],
+      "completed": false
+    },
+    {
+      "profile": "v27",
+      "seed": 3142647,
+      "round": 53,
+      "turns": 208,
+      "winner": [
+        "적연국"
+      ],
+      "completed": true
+    },
+    {
+      "profile": "v26",
+      "seed": 3247376,
+      "round": 101,
+      "turns": 426,
+      "winner": [],
+      "completed": false
+    },
+    {
+      "profile": "v27",
+      "seed": 3247376,
+      "round": 64,
+      "turns": 284,
+      "winner": [
+        "적연국"
+      ],
+      "completed": true
+    }
+  ],
+  "summaries": [
+    {
+      "profile": "v26",
+      "total": 32,
+      "complete": 7,
+      "by60": 1,
+      "medianCompleted": 90,
+      "winners": {
+        "적연국": 7
+      }
+    },
+    {
+      "profile": "v27",
+      "total": 32,
+      "complete": 27,
+      "by60": 10,
+      "medianCompleted": 66,
+      "winners": {
+        "적연국": 25,
+        "현해국": 1,
+        "청람국": 1
+      }
+    }
+  ]
+}

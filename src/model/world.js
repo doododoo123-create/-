@@ -1,3 +1,4 @@
+import {validateBalanceV27} from './balance-v27.js';
 import { validateDeployment,synchronizeDeployment } from './deployment.js';
 import { MAP_SCALE_DEFAULTS, scaledProduction } from './map-scale.js';
 import { ADDITIVE_COMBAT_DEFAULTS, isModernCombat } from './combat-rules.js';
@@ -64,7 +65,7 @@ export function validateWorld(source) {
   const counters=new Map();
   const people=array(input.people,'인물 목록',2000).map(p=>{
     object(p,'인물');if(!Object.hasOwn(ROLES,p.role)||!Object.hasOwn(PERSONALITIES,p.personality))fail('인물 직책 또는 성향이 올바르지 않습니다.');
-    if(p.role==='general'&&isModernCombat({...ADDITIVE_COMBAT_DEFAULTS,...input.rules})){number(p.ability,'장군 능력 보정',-4,4);}else if(![-2,0,2].includes(p.ability))fail('국왕·승상과 원본 v11 능력은 −2 / 0 / +2 중에서 선택해 주세요.');
+    if((p.role==='general'||p.role==='king'&&input.rules.royalDefense)&&isModernCombat({...ADDITIVE_COMBAT_DEFAULTS,...input.rules})){number(p.ability,'장군 능력 보정',-4,4);}else if(![-2,0,2].includes(p.ability))fail('국왕·승상과 원본 v11 능력은 −2 / 0 / +2 중에서 선택해 주세요.');
     if(p.portraitKey!==undefined&&p.portraitKey!==''&&(typeof p.portraitKey!=='string'||!/^(?:n[0-3]-(king|minister|general)|general-(?:00[1-9]|0[1-6][0-9]|070)|(king|minister)-(?:00[1-9]|010))$/.test(p.portraitKey)))fail('인물 초상화 선택이 올바르지 않습니다.');
     const result={id:text(p.id,'인물 ID',100),name:text(p.name,'인물명',40),countryId:owner(p.countryId,'인물 소속'),role:p.role,ability:p.ability,personality:p.personality,feature:optionalText(p.feature),...(p.portraitKey?{portraitKey:p.portraitKey}:{})};
     if(p.role==='minister'){const style=p.ministerStyle||'balanced';if(!Object.hasOwn(MINISTER_STYLES,style))fail('승상 성향이 올바르지 않습니다.');result.ministerStyle=style;}
@@ -85,6 +86,7 @@ export function validateWorld(source) {
   const scale={...MAP_SCALE_DEFAULTS,...r};for(const [key,label,min,max,integer]of [['territoriesPerCommander','장군당 담당 영토',1,12,true],['productionDivisor','생산 영토 묶음',1,10,true],['distanceScale','이동 거리 환산',1,3,false]])rules[key]=number(scale[key],label,min,max,integer);
   if(typeof scale.adaptiveReserve!=='boolean')fail('소국 수도 예비병 설정을 확인해 주세요.');rules.adaptiveReserve=scale.adaptiveReserve;
   const combat={...clone(ADDITIVE_COMBAT_DEFAULTS),...r};
+  Object.assign(rules,validateBalanceV27(r,number,fail));
   for(const key of ['continuousCampaign','routDeath','strategicTargets','recoveryPriority','underdogExperience','frontierReserves']){if(typeof combat[key]!=='boolean')fail('새 연속 원정 설정을 확인해 주세요.');rules[key]=combat[key];}
   for(const [key,min,max] of [['unopposedCaptureLimit',1,3],['routDeathChance',0,100],['strategyCommitment',1,20],['strategyStall',1,20],['strategyWeakLands',1,100],['strategyEmergencyLoss',1,100],['strategyResponseOrders',1,20],['strategySwitchMargin',0,100]])rules[key]=number(combat[key],key,min,max);
   if(typeof combat.occupationAdvance!=='boolean')fail('점령 후 지휘관 전진 설정을 확인해 주세요.');rules.occupationAdvance=combat.occupationAdvance;
@@ -115,6 +117,8 @@ export function validateWorld(source) {
   if(!['own','smaller'].includes(combat.casualtyBasis))fail('전투 손실 기준 병력을 확인해 주세요.');rules.casualtyBasis=combat.casualtyBasis;
   rules.lossThresholds=array(combat.lossThresholds,'손실 등급 점수 차',3).map(v=>number(v,'손실 등급 점수 차',1,200));if(rules.lossThresholds.length!==3||rules.lossThresholds.some((v,i)=>i&&v<=rules.lossThresholds[i-1]))fail('손실 등급 점수 차 3개를 증가 순서로 지정해 주세요.');
   rules.combatLosses=Object.fromEntries(['narrow','clear','major','rout','draw'].map(key=>{const pair=array((combat.combatLosses?.[key]??(key==='major'?ADDITIVE_COMBAT_DEFAULTS.combatLosses.major:undefined)),'전투 손실 기준',2).map(v=>number(v,'손실 비율',0,1,false));if(pair.length!==2)fail('양측 손실 기준을 입력해 주세요.');return [key,pair];}));
+  if(rules.finishStrategy&&!rules.strategicTargets)fail('마무리 전략은 주공 전략을 켠 상태에서 사용합니다.');
+  if((rules.royalDefense||rules.warReadiness)&&(!rules.continuousCampaign||!rules.fieldCommand||!rules.advancedCampaign||rules.battleMode!=='additive30'))fail('왕 수비와 패전 정비는 D30 실제 출정·연속 진격 규칙에서 사용합니다.');
   const cartography=validateCartography(input.cartography,territories);
   if(mapKind==='free'&&(!cartography||cartography.links===null||territories.some(t=>!Object.hasOwn(cartography.polygons,t.id))))fail('자유 지도에는 모든 영토의 경계와 인접 연결 목록이 필요합니다.');
   const deployment=validateDeployment(input.deployment,countries,people,territories,rules.territoriesPerCommander);

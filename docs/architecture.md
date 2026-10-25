@@ -1,4 +1,4 @@
-# 구조 · Studio v0.26.0 / 용량 기반 저장·제한 해제·달력
+# 구조 · Studio v0.27.0
 
 ## 데이터와 엔진
 
@@ -399,3 +399,14 @@ v0.25.1은 `audio/cues.js`의 파칭코/주사위 rolling과 양수 merging에�
 `simulation.removeRunLimit`는 현재 경기의 종료 제한만 null로 바꾸고,이미limit로 끝났다면 생산을 반복하지 않고 round+1/alive schedule/첫 차례로 준비한다. initialWorld와 기존 history를 유지하며 optional `limitRemovedAt`에 현재 완료 차례를 저장한다. 실행version1/엔진26을 유지하고 포장·archive·내보내기·복원이 이 선택적 값을 보존한다. `projectWorld`는 실제 state.roundLimit을 표시한다. `replayTurn`은 기록한 해제 시점 직후에 같은 처리를 해서 과거limit결산과 이후 기록 모두 재현한다. 처음부터 재실행은 해제한 설정으로 시작한다.
 
 전체화면 `map-stage.js`는 현재 playback record의 round,또는 마지막 완료 기록의 round를 calendarAtRound에 전달해 날짜를 출력한다. 실제 엔진은 앞 계절 마지막 차례를 계산하며 다음 round로 미리 넘어가므로 표시 날짜에 엔진의 미래 round를 곧장 쓰지 않는다. 작은 날짜 표시는 화면 좌표이며 카메라와 함께 확대하지 않는다. 속도 안내를 아래로 내려390×844/844×390에서도 재생/소리/날짜/배속이 겹치지 않는다.
+
+
+## v0.27 분리한 밸런스 계층
+
+- `model/balance-v27.js`는 누락=false인 선택 스위치와 검증 가능한 수치다. `model/campaign-v27.js`는 새 실행용 명시 전환이며 `scenarios/continent-v27.js`는 이전v25 기본 지도를 보존한 새 기본 생성기다.
+- `engine/war-readiness.js`는 전쟁 명령 중 `readiness.firstArmy/defeats/resting/reasons`와 계절 동안 `confusion`을 분리한다. 연속 공세의 개별 격파 목록은 그대로 유지한다. 종료 스냅샷과 계절 회복 스냅샷을 따로 기록한다.
+- `engine/royal-army.js`는 국가의 실제 `royal` 부대와 한도 내 병력 배분·왕의 현지/복귀/구원 수비다. `reserve`는 새 모드에서 실제 왕 병력이 아닌 미배치 풀이다. 공격 루프는 일반 장군만 순회한다. 전사와 후임3회 대기는 공통 흐름을 사용하며 새 왕은 별도세대/ID다.
+- `engine/economy-v27.js`는 생산 예측·소수 이월·실제 배분·국가 전체 탈영량/정수 비례 배분을 계산한다. `capitalShock`는 남은 생산 결산 횟수,`productionCarries`는 보급권별 남은 병사 수와 이전 영토다. 현재 소유 영토와 겹치는 성분으로만 이월한다.
+- `strategic-targets.js`는 거리별 출전 예상 병력을 한 장수당 한 번 합산하고 적 왕 부대도 비교한다. 옛 수복 조기 반환은 새 `finishStrategy`에서만 점수 비교로 대체한다. 출전·전투·점령의 실제 합법성 검사는 우회하지 않는다.
+- `simulation.js`는 왕 부대와 경제 예측을 표시 세계에 투영한다. `ui/balance-v27-view.js`는 설정/상태/경제 요약/완료 역사 표시,`ui/commander-history.js`는 인물 ID별 공개된 전투를 공유한다. 왕의 새 생애에 옛 왕 전적을 합치지 않는다.
+- 엔진27이며 세계schema2/실행version1은 유지한다.26이하의 누락 스위치는false로 고정한다. 과거재생 fingerprint에 새 혼란/정비·왕 수비·생산/탈영 사건을 포함한다. 화면 연출과 소리는 난수를 소비하지 않는다.

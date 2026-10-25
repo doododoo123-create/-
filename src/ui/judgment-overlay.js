@@ -1,5 +1,5 @@
 import { renderAccumulatingDie, scoreBonusItems } from './score-accumulation.js';
-import { royalRoleForScene } from './royal-presentation.js';
+import { royalRoleForScene,royalCommandPerson } from './royal-presentation.js';
 import { renderSeasonAnnouncement } from './season-view.js';
 import { renderChoiceReel } from './choice-reel.js';
 import { sideBonus, renderObserverBonuses, renderObserverScore, veteranStars } from './combat-view.js';
@@ -14,7 +14,7 @@ export function judgmentVisible(playback){
   const scene=playback.scene;
   return !!(playback.state&&!playback.complete&&!(playback.groupDone&&!playback.playing)&&scene&& !['apply','summary','movement','route','arrival','capture','round-settle'].includes(scene.kind)&&scene.event?.type!=='territory');
 }
-function judgmentPerson(world,country,role,slot){return countryPeople(world,country?.id).find(p=>p.role===role&&(role!=='general'||p.slot===slot));}
+function judgmentPerson(world,country,role,slot){return royalCommandPerson(countryPeople(world,country?.id).find(p=>p.role===role&&(role!=='general'||p.slot===slot)),world);}
 function judgmentPortrait(person,country,role,army=null){return `<figure class="judgment-person" style="--nation:${country?.color||'#c0b698'}"><div class="framed-portrait">${portraitImage(person,country,role)}</div><figcaption><strong>${esc(displayName(person,ROLES[role]))}${role==='general'?veteranStars(person):''}</strong><small>${role==='general'?`병력 ${army??person?.troops??0}만`:esc(country?.name||'')+' · '+ROLES[role]}</small></figcaption></figure>`;}
 function judgmentTraits(person,role,country){
   const trait=role==='king'?PERSONALITIES[person?.personality||country?.personality]:role==='minister'?MINISTER_STYLES[person?.ministerStyle||'balanced']:`능력 ${judgmentSign(person?.ability)}`;
@@ -39,7 +39,7 @@ export function renderJudgmentOverlay({world,playback}) {
   if(duel){
     const side=(key,attack)=>{
       const info=battle[key],country=findCountry(frame,attack?battle.actorId:battle.defenderId);
-      const person=judgmentPerson(frame,country,'general',attack?battle.slot:battle.defenseSlot);
+      const person=judgmentPerson(frame,country,attack?'general':battle.defenseRole||'general',attack?battle.slot:battle.defenseSlot);
       const current=event.type===(attack?'attack_roll':'defense_roll'),seen=result||attack&&event.type==='defense_roll';
       const visible=seen||current&&phase==='locked';
       const die=battle.automatic?'<span class="judgment-auto">—</span>':renderAccumulatingDie(current||seen?info.raw:null,battle.sides||30,current?phase:seen?'locked':'waiting',attack?'⚔':'🛡',scoreBonusItems(info),{mergeIndex:state.mergeIndex||0,progress:playback.sceneProgress,speed:typeof playback.speed==='function'?playback.speed():state.speed||1});
@@ -56,8 +56,8 @@ export function renderJudgmentOverlay({world,playback}) {
     const die=showDie?renderAccumulatingDie(value,scene.faces||10,scene.kind==='roll'?phase:'locked',event.type==='supply_roll'?'지휘한도 증가':'내정 판정',scene.bonusItems||scoreBonusItems(null,bonus),{mergeIndex:state.mergeIndex||0,progress:playback.sceneProgress,speed:typeof playback.speed==='function'?playback.speed():state.speed||1}):'';
     return `<aside class="map-judgment is-royal-die" data-nation="${esc(nation?.id||'')}" data-anchor-role="minister" data-event="${esc(event.type)}" data-phase="${state.phase}" style="--nation:${nation?.color||'#fff'}" aria-label="${esc(nation?.name||'')} 승상 판정"><div class="royal-choice-heading">${esc(nation?.name||'')} · 승상</div>${die}${judgmentTraits(person,'minister',nation)}${result?`<p class="royal-result">${event.success?'내정 성공':'내정 실패'}</p>`:''}</aside>`;
   }else if(event.type==='death_roll'){
-    const person=judgmentPerson(frame,nation,'general',event.slot);
-    return `<aside class="map-judgment is-royal-die" data-anchor-role="general" data-anchor-slot="${event.slot}" data-nation="${esc(nation.id)}" data-event="death_roll"><div class="royal-choice-heading">${esc(displayName(person))} · 전사 판정</div>${renderAccumulatingDie(scene.value,scene.faces||10,phase,event.reason==='rout'?`대패 · ${event.threshold} 이하 전사`:'1~3 전사 / 4~10 생존',[])}</aside>`;
+    const person=judgmentPerson(frame,nation,event.role||'general',event.slot);
+    return `<aside class="map-judgment is-royal-die" data-anchor-role="${event.role||'general'}" data-anchor-slot="${event.slot}" data-nation="${esc(nation.id)}" data-event="death_roll"><div class="royal-choice-heading">${esc(displayName(person))} · 전사 판정</div>${renderAccumulatingDie(scene.value,scene.faces||10,phase,event.reason==='rout'?`대패 · ${event.threshold} 이하 전사`:'1~3 전사 / 4~10 생존',[])}</aside>`;
   }else if(event.type==='hold'){
     const person=judgmentPerson(frame,nation,'general',event.slot);
     body=`<div class="judgment-single refusal-person">${judgmentPortrait(person,nation,'general')}</div><p class="dispatch-refusal">출정 거부</p>`;

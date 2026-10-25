@@ -1,6 +1,6 @@
 import { neighbors } from '../model/world.js';
 export function fieldCamps(world){
- const camps={};for(const p of world.people)if(p.role==='general'&&p.active&&p.alive&&p.positionId&&p.positionId!==p.stationId)Object.defineProperty(camps,p.id,{value:{territoryId:p.positionId,homeId:p.stationId},enumerable:true,writable:true,configurable:true});return validCamps(world,camps);
+ const camps={};for(const p of world.people)if((p.role==='general'||p.role==='king'&&p.slot===-1)&&p.active&&p.alive&&p.positionId&&p.positionId!==p.stationId)Object.defineProperty(camps,p.id,{value:{territoryId:p.positionId,homeId:p.stationId},enumerable:true,writable:true,configurable:true});return validCamps(world,camps);
 }
 function recordedFieldMovements(record,before,after){
  record.campsBefore=fieldCamps(before);record.movements=[];
@@ -8,7 +8,7 @@ function recordedFieldMovements(record,before,after){
   if(event.type!=='territory'&&!event.moves)continue;
   const battle=record.battles[event.battleIndex],frame=record.frames[event.index];
   const moves=(event.moves||battle?.moves||[]).map(m=>{
-   const countryId=before.countries[m.nation].id,person=frame.before.people.find(p=>p.role==='general'&&p.countryId===countryId&&p.slot===m.slot&&p.generation===m.generation);
+   const countryId=before.countries[m.nation].id,person=frame.before.people.find(p=>p.role===(m.role||'general')&&p.countryId===countryId&&p.slot===m.slot&&p.generation===m.generation);
    return person?{personId:person.id,countryId,slot:m.slot,kind:m.kind,...(Number.isInteger(m.battlefieldFrom)?{visualFromId:before.territories[m.battlefieldFrom].id,presentationOnly:!!m.presentationOnly,encircled:!!m.encircled}:{}),fromId:before.territories[m.from].id,toId:before.territories[m.to].id,path:m.path.map(i=>before.territories[i].id)}:null;
   }).filter(Boolean);
   if(moves.length){const camps=fieldCamps(frame.after);for(const m of moves)Object.defineProperty(camps,m.personId,{value:{territoryId:m.toId,homeId:frame.after.people.find(p=>p.id===m.personId)?.stationId},enumerable:true,writable:true,configurable:true});record.movements.push({eventIndex:event.index,battleIndex:event.battleIndex,moves,camps});}
@@ -17,7 +17,7 @@ function recordedFieldMovements(record,before,after){
 }
 // The legacy branch plans visual camps; the field branch reads authoritative recorded moves. Neither consumes RNG.
 export function validCamps(world,camps={}){
-  const result={};if(!camps||typeof camps!=='object')return result;for(const p of world.people){const camp=Object.hasOwn(camps,p.id)?camps[p.id]:null;if(p.role==='general'&&p.active&&p.alive&&camp&&world.territories.some(t=>t.id===camp.territoryId&&t.ownerId===p.countryId))Object.defineProperty(result,p.id,{value:{territoryId:camp.territoryId,homeId:p.stationId},enumerable:true,writable:true,configurable:true});}return result;
+  const result={};if(!camps||typeof camps!=='object')return result;for(const p of world.people){const camp=Object.hasOwn(camps,p.id)?camps[p.id]:null;if((p.role==='general'||p.role==='king'&&p.slot===-1)&&p.active&&p.alive&&camp&&world.territories.some(t=>t.id===camp.territoryId&&t.ownerId===p.countryId))Object.defineProperty(result,p.id,{value:{territoryId:camp.territoryId,homeId:p.stationId},enumerable:true,writable:true,configurable:true});}return result;
 }
 export function friendlyPaths(world,countryId,start){
   const first=world.territories.find(t=>t.id===start&&t.ownerId===countryId),paths=new Map();if(!first)return paths;
@@ -32,7 +32,7 @@ export function planCommandMovements(record,before,after,initial={}){
     if(event.type!=='territory'||!Number.isInteger(event.battleIndex))continue;
     const battle=record.battles[event.battleIndex];if(!battle)continue;const moves=[];
     const move=(countryId,slot,kind)=>{
-      const person=world.people.find(p=>p.countryId===countryId&&p.slot===slot&&p.role==='general'&&p.active&&p.alive);if(!person)return;
+      const person=world.people.find(p=>p.countryId===countryId&&p.slot===slot&&(p.role==='general'||p.role==='king'&&p.slot===-1)&&p.active&&p.alive);if(!person)return;
       const fromId=camps[person.id]?.territoryId||person.stationId,paths=friendlyPaths(world,countryId,fromId);
       let toId=person.stationId;
       if(kind==='outbound'){

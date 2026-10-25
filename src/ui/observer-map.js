@@ -13,7 +13,7 @@ export function observerLandmarks(world){
 export function incidentTerritories(world,scene,battle){
  const ids=new Set();if(battle)ids.add(battle.territoryId);
  for(const move of scene?.moves||[]){ids.add(move.fromId);ids.add(move.toId);}
- for(const p of world.people)if(p.role==='general'&&battle&&((p.countryId===battle.actorId&&p.slot===battle.slot)||(p.countryId===battle.defenderId&&p.slot===battle.defenseSlot)))ids.add(p.positionId||p.stationId);
+ for(const p of world.people)if(Number.isInteger(p.slot)&&battle&&((p.countryId===battle.actorId&&p.slot===battle.slot)||(p.countryId===battle.defenderId&&p.slot===battle.defenseSlot)))ids.add(p.positionId||p.stationId);
  if(!battle&&scene?.event?.nationId){const c=world.countries.find(c=>c.id===scene.event.nationId),person=world.people.find(p=>p.role==='general'&&p.countryId===c?.id&&p.slot===scene.event.slot);if(person)ids.add(person.positionId||person.stationId);else if(c)ids.add(c.capitalId);}
  return ids;
 }

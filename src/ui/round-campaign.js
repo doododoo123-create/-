@@ -39,7 +39,7 @@ export function roundCampaign(world,presentation){
    for(const [side,countryId,slot] of [['attack',b.actorId,b.slot],['defense',b.defenderId,b.defenseSlot]]){
     if(side==='defense'&&b.automatic)continue;
     if(r===record&&event?.index===limit&&scene?.revealedRoutes&&!scene.revealedRoutes.includes(side)&&scene?.movementSide!==side)continue;
-    const moving=motion?.moves.find(m=>m.countryId===countryId&&m.slot===slot),person=frame?.people.find(p=>p.role==='general'&&p.countryId===countryId&&p.slot===slot);
+    const moving=motion?.moves.find(m=>m.countryId===countryId&&m.slot===slot),person=frame?.people.find(p=>p.role===(side==='defense'?b.defenseRole||'general':'general')&&p.countryId===countryId&&p.slot===slot);
     const fromId=moving?.fromId||person?.positionId||person?.stationId||(side==='attack'?b.fromId:b.territoryId);
     if(side==='defense'&&fromId===b.territoryId)continue;
     const laneKey=`${side}:${fromId}:${b.territoryId}`,lane=lanes.get(laneKey)||0;lanes.set(laneKey,lane+1);

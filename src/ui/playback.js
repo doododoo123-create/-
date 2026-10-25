@@ -14,6 +14,7 @@ export function makeTurnScenes(record,before,history=[]) {
     if(motion||event.type==='territory'){const steps=movementScenes(event,frame,motion,camps,record.battles[event.battleIndex]);scenes.push(...steps.scenes);camps=steps.camps;}
     if(event.type==='expedition_roll')continue;
     const start=scenes.length;
+    if(['war_recovery','season_recovery','desertion','production_settlement'].includes(event.type)){scenes.push({id:`apply-${event.index}`,kind:'apply',event,title:event.title,detail:event.detail,worldBefore:frame.before,worldAfter:frame.after,camps});continue;}
     const roll=record.rolls[event.rollIndex];
     const attempts=event.type==='king'?(roll?.attempts||[]):roll?[roll.value]:[];
     if(attempts.length) attempts.forEach((value,attempt)=>scenes.push({

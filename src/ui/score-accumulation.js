@@ -2,7 +2,7 @@ import { renderDie } from './die-view.js';
 import { diceColor } from './dice-colors.js';
 import { esc } from './icons.js';
 export function scoreBonusItems(side,ability=0){
- return side?[['장군',side.ability||0],['병력',side.armyBonus||0],[side.underdogWins!==undefined?'역전':'전적',side.experienceBonus||0],['지형',side.terrainBonus||0],['피로',side.fatigueBonus||0]].map(([label,value])=>({label,value})):[{label:'능력',value:ability||0}];
+ return side?[['장군',side.ability||0],['병력',side.armyBonus||0],[side.underdogWins!==undefined?'역전':'전적',side.experienceBonus||0],['지형',side.terrainBonus||0],['피로',side.fatigueBonus||0],...(side.confusionBonus!==undefined?[['혼란',side.confusionBonus]]:[])].map(([label,value])=>({label,value})):[{label:'능력',value:ability||0}];
 }
 export function accumulatedScore(raw,items,phase,index=0){
  const active=items.filter(i=>i.value),count=phase==='locked'?active.length:phase==='merging'?index:0;

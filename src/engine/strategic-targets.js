@@ -1,5 +1,6 @@
+import {lostHomelands} from './recovery-priority.js';
 import { recoveryNationCandidates } from './recovery-priority.js';
-import { expeditionRoute } from './field-command.js';
+import { expeditionRoute,expeditionChance } from './field-command.js';
 import { scaledDistance } from '../model/map-scale.js';
 export function initializeStrategy(s,id){
  const c=s.countries[id];if(!c.strategy)c.strategy={primary:null,temporary:null,temporaryLevel:0,committed:0,stagnant:0,responseOrders:0,baselineOwners:s.cells.map(c=>c.owner),baselineCapital:s.capitals[id],capitalAttackers:[],reason:'첫 주공 선정 대기',mode:null,scores:[]};
@@ -16,12 +17,14 @@ export function strategyLosses(s,id){
  for(let i=0;i<s.cells.length;i++)if(strategy.baselineOwners[i]===id&&s.cells[i].owner!==id)losses[s.cells[i].owner]++;
  return losses;
 }
+export function finishingPower(s,atlas,id,target,rules){const routes=strategicRoutes(s,atlas,id,target),attack=routes.reduce((n,r)=>n+s.countries[id].generals[r.slot].troops*expeditionChance(r.distance,rules)/100,0),c=s.countries[target],defense=c.generals.filter(g=>g.active&&g.alive).reduce((n,g)=>n+g.troops,0)+(c.royal?.active&&c.royal.alive?c.royal.troops:0);return {attack,defense,ready:attack>0&&attack>=defense*rules.finishPowerRatio};}
 export function strategicScores(s,atlas,id,candidates,rules){
  const t=initializeStrategy(s,id),losses=strategyLosses(s,id);
  return candidates.map(target=>{
   const routes=strategicRoutes(s,atlas,id,target),distance=scaledDistance(Math.min(...routes.map(r=>r.distance)),rules),lands=s.cells.filter(c=>c.owner===target).length;
-  const components={continuity:target===t.primary?25:0,finish:lands<=rules.strategyWeakLands?20:0,recovery:Math.min(20,losses[target]*4),commanders:routes.length>=2?10:0,distance:distance<=2?10:distance>=5?-10:0,stagnation:target===t.primary&&t.stagnant>=rules.strategyStall?-Math.min(60,30+(t.stagnant-rules.strategyStall)*10):0};
-  return {target,score:Object.values(components).reduce((a,b)=>a+b,0),lands,distance,commanders:routes.length,components};
+  const power=rules.finishStrategy?finishingPower(s,atlas,id,target,rules):null,homeLosses=rules.finishStrategy?lostHomelands(s,atlas,id).filter(cell=>s.cells[cell].owner===target).length:0;
+  const components={continuity:target===t.primary?25:0,finish:rules.finishStrategy?(power.ready?(rules.finishBands.find(([upper])=>lands<=upper)?.[1]||0):0):lands<=rules.strategyWeakLands?20:0,recovery:rules.finishStrategy?Math.min(rules.recoveryScoreCap,homeLosses*rules.recoveryScorePerLand):Math.min(20,losses[target]*4),commanders:routes.length>=2?10:0,distance:distance<=2?10:distance>=5?-10:0,stagnation:target===t.primary&&t.stagnant>=rules.strategyStall?-Math.min(60,30+(t.stagnant-rules.strategyStall)*10):0};
+  return {target,...(power?{power}:{}),score:Object.values(components).reduce((a,b)=>a+b,0),lands,distance,commanders:routes.length,components};
  }).sort((a,b)=>b.score-a.score||a.target-b.target);
 }
 export function strategicThreats(s,atlas,id,candidates,rules){
@@ -36,10 +39,10 @@ export function strategicThreats(s,atlas,id,candidates,rules){
 export function selectStrategicTarget(s,atlas,id,candidates,rules,randomInt){
  const t=initializeStrategy(s,id),eligible=candidates.filter(target=>strategicRoutes(s,atlas,id,target).length);
  if(!eligible.length)throw Error('공격 가능한 전략 목표가 없습니다.');
- const recovery=rules.recoveryPriority?recoveryNationCandidates(s,atlas,id,eligible):[];
+ const recovery=rules.recoveryPriority&&!rules.finishStrategy?recoveryNationCandidates(s,atlas,id,eligible):[];
  if(recovery.length){const choice=recovery.length===1?recovery[0]:recovery[randomInt(s,recovery.length)];t.mode='recovery';t.selected=choice.target;t.reason=choice.recoverable?'시작 영토 수복 최우선':'빼앗긴 시작 영토로 진격';return {target:choice.target,primary:t.primary,temporary:t.temporary,reason:t.reason,mode:t.mode,recovery:choice};}
  if(rules.strategicTargets===false){t.mode=null;t.selected=eligible[randomInt(s,eligible.length)];t.reason='공격 가능한 접경국 무작위 선정';return {target:t.selected,primary:t.primary,temporary:t.temporary,reason:t.reason,mode:null};}
- let reason='주공 공세 유지';
+ let reason='주공 공세 유지';const firstSelection=t.primary===null;
  if(t.primary===null){t.primary=eligible[randomInt(s,eligible.length)];t.committed=0;t.stagnant=0;reason='최초 접경국 무작위 주공 선정';}
  const threats=strategicThreats(s,atlas,id,eligible,rules),current=threats.find(v=>v.target===t.temporary),best=threats[0];
  if(best){
@@ -51,11 +54,12 @@ export function selectStrategicTarget(s,atlas,id,candidates,rules,randomInt){
  }else{
   if(t.temporary!==null)reason='비상 위협 해소 · 원래 주공 복귀';t.temporary=null;t.temporaryLevel=0;t.responseOrders=0;t.mode='primary';
   const scores=strategicScores(s,atlas,id,eligible,rules);t.scores=scores;
-  if(!eligible.includes(t.primary)||t.committed>=rules.strategyCommitment&&t.stagnant>=rules.strategyStall){
+  const finishing=rules.finishStrategy&&!firstSelection&&scores.some(v=>v.target!==t.primary&&v.components.finish>0),reversed=rules.finishStrategy&&!firstSelection&&scores.find(v=>v.target===t.primary)?.power?.attack<scores.find(v=>v.target===t.primary)?.power?.defense;
+  if(!eligible.includes(t.primary)||finishing||reversed||t.committed>=rules.strategyCommitment&&t.stagnant>=rules.strategyStall){
    const old=scores.find(v=>v.target===t.primary),highest=scores[0].score,ties=scores.filter(v=>v.score===highest),winner=ties.length===1?ties[0]:ties[randomInt(s,ties.length)];
-   if(!old||winner.target!==t.primary&&winner.score-old.score>=rules.strategySwitchMargin){t.primary=winner.target;t.committed=0;t.stagnant=0;reason=old?'공세 정체 · 전략 점수에 따라 주공 변경':'기존 주공 소멸·경로 단절 · 새 주공 선정';}
+   if(!old||winner.target!==t.primary&&winner.score-old.score>=rules.strategySwitchMargin){t.primary=winner.target;t.committed=0;t.stagnant=0;reason=old?(winner.components.finish>0?'마무리 가능한 소국으로 주공 변경':'공세 정체 · 전략 점수에 따라 주공 변경'):'기존 주공 소멸·경로 단절 · 새 주공 선정';}
   }
-  t.committed++;
+  if(rules.finishStrategy&&scores.find(v=>v.target===t.primary)?.components.finish>0&&reason==='주공 공세 유지')reason='마무리 공세 유지';t.committed++;
  }
  t.reason=reason;t.selected=t.mode==='temporary'?t.temporary:t.primary;t.scores=strategicScores(s,atlas,id,eligible,rules);
  return {target:t.selected,primary:t.primary,temporary:t.temporary,reason,mode:t.mode,scores:t.scores};

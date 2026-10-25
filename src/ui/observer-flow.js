@@ -27,7 +27,7 @@ export function applicationWorld(scene,step){
  if(step==='outcome')return scene.worldBefore;
  if(!observerWorlds.has(scene))observerWorlds.set(scene,new Map());const cache=observerWorlds.get(scene);if(cache.has(step))return cache.get(step);
  const before=scene.worldBefore,after=scene.worldAfter,old=new Map(before.people.map(p=>[p.id,p])),next=new Map(after.people.map(p=>[p.id,p]));
- const world=step==='troops'?{...before,countries:before.countries.map(c=>{const n=after.countries.find(n=>n.id===c.id);return {...c,troops:n?.troops??c.troops,reserve:n?.reserve??c.reserve};}),people:before.people.map(p=>({...p,troops:next.get(p.id)?.troops??p.troops}))}:{...after,people:after.people.map(p=>({...p,capacity:old.get(p.id)?.capacity??p.capacity,wins:old.get(p.id)?.wins??p.wins,...(p.underdogWins!==undefined?{underdogWins:old.get(p.id)?.underdogWins??p.underdogWins}:{})}))};
+ const world=step==='troops'?{...before,countries:before.countries.map(c=>{const n=after.countries.find(n=>n.id===c.id);return {...c,troops:n?.troops??c.troops,reserve:n?.reserve??c.reserve,...(n?.royalTroops!==undefined?{royalTroops:n.royalTroops}:{})};}),people:before.people.map(p=>({...p,troops:next.get(p.id)?.troops??p.troops}))}:{...after,people:after.people.map(p=>({...p,capacity:old.get(p.id)?.capacity??p.capacity,wins:old.get(p.id)?.wins??p.wins,...(p.underdogWins!==undefined?{underdogWins:old.get(p.id)?.underdogWins??p.underdogWins}:{})}))};
  cache.set(step,world);return world;
 }
 export function applicationNotice(scene,record,step){
@@ -50,6 +50,8 @@ export function observerDuration(scene,record,phase,reduced=false){
  if(phase==='raw'||phase==='merging')return 500;
  const b=observerBattle(scene,record),capital=b?.takenTerritoryIds?.some(id=>scene.worldBefore.countries.some(c=>c.capitalId===id));
  if(scene.kind==='apply'){
+  if(['war_recovery','season_recovery'].includes(scene.event?.type))return reduced?50:250;
+  if(['desertion','production_settlement'].includes(scene.event?.type))return reduced?80:650;
   if(scene.event?.type==='death'||scene.event?.type==='elimination')return reduced?140:2800;
   if(phase==='outcome')return b?.automatic?800:capital?1800:1200;
   if(phase==='troops')return 1200;

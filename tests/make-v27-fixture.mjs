@@ -1,0 +1,10 @@
+import {writeFileSync,mkdirSync} from 'node:fs';
+import {campaign22Fixture,campaign22Controls} from './campaign-v22-fixture.mjs';
+import {enableCampaignV27} from '../src/model/campaign-v27.js';
+import {createContinentV27World} from '../src/scenarios/continent-v27.js';
+import {createRun,nextTurn} from '../src/engine/simulation.js';
+import {runSaveData} from '../src/storage/run-store.js';
+import {serializeWorld} from '../src/storage/world-store.js';
+const w=enableCampaignV27(campaign22Fixture().initialWorld);Object.assign(w.rules,{finishStrategy:false,strategicTargets:false,recoveryPriority:false,capitalFallAnnexation:false,minimumReserve:1,baseCapacity:25,territoryArmyLimit:100,territoriesPerCommander:2,captureThresholds:[10,20],expeditionChances:[100,100,100,100,100,100]});w.countries[1].troops=1;w.countries[1].capitalId='tile-4';w.countries[1].recruitment=15;let r=createRun(w,777);const ctl=campaign22Controls();for(const key of Object.keys(ctl.rolls))if(key.startsWith('death:'))ctl.rolls[key]=1;r=nextTurn(r,ctl);const domestic={rolls:{king:1,minister:1,domestic:1}};while(r.turn<13&&!r.result)r=nextTurn(r,domestic);
+const legacyWorld=campaign22Fixture().initialWorld;legacyWorld.rules.roundLimit=null;let legacyRun=createRun(legacyWorld,777);for(let i=0;i<8;i++)legacyRun=nextTurn(legacyRun,domestic);const legacySaved=runSaveData(legacyRun);legacySaved.engineVersion='studio-v11-26';const legacy={world:JSON.parse(serializeWorld(legacyWorld)),eight:legacySaved};
+const small={world:JSON.parse(serializeWorld(w)),run:runSaveData(r)};let big=createRun(createContinentV27World(),777);while(big.turn<14&&!big.result)big=nextTurn(big);mkdirSync('.artifacts',{recursive:true});writeFileSync('.artifacts/v27-browser-fixture.json',JSON.stringify({small,legacy,big:{world:JSON.parse(serializeWorld(big.initialWorld)),run:runSaveData(big)}}));console.log('Small',r.turn,'king deaths',r.history.flatMap(r=>r.events).filter(e=>e.type==='death'&&e.role==='king').length,'new kings',r.history.flatMap(r=>r.events).filter(e=>e.type==='appointment'&&e.role==='king').length,'big',big.turn);

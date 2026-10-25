@@ -1,7 +1,7 @@
 import { fieldPaths } from './field-command.js';
 export const movementFatigue=(edges,rules)=>(-Math.floor(Math.max(0,edges)/(rules.fatigueStep*(rules.distanceScale||1)))*rules.fatiguePenalty)||0;
 export function reinforcementRoom(state,id,rules){
- const c=state.countries[id],total=c.reserve+(c.reorganization||0)+c.generals.reduce((n,g)=>n+g.troops,0);
+ const c=state.countries[id],total=c.reserve+(c.royal?.troops||0)+(c.reorganization||0)+c.generals.reduce((n,g)=>n+g.troops,0);
  return Math.max(0,state.cells.filter(t=>t.owner===id).length*rules.territoryArmyLimit-total);
 }
 export function campaignDefenders(state,atlas,id,targetId,home,radius){
