@@ -5,7 +5,7 @@ import { clone,validateWorld,landCount,countryPeople,neighbors } from '../model/
 import { V11_ATLAS,V11_NATIONS } from '../data/v11-preset.js';
 import { seaSupplyPorts } from '../model/sea-supply.js';
 import { createV11Engine } from './v11-core.js';
-export const ENGINE_VERSION='studio-v11-27';
+export const ENGINE_VERSION='studio-v11-28';
 const engineCache=new WeakMap();
 export const livingCountries=world=>world.countries.filter(c=>landCount(world,c.id)>0);
 export function numericSeed(seed){const text=String(seed??123456).trim();if(!/^\d+$/.test(text)||Number(text)>4294967295)throw new Error('원본과 같은 난수를 사용하려면 시드를 0~4294967295 정수로 입력해 주세요.');return Number(text)>>>0;}
@@ -88,8 +88,9 @@ export function removeRunLimit(run){
 export function casualty(own,enemy,rate){const base=rate*100;if(!own||!enemy||!base)return 0;const n=own*base*enemy*2,d=(own+enemy)*100;return Math.min(own,Math.max(1,Math.floor((n*2+d)/(d*2))));}
 export function borderTargets(world,id){return world.territories.filter(t=>t.ownerId!==id&&neighbors(world,t).some(n=>n.ownerId===id));}
 export function restoreRun(data){
-  if(![ENGINE_VERSION,'studio-v11-26','studio-v11-25','studio-v11-24','studio-v11-23','studio-v11-22','studio-v11-21','studio-v11-20','studio-v11-19','studio-v11-18','studio-v11-17','studio-v11-16','studio-v11-15','studio-v11-14','studio-v11-13','studio-v11-12','studio-v11-11'].includes(data?.engineVersion))throw new Error('현재 v11 엔진과 다른 실행 저장입니다.');
+  if(![ENGINE_VERSION,'studio-v11-27','studio-v11-26','studio-v11-25','studio-v11-24','studio-v11-23','studio-v11-22','studio-v11-21','studio-v11-20','studio-v11-19','studio-v11-18','studio-v11-17','studio-v11-16','studio-v11-15','studio-v11-14','studio-v11-13','studio-v11-12','studio-v11-11'].includes(data?.engineVersion))throw new Error('현재 v11 엔진과 다른 실행 저장입니다.');
   const source=clone(data.initialWorld),revision=Number(data.engineVersion.split('-').at(-1));
+  if(revision<28&&source?.rules)source.rules.resetConfusionOnRest??=false;
   if(revision<27&&source?.rules)for(const key of BALANCE_V27_SWITCHES)source.rules[key]??=false;
   if(revision<26&&source?.rules)for(const key of ['recoveryPriority','underdogExperience','frontierReserves'])source.rules[key]??=false;
   if(revision<25&&source?.rules)for(const key of ['continuousCampaign','routDeath','strategicTargets'])source.rules[key]??=false;

@@ -3,6 +3,7 @@ import {BALANCE_V27_DEFAULTS} from './balance-v27.js';
 export const LEGACY_ARMY_BANDS=Object.freeze([[1.25,4],[1.5,10],[2,16],[3,21],[5,25],[10,27],[20,28]]);
 export const ADDITIVE_COMBAT_DEFAULTS=Object.freeze({
  ...BALANCE_V27_DEFAULTS,
+ resetConfusionOnRest:false,
  recoveryPriority:false,underdogExperience:false,frontierReserves:false,
  continuousCampaign:false,routDeath:false,strategicTargets:false,unopposedCaptureLimit:3,routDeathChance:10,strategyCommitment:3,strategyStall:3,strategyWeakLands:7,strategyEmergencyLoss:4,strategyResponseOrders:2,strategySwitchMargin:15,
  battleMode:'additive30',combatSides:30,experiencePerWin:1,experienceWinStep:3,experienceCap:3,mountainBonus:8,

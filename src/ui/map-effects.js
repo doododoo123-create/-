@@ -29,6 +29,7 @@ export function mapEffects(scene,stage=null,record=null) {
     const prev=oldGenerals.get(key),next=nextGenerals.get(key),p=next||prev;
     const delta=(next?.troops??0)-(prev?.troops??0);
     if(delta)add(p.countryId,p.role,p.slot,'army',delta,`${event.type==='desertion'?'탈영 ':event.type==='death'&&event.survivors?'이관 ':event.type==='roster'?'이관 ':event.type==='resupply'?'배분 ':''}${effectSign(delta)}만명`,delta>0?'positive':event.type==='roster'?'transfer':'negative');
+    if(event.type==='resolve'&&next?.alive!==false&&prev&&next?.generation===prev.generation&&(next.confusion||0)>(prev.confusion||0))add(p.countryId,p.role,p.slot,'confusion',next.confusion-(prev.confusion||0),'혼란 −'+(next.confusion-(prev.confusion||0)),'negative');
     const capacity=(next?.capacity??0)-(prev?.capacity??0);
     if(capacity&&next?.active&&next?.alive&&event.type==='resolve')add(p.countryId,p.role,p.slot,'capacity',capacity,`한도 ${effectSign(capacity)}만`,'upgrade');
     const experience=next&&prev?observedExperience(next,after.rules)-observedExperience(prev,before.rules):0;
@@ -44,7 +45,7 @@ export function mapEffects(scene,stage=null,record=null) {
   if(event.type==='elimination')add(event.targetId,'king',null,'elimination',0,'멸망','negative');
   output.announcement=event.type==='round_end'?'라운드 병력 생산':event.type==='roster'?'지휘 구역 재편':displayEventText(event.title||'');
   if(stage&&stage!=='all'){
-    output.units=output.units.filter(e=>stage==='troops'?e.type==='army':stage==='territory'?e.type==='capital':stage==='growth'?['capacity','experience','recruitment','supply'].includes(e.type):false);
+    output.units=output.units.filter(e=>stage==='troops'?['army','confusion'].includes(e.type):stage==='territory'?e.type==='capital':stage==='growth'?['capacity','experience','recruitment','supply'].includes(e.type):false);
     if(stage!=='territory')output.territories=[];
     output.announcement=displayEventText(applicationNotice(scene,record,stage));
   }

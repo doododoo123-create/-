@@ -1,4 +1,4 @@
-import { cameraExtent, placeCompactDuel, placeRoyalChoice } from './camera-focus.js';
+import { cameraExtent, placeCompactDuel, placeRoyalChoice, nationFraming, battleFraming, sceneFocus } from './camera-focus.js';
 import { observerDetail } from './observer-map.js';
 import { fitMapUnits } from './battle-presentation.js';
 // View state only; SVG coordinates and the world remain unchanged.
@@ -6,14 +6,26 @@ export function mapZoomControls(context='overview'){
  return `<div class="map-camera-controls" data-camera-controls="${context}"><button type="button" class="button outline" data-action="map-zoom-out" data-camera="${context}" aria-label="지도 축소">−</button><output data-camera-scale="${context}">100%</output><button type="button" class="button outline" data-action="map-zoom-in" data-camera="${context}" aria-label="지도 확대">＋</button><button type="button" class="button subtle" data-action="map-zoom-reset" data-camera="${context}">전체 보기</button>${context!=='editor'?`<label class="observer-detail-control">지도 정보 <select data-map-detail aria-label="지도 정보 표시"><option value="auto">확대에 맞춰 표시</option><option value="all">모든 정보 표시</option></select></label>`:''}${context==='editor'?`<button type="button" class="button outline" data-action="map-pan-toggle" data-camera="editor" aria-pressed="false">지도 이동</button>`:''}</div>`;
 }
 export class MapCamera {
- constructor(){this.views=new Map();this.drag=null;this.panEditor=false;this.suppressClick=false;this.autoFollow=false;this.followKey=null;this.motion=null;this.detailMode='auto';}
+ constructor(){this.views=new Map();this.drag=null;this.panEditor=false;this.suppressClick=false;this.autoFollow=false;this.followKey=null;this.followRecord=null;this.motion=null;this.detailMode='auto';}
  cancelMotion(){if(this.motion!==null){globalThis.cancelAnimationFrame?.(this.motion);this.motion=null;}}
  manual(){this.cancelMotion();}
  keyboard(event,context){this.manual();const v=this.view(context),step=(event.shiftKey?3:1)*70/v.zoom;v.x+=event.key==='ArrowLeft'?-step:event.key==='ArrowRight'?step:0;v.y+=event.key==='ArrowUp'?-step:event.key==='ArrowDown'?step:0;this.clamp(v);this.update(context);}
  viewport(context){const el=globalThis.document?.querySelector?.(`.atlas-scroll[data-map-camera="${context}"]`);return {width:el?.clientWidth||1200,height:el?.clientHeight||800};}
- follow(){this.cancelMotion();}
+ resetFollow(){this.followRecord=null;this.followKey=null;this.cancelMotion();}
+ setFollowing(value,playback){this.autoFollow=!!value;this.followKey=null;this.cancelMotion();if(this.autoFollow)this.follow(playback);}
+ follow(playback){
+  const record=playback?.state?.record,scene=playback?.scene;if(!record||!scene)return;
+  const world=scene.worldBefore||scene.worldAfter||playback.displayWorld;if(!world)return;
+  const viewport=this.viewport('simulation'),view=this.view('simulation');
+  if(this.followRecord!==record){this.followRecord=record;this.followKey=null;const target=nationFraming(world,record.actorId,viewport);if(target){this.cancelMotion();Object.assign(view,{x:target.x,y:target.y},this.autoFollow?{zoom:target.zoom}:{});this.clamp(view);this.update('simulation');}}
+  if(!this.autoFollow||['season','round-settle','summary'].includes(scene.kind)||['round_end','desertion','production_settlement','war_recovery','season_recovery'].includes(scene.event?.type))return;
+  const battle=record.battles?.[scene.battleIndex],point=battle?null:sceneFocus(scene,record),key=battle?'battle:'+battle.territoryId:point?'point:'+point.join(','):null;
+  if(!key||key===this.followKey)return;
+  this.followKey=key;const target=battle?battleFraming(scene,record,viewport):{x:point[0],y:point[1]};if(!target)return;
+  this.cancelMotion();Object.assign(view,target);this.clamp(view);this.update('simulation');
+ }
  view(context){if(!this.views.has(context))this.views.set(context,{zoom:1,x:600,y:400});return this.views.get(context);}
- resetAll(){this.cancelMotion();this.followKey=null;this.views.clear();this.panEditor=false;this.drag=null;}
+ resetAll(){this.resetFollow();this.views.clear();this.panEditor=false;this.drag=null;}
  box(context){const v=this.view(context),viewport=this.viewport(context),[w,h]=cameraExtent(viewport.width,viewport.height);return [v.x-w/2/v.zoom,v.y-h/2/v.zoom,w/v.zoom,h/v.zoom];}
  restore(){document.querySelectorAll('.atlas-scroll[data-map-camera]').forEach(el=>this.update(el.dataset.mapCamera));}
  update(context){const v=this.view(context);document.querySelectorAll(`.atlas-scroll[data-map-camera="${context}"]`).forEach(el=>{el.querySelector('.atlas-map').setAttribute('viewBox',this.box(context).join(' '));el.dataset.zoom=String(v.zoom);const bounds=this.viewport(context),scale=Math.min(bounds.width/1200,bounds.height/800)*v.zoom;el.dataset.detail=context==='editor'?'editor':observerDetail(this.detailMode,scale,v.zoom);el.classList.toggle('camera-pan-mode',context==='editor'&&this.panEditor);fitMapUnits(el);});document.querySelectorAll(`[data-camera-scale="${context}"]`).forEach(el=>el.textContent=`${Math.round(v.zoom*100)}%`);document.querySelectorAll('[data-map-detail]').forEach(el=>el.value=this.detailMode);const select=document.querySelector('#map-editor-zoom');if(context==='editor'&&select){let option=[...select.options].find(o=>Number(o.value)===v.zoom);if(!option){option=new Option(`${Math.round(v.zoom*100)}%`,String(v.zoom));select.add(option);}select.value=String(v.zoom);}document.querySelectorAll('[data-action="map-pan-toggle"]').forEach(el=>el.setAttribute('aria-pressed',String(this.panEditor)));if(context==='simulation'){placeCompactDuel();placeRoyalChoice();}this.onUpdate?.();}

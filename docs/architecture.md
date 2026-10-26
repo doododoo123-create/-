@@ -1,4 +1,4 @@
-# 구조 · Studio v0.27.0
+# 구조 · Studio v0.28.0
 
 ## 데이터와 엔진
 
@@ -410,3 +410,12 @@ v0.25.1은 `audio/cues.js`의 파칭코/주사위 rolling과 양수 merging에�
 - `strategic-targets.js`는 거리별 출전 예상 병력을 한 장수당 한 번 합산하고 적 왕 부대도 비교한다. 옛 수복 조기 반환은 새 `finishStrategy`에서만 점수 비교로 대체한다. 출전·전투·점령의 실제 합법성 검사는 우회하지 않는다.
 - `simulation.js`는 왕 부대와 경제 예측을 표시 세계에 투영한다. `ui/balance-v27-view.js`는 설정/상태/경제 요약/완료 역사 표시,`ui/commander-history.js`는 인물 ID별 공개된 전투를 공유한다. 왕의 새 생애에 옛 왕 전적을 합치지 않는다.
 - 엔진27이며 세계schema2/실행version1은 유지한다.26이하의 누락 스위치는false로 고정한다. 과거재생 fingerprint에 새 혼란/정비·왕 수비·생산/탈영 사건을 포함한다. 화면 연출과 소리는 난수를 소비하지 않는다.
+
+
+## v0.28 표시와 선택 규칙
+
+`model/campaign-v28.js`는 기존27 전체 설정에 resetConfusionOnRest:true만 추가한다. `scenarios/continent-v28.js`가 새 기본 세계다. `war-readiness.recordDefeat`는 이유를 계산한 뒤 정비이면 혼란을0으로 비우고 clearedConfusion을 기록한다.27이하 저장의 누락 설정은false다. 엔진28이며 세계/실행 스키마는 그대로다.
+
+`ui/readiness-display.js`의 화살표는 표시 인물의 실제 혼란과 정비·생존 상태만 읽는다. 증가 안내는 mapEffects의 실제 전후 차이와 손실 적용 단계에서만 표시한다. 정비와 안내 모두 기존 cardLabel 렌더링을 공유한다.
+
+MapCamera.followRecord가 국가 차례당 한 번의 이동을,followKey가 같은 전투의 중복 카메라 이동을 막는다. 카메라 설정·키·뷰포트는 게임 상태/파일/난수와 독립적이다. 역사 세션은 기존 카메라와 followRecord를 같이 보관하고 현재로 복귀할 때 복원한다. S와 화면 버튼은 추적 전환,Shift+S는 결과 건너뛰기다.
