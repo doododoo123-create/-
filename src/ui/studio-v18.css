@@ -1,5 +1,5 @@
 .season-announcement{position:fixed;left:50%;top:44%;transform:translate(-50%,-50%);z-index:80;display:flex;flex-direction:column;align-items:center;gap:10px;min-width:230px;max-width:calc(100vw - 32px);padding:22px 42px;border:1px solid #d5e7dc;border-radius:7px;background:#08151eee;box-shadow:0 8px 30px #0008;pointer-events:none;color:#fff;text-align:center}
-.season-announcement strong{font:700 27px/1.4 'Malgun Gothic',sans-serif;white-space:nowrap;text-shadow:0 2px 3px #000}
+.season-announcement strong{font:700 27px/1.4 var(--studio-sans);white-space:nowrap;text-shadow:0 2px 3px #000}
 .season-symbol{font-size:34px;line-height:1;color:#a8efb8}.season-1 .season-symbol{color:#ffd66c}.season-2 .season-symbol{color:#ffad67}.season-3 .season-symbol{color:#9ddcff}
 .game-skin .battle-swords{stroke:#ff263d;stroke-width:3}.game-skin .battle-swords-outline{stroke:#16090d;stroke-width:5.5}
 .game-skin .battle-emblem .target-ring{stroke:#ff4455;fill:#270e1433}
@@ -11,7 +11,7 @@
 .game-skin .round-march,.operation-movement.is-selected .round-march{opacity:.85}
 .game-skin .round-retreat .campaign-route{stroke-width:3.2;stroke-dasharray:none}
 .game-skin .round-retreat .campaign-route-shadow{stroke-width:4.4}
-.unit-combat-role,.unit-loss-label{fill:#fff;stroke:#000;stroke-width:2.5;paint-order:stroke;stroke-linejoin:round;font-family:'Malgun Gothic',sans-serif;font-size:7.5px;font-weight:800;pointer-events:none}
+.unit-combat-role,.unit-loss-label{fill:#fff;stroke:#000;stroke-width:2.5;paint-order:stroke;stroke-linejoin:round;font-family:var(--studio-sans);font-size:7.5px;font-weight:800;pointer-events:none}
 .unit-loss-label{fill:#ff4252;font-size:8px}
 .game-skin .unit-status-label{font-size:8.5px;stroke:#000;stroke-width:2.5;paint-order:stroke;pointer-events:none}
 .game-skin .unit-status-label.victory{fill:#ff263d}.game-skin .unit-status-label.defeat,.game-skin .unit-status-label.draw{fill:#d3d9e1}

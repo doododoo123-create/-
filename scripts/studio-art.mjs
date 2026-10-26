@@ -9,7 +9,7 @@ export async function syncStudioArt(root){
  for(const name of (await readdir(resolve(root,'assets/dice'))).filter(n=>/^die_\d{2}\.svg$/.test(n)).sort()){
   const svg=await readFile(resolve(root,'assets/dice',name),'utf8');
   if(/<\s*(script|foreignObject|image|iframe)|\bon\w+\s*=|\bhref\s*=|url\((?!#)/i.test(svg))throw new Error('다이스 SVG 형식을 확인해 주세요.');
-  dice[Number(name.slice(4,6))]=svg;
+  dice[Number(name.slice(4,6))]=svg.replace(/font-family="[^"]+"/g,'font-family="Studio Serif"');
  }
  for(const name of (await readdir(resolve(root,'assets/leaders'))).filter(n=>/^(king|chancellor)_\d{3}\.jpg$/.test(n)).sort())leaders[name.slice(0,-4).replace('chancellor','minister').replace('_','-')]='data:image/jpeg;base64,'+(await readFile(resolve(root,'assets/leaders',name))).toString('base64');
  if(Object.keys(dice).length!==60||Object.keys(leaders).length!==20)throw new Error('주사위 60종과 왕·승상 20종을 확인해 주세요.');

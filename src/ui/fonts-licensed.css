@@ -1,0 +1,10 @@
+/* Google Noto derivatives; SIL OFL 1.1 notices are bundled in every release. */
+@font-face{font-family:'Studio Sans';src:url('../../assets/fonts/NotoSansKR.woff2') format('woff2');font-weight:100 900;font-style:normal;font-display:block}
+@font-face{font-family:'Studio Serif';src:url('../../assets/fonts/NotoSerifKR.woff2') format('woff2');font-weight:600;font-style:normal;font-display:block}
+@font-face{font-family:'Studio Symbols';src:url('../../assets/fonts/NotoSymbols.woff2') format('woff2');font-weight:400;font-style:normal;font-display:block}
+@font-face{font-family:'Studio Emoji';src:url('../../assets/fonts/NotoEmoji.woff2') format('woff2');font-weight:300 700;font-style:normal;font-display:block}
+:root{--studio-sans:'Studio Sans','Studio Symbols','Studio Emoji';--studio-serif:'Studio Serif','Studio Sans','Studio Symbols','Studio Emoji'}
+html,body,button,input,select,textarea,svg text{font-family:var(--studio-sans)}
+.dice-art text{font-family:var(--studio-serif)!important}
+.king-crown{font-family:'Studio Emoji'!important}
+.font-license-dialog{width:min(800px,calc(100vw - 28px));max-height:85vh;overflow:auto;background:#12232c;color:white;padding:20px;border:1px solid #95adb8;border-radius:7px}.font-license-dialog pre{white-space:pre-wrap;font-size:12px;line-height:1.6}

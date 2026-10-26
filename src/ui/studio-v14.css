@@ -4,7 +4,7 @@
 .game-skin .country-outlines>g>path:first-child{stroke-width:6px}
 .game-skin .country-outlines .country-border-color{stroke-width:4px}
 .game-skin .atlas-territory{stroke-width:.65px}
-.observer-country-labels{display:none;font:800 28px 'Malgun Gothic',sans-serif;fill:#fff;stroke:#09171d;stroke-width:3px;paint-order:stroke;opacity:.75;letter-spacing:2px}
+.observer-country-labels{display:none;font:800 28px var(--studio-sans);fill:#fff;stroke:#09171d;stroke-width:3px;paint-order:stroke;opacity:.75;letter-spacing:2px}
 .atlas-scroll[data-detail=wide] .observer-country-labels{display:block}
 .atlas-scroll.combat-focused .observer-country-labels{display:none}
 .atlas-scroll[data-detail=wide] .atlas-name:not(.name-key),.atlas-scroll[data-detail=wide] .map-unit-position:not(.unit-key){visibility:hidden}
@@ -13,8 +13,8 @@
 .atlas-scroll[data-detail=all] .atlas-name,.atlas-scroll[data-detail=all] .map-unit-position{visibility:visible}
 .combat-focused .atlas-name:not(.name-incident){opacity:.48}
 .unit-engaged .unit-focal-body{transform:scale(1.12);transform-box:fill-box;transform-origin:50% 100%}
-.unit-combat-role{font:800 13px 'Malgun Gothic',sans-serif;fill:white;stroke:#061016;stroke-width:3px;paint-order:stroke}
-.battle-place-label{font:800 13px 'Malgun Gothic',sans-serif;fill:#fff;stroke:#000;stroke-width:3px;paint-order:stroke}
+.unit-combat-role{font:800 13px var(--studio-sans);fill:white;stroke:#061016;stroke-width:3px;paint-order:stroke}
+.battle-place-label{font:800 13px var(--studio-sans);fill:#fff;stroke:#000;stroke-width:3px;paint-order:stroke}
 .observer-detail-control{display:flex;align-items:center;gap:5px;white-space:nowrap;font-size:11px}
 .observer-detail-control select{width:auto;min-width:0;font-size:11px;padding:5px 7px}
 .game-skin .map-judgment{top:6%;transform:translateX(-50%);max-width:min(640px,calc(100% - 24px));padding:12px 16px;background:#0d1a21f7}
@@ -29,7 +29,7 @@
 .game-skin .map-judgment.is-duel .judgment-side .visual-die-block{align-self:center;margin:0}
 .observer-score{display:grid;grid-template-columns:auto auto;justify-content:center;align-items:baseline;gap:0 9px;margin-top:5px;font-variant-numeric:tabular-nums}
 .observer-score>span{font-size:11px;color:#cfdee9}
-.observer-score>strong{font:bold 32px/1.1 Georgia,'Malgun Gothic',serif;color:#fff}
+.observer-score>strong{font:bold 32px/1.1 var(--studio-serif);color:#fff}
 .observer-score small{grid-column:1/-1;font-size:10px;color:#bacbd8;margin-top:3px}
 .observer-die-column{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0}
 .observer-die-column .observer-score{gap:0 6px}

@@ -1,0 +1,4 @@
+import {readFile,writeFile} from 'node:fs/promises';
+import {resolve} from 'node:path';
+import {createHash} from 'node:crypto';
+export async function syncLicensedFonts(root){const rows=JSON.parse(await readFile(resolve(root,'assets/fonts/manifest.json'),'utf8')),licenses=[];for(const row of rows){for(const [name,hash] of [[row.file,row.sha256],[row.license,row.licenseSha256]]){const b=await readFile(resolve(root,'assets/fonts',name));if(createHash('sha256').update(b).digest('hex')!==hash)throw Error('내장 글꼴 또는 라이선스 해시가 다릅니다: '+name);}licenses.push({family:row.family,source:row.source,text:await readFile(resolve(root,'assets/fonts',row.license),'utf8')});}await writeFile(resolve(root,'src/data/font-licenses.js'),'// Official OFL notices, bundled for offline redistribution.\nexport const FONT_LICENSES = '+JSON.stringify(licenses)+';\n');}

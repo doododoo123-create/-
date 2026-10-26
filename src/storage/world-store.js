@@ -2,7 +2,7 @@ import { validateWorld } from '../model/world.js';
 export const STORAGE_KEY = 'saguk-studio.world.v1';
 export const serializeWorld = world => JSON.stringify({ kind: 'saguk-studio-world', version: 2, world: validateWorld(world) }, null, 2);
 export function parseWorld(text) {
-  if (typeof text !== 'string' || text.length > 5 * 1024 * 1024) throw new Error('세계 파일은 5MB 이하의 JSON이어야 합니다.');
+  if (typeof text !== 'string') throw new Error('세계 JSON 파일을 선택해 주세요.');
   let data;
   try { data = JSON.parse(text); } catch { throw new Error('JSON 파일을 읽을 수 없습니다. 내보낸 세계 파일을 선택해 주세요.'); }
   if (data?.kind !== 'saguk-studio-world' || ![1,2].includes(data.version)) throw new Error('Studio v11에서 내보낸 세계 JSON 파일이 아닙니다. 기존 HTML은 직접 가져올 수 없습니다.');
@@ -18,6 +18,7 @@ export function saveWorld(storage, world) {
 }
 export function loadWorld(storage) {
   const text = storage.getItem(STORAGE_KEY);
+  if(text){try{if(JSON.parse(text)?.kind==='saguk-studio-world-archive')return null;}catch{}}
   return text ? parseWorld(text) : null;
 }
 export function downloadFile(name, content, type = 'application/json') {

@@ -8,10 +8,10 @@
 .game-skin .map-unit-token .token-portraits img[data-portrait-kind=leader]{width:260%;left:-80%;top:-25%}
 .game-skin .map-unit-token .token-portraits img[data-portrait-key=general-026]{width:160%;left:-30%;top:-5%}
 .game-skin .map-unit-token .token-copy{display:flex;flex-direction:column;align-items:center;gap:0;width:100%;min-width:0}
-.game-skin .map-unit-token .token-copy b{max-width:46px;width:100%;font-family:'Malgun Gothic',sans-serif;font-size:10px;line-height:14px;letter-spacing:0;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;color:#f6e7c3}
-.game-skin .map-unit-token .token-copy strong{display:block;font:600 13px/16px Georgia,'Malgun Gothic',serif;color:#fff0c8;letter-spacing:0;margin:0;white-space:nowrap}
-.game-skin .map-unit-token .token-copy strong small{display:inline;font:normal 7px/1 sans-serif;color:#c0af86;margin:0 1px 0 0}
-.game-skin .map-unit-token .token-copy strong>span{font:normal 9px/1 'Malgun Gothic',sans-serif;margin-left:1px}
+.game-skin .map-unit-token .token-copy b{max-width:46px;width:100%;font-family:var(--studio-sans);font-size:10px;line-height:14px;letter-spacing:0;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;color:#f6e7c3}
+.game-skin .map-unit-token .token-copy strong{display:block;font:600 13px/16px var(--studio-serif);color:#fff0c8;letter-spacing:0;margin:0;white-space:nowrap}
+.game-skin .map-unit-token .token-copy strong small{display:inline;font:normal 7px/1 var(--studio-sans);color:#c0af86;margin:0 1px 0 0}
+.game-skin .map-unit-token .token-copy strong>span{font:normal 9px/1 var(--studio-sans);margin-left:1px}
 .game-skin .station-leaders path{fill:none;stroke:#efe2b3;stroke-opacity:.48;stroke-width:1.2}
 .game-skin .station-leaders circle{fill:#ebd69f;stroke:#1a302b;stroke-width:.8}
 .game-skin .campaign-route-shadow{fill:none;stroke:#092430;stroke-opacity:.85;stroke-width:6.5;stroke-linecap:round}

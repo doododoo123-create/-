@@ -87,9 +87,9 @@ export function removeRunLimit(run){
 }
 export function casualty(own,enemy,rate){const base=rate*100;if(!own||!enemy||!base)return 0;const n=own*base*enemy*2,d=(own+enemy)*100;return Math.min(own,Math.max(1,Math.floor((n*2+d)/(d*2))));}
 export function borderTargets(world,id){return world.territories.filter(t=>t.ownerId!==id&&neighbors(world,t).some(n=>n.ownerId===id));}
-export function restoreRun(data){
-  if(![ENGINE_VERSION,'studio-v11-27','studio-v11-26','studio-v11-25','studio-v11-24','studio-v11-23','studio-v11-22','studio-v11-21','studio-v11-20','studio-v11-19','studio-v11-18','studio-v11-17','studio-v11-16','studio-v11-15','studio-v11-14','studio-v11-13','studio-v11-12','studio-v11-11'].includes(data?.engineVersion))throw new Error('현재 v11 엔진과 다른 실행 저장입니다.');
-  const source=clone(data.initialWorld),revision=Number(data.engineVersion.split('-').at(-1));
+export function definitionForVersion(initialWorld,engineVersion){
+  if(![ENGINE_VERSION,'studio-v11-27','studio-v11-26','studio-v11-25','studio-v11-24','studio-v11-23','studio-v11-22','studio-v11-21','studio-v11-20','studio-v11-19','studio-v11-18','studio-v11-17','studio-v11-16','studio-v11-15','studio-v11-14','studio-v11-13','studio-v11-12','studio-v11-11'].includes(engineVersion))throw new Error('현재 v11 엔진과 다른 실행 저장입니다.');
+  const source=clone(initialWorld),revision=Number(engineVersion.split('-').at(-1));
   if(revision<28&&source?.rules)source.rules.resetConfusionOnRest??=false;
   if(revision<27&&source?.rules)for(const key of BALANCE_V27_SWITCHES)source.rules[key]??=false;
   if(revision<26&&source?.rules)for(const key of ['recoveryPriority','underdogExperience','frontierReserves'])source.rules[key]??=false;
@@ -109,7 +109,10 @@ export function restoreRun(data){
     if(revision<13)source.rules.battleMode='v11';
     if(revision<12)source.rules.seaSupply=false;
   }
-  const definition=validateWorld(source),context=engineFor(definition),state=clone(data.engineState);
+  return validateWorld(source);
+}
+export function restoreRun(data){
+  const definition=definitionForVersion(data.initialWorld,data.engineVersion),context=engineFor(definition),state=clone(data.engineState);
   if(!context.engine.validState(state)||state.seed!==numericSeed(data.seed))throw new Error('저장된 경기의 병력·영토·난수 상태가 올바르지 않습니다.');
   if(!Array.isArray(data.history)||data.history.length!==state.turns)throw new Error('저장된 턴 기록이 경기와 일치하지 않습니다.');
   for(let i=0;i<data.history.length;i++){const r=data.history[i];if(r.turn!==i+1||!context.ids.includes(r.actorId)||!Array.isArray(r.rolls)||!Array.isArray(r.battles)||!Array.isArray(r.events)||!r.rolls.every(d=>Number.isInteger(d.value)&&Number.isInteger(d.sides)&&d.value>=1&&d.value<=d.sides))throw new Error('저장된 판정 기록이 올바르지 않습니다.');}

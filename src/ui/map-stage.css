@@ -32,7 +32,7 @@ body.map-stage-open{overflow:hidden}
 .judgment-side-label{font-size:12px;color:#f4b2a0;margin-bottom:9px}
 .judgment-side.defense .judgment-side-label{color:#b6d1ed}
 .judgment-side-label small{font-size:11px;color:#ddd7c8;margin-left:5px}
-.judgment-vs{font-family:Georgia,serif;font-size:22px;color:#fff0bb;flex:none}
+.judgment-vs{font-family:var(--studio-serif);font-size:22px;color:#fff0bb;flex:none}
 .judgment-side .judgment-roll{gap:13px}
 .judgment-side .judgment-person{width:80px;flex-basis:80px}
 .judgment-side .judgment-person>img{height:90px}

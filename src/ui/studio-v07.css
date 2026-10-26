@@ -23,7 +23,7 @@
 .dice-art,.die-art-stack{position:absolute;inset:0;width:100%;height:100%}
 .dice-art text{fill:var(--die-ink);paint-order:stroke;stroke:#000;stroke-width:1.3px}
 .game-skin .attached-die .die-number{opacity:0}
-.game-skin .attached-die.custom-die-value .die-number{opacity:1;position:absolute;left:0;right:0;top:27%;font:700 42px/1.3 Georgia,serif;color:var(--die-ink);text-shadow:0 2px 2px #000}
+.game-skin .attached-die.custom-die-value .die-number{opacity:1;position:absolute;left:0;right:0;top:27%;font:700 42px/1.3 var(--studio-serif);color:var(--die-ink);text-shadow:0 2px 2px #000}
 .dice-art.blank-face text{visibility:hidden}
 .game-skin .attached-die>small{position:absolute;left:0;right:0;bottom:15%;font-size:8px;color:#fff}
 .die-art-frame{position:absolute;inset:0;opacity:0;animation:attached-die-reel .7s steps(1,end) infinite;animation-delay:calc(var(--frame) * -.1s)}

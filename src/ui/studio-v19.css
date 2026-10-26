@@ -3,7 +3,7 @@
 .game-skin .atlas-map .atlas-name.name-incident{font-size:12px;stroke-width:2.2px!important}
 .game-skin .atlas-scroll.combat-focused .map-unit-position:not(.unit-engaged),
 .game-skin .atlas-scroll.combat-focused .map-unit-position:not(.unit-engaged) .map-unit-token{opacity:1}
-.game-skin .unit-feedback-text,.game-skin .unit-loss-label,.game-skin .march-label,.game-skin .unit-combat-role,.game-skin .unit-status-label{font:800 8px/1.2 'Malgun Gothic',sans-serif;fill:#fff;stroke:#000;stroke-width:1.7px;paint-order:stroke;stroke-linejoin:round;pointer-events:none}
+.game-skin .unit-feedback-text,.game-skin .unit-loss-label,.game-skin .march-label,.game-skin .unit-combat-role,.game-skin .unit-status-label{font:800 8px/1.2 var(--studio-sans);fill:#fff;stroke:#000;stroke-width:1.7px;paint-order:stroke;stroke-linejoin:round;pointer-events:none}
 .game-skin .unit-status-label.death{fill:#ff3038}.game-skin .unit-status-label.appointment{fill:#39ff73}
 .game-skin .unit-status-label.victory{fill:#ff263d}.game-skin .unit-status-label.defeat,.game-skin .unit-status-label.draw{fill:#fff}
 .unit-result-wash{fill:#46505a;fill-opacity:.32;pointer-events:none}

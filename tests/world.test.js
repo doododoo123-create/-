@@ -27,10 +27,11 @@ test('blank worlds have variable dimensions and work without countries', () => {
   assert.equal(neighbors(world, world.territories[0]).length, 2);
   assert.equal(neighbors(world, world.territories[5]).length, 4);
 });
-test('rejects unsupported, malformed and oversized files without mutating input', () => {
+test('rejects unsupported/malformed files and accepts valid world JSON beyond the former5MiB gate', () => {
   assert.throws(() => parseWorld('invalid'), /JSON/);
   assert.throws(() => parseWorld('{}'), /세계 JSON/);
-  assert.throws(() => parseWorld('x'.repeat(5 * 1024 * 1024 + 1)), /5MB/);
+  assert.throws(() => parseWorld('x'.repeat(5 * 1024 * 1024 + 1)), /JSON/);
+  assert.equal(parseWorld(' '.repeat(6*1024*1024)+serializeWorld(createDemoWorld())).countries.length,7);
   const world = createDemoWorld(); world.schemaVersion = 10; assert.throws(() => validateWorld(world), /버전/);
 });
 test('rejects duplicate IDs, coordinates, foreign ownership and color injection', () => {

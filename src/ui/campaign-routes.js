@@ -1,8 +1,9 @@
+import {bundleRouteSegments,bundledGeometry} from './route-bundles.js';
 import { mapAnchor } from '../model/cartography-geometry.js';
 import { neighbors } from '../model/world.js';
 import { battleRoute } from './battle-map.js';
 import { esc } from './icons.js';
-import { operationGeometry } from './operation-geometry.js';
+import { operationGeometry,polylineAt } from './operation-geometry.js';
 
 // Aggregate only revealed engagements, independently of the duel cards' display positions.
 export function groupedOperations(campaign){
@@ -23,9 +24,10 @@ export function renderOperationalFront(world,geometry,campaign,frontPath){
  }
  return paths.length?`<g class="operational-front" pointer-events="none" data-front-actor="${esc(campaign.actorId)}" data-front-opponent="${esc(campaign.opponentId)}"><path d="${paths.join(' ')}"/></g>`:'';
 }
-export function renderCampaignRoutes(world,geometry,campaign,{frontPath,scene,progress=0,selectedPersonId=null,speed=1}={}){
+export function renderCampaignRoutes(world,geometry,campaign,{frontPath,scene,progress=0,selectedPersonId=null,speed=1,routeMode='all'}={}){
  const country=id=>world.countries.find(c=>c.id===id),anchor=(id,kind='station')=>mapAnchor(world,id,kind,geometry);
- const operations=operationGeometry(world,geometry,groupedOperations(campaign)).map(r=>{
+ const summary=routeMode==='summary',individual=groupedOperations(campaign).filter(r=>!summary||r.moving||r.personId===selectedPersonId);
+ const operations=operationGeometry(world,geometry,individual).map(r=>{
   const from=anchor(r.fromId,'reference'),to=anchor(r.toId,'battle');if(!from||!to)return '';
   const names=[...r.people].map(id=>world.people.find(p=>p.id===id)?.name).filter(Boolean).join(' · '),label=`${country(r.countryId)?.name||''} · ${names} · 이 구간 ${r.count}회 전투`;
   const count=r.count>1?`<text class="operation-count" x="${(from[0]+to[0])/2}" y="${(from[1]+to[1])/2-7}">×${r.count}</text>`:'';
@@ -38,9 +40,11 @@ export function renderCampaignRoutes(world,geometry,campaign,{frontPath,scene,pr
  const moving=scene?.kind==='movement'?scene.moves||[]:[],shown=new Map();
  for(const m of campaign.movements)if(['retreat','redeploy'].includes(m.kind)||selectedPersonId===m.personId&&!['outbound','return','relief'].includes(m.kind))shown.set(m.key,m);
  for(const m of moving)if(!['outbound','return','relief'].includes(m.kind))shown.set(`live:${m.personId}`,{...m,key:`live:${m.personId}`,live:true});
+ const pastRetreats=summary?[...shown.values()].filter(m=>m.kind==='retreat'&&!m.live&&m.personId!==selectedPersonId).map(m=>({...m,side:'retreat',path:m.visualFromId?[m.visualFromId,m.toId]:m.path,fromId:m.visualFromId||m.fromId,army:world.people.find(p=>p.id===m.personId)?.troops||0})):[];
+ const bundles=summary?bundledGeometry(world,geometry,bundleRouteSegments([...campaign.routes.filter(r=>!r.moving&&r.personId!==selectedPersonId),...pastRetreats])):[],summaryArrows=renderBundledRoutes(world,bundles);
  const liveIds=new Set(moving.map(m=>m.personId)),dedup=new Set();
  const marches=[...shown.values()].map(m=>{
-  if(!m.live&&liveIds.has(m.personId))return '';
+  if(!m.live&&liveIds.has(m.personId)||summary&&m.kind==='retreat'&&!m.live&&m.personId!==selectedPersonId)return '';
   const key=[m.kind,m.countryId,m.fromId,m.toId].join(':');if(dedup.has(key)&&!m.live)return '';dedup.add(key);
   const visualFrom=m.visualFromId||m.fromId,visualPath=m.visualFromId?[visualFrom,m.toId]:m.path;
   const points=visualPath.map((id,i)=>anchor(id,i===0&&m.visualFromId?'battle':'station')).filter(Boolean);if(points.length<2||visualFrom===m.toId)return '';
@@ -58,5 +62,7 @@ export function renderCampaignRoutes(world,geometry,campaign,{frontPath,scene,pr
   }
   return `<g class="operation-movement ${m.live?'is-moving':'is-selected'}" data-round-move="${esc(m.key)}"><title>${label} · 실제 이동</title><path class="round-march ${esc(m.kind)}" style="stroke:${color}" d="${d}"/>${dot}</g>`;
  }).join('');
- return `<g class="round-campaign-history" pointer-events="none">${marches}${operations}${fronts}</g>`;
+ return `<g class="round-campaign-history" data-route-mode="${routeMode}" pointer-events="none">${summaryArrows}${marches}${operations}${fronts}</g>`;
 }
+
+function renderBundledRoutes(world,bundles){return bundles.map(r=>{if(r.points.length<2)return '';const country=world.countries.find(c=>c.id===r.countryId),middle=polylineAt(r.points,.5).point,label=r.count>1?`<text class="operation-count bundle-count" x="${middle[0]+5}" y="${middle[1]-8}">${r.count}개 ${r.known?'부대':'경로'}</text>`:'',names=[...r.people].map(id=>world.people.find(p=>p.id===id)?.name||'지휘관').join(' · ');return `<g class="operation-arrow is-summary ${r.kind==='retreat'?'round-retreat':''}" data-route-person="${esc(r.personId||'')}" data-route-people="${esc(JSON.stringify([...r.people]))}" data-live-march="false" data-smooth-route="true" data-route-terminal="${r.terminal}" data-route-points="${esc(JSON.stringify(r.points))}" data-operation-from="${esc(r.fromId)}" data-operation-to="${esc(r.toId)}" ${r.kind==='retreat'?`data-retreat-from="${esc(r.fromId)}" data-retreat-to="${esc(r.toId)}"`:""} data-operation-count="${r.count}" data-bundle-country="${esc(r.countryId)}" data-bundle-kind="${r.kind}" data-bundle-path="${esc(JSON.stringify(r.path))}"><title>${esc(country?.name||'')} · ${esc(names)}</title>${battleRoute(r.points[0],r.points.at(-1),r.kind==='retreat'?'attack':r.side,country?.color,{id:'bundle-marker-'+[...r.key].map(c=>c.codePointAt(0).toString(16)).join('-'),active:false,points:r.points,army:r.army,width:r.width,smooth:true,arrowHead:r.terminal})}${label}</g>`;}).join('');}

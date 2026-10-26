@@ -1,9 +1,9 @@
 .game-skin .map-unit-token[data-role=king] .token-copy b {color:#ffd65a;text-shadow:0 1px 2px #000}
-.king-crown {font:normal 11px/1 sans-serif;flex:none}
+.king-crown {font:normal 11px/1 var(--studio-sans);flex:none}
 .unit-status-wash {pointer-events:none;animation:unit-status-pulse var(--outcome-time,1.8s) linear both;animation-delay:var(--outcome-delay,0s)}
 .unit-status-wash.death {fill:#ff101b}
 .unit-status-wash.appointment {fill:#ffd23e}
-.unit-status-label {pointer-events:none;font:800 18px/1 'Malgun Gothic',sans-serif;paint-order:stroke;stroke:#081015;stroke-width:3px;stroke-linejoin:round}
+.unit-status-label {pointer-events:none;font:800 18px/1 var(--studio-sans);paint-order:stroke;stroke:#081015;stroke-width:3px;stroke-linejoin:round}
 .unit-status-label.death {fill:#ff3038}
 .unit-status-label.appointment {fill:#39ff73}
 .unit-appointment {animation-name:commander-appointment}

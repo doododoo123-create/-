@@ -1,3 +1,4 @@
+import {roundedRoutePath} from './route-bundles.js';
 import { buildFrontWave,frontWaveAt,frontSequenceProgress } from './front-wave.js';
 import { atlasGeometry } from './atlas-cache.js';
 import { polylineAt, operationPath,armyArrowWidth } from './operation-geometry.js';
@@ -19,9 +20,9 @@ export class MapAnimation {
    const duelScale=Number(svg.style.getPropertyValue('--duel-display-scale'))||1;
    const screenScale=Math.hypot(matrix.a,matrix.b);
    for(const arrow of root.querySelectorAll('.operation-arrow[data-route-points]')){
-    const moving=arrow.dataset.liveMarch==='true',points=JSON.parse(arrow.dataset.routePoints),part=polylineAt(points,moving?movement:1),width=armyArrowWidth(Number(arrow.querySelector('.campaign-route-pair')?.dataset.arrowArmy)||0),gap=Math.min(part.total,(22+width*1.5)/screenScale),drawn=polylineAt(points,Math.min(moving?movement:1,part.total?(part.total-gap)/part.total:0));
+    const moving=arrow.dataset.liveMarch==='true',points=JSON.parse(arrow.dataset.routePoints),part=polylineAt(points,moving?movement:1),width=Number(arrow.querySelector('.campaign-route-pair')?.dataset.arrowWidth)||armyArrowWidth(Number(arrow.querySelector('.campaign-route-pair')?.dataset.arrowArmy)||0),gap=arrow.dataset.routeTerminal==='false'?0:Math.min(part.total,(22+width*1.5)/screenScale),drawn=polylineAt(points,Math.min(moving?movement:1,part.total?(part.total-gap)/part.total:0));
     // Very short routes have no room for a shaft outside the enlarged battle icon.
-    for(const path of arrow.querySelectorAll('.campaign-route,.campaign-route-shadow'))path.setAttribute('d',part.total>gap?operationPath(drawn.path):'');
+    for(const path of arrow.querySelectorAll('.campaign-route,.campaign-route-shadow'))path.setAttribute('d',part.total>gap?(arrow.dataset.smoothRoute==='true'?roundedRoutePath(drawn.path):operationPath(drawn.path)):'');
     const card=[...root.querySelectorAll('.map-unit-position')].find(c=>c.dataset.person===arrow.dataset.routePerson),node=card?.querySelector('.clock-marching');
     if(moving&&node){const x=part.point[0]-Number(card.dataset.mapX),y=part.point[1]-35-Number(card.dataset.mapY);node.style.transform=`translate(${x}px,${y}px)`;card.dataset.motionPin=part.point.join(',');}
     arrow.dataset.motionTip=drawn.point.join(',');arrow.dataset.iconClearance=String(gap*screenScale);

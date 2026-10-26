@@ -1,3 +1,4 @@
+import {syncLicensedFonts} from './licensed-fonts.mjs';
 import { syncSoundArt } from './sound-art.mjs';
 import { syncTextBoxArt } from './text-box-art.mjs';
 // Minimal bundling for this dependency-free application. The modular source is authoritative.
@@ -10,6 +11,7 @@ import { syncStudioArt } from './studio-art.mjs';
 import { syncKitIcons } from './ui-kit.mjs';
 import { syncGeneralPortraits } from './general-portraits.mjs';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+await syncLicensedFonts(root);
 await syncStudioArt(root);
 await syncTextBoxArt(root);
 await syncSoundArt(root);
@@ -37,6 +39,8 @@ async function bundle(path) {
   chunks.push(`\n// ${path.slice(root.length + 1)}\n${source}`);
 }
 async function scriptFor(mobile){mobileBuild=mobile;visited.clear();chunks.length=0;await bundle(resolve(root,'src/app.js'));return `(() => {\n'use strict';\n${chunks.join('\n')}\n})();`.replace(/<\/script/gi,'<\\/script');}
+let fontCss=await readFile(resolve(root,'src/ui/fonts-licensed.css'),'utf8');
+for(const match of [...fontCss.matchAll(/url\('([^']+\.woff2)'\)/g)])fontCss=fontCss.replace(match[0],`url('data:font/woff2;base64,${(await readFile(resolve(root,'src/ui',match[1]))).toString('base64')}')`);
 const css = await readFile(resolve(root, 'src/ui/style.css'), 'utf8');
 const visuals = await readFile(resolve(root, 'src/ui/visuals.css'), 'utf8');
 const mapStage = await readFile(resolve(root, 'src/ui/map-stage.css'), 'utf8');
@@ -69,7 +73,7 @@ for (const match of [...lacquerCss.matchAll(/url\("(\.\.\/\.\.\/assets\/ui-kit\/
 }
 const favicon = Buffer.from(await readFile(resolve(root, 'favicon.svg'))).toString('base64');
 let html = await readFile(resolve(root, 'index.html'), 'utf8');
-html = html.replace('<link rel="stylesheet" href="./src/ui/style.css">', `<style>${css}</style>`)
+html = html.replace('<link rel="stylesheet" href="./src/ui/fonts-licensed.css">',`<style>${fontCss}</style>`).replace('<link rel="stylesheet" href="./src/ui/style.css">', `<style>${css}</style>`)
   .replace('<link rel="stylesheet" href="./src/ui/visuals.css">', `<style>${visuals}</style>`)
   .replace('<link rel="stylesheet" href="./src/ui/map-stage.css">', `<style>${mapStage}</style>`)
   .replace('<link rel="stylesheet" href="./src/ui/map-editor.css">', `<style>${mapEditorCss}</style>`)

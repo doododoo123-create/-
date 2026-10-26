@@ -22,7 +22,7 @@
 .cartography-settings{margin-top:12px;padding-top:12px;border-top:1px solid #323d2b}
 .cartography-settings select{width:130px;padding:7px}
 .opacity-control input{width:100px;padding:0;accent-color:#c7b37e}
-.opacity-control output{width:31px;font-family:monospace}
+.opacity-control output{width:31px;font-family:var(--studio-sans)}
 .cartography-hint{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:12px;line-height:1.9;color:#b3bea7;font-size:11px}
 .cartography-hint strong{color:#f1d794;font-weight:500}
 .cartography-viewport{overflow:auto;max-height:720px;background:#103e48;scrollbar-color:#657458 #17221a}

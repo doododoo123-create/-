@@ -3,14 +3,14 @@
 .unit-role-background{stroke:#061016;stroke-width:1;opacity:.96}
 .global-history-notice{position:absolute;z-index:60;left:50%;top:8%;transform:translateX(-50%);max-width:calc(100% - 24px);padding:14px 22px;background:#0a1525f2;border:1px solid #e9bd65;border-radius:6px;color:#fff;text-align:center;pointer-events:none}
 .global-history-notice strong{display:block;font-size:22px}.global-history-notice small{display:block;font-size:12px;margin-top:5px}
-.map-play-toggle{position:absolute;z-index:90;top:10px;right:10px;padding:7px 10px;border:1px solid #a9bdc7;border-radius:5px;background:#071621df;color:white;font:600 12px 'Malgun Gothic',sans-serif;cursor:pointer;box-shadow:0 2px 5px #0006}
+.map-play-toggle{position:absolute;z-index:90;top:10px;right:10px;padding:7px 10px;border:1px solid #a9bdc7;border-radius:5px;background:#071621df;color:white;font:600 12px var(--studio-sans);cursor:pointer;box-shadow:0 2px 5px #0006}
 .map-play-toggle:focus-visible{outline:2px solid #fff;outline-offset:3px}
 .accumulating-die .visual-die:not(.rolling) .dice-art text{visibility:hidden}
-.game-skin .accumulating-die .attached-die:not(.rolling) .die-number{opacity:1;position:absolute;left:0;right:0;top:21%;min-width:0;padding:0;background:none;font:700 27px/1.25 Georgia,serif;color:var(--die-ink);text-shadow:-1px -1px #000,1px -1px #000,-1px 1px #000,1px 1px #000}
+.game-skin .accumulating-die .attached-die:not(.rolling) .die-number{opacity:1;position:absolute;left:0;right:0;top:21%;min-width:0;padding:0;background:none;font:700 27px/1.25 var(--studio-serif);color:var(--die-ink);text-shadow:-1px -1px #000,1px -1px #000,-1px 1px #000,1px 1px #000}
 .game-skin .is-v17-duel .accumulating-die .attached-die:not(.rolling) .die-number{font-size:21.6px}
 .accumulating-die .die-equation{font-size:8px!important;line-height:1.3;min-height:12px}
 .game-skin .accumulating-die .attached-die>small{bottom:-2px!important;font-size:7px}
-.bonus-flight{position:absolute;z-index:5;left:50%;top:-9px;white-space:nowrap;padding:2px 4px;border:1px solid #9cd5e6;border-radius:3px;background:#102838;color:#fff;font:700 10px 'Malgun Gothic',sans-serif;pointer-events:none;animation:score-bonus-flight var(--flight-time,.5s) linear both;animation-delay:var(--flight-delay,0s)}
+.bonus-flight{position:absolute;z-index:5;left:50%;top:-9px;white-space:nowrap;padding:2px 4px;border:1px solid #9cd5e6;border-radius:3px;background:#102838;color:#fff;font:700 10px var(--studio-sans);pointer-events:none;animation:score-bonus-flight var(--flight-time,.5s) linear both;animation-delay:var(--flight-delay,0s)}
 .score-number .score-before,.score-number .score-after{position:absolute;left:0;right:0;top:0}
 .score-before{animation:score-old var(--flight-time,.5s) linear both;animation-delay:var(--flight-delay,0s)}
 .score-after{animation:score-new var(--flight-time,.5s) linear both;animation-delay:var(--flight-delay,0s)}

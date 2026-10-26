@@ -1,0 +1,54 @@
+[
+  {
+    "file": "NotoSansKR.woff2",
+    "family": "Studio Sans",
+    "source": "https://github.com/google/fonts/tree/main/ofl/notosanskr",
+    "sourceFile": "NotoSansKR[wght].ttf",
+    "sourceSha256": "194018e6b2b293a7964f037b25c0249ce1418bc9ab3c971060a03aa57861e252",
+    "sha256": "0a9073a89e4897f43158f9b1490629ad3ba166dee7d6cbd06d861ac418c31d0c",
+    "bytes": 3908196,
+    "glyphs": 23174,
+    "weight": "variable",
+    "license": "notosanskr-OFL.txt",
+    "licenseSha256": "1c05c68c34f9708415aada51f17e1b0092d2cea709bf4a94cd38114f9e73d7d9"
+  },
+  {
+    "file": "NotoSerifKR.woff2",
+    "family": "Studio Serif",
+    "source": "https://github.com/google/fonts/tree/main/ofl/notoserifkr",
+    "sourceFile": "NotoSerifKR[wght].ttf",
+    "sourceSha256": "11f8d5de6f1b79195efba3828aaa2ec95c1178f5ae976fb23c8d53250a9938f3",
+    "sha256": "4f3bb60f58c5f94dafe5eee53ab26476eb71ebd53c3f055c77da3179a6b9cbbb",
+    "bytes": 3115956,
+    "glyphs": 23124,
+    "weight": 600,
+    "license": "notoserifkr-OFL.txt",
+    "licenseSha256": "5e0da210fb04058a8c0087985d2d456b931c2579811a49655721d3cf0c36b6d6"
+  },
+  {
+    "file": "NotoSymbols.woff2",
+    "family": "Studio Symbols",
+    "source": "https://github.com/google/fonts/tree/main/ofl/notosanssymbols2",
+    "sourceFile": "NotoSansSymbols2-Regular.ttf",
+    "sourceSha256": "7d5fb73b7ca67a6798101741f5d280a3d016a56a197afcd4199dbb57b4b82a21",
+    "sha256": "0167cbadb6c076e3f6ffc1d14575982dfd3b2a6eed00f7d0f651cab3e9c13a20",
+    "bytes": 395580,
+    "glyphs": 2955,
+    "weight": 400,
+    "license": "notosanssymbols2-OFL.txt",
+    "licenseSha256": "b118dd41337806a5d4797052c77caf3bd096aed783e5eb21b4d11154351e1ac0"
+  },
+  {
+    "file": "NotoEmoji.woff2",
+    "family": "Studio Emoji",
+    "source": "https://github.com/google/fonts/tree/main/ofl/notoemoji",
+    "sourceFile": "NotoEmoji[wght].ttf",
+    "sourceSha256": "de6c18832938afc99caf132b39d6a30a19bac7f2e812e28db2535b4608d27551",
+    "sha256": "afcdd9a553f861e7cb18235cb5aece53b78a37e346b9dc0ff05876386394f018",
+    "bytes": 2624,
+    "glyphs": 4,
+    "weight": "variable",
+    "license": "notoemoji-OFL.txt",
+    "licenseSha256": "500bb1ccf43df7bbb522112f9133a52b16e1c35e809632f5d8609b179152de5b"
+  }
+]
