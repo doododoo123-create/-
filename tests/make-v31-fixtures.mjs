@@ -1,0 +1,10 @@
+import {writeFile,mkdir} from 'node:fs/promises';
+import {campaign28Fixture,campaign28Controls} from './campaign-v28-fixture.mjs';
+import {enableCampaignV31} from '../src/model/campaign-v31.js';
+import {createRun,nextTurn} from '../src/engine/simulation.js';
+import {exportHistoryData} from '../src/storage/history-file.js';
+import {validateWorld} from '../src/model/world.js';
+await mkdir('.artifacts',{recursive:true});
+let rested=createRun(enableCampaignV31(campaign28Fixture().initialWorld),777);rested=nextTurn(rested,campaign28Controls());await writeFile('.artifacts/v31-rest.history.json',JSON.stringify(await exportHistoryData(rested)));
+const w=enableCampaignV31(campaign28Fixture().initialWorld);w.name='수도 인접 수비·복귀 검사';w.countries=w.countries.slice(0,2);w.people=w.people.filter(p=>['a','b'].includes(p.countryId)&&(p.role!=='general'||p.slot===0));w.countries[0].troops=25;w.countries[1].troops=5;w.countries[1].capitalId='tile-7';w.territories.forEach((t,i)=>t.ownerId=i<6?'a':'b');w.deployment={version:1,generals:[{personId:'a0',positionId:'tile-1',stationId:'tile-1',territoryIds:w.territories.slice(0,6).map(t=>t.id)},{personId:'b0',positionId:'tile-14',stationId:'tile-14',territoryIds:w.territories.slice(6).map(t=>t.id)}]};w.rules.unopposedCaptureLimit=1;const ctl=campaign28Controls();ctl.targetCells={0:'tile-6'};for(const key of Object.keys(ctl.rolls)){if(key.startsWith('attack:'))ctl.rolls[key]=1;if(key.startsWith('defense:'))ctl.rolls[key]=30;if(key.startsWith('death:'))ctl.rolls[key]=10;}let guard=createRun(validateWorld(w),777);guard=nextTurn(guard,ctl);await writeFile('.artifacts/v31-guard.history.json',JSON.stringify(await exportHistoryData(guard)));if(!guard.history[0].events.some(e=>e.type==='royal_return'))throw Error('royal return fixture not exercised');
+console.log('v31 portable fixtures: seasonal -6 after rest and reproducible nearby royal defense/return');

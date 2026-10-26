@@ -6,6 +6,7 @@ export function localNotices(scene,record,world){
  if(scene.kind==='movement')return [];
  if(e.type==='hold')add('출정 거부','general','refusal');
  if(e.type==='skip')add(e.detail?.includes('정비')?'정비 중':e.detail?.includes('0만')?'병력 0 · 충원 대기':'출정 불가');
+ if(e.type==='royal_return')add('수도 복귀','king');
  if(e.type==='retreat')add(e.title?.includes('인근')?'인근 후퇴':e.title?.includes('재배치')?'재배치':'후퇴',e.role||'general');
  if(e.type==='empty_return')add(e.reason==='home'?'주둔지 복귀':'수도 복귀',e.role||'general');
  if(e.type==='frontier_reserve')add('전선 대기');

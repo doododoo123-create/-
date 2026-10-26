@@ -1,3 +1,5 @@
+import {enableCampaignV31} from './model/campaign-v31.js';
+import {createContinentV31World} from './scenarios/continent-v31.js';
 import {createContinentV30World,applyDeploymentV30,matchesDeploymentV30} from './scenarios/continent-v30.js';
 import {waitForStudioFonts,showFontLicenses} from './ui/licensed-fonts.js';
 import {FileImportPanel} from './ui/file-import-panel.js';
@@ -56,7 +58,7 @@ let initialError = '';
 let territoryPresetUndo=null;
 let deploymentV30Undo=null;
 let world;
-try { world = vividWorld(prepareV13World(loadWorld(localStorage) || createContinentV30World())); } catch (error) { world = createDemoWorld(); initialError = error.message + ' 시작 예제를 표시합니다. 기존 저장 데이터는 덮어쓰지 않았습니다.'; }
+try { world = vividWorld(prepareV13World(loadWorld(localStorage) || createContinentV31World())); } catch (error) { world = createDemoWorld(); initialError = error.message + ' 시작 예제를 표시합니다. 기존 저장 데이터는 덮어쓰지 않았습니다.'; }
 const ui = { page: 'overview', selected: world.territories[0]?.id, paint: false, brush: world.countries[0]?.id || '', countryFilter: '', roleFilter: '', search: '', showNames: true, recording: false, mapFullscreen:false, seed: '20261017', speed: 1, mapStyle: 'atlas', editorView:'atlas', focusedCountry: null, focusedPerson:null, inspectedPerson:null, speedHint:0, historyOffset:0, replayLoading:false,stackFocus:{},routeMode:'summary' };
 const soundMixer=new SoundMixer({settings:loadSoundSettings(localStorage)});
 const soundDirector=new SoundDirector(soundMixer);
@@ -134,7 +136,7 @@ function render() {
   renderApp($('#app'), `
     <aside class="sidebar">
       <a class="brand" href="#" data-page="overview" aria-label="사국쟁패 Studio 세계 개요"><span class="brand-symbol">${icon('compass', 29)}</span><span><strong>사국쟁패</strong><small>HISTORY STUDIO</small></span></a>
-      <div class="workspace-label">WORKSPACE <span>v0.30.0${mobileProfile()?' · 경량판':' · 일반판'}</span></div>
+      <div class="workspace-label">WORKSPACE <span>v0.31.0${mobileProfile()?' · 경량판':' · 일반판'}</span></div>
       <button class="world-switch" data-action="world-meta"><span class="world-icon">${icon('globe', 19)}</span><span><b>${esc(world.name)}</b><small>나의 세계 · 편집 가능</small></span>${icon('edit', 13)}</button>
       <div class="nav-label">세계 만들기</div>
       <nav aria-label="주요 메뉴">${Object.entries(pages).slice(0, 5).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}<div class="nav-label nav-second">역사 관찰하기</div>${Object.entries(pages).slice(5).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}</nav>
@@ -146,7 +148,7 @@ function render() {
         ${pageHeading()}
         ${['overview','deployment'].includes(ui.page)?territoryPresetNotice():''}
         ${ui.page === 'overview' ? overview() : ui.page === 'countries' ? countriesPage() : ui.page === 'people' ? peoplePage() : ui.page === 'map' ? mapPage() : ui.page === 'deployment'?deploymentEditor.view():ui.page === 'simulation' ? simulationPage() : rulesPage()}
-        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.30.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><button type="button" class="text-button" data-action="font-licenses">글꼴 라이선스</button><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
+        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.31.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><button type="button" class="text-button" data-action="font-licenses">글꼴 라이선스</button><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
       </main>
     </div>`);
   mapCamera.restore();if(ui.page==='simulation')mapCamera.follow(playback);mapAnimation.start($('#app'),playback);
@@ -283,7 +285,7 @@ function personDialog(id) {
 function newWorldDialog() {
   stop();
   openDialog('새 세계 만들기', '현재 세계는 먼저 파일로 내보내 보관해 주세요. 지도 종류를 선택해 시작합니다. 자유 지도는 영토 수·위치가 격자에 묶이지 않습니다.', `<label>지도 종류<select name="mapTemplate"><option value="continent160">160영토 · 새 주둔·산악 배치</option><option value="reference">기존 참고 대륙 · 80영토</option><option value="free">빈 자유 지도 · 영토 1개로 시작</option><option value="grid">기존 격자 지도</option><option value="original">원본 v11 칠국 지도</option></select></label><label>세계 이름<input name="name" maxlength="80" required placeholder="예: 삼국의 시대"></label><div class="fields-two" id="grid-dimensions" style="display:none"><label>가로 영토 수<input disabled type="number" name="cols" min="2" max="24" value="10" required></label><label>세로 영토 수<input disabled type="number" name="rows" min="2" max="20" value="8" required></label></div><div class="notice">현재 작업 공간의 세계와 실행 기록이 새 세계로 교체됩니다. 파일로 내보낸 세계는 다시 불러올 수 있습니다.</div>`, '새 세계 만들기');
-  dialogHandler = data => { const type=data.get('mapTemplate');let next=type==='continent160'?createContinentV30World():type==='reference'?createReferenceWorld():type==='original'?createDemoWorld():blankWorld({name:data.get('name'),cols:Number(data.get('cols')||10),rows:Number(data.get('rows')||8)});if(type==='free'){next.mapKind='free';next.territories=[{id:'tile-0',name:'첫 영토',ownerId:null}];next.cartography={version:1,style:'illustrated',opacity:.3,background:null,polygons:{'tile-0':{points:[[500,300],[700,300],[700,500],[500,500]],center:[600,400]}},links:[]};}if(type!=='original')next=enableCampaignV28(next);next.name=data.get('name');setNewWorld(next); notify('새 세계를 만들었습니다. 지도 편집에서 영토·인접 관계를 바꿀 수 있습니다.'); };
+  dialogHandler = data => { const type=data.get('mapTemplate');let next=type==='continent160'?createContinentV31World():type==='reference'?createReferenceWorld():type==='original'?createDemoWorld():blankWorld({name:data.get('name'),cols:Number(data.get('cols')||10),rows:Number(data.get('rows')||8)});if(type==='free'){next.mapKind='free';next.territories=[{id:'tile-0',name:'첫 영토',ownerId:null}];next.cartography={version:1,style:'illustrated',opacity:.3,background:null,polygons:{'tile-0':{points:[[500,300],[700,300],[700,500],[500,500]],center:[600,400]}},links:[]};}if(type!=='original')next=enableCampaignV31(next);next.name=data.get('name');setNewWorld(next); notify('새 세계를 만들었습니다. 지도 편집에서 영토·인접 관계를 바꿀 수 있습니다.'); };
 }
 function metaDialog() {
   stop(); render();
@@ -332,7 +334,7 @@ const actions = {
   'deployment-v30-undo':()=>{if(!deploymentV30Undo)return;const previous=deploymentV30Undo;deploymentV30Undo=null;stop();deploymentEditor.reset();updateWorld(previous,{preserveDeployment:true});notify('주둔·산악 배치 적용 전으로 되돌렸습니다.');},
   'territory-v25':()=>{const next=prepareContinentV25(world);stop();territoryPresetUndo=clone(world);deploymentEditor.reset();updateWorld(next,{preserveDeployment:true});notify('새 국경·수도·초기 지휘 배치를 적용했습니다. 진행 경기는 유지하며 새 실행부터 반영됩니다.');},
   'territory-v25-undo':()=>{if(!territoryPresetUndo)return;const previous=territoryPresetUndo;territoryPresetUndo=null;stop();deploymentEditor.reset();updateWorld(previous,{preserveDeployment:true});notify('영토 배치 적용 전 세계로 되돌렸습니다.');},
-  'v27-rules':()=>{updateWorld(enableCampaignV28(clone(world)));notify('새 밸런스와 왕의 방어 부대를 준비했습니다. 새 실행부터 적용됩니다.');},
+  'v27-rules':()=>{updateWorld(enableCampaignV31(clone(world)));notify('계절 정비 혼란 −6과 왕의 수도 인근 방어 규칙을 준비했습니다. 새 실행부터 적용됩니다.');},
   'v23-rules':()=>{updateWorld(enableCampaignV23(clone(world)));notify('수복·역전승·전선 대기·제한 없는 진행을 준비했습니다. 새 실행부터 적용됩니다.');},
   'v22-rules':()=>{const next=enableCampaignV22(clone(world));updateWorld(next);notify('연속 진격·전략 목표·대패 전사 규칙을 준비했습니다. 새 실행부터 적용합니다.');},
   'replay-turn':showHistoryTurn,

@@ -1,5 +1,5 @@
 import {beginReadiness,recordDefeat,clearReadiness,battleReady,fieldOfficers} from './war-readiness.js';
-import {royalDefender} from './royal-army.js';
+import {royalDefender,returnRoyalToCapital} from './royal-army.js';
 import { expeditionRoute,expeditionChance,fieldPaths } from './field-command.js';
 import { advanceDefenders,campaignOfficerKey } from './advance-defenders.js';
 import { movementFatigue } from './campaign-logistics.js';
@@ -15,13 +15,14 @@ export function resolveContinuousCampaign(ctx){
  const {s,Atlas,rules,actor,opponent,ctl,battles,emit,die,randomInt,helpers:h}=ctx;
  const radius=Math.floor(rules.reliefRadius*(rules.distanceScale||1));
  const live=(nation,g)=>(!rules.warReadiness||battleReady(g))&&g?.active&&g.alive&&g.troops>0&&!g.stranded&&h.lands(s,nation)>0;
- const defenders=(nation,target,home,excluded)=>{const d=advanceDefenders(s,Atlas,nation,target,home,radius,excluded,g=>!rules.warReadiness||battleReady(g));if(rules.royalDefense){const entry=royalDefender(s,Atlas,nation,target,!!d.queue.find(e=>e.general===home),radius,g=>live(nation,g)&&!excluded.has(campaignOfficerKey(nation,g)));if(entry)d.queue.push(entry);}return d;};
+ const defenders=(nation,target,home,excluded)=>{const d=advanceDefenders(s,Atlas,nation,target,home,radius,excluded,g=>!rules.warReadiness||battleReady(g));if(rules.royalDefense){const entry=royalDefender(s,Atlas,nation,target,!!d.queue.find(e=>e.general===home),radius,g=>live(nation,g)&&!excluded.has(campaignOfficerKey(nation,g)),{capital:h.capitalCell(s,nation),restricted:rules.royalCapitalGuard});if(entry)d.queue.push(entry);}return d;};
  const move=(nation,g,path,kind,moves,travel)=>{
   if(!path||path.length<2)return;
   moves.push({nation,slot:g.slot,...(g.role?{role:g.role}:{}),generation:g.generation,kind,from:path[0],to:path.at(-1),path:[...path]});g.position=path.at(-1);g.stranded=false;
   const key=campaignOfficerKey(nation,g);travel.set(key,(travel.get(key)||0)+path.length-1);
  };
  const retreat=(nation,g,b,battlefield=b.cellId)=>{
+  if(rules.royalCapitalGuard&&g.role==='king')return;
   if(!g.active||!g.alive||g.troops<=0||!h.lands(s,nation))return;
   const placement=moveToNearbyRetreat(s,Atlas,nation,g,battlefield,nation===b.actor?b.cellId:b.from);
   if(placement)emit('retreat',g.name+' · 전장 인근 후퇴','살아남은 병력과 함께 가까운 자국 영토로 물러났어.',{nation,slot:g.slot,role:g.role||'general',battleIndex:b.index,...placement},true);
@@ -109,6 +110,7 @@ export function resolveContinuousCampaign(ctx){
     if(!automatic&&d.role!=='king'&&b.winner===enemy&&rules.defenderCounterattack){const margin=b.defense.score-b.attack.score;b.counterCaptureLimit=margin>=rules.counterCaptureThresholds[1]?2:margin>=rules.counterCaptureThresholds[0]?1:0;if(b.counterCaptureLimit)b.summary+=` · 최대 ${b.counterCaptureLimit}개 역공격`;}else b.counterCaptureLimit=0;
     emit('resolve',b.summary,automatic?'추가 병력 손실·승수 없음':`공격 ${b.attack.army} → ${g.troops}만 / 방어 ${b.defense.army} → ${d.troops}만`,{battleIndex:index,success:b.winner===nation},true);
     if(!automatic&&b.winner!==null){const loser=b.winner===nation?d:g,loserNation=b.winner===nation?enemy:nation;campaignDeath(ctx,b,loser,loserNation,suffix);}
+    if(!automatic&&d.role==='king'&&rules.royalCapitalGuard)returnRoyalToCapital(s,Atlas,enemy,h.capitalCell,emit,b.index);
     if(b.winner!==nation)retreat(nation,g,b);if(!automatic&&b.winner===nation)retreat(enemy,d,b);
     if(finalWin){
      captured=true;

@@ -89,6 +89,9 @@ export function validateWorld(source) {
   Object.assign(rules,validateBalanceV27(r,number,fail));
   if(typeof combat.resetConfusionOnRest!=='boolean')fail('정비 시 혼란 초기화 설정을 확인해 주세요.');rules.resetConfusionOnRest=combat.resetConfusionOnRest;
   if(rules.resetConfusionOnRest&&!rules.warReadiness)fail('정비 시 혼란 초기화에는 패전 정비 기능이 필요합니다.');
+  for(const key of ['seasonRestConfusion','royalCapitalGuard']){if(typeof combat[key]!=='boolean')fail('계절 정비·수도 방어 설정을 확인해 주세요.');rules[key]=combat[key];}
+  if(rules.seasonRestConfusion&&!rules.warReadiness)fail('계절 정비 혼란에는 패전 정비 기능이 필요합니다.');
+  if(rules.royalCapitalGuard&&!rules.royalDefense)fail('수도 인근 방어에는 왕의 방어 부대가 필요합니다.');
   for(const key of ['continuousCampaign','routDeath','strategicTargets','recoveryPriority','underdogExperience','frontierReserves']){if(typeof combat[key]!=='boolean')fail('새 연속 원정 설정을 확인해 주세요.');rules[key]=combat[key];}
   for(const [key,min,max] of [['unopposedCaptureLimit',1,3],['routDeathChance',0,100],['strategyCommitment',1,20],['strategyStall',1,20],['strategyWeakLands',1,100],['strategyEmergencyLoss',1,100],['strategyResponseOrders',1,20],['strategySwitchMargin',0,100]])rules[key]=number(combat[key],key,min,max);
   if(typeof combat.occupationAdvance!=='boolean')fail('점령 후 지휘관 전진 설정을 확인해 주세요.');rules.occupationAdvance=combat.occupationAdvance;
