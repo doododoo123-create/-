@@ -1,3 +1,4 @@
+import {PRESENTATION_RATE} from './presentation-tempo.js';
 import { combatBonuses } from '../model/combat-rules.js';
 // Recorded results become a sequence of readable display steps. These previews never enter the engine.
 const observerWorlds=new WeakMap();
@@ -38,29 +39,34 @@ export function applicationNotice(scene,record,step){
  if(step==='growth')return '전투 경험 · 지휘관 성장';
  return '';
 }
-export function observerDuration(scene,record,phase,reduced=false){
- if(phase==='departing')return reduced?80:240;
+function baseDuration(scene,record,phase,reduced=false){
+ if(phase==='departing')return 0;
  if(scene.kind==='season')return reduced?500:1500;
  if(scene.kind==='round-settle')return reduced?200:1000+Math.min(6000,(scene.settlementCount||1)*350);
  if(scene.kind==='capture')return reduced?100:900+Math.max(0,(record.battles?.[scene.battleIndex]?.takenTerritoryIds?.length||1)-1)*500;
  if(scene.kind==='route')return reduced?80:600;
- if(scene.kind==='arrival')return reduced?80:160;
+ if(scene.kind==='arrival')return 0;
  if(scene.kind==='movement')return reduced?100:1600;
  if(phase==='rolling')return reduced?80:900;
- if(phase==='raw'||phase==='merging')return 500;
+ if(phase==='raw')return reduced?40:120;
+ if(phase==='merging')return 500;
+ if(phase==='locked')return scene.kind==='reel'?160:180;
  const b=observerBattle(scene,record),capital=b?.takenTerritoryIds?.some(id=>scene.worldBefore.countries.some(c=>c.capitalId===id));
  if(scene.kind==='apply'){
   if(['war_recovery','season_recovery'].includes(scene.event?.type))return reduced?50:250;
   if(['desertion','production_settlement'].includes(scene.event?.type))return reduced?80:650;
   if(scene.event?.type==='death'||scene.event?.type==='elimination')return reduced?140:2800;
-  if(phase==='outcome')return b?.automatic?800:capital?1800:1200;
-  if(phase==='troops')return 1200;
-  if(phase==='territory')return capital?2000:1400;
-  if(phase==='growth')return 1100;
-  return ['resupply','round_end'].includes(scene.event?.type)?1100:1500;
+  if(phase==='outcome')return b?.automatic?100:capital?500:300;
+  if(phase==='troops')return 650;
+  if(phase==='territory')return 80;
+  if(phase==='growth')return 350;
+  return ['resupply','round_end'].includes(scene.event?.type)?600:650;
  }
- if(scene.kind==='summary')return 1200;
- if(scene.kind==='result')return b?(b.automatic?900:capital||Math.abs(b.attack.score-b.defense.score)<=3?1900:1400):1000;
+ if(scene.kind==='summary')return 0;
+ if(scene.kind==='result')return 0;
  if(['death','elimination','finish'].includes(scene.event?.type))return 1600;
- return 700;
+ if(['territory','occupation'].includes(scene.event?.type))return 0;
+ return 150;
 }
+
+export function observerDuration(scene,record,phase,reduced=false){const duration=baseDuration(scene,record,phase,reduced);return scene.kind==='reel'?duration:duration/PRESENTATION_RATE;}

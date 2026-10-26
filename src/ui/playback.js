@@ -1,3 +1,4 @@
+import {animationRate} from './presentation-tempo.js';
 import { movementScenes } from './movement-scenes.js';
 import { scoreBonusItems } from './score-accumulation.js';
 import { calendarAtRound } from '../model/calendar.js';
@@ -39,6 +40,7 @@ export class TurnPlayback {
     Object.assign(this,{onChange,onFinish,speed,reducedMotion,schedule,cancel,now});
     this.groupEnd=null;this.groupDone=false;this.state=null;this.handle=null;this.remaining=0;this.deadline=0;this.scheduledSpeed=1;
   }
+  get animationSpeed(){return this.speed()*animationRate(this.scene);}
   get scene(){return this.state?.scenes[this.state.index]||null;}
   get playing(){return !!this.state?.playing;}
   get complete(){return !this.state||this.state.finished;}

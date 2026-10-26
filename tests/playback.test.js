@@ -14,7 +14,7 @@ test('every source event and die has a presentation, including each sequential b
 });
 test('presentation clock pauses exactly and consumes no game randomness or mutations',()=>{
  const c=clock(),f=fixture(),snapshot=structuredClone(f.run);let finishes=0;
- const player=new TurnPlayback({...c,onFinish:()=>finishes++});player.load(f.record,f.before,f.after);assert.equal(player.scene.kind,'season');c.tick(1500);c.tick(350);player.pause();c.tick(9000);assert.equal(player.state.phase,'rolling');assert.equal(c.pending,0);
+ const player=new TurnPlayback({...c,onFinish:()=>finishes++});player.load(f.record,f.before,f.after);assert.equal(player.scene.kind,'season');c.tick(player.duration());c.tick(350);player.pause();c.tick(9000);assert.equal(player.state.phase,'rolling');assert.equal(c.pending,0);
  player.resume();c.tick(549);assert.equal(player.state.phase,'rolling');c.tick(1);assert.equal(player.state.phase,'locked');c.tick(100000);
  assert.equal(player.complete,true);assert.equal(finishes,1);assert.deepEqual(f.run,snapshot);player.finish();assert.equal(finishes,1);
 });
@@ -31,7 +31,7 @@ test('battle result is announced before ownership and troop changes are applied'
  player.finish();assert.deepEqual(player.displayWorld,f.after);assert.equal(player.showingResult,true);
 });
 test('speed changes affect only remaining clock time; reset cancels callbacks',()=>{
- const c=clock(),f=fixture();let speed=1;const player=new TurnPlayback({...c,speed:()=>speed});player.load(f.record,f.before,f.after);assert.equal(player.scene.kind,'season');c.tick(1500);c.tick(400);player.pause();speed=4;player.resume();c.tick(124);assert.equal(player.state.phase,'rolling');c.tick(1);assert.equal(player.state.phase,'locked');player.reset();c.tick(10000);assert.equal(player.state,null);assert.equal(c.pending,0);
+ const c=clock(),f=fixture();let speed=1;const player=new TurnPlayback({...c,speed:()=>speed});player.load(f.record,f.before,f.after);assert.equal(player.scene.kind,'season');c.tick(player.duration());c.tick(400);player.pause();speed=4;player.resume();c.tick(124);assert.equal(player.state.phase,'rolling');c.tick(1);assert.equal(player.state.phase,'locked');player.reset();c.tick(10000);assert.equal(player.state,null);assert.equal(c.pending,0);
 });
 test('map uses original v11 polygons and stations, showing 7 capitals and 22 general units',()=>{
  const f=fixture(),markers=unitMarkers(f.before);assert.equal(markers.filter(m=>m.role==='king').length,7);assert.equal(markers.filter(m=>m.role==='general').length,22);

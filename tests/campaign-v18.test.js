@@ -32,8 +32,8 @@ test('each full surviving-country cycle advances exactly one season and winter a
 });
 test('the season popup pauses and resumes its exact remaining time before any first-country action',()=>{
  const initial=fixture18(),n=nextTurn(initial,domestic18),record=n.history[0],saved=JSON.stringify(n);let now=0,pending=null;
- const p=new TurnPlayback({now:()=>now,schedule:(fn,delay)=>{pending={fn,delay};return 1;},cancel:()=>pending=null});p.load(record,initial.world,n.world,true);assert.equal(p.scene.kind,'season');assert.equal(pending.delay,1500);
- now=500;p.pause();assert.equal(p.remaining,1000);now=4000;p.resume();assert.equal(pending.delay,1000);pending.fn();assert.notEqual(p.scene.kind,'season');assert.equal(JSON.stringify(n),saved);p.pause();
+ const p=new TurnPlayback({now:()=>now,schedule:(fn,delay)=>{pending={fn,delay};return 1;},cancel:()=>pending=null});p.load(record,initial.world,n.world,true);assert.equal(p.scene.kind,'season');const duration=p.duration();assert.equal(pending.delay,duration);
+ now=500;p.pause();assert.equal(p.remaining,duration-500);now=4000;p.resume();assert.equal(pending.delay,duration-500);pending.fn();assert.notEqual(p.scene.kind,'season');assert.equal(JSON.stringify(n),saved);p.pause();
 });
 test('a defeated positive-army defender retreats one province beside the battlefield rather than its assigned home',()=>{
  const r=fixture18(),n=nextTurn(r,war18()),record=n.history[0],g=n.world.people.find(p=>p.id==='b0');assert.equal(g.positionId,'tile-5');assert.notEqual(g.positionId,g.stationId);assert(g.troops>0);
