@@ -1,6 +1,6 @@
 import { mapAnchor } from '../model/cartography-geometry.js';
 // Screen-only geometry. No path here is used for movement legality or fatigue.
-export function armyArrowWidth(army=0){return 3.8*(army>=21?3.3:army>=15?2.5:army>=8?1.7:1);}
+export function armyArrowWidth(army=0){return 3.8*(army>=120?6:army>=80?5:army>=50?4.3:army>=30?3.8:army>=21?3.3:army>=15?2.5:army>=8?1.7:1);}
 export function polylineAt(points,progress=1){
  const lengths=points.slice(1).map((p,i)=>Math.hypot(p[0]-points[i][0],p[1]-points[i][1])),total=lengths.reduce((a,b)=>a+b,0);
  let left=Math.max(0,Math.min(1,progress))*total;const path=points.length?[[...points[0]]]:[];

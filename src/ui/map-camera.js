@@ -19,11 +19,11 @@ export class MapCamera {
   const record=playback?.state?.record,scene=playback?.scene;if(!record||!scene)return;
   const world=scene.worldBefore||scene.worldAfter||playback.displayWorld;if(!world)return;
   const viewport=this.viewport('simulation'),view=this.view('simulation');
-  if(this.followRecord!==record){this.followRecord=record;this.followKey=null;const target=nationFraming(world,record.actorId,viewport);if(target){this.cancelMotion();Object.assign(view,{x:target.x,y:target.y},this.autoFollow?{zoom:target.zoom}:{});this.clamp(view);this.update('simulation');}}
+  if(this.followRecord!==record){this.followRecord=record;this.followKey=null;const target=!this.autoFollow&&nationFraming(world,record.actorId,viewport);if(target){this.cancelMotion();Object.assign(view,{x:target.x,y:target.y});this.clamp(view);this.update('simulation');}}
   if(!this.autoFollow||['season','round-settle','summary'].includes(scene.kind)||['round_end','desertion','production_settlement','war_recovery','season_recovery'].includes(scene.event?.type))return;
   const battle=record.battles?.[scene.battleIndex],point=battle?null:sceneFocus(scene,record),key=battle?'battle:'+battle.territoryId:point?'point:'+point.join(','):null;
   if(!key||key===this.followKey)return;
-  this.followKey=key;const target=battle?battleFraming(scene,record,viewport):{x:point[0],y:point[1]};if(!target)return;
+  this.followKey=key;const anchor=battle?mapAnchor(world,battle.territoryId,'battle'):point,target=anchor?{x:anchor[0],y:anchor[1]}:null;if(!target)return;
   this.cancelMotion();Object.assign(view,target);this.clamp(view);this.update('simulation');
  }
  view(context){if(!this.views.has(context))this.views.set(context,{zoom:1,x:600,y:400});return this.views.get(context);}

@@ -9,9 +9,10 @@ function rowList(record,world){
   const b=record.battles?.[e.battleIndex],frame=record.frames?.[e.index],known=frame?.after||frame?.before||world;
   for(const [order,m] of (record.movements||[]).find(v=>v.eventIndex===e.index)?.moves.entries()||[]){
    const p=known.people.find(p=>p.id===m.personId),name=displayName(p,displayEventText(e.title||'지휘관'));
-   const action=m.kind==='retreat'?'후퇴':m.kind==='royal-return'?'수도 복귀':m.kind==='occupation'?'점령지 진입':m.kind==='relief'||m.kind==='return'?'방어 이동':m.kind==='redeploy'?'재배치':m.kind==='home'||m.kind==='recovery'?'복귀':'진군';
+   if(m.kind==='army-march'&&order>0)continue;
+   const action=m.kind==='assembly'?'집결':m.kind==='army-march'?'집단군 진군':m.kind==='retreat'?'후퇴':m.kind==='royal-return'?'수도 복귀':m.kind==='occupation'?'점령지 진입':m.kind==='relief'||m.kind==='return'?'방어 이동':m.kind==='redeploy'?'재배치':m.kind==='home'||m.kind==='recovery'?'복귀':'진군';
    const destination=m.kind==='outbound'&&b?b.territoryId:m.toId;
-   push(e,'move',`${name} · ${territory(destination)?.name||''} ${action}`,destination,{personId:m.personId,motionOrder:order,motionKind:m.kind});
+   push(e,'move',`${m.kind==='army-march'?'집단군 '+e.armyGroup.members.length+'부대 · '+e.armyGroup.army+'만':name} · ${territory(destination)?.name||''} ${action}`,destination,{personId:m.personId,motionOrder:order,motionKind:m.kind});
   }
   if(e.type==='resolve'&&b&&!b.automatic){const won=b.winner===null?null:b.winner===b.actor?b.actorId:b.defenderId,c=world.countries.find(c=>c.id===won);push(e,'battle',`${b.territoryName} 전투 · ${c?c.name+' 승리':'무승부'}`,b.territoryId);}
   if(e.type==='resolve'&&b){const capture=(record.events||[]).find(v=>v.type==='occupation'&&v.battleIndex===b.index)||e;for(const [i,id] of (b.takenTerritoryIds||[]).entries()){const owner=world.countries.find(c=>c.id===(b.captureOwner===b.target?b.defenderId:b.actorId));push(capture,'capture',`${territory(id)?.name||'영토'} 점령 · ${owner?.name||'점령군'}`,id,{captureOrder:i,captureCount:b.takenTerritoryIds.length,battleIndex:b.index});}}

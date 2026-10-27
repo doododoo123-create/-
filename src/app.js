@@ -61,7 +61,8 @@ let territoryPresetUndo=null;
 let deploymentV30Undo=null;
 let world;
 try { world = vividWorld(prepareV13World(loadWorld(localStorage) || createContinentV31World())); } catch (error) { world = createDemoWorld(); initialError = error.message + ' 시작 예제를 표시합니다. 기존 저장 데이터는 덮어쓰지 않았습니다.'; }
-const ui = { page: 'overview', selected: world.territories[0]?.id, paint: false, brush: world.countries[0]?.id || '', countryFilter: '', roleFilter: '', search: '', showNames: true, recording: false, mapFullscreen:false, seed: '20261017', speed: 1, mapStyle: 'atlas', editorView:'atlas', focusedCountry: null, focusedPerson:null, inspectedPerson:null, speedHint:0, historyOffset:0, replayLoading:false,stackFocus:{},routeMode:'summary',selectedMapEvent:'' };
+const ui = { page: 'overview', selected: world.territories[0]?.id, paint: false, brush: world.countries[0]?.id || '', countryFilter: '', roleFilter: '', search: '', showNames: true, recording: false, mapFullscreen:false, seed: '20261017', speed: 1, mapStyle: 'atlas', editorView:'atlas', focusedCountry: null, focusedPerson:null, inspectedPerson:null, speedHint:0, historyOffset:0, replayLoading:false,stackFocus:{},routeMode:'summary',selectedMapEvent:'',armyAssembly:true };
+try{ui.armyAssembly=localStorage.getItem('saguk-studio.army-assembly.v34')!=='false';}catch{}
 let playbackSettings=loadPlaybackSettings(localStorage);
 const soundMixer=new SoundMixer({settings:loadSoundSettings(localStorage)});
 const soundDirector=new SoundDirector(soundMixer);
@@ -141,7 +142,7 @@ function render() {
   renderApp($('#app'), `
     <aside class="sidebar">
       <a class="brand" href="#" data-page="overview" aria-label="사국쟁패 Studio 세계 개요"><span class="brand-symbol">${icon('compass', 29)}</span><span><strong>사국쟁패</strong><small>HISTORY STUDIO</small></span></a>
-      <div class="workspace-label">WORKSPACE <span>v0.33.0${mobileProfile()?' · 경량판':' · 일반판'}</span></div>
+      <div class="workspace-label">WORKSPACE <span>v0.34.0${mobileProfile()?' · 경량판':' · 일반판'}</span></div>
       <button class="world-switch" data-action="world-meta"><span class="world-icon">${icon('globe', 19)}</span><span><b>${esc(world.name)}</b><small>나의 세계 · 편집 가능</small></span>${icon('edit', 13)}</button>
       <div class="nav-label">세계 만들기</div>
       <nav aria-label="주요 메뉴">${Object.entries(pages).slice(0, 5).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}<div class="nav-label nav-second">역사 관찰하기</div>${Object.entries(pages).slice(5).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}</nav>
@@ -153,7 +154,7 @@ function render() {
         ${pageHeading()}
         ${['overview','deployment'].includes(ui.page)?territoryPresetNotice():''}
         ${ui.page === 'overview' ? overview() : ui.page === 'countries' ? countriesPage() : ui.page === 'people' ? peoplePage() : ui.page === 'map' ? mapPage() : ui.page === 'deployment'?deploymentEditor.view():ui.page === 'simulation' ? simulationPage() : rulesPage()}
-        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.33.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><button type="button" class="text-button" data-action="font-licenses">글꼴 라이선스</button><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
+        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.34.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><button type="button" class="text-button" data-action="font-licenses">글꼴 라이선스</button><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
       </main>
     </div>`);
   mapCamera.restore();if(ui.page==='simulation')mapCamera.follow(playback);mapAnimation.start($('#app'),playback);
@@ -247,7 +248,7 @@ function simulationPage() {
   const running = auto || playback.playing || !!replaySession?.playing;
   return `${replaySession?`<div class="replay-banner"><span>${replaySession.turn} / ${replaySession.endTurn}턴 ${ui.replayLoading?'복원 중':replaySession.playing?'역사 재생 중 · 연속':'역사 재생 일시정지'} · 현재 경기는 보존되어 있습니다.</span>${button('return-live','현재로 돌아가기','arrow','outline')}</div>`:''}<div class="notice simulation-notice">${icon('info',16)}${data.rules.battleMode==='additive30'?'D30 전투: 병력·장군·전적·지형 가산':'원본 v11'} · 국왕 선택 → 승상의 내정 또는 장군별 원정 → 손실·점령 → 전사·재편. 각 부대의 병력을 따로 계산합니다.<button class="text-button" data-page="rules">규칙 보기 ${icon('arrow',13)}</button></div>
   <section class="simulation-controls"><div class="round-display"><small>ROUND</small><strong>${String(active?playback.state.record.round:run?.round||1).padStart(2,'0')}</strong><span>${data.rules.roundLimit===null?'제한 없음':`/ ${data.rules.roundLimit}`}</span></div><div class="simulation-meta"><b>${shownResult?'역사 기록 완료':running?'역사를 기록하는 중':run?.turn?'일시정지':'새로운 역사를 시작할 준비'}</b><span>${active?`${esc(actor?.name)} 판정 중`:actor?`${esc(actor.name)} 행동 대기`:shownResult?`${run.turn}턴 진행`:'당신의 세계가 역사의 무대가 됩니다.'}</span></div><div class="simulation-buttons">${button('playback-settings','관전 설정','settings','outline')}${playback.detailReturn?button('campaign-return','공세 요약으로 돌아가기','','outline'):''}<label class="speed-label">배속<select id="sim-speed" aria-label="자동 진행 배속">${PLAYBACK_SPEEDS.map(v=>`<option value="${v}" ${ui.speed===v?'selected':''}>${v}×</option>`).join('')}</select></label>${button('step',active&&!playback.playing?'이어서 보기':'한 턴 진행','chevron','outline',running||shownResult?'disabled':'')}${button('auto',running?'일시정지':'자동 진행',running?'pause':'play','primary',shownResult?'disabled':'')}</div></section>
-  <div class="run-settings"><label>역사 시드 <input id="sim-seed" type="number" min="0" max="4294967295" value="${esc(ui.seed)}" aria-label="역사 시드" ${run?'disabled':''}></label><span>${run?`시드 ${esc(run.seed)} · 완료된 턴 자동 저장 · 새로고침 후 이어서 실행`:'같은 세계와 시드는 같은 역사를 만듭니다.'}</span>${((run?run.engineState.roundLimit:world.rules.roundLimit)!==null&&run?.result?.reason!=='unification')?button('unlimited-continue','제한 없이 계속','play','outline',active?'disabled':''):''}${button('new-run','새 실행','reset','subtle')}${button('replay-run','같은 역사 처음부터','play','subtle',!run?'disabled':'')}</div>
+  <div class="run-settings"><label class="army-assembly-setting" title="다음 전쟁 명령부터 적용 · 집결 이동도 거리와 피로에 포함"><input id="army-assembly-setting" type="checkbox" ${ui.armyAssembly?'checked':''}> 집단군 실제 집결</label><label>역사 시드 <input id="sim-seed" type="number" min="0" max="4294967295" value="${esc(ui.seed)}" aria-label="역사 시드" ${run?'disabled':''}></label><span>${run?`시드 ${esc(run.seed)} · 완료된 턴 자동 저장 · 새로고침 후 이어서 실행`:'같은 세계와 시드는 같은 역사를 만듭니다.'}</span>${((run?run.engineState.roundLimit:world.rules.roundLimit)!==null&&run?.result?.reason!=='unification')?button('unlimited-continue','제한 없이 계속','play','outline',active?'disabled':''):''}${button('new-run','새 실행','reset','subtle')}${button('replay-run','같은 역사 처음부터','play','subtle',!run?'disabled':'')}</div>
   ${shownResult?`<div class="result-banner">${icon('crown',27)}<div><h2>${esc(winners)} ${run.result.winnerIds.length>1?'공동 승리':'승리'}</h2><p>${run.result.reason==='unification'?'경쟁 국가의 모든 영토를 정복했습니다.':'제한 라운드 종료 · 영토 수, 총병력 순으로 승자를 정했습니다.'}</p></div></div>`:''}
   <div class="simulation-layout visual-layout"><div class="visual-map-column">${mapPanel(data,false,true)}${ui.inspectedPerson?`<div class="commander-overview-slot">${commanderOverview()}</div>`:''}${renderNationCards(data,focused)}${renderCommanders(data,focused)}</div>${renderArena({world:data,run,playback})}</div>${historyList()}`;
 }
@@ -304,7 +305,7 @@ function beginTurn(play=true) {
   ensureRun();
   if(!playback.complete) { if(play) playback.resume(); return; }
   if(run.result) return;
-  const before=run.world;run=nextTurn(run);const record=run.history.at(-1);
+  const before=run.world;run=nextTurn(run,{armyAssembly:ui.armyAssembly});const record=run.history.at(-1);
   ui.focusedCountry=record.actorId;playback.load(record,before,run.world,play,run.history);
 }
 function step() { stop();beginTurn(); }
@@ -337,7 +338,7 @@ const actions = {
   'playback-settings':()=>{
    stop();render();
    openDialog('관전 설정','현재 경기와 전투 결과는 유지하며, 재생 방식만 바꿉니다.',
-    '<label class="playback-option"><input type="checkbox" name="compactCampaigns" '+(playbackSettings.compactCampaigns?'checked':'')+'> 집단군 다이스 대결표</label><p class="field-help">다이스와 보정을 공유 대결표에서 보여준 뒤, 장수 이동·후퇴·점령은 지도에서 하나씩 재생합니다. 다음 국가 차례부터 적용합니다.</p>'+
+    '<label class="playback-option"><input type="checkbox" name="compactCampaigns" '+(playbackSettings.compactCampaigns?'checked':'')+'> 집단군 다이스 대결표</label><p class="field-help">집단군의 다이스를 모두 판정한 뒤, 판정 순서대로 이동·승패·후퇴·점령을 지도에서 보여줍니다. 다음 국가 차례부터 적용합니다.</p>'+
     '<label class="playback-option"><input type="checkbox" name="kingChoiceNormalSpeed" '+(playbackSettings.kingChoiceNormalSpeed?'checked':'')+'> 국왕의 첫 행동 선택은 항상 1배속</label><p class="field-help">전쟁·내정 선택만 1배속으로 보여줍니다. 상대국 선택과 이후 전투는 선택한 배속으로 진행합니다.</p>','설정 저장');
    dialogHandler=data=>{const next={compactCampaigns:data.has('compactCampaigns'),kingChoiceNormalSpeed:data.has('kingChoiceNormalSpeed')};try{savePlaybackSettings(localStorage,next);playbackSettings=next;notify('관전 설정을 저장했습니다.');}catch{playbackSettings=next;notify('설정은 적용했지만 브라우저에 저장하지 못했습니다.',true);}render();};
   },
@@ -463,6 +464,7 @@ document.addEventListener('change', async event => {
   else if (target.id === 'person-role-filter') { ui.roleFilter = target.value; render(); }
   else if(target.name==='mapTemplate'){const grid=target.value==='grid';$('#grid-dimensions').style.display=grid?'grid':'none';document.querySelectorAll('#grid-dimensions input').forEach(input=>input.disabled=!grid);}
   else if (target.id === 'map-style') { ui.mapStyle=target.value; render(); }
+  else if(target.id === 'army-assembly-setting'){ui.armyAssembly=target.checked;try{localStorage.setItem('saguk-studio.army-assembly.v34',String(ui.armyAssembly));}catch{}}
   else if (target.id === 'sim-speed') setPlaybackSpeed(Number(target.value));
   else if (target.id === 'sim-seed') ui.seed = target.value;
 });

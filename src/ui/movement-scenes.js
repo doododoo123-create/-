@@ -13,6 +13,9 @@ export function movementScenes(event,frame,motion,initialCamps,battle=null){
   for(const m of attack){add(m,'attack',[]);scenes.at(-1).readySides=[];}route('attack');
   for(const m of defense){add(m,'defense',['attack']);scenes.at(-1).readySides=['attack'];}
   if(defense.length||battle&&!battle.automatic)route('defense');
+ }else if(event.type==='army_march'&&moves.length){
+  const before={...camps};for(const m of moves)camps={...camps,[m.personId]:{territoryId:m.toId,homeId:motion?.camps?.[m.personId]?.homeId}};
+  scenes.push({id:`army-move-${event.index}`,kind:'movement',event,title:'집단군 진군',worldBefore:frame.before,worldAfter:frame.before,campsBefore:before,camps:{...camps},moves:[...moves],armyGroup:event.armyGroup});
  }else for(const m of moves)add(m,null,[]);
  if(motion){camps={...camps,...motion.camps};if(moves.some(m=>m.kind==='occupation')){
   scenes.push({id:`arrival-${event.index}`,kind:'arrival',event,battleIndex:event.battleIndex,title:'점령지 도착',worldBefore:frame.before,worldAfter:frame.after,camps:{...camps}});

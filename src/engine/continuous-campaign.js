@@ -8,6 +8,7 @@ import { combatBonuses,combatCasualties,roundedTroops } from '../model/combat-ru
 import { moveToNearbyRetreat,returnEmptyCommanders } from './battlefield-movement.js';
 import { campaignDeath } from './campaign-deaths.js';
 import { initializeStrategy } from './strategic-targets.js';
+import {assembleArmies} from './army-assembly.js';
 
 // Each directional advance has a finite capture allowance. A counter starts a new
 // allowance, but every defeat removes a distinct officer from this operation.
@@ -38,17 +39,21 @@ export function resolveContinuousCampaign(ctx){
   for(const c of s.countries)h.syncArmy(c);
   if(h.aliveIds(s).length===1)h.finish(s,'conquest');
  };
- for(const slot of s.countries[actor].generals.filter(g=>g.active&&g.alive).map(g=>g.slot)){
+ const assembly=assembleArmies(ctx);
+ const originalSlots=s.countries[actor].generals.filter(g=>g.active&&g.alive).map(g=>g.slot);
+ const slots=assembly.groups.length?[...assembly.groups.flatMap(group=>group.members.map(g=>g.slot).sort((a,b)=>a-b)),...originalSlots.filter(slot=>!assembly.bySlot.has(slot))]:originalSlots;
+ for(const slot of slots){
   if(s.result||!h.lands(s,actor))break;
   const initial=s.countries[actor].generals[slot],candidates=h.targets(s,actor,slot,opponent);
-  if(!live(actor,initial)||!candidates.length){emit('skip',initial.name+' 공격 건너뜀',!initial.troops?'병력 0만명 · 충원 대기':initial.readiness?.resting?'이번 전쟁 정비 중':'도달 가능한 접경 영토 없음',{nation:actor,slot,role:'general'});continue;}
+  if(!live(actor,initial)||!candidates.length){assembly.detach?.(initial);emit('skip',initial.name+' 공격 건너뜀',!initial.troops?'병력 0만명 · 충원 대기':initial.readiness?.resting?'이번 전쟁 정비 중':'도달 가능한 접경 영토 없음',{nation:actor,slot,role:'general'});continue;}
   const routes=new Map(candidates.map(id=>[id,expeditionRoute(s,Atlas,actor,initial,id)]));
   let target=chooseFrontier(s,Atlas,actor,candidates,{paths:new Map([...routes].map(([id,r])=>[id,r.path])),supply:h.connectedSupply,recoveryPriority:rules.recoveryPriority,recoveryBonus:rules.finishStrategy?rules.recoveryScoreCap:0},randomInt);
   if(ctl.targetCells?.[slot]!==undefined){target=ctl.targetCells[slot];if(!candidates.includes(target))throw Error('인접하지 않은 대상 영지');}
-  const firstRoute=routes.get(target),chance=expeditionChance(firstRoute.distance,rules),roll=die('expedition:'+slot,100);
-  emit('expedition_roll',initial.name+' 출전 판정',`목표까지 ${firstRoute.distance}칸 · 출전 확률 ${chance}%`,{nation:actor,slot,role:'general',roll,faces:100,distance:firstRoute.distance,chance,accepted:roll<=chance,cellId:target});
-  if(roll>chance){emit('hold',initial.name+' 출전하지 않음','선택한 목표를 포기하고 현재 위치에서 대기해.',{nation:actor,slot,role:'general',cellId:target});continue;}
-  const root={id:battles.length,defeated:new Set(),travel:new Map(),capitalFalls:new Set()};
+  const firstRoute=routes.get(target),assemblyEdges=assembly.travel.get(campaignOfficerKey(actor,initial))||0,distance=assemblyEdges+firstRoute.distance,chance=expeditionChance(distance,rules),roll=die('expedition:'+slot,100);
+  emit('expedition_roll',initial.name+' 출전 판정',`${ctl.armyAssembly?'집결 포함 ':''}목표까지 ${distance}칸 · 출전 확률 ${chance}%`,{nation:actor,slot,role:'general',roll,faces:100,distance,chance,accepted:roll<=chance,cellId:target});
+  if(roll>chance){assembly.detach?.(initial);emit('hold',initial.name+' 출전하지 않음','선택한 목표를 포기하고 현재 위치에서 대기해.',{nation:actor,slot,role:'general',cellId:target});continue;}
+  assembly.march?.(initial,firstRoute.path);assembly.detach?.(initial);
+  const root={id:battles.length,defeated:new Set(),travel:new Map(assembly.travel),capitalFalls:new Set()};
   let task={nation:actor,enemy:opponent,g:initial,target,budget:null,taken:[],special:[],counter:false};
   while(task&&!s.result){
    const {nation,enemy,g}=task;
@@ -63,6 +68,7 @@ export function resolveContinuousCampaign(ctx){
     if(!automatic)move(enemy,d,entry.path,entry.kind,moves,root.travel);
     const b={index,assaultId:root.id,operationId:root.id,continuation:task.counter?'counter':task.taken.length?'advance':'initial',wave:wave+1,defendersTotal:defense.queue.length,actor:nation,target:enemy,slot:g.slot,defenseSlot:d.slot,...(d.role==='king'?{defenseRole:'king'}:{}),regionSlot:home.slot,returnBlocked:defense.blocked,relief:entry.kind==='relief',cellId,from:route.from,candidates:[cellId],distance:route.distance,moves,automatic,winner:null,takenCells:[],captureOwner:nation,
      attack:{id:nation,slot:g.slot,name:g.name,ability:g.ability,army:g.troops},defense:{id:enemy,slot:d.slot,...(d.role==='king'?{role:'king',generation:d.generation}:{}),name:automatic?'방어 병력 없음':d.name,ability:d.ability,army:automatic?0:d.troops}};
+    if(assembly.bySlot.has(slot)){b.armyGroupId=assembly.bySlot.get(slot).id;b.assemblyEdges=assembly.travel.get(campaignOfficerKey(nation,g))||0;}
     battles.push(b);
     if(!automatic&&rules.warReadiness){beginReadiness(g);beginReadiness(d);}
     if(rules.strategicTargets&&cellId===h.capitalCell(s,enemy)){const strategy=initializeStrategy(s,enemy);if(!strategy.capitalAttackers.includes(nation))strategy.capitalAttackers.push(nation);}
@@ -138,5 +144,6 @@ export function resolveContinuousCampaign(ctx){
    task.target=chooseFrontier(s,Atlas,nation,options,{recent:task.taken,supply:h.connectedSupply,recoveryPriority:rules.recoveryPriority,recoveryBonus:rules.finishStrategy?rules.recoveryScoreCap:0},randomInt);
   }
  }
+ assembly.finish?.();
  if(rules.warReadiness&&clearReadiness(s))emit('war_recovery','전쟁 명령 종료 · 정비 해제','혼란 점수는 계절이 끝날 때까지 유지해.',{},true);
 }

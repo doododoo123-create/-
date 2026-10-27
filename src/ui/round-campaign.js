@@ -29,7 +29,7 @@ export function roundCampaign(world,presentation){
  const limit=complete?Infinity:scene?.mapEventIndex??scene?.event?.index??-1;
  const applied=r=>r!==record||complete;
  for(const r of records){
-  for(const motion of r.movements||[])for(const m of motion.moves)if(applied(r)||motion.eventIndex<limit||motion.eventIndex===limit&&(scene?.kind!=='movement'||['retreat','redeploy'].includes(m.kind)))movements.push({...m,army:r.frames?.[motion.eventIndex]?.before?.people.find(p=>p.id===m.personId)?.troops,turn:r.turn,key:`${r.turn}:${motion.eventIndex}:${m.personId}`});
+  for(const motion of r.movements||[])for(const m of motion.moves)if(applied(r)||motion.eventIndex<limit||motion.eventIndex===limit&&(scene?.kind!=='movement'||['retreat','redeploy'].includes(m.kind)))movements.push({...m,...(motion.armyGroup?{armyGroup:motion.armyGroup}:{}),eventIndex:motion.eventIndex,army:r.frames?.[motion.eventIndex]?.before?.people.find(p=>p.id===m.personId)?.troops,turn:r.turn,key:`${r.turn}:${motion.eventIndex}:${m.personId}`});
   for(const b of r.battles||[]){
    const event=r.events.find(e=>e.type==='territory'&&e.battleIndex===b.index),resolve=r.events.find(e=>e.type==='resolve'&&e.battleIndex===b.index);
    const revealed=applied(r)||event&&(event.index<=limit);
