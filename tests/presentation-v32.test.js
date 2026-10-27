@@ -14,7 +14,7 @@ function campaignFixture(){const initial=createRun(createDemoWorld(),123456),run
 function timing(){let id=0,now=0;const jobs=new Map();return {jobs,now:()=>now,schedule:(fn,ms)=>{jobs.set(++id,{fn,ms});return id;},cancel:n=>jobs.delete(n),advance(ms){now+=ms;}};}
 test('compact groups preserve the engine and reveal only completed battles',()=>{
  const f=campaignFixture(),snapshot=JSON.stringify(f.run),raw=makeTurnScenes(f.record,f.before),compact=compactCampaignScenes(raw,f.record),groups=compact.filter(s=>s.kind==='campaign');
- assert(groups.length>0);assert(compact.length<raw.length);
+ assert(groups.length>0);assert.equal(compact.filter(s=>s.kind==='movement').length,raw.filter(s=>s.kind==='movement').length);assert.equal(compact.filter(s=>s.kind==='capture').length,raw.filter(s=>s.kind==='capture').length);
  for(const s of groups){
   const info=campaignSummary(s);
   assert.equal(info.completed,s.completedBattles);

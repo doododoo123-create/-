@@ -53,7 +53,7 @@ export class TurnPlayback {
   duration(){return this.scene?.kind==='campaign'?campaignSceneDuration(this.scene):observerDuration(this.scene,this.state.record,this.state.phase==='departing'?'departing':this.state.effectStage||this.state.phase,this.reducedMotion());}
   clearTimer(){if(this.handle!==null)this.cancel(this.handle);this.handle=null;}
   load(record,before,after,play=true,history=[]){
-    this.clearTimer();this.groupEnd=null;this.groupDone=false;this.detailReturn=null;const original=makeTurnScenes(record,before,history),scenes=this.options().compactCampaigns?compactCampaignScenes(original,record):original;scenes.at(-1).worldAfter=after;
+    this.clearTimer();this.groupEnd=null;this.groupDone=false;this.detailReturn=null;this.campaignExpanded=false;const original=makeTurnScenes(record,before,history),scenes=this.options().compactCampaigns?compactCampaignScenes(original,record):original;scenes.at(-1).worldAfter=after;
     this.state={record,before,after,scenes,index:0,previousRoundRecords:history.filter(r=>r.round===record.round-1),roundRecords:history.filter(r=>r.round===record.round&&r.turn<record.turn),phase:['roll','reel'].includes(scenes[0].kind)?'rolling':'holding',playing:play,finished:false};
     this.remaining=this.duration();this.onChange();if(play)this.arm();
   }
@@ -68,7 +68,7 @@ export class TurnPlayback {
     else if(this.state.phase==='merging'){const count=this.scene.bonusItems?.filter(i=>i.value).length||1;if((this.state.mergeIndex||0)<count-1)this.state.mergeIndex++;else this.state.phase='locked';}
     else if(this.state.phase!=='departing'&&this.state.scenes[this.state.index+1]?.kind==='apply')this.state.phase='departing';
     else if(this.groupEnd===this.state.index&&this.state.index<this.state.scenes.length-1){this.remaining=0;this.state.playing=false;this.groupDone=true;if(this.scene.kind==='apply')this.state.phase='settled';this.onChange();return;}
-    else if(this.state.index<this.state.scenes.length-1){this.state.index++;this.state.mergeIndex=0;this.state.phase=['roll','reel'].includes(this.scene.kind)?'rolling':'holding';this.state.effectStage=this.scene.kind==='apply'?applicationSteps(this.scene,this.state.record)[0]:null;}
+    else if(this.state.index<this.state.scenes.length-1){this.state.index++;this.campaignExpanded=false;this.state.mergeIndex=0;this.state.phase=['roll','reel'].includes(this.scene.kind)?'rolling':'holding';this.state.effectStage=this.scene.kind==='apply'?applicationSteps(this.scene,this.state.record)[0]:null;}
     else{if(this.detailReturn){this.returnCampaignDetails();return;}this.state.finished=true;this.state.playing=false;this.onChange();this.onFinish();return;}
     this.remaining=this.duration();this.onChange();if(this.state.playing)this.arm();
   }
@@ -96,6 +96,6 @@ export class TurnPlayback {
     if(!this.detailReturn)return;this.clearTimer();Object.assign(this,this.detailReturn);this.detailReturn=null;this.state.playing=false;this.onChange();
   }
   finish(){if(this.detailReturn)this.returnCampaignDetails();if(!this.state||this.state.finished)return;this.clearTimer();this.state.index=this.state.scenes.length-1;this.state.phase='holding';this.state.finished=true;this.state.playing=false;this.onChange();this.onFinish();}
-  reset(){this.clearTimer();this.detailReturn=null;this.state=null;this.remaining=0;}
+  reset(){this.clearTimer();this.detailReturn=null;this.campaignExpanded=false;this.state=null;this.remaining=0;}
 }
 

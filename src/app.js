@@ -1,3 +1,4 @@
+import {recentMapEvents,refreshRecentMapEvents} from './ui/recent-map-events.js';
 import {enableCampaignV31} from './model/campaign-v31.js';
 import {createContinentV31World} from './scenarios/continent-v31.js';
 import {createContinentV30World,applyDeploymentV30,matchesDeploymentV30} from './scenarios/continent-v30.js';
@@ -60,7 +61,7 @@ let territoryPresetUndo=null;
 let deploymentV30Undo=null;
 let world;
 try { world = vividWorld(prepareV13World(loadWorld(localStorage) || createContinentV31World())); } catch (error) { world = createDemoWorld(); initialError = error.message + ' 시작 예제를 표시합니다. 기존 저장 데이터는 덮어쓰지 않았습니다.'; }
-const ui = { page: 'overview', selected: world.territories[0]?.id, paint: false, brush: world.countries[0]?.id || '', countryFilter: '', roleFilter: '', search: '', showNames: true, recording: false, mapFullscreen:false, seed: '20261017', speed: 1, mapStyle: 'atlas', editorView:'atlas', focusedCountry: null, focusedPerson:null, inspectedPerson:null, speedHint:0, historyOffset:0, replayLoading:false,stackFocus:{},routeMode:'summary' };
+const ui = { page: 'overview', selected: world.territories[0]?.id, paint: false, brush: world.countries[0]?.id || '', countryFilter: '', roleFilter: '', search: '', showNames: true, recording: false, mapFullscreen:false, seed: '20261017', speed: 1, mapStyle: 'atlas', editorView:'atlas', focusedCountry: null, focusedPerson:null, inspectedPerson:null, speedHint:0, historyOffset:0, replayLoading:false,stackFocus:{},routeMode:'summary',selectedMapEvent:'' };
 let playbackSettings=loadPlaybackSettings(localStorage);
 const soundMixer=new SoundMixer({settings:loadSoundSettings(localStorage)});
 const soundDirector=new SoundDirector(soundMixer);
@@ -93,6 +94,7 @@ const fileImportPanel=new FileImportPanel({notify,commit:async(prepared,signal)=
  await commitFileImport(localStorage,prepared,{signal});
  stop();playback.reset();soundDirector.reset();mapEditor.reset();deploymentEditor.reset();mapCamera.resetAll();territoryPresetUndo=null;deploymentV30Undo=null;replaySession=null;replayToken++;world=vividWorld(prepared.world);run=prepared.run;ui.seed=run?.seed||ui.seed;ui.historyOffset=0;ui.selected=world.territories[0]?.id;ui.brush=world.countries[0]?.id||'';ui.paint=false;ui.search='';ui.countryFilter='';ui.roleFilter='';ui.inspectedPerson=null;ui.page=run?'simulation':'overview';saveStatus='브라우저에 자동 저장';render();void pruneStoredWorlds(localStorage).catch(()=>{});void pruneArchivedRuns(localStorage).catch(()=>{});
 }});
+mapAnimation.onMapProgress=()=>refreshRecentMapEvents(run,playback,playback.displayWorld||run?.world||world,ui.selectedMapEvent);
 const pages = { overview: ['globe', '세계 개요'], countries: ['flag', '국가 관리'], people: ['people', '인물 관리'], map: ['map', '지도 · 영토'], deployment:['people','시작 배치'], simulation: ['play', '시뮬레이션'], rules: ['settings', '규칙 설정'] };
 const dot = color => `<span class="dot" style="--color:${esc(color)}"></span>`;
 const countryOptions = (selected, empty = '무소속') => `<option value="">${empty}</option>${world.countries.map(c => `<option value="${esc(c.id)}" ${selected === c.id ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}`;
@@ -135,11 +137,11 @@ function render() {
   document.title = `${world.name} · 사국쟁패 Studio${mobileProfile()?' 모바일 경량판':''}`;
   document.body.classList.toggle('map-stage-open',ui.mapFullscreen);
   $('#app').className = ui.mapFullscreen?'map-fullscreen':ui.recording ? 'recording-mode' : '';
-  if(ui.mapFullscreen){renderApp($('#app'),renderMapStage({world:playback.displayWorld||run?.world||previewWorld(world),run,playback,auto,speed:ui.speed,showNames:ui.showNames,focusedCountry:ui.focusedCountry,focusedPerson:ui.focusedPerson,stackFocus:ui.stackFocus,commanderPanel:commanderOverview(true),soundButton:renderSoundButton(soundMixer.settings,true),speedHint:ui.speedHint>Date.now(),cameraFollow:mapCamera.autoFollow,routeMode:ui.routeMode}));mapCamera.restore();mapCamera.follow(playback);mapAnimation.start($('#app'),playback);return;}
+  if(ui.mapFullscreen){renderApp($('#app'),renderMapStage({world:playback.displayWorld||run?.world||previewWorld(world),run,playback,auto,speed:ui.speed,showNames:ui.showNames,focusedCountry:ui.focusedCountry,focusedPerson:ui.focusedPerson,stackFocus:ui.stackFocus,commanderPanel:commanderOverview(true),soundButton:renderSoundButton(soundMixer.settings,true),speedHint:ui.speedHint>Date.now(),cameraFollow:mapCamera.autoFollow,routeMode:ui.routeMode,selectedMapEvent:ui.selectedMapEvent}));mapCamera.restore();mapCamera.follow(playback);mapAnimation.start($('#app'),playback);return;}
   renderApp($('#app'), `
     <aside class="sidebar">
       <a class="brand" href="#" data-page="overview" aria-label="사국쟁패 Studio 세계 개요"><span class="brand-symbol">${icon('compass', 29)}</span><span><strong>사국쟁패</strong><small>HISTORY STUDIO</small></span></a>
-      <div class="workspace-label">WORKSPACE <span>v0.32.0${mobileProfile()?' · 경량판':' · 일반판'}</span></div>
+      <div class="workspace-label">WORKSPACE <span>v0.33.0${mobileProfile()?' · 경량판':' · 일반판'}</span></div>
       <button class="world-switch" data-action="world-meta"><span class="world-icon">${icon('globe', 19)}</span><span><b>${esc(world.name)}</b><small>나의 세계 · 편집 가능</small></span>${icon('edit', 13)}</button>
       <div class="nav-label">세계 만들기</div>
       <nav aria-label="주요 메뉴">${Object.entries(pages).slice(0, 5).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}<div class="nav-label nav-second">역사 관찰하기</div>${Object.entries(pages).slice(5).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}</nav>
@@ -151,7 +153,7 @@ function render() {
         ${pageHeading()}
         ${['overview','deployment'].includes(ui.page)?territoryPresetNotice():''}
         ${ui.page === 'overview' ? overview() : ui.page === 'countries' ? countriesPage() : ui.page === 'people' ? peoplePage() : ui.page === 'map' ? mapPage() : ui.page === 'deployment'?deploymentEditor.view():ui.page === 'simulation' ? simulationPage() : rulesPage()}
-        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.32.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><button type="button" class="text-button" data-action="font-licenses">글꼴 라이선스</button><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
+        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.33.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><button type="button" class="text-button" data-action="font-licenses">글꼴 라이선스</button><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
       </main>
     </div>`);
   mapCamera.restore();if(ui.page==='simulation')mapCamera.follow(playback);mapAnimation.start($('#app'),playback);
@@ -335,10 +337,12 @@ const actions = {
   'playback-settings':()=>{
    stop();render();
    openDialog('관전 설정','현재 경기와 전투 결과는 유지하며, 재생 방식만 바꿉니다.',
-    '<label class="playback-option"><input type="checkbox" name="compactCampaigns" '+(playbackSettings.compactCampaigns?'checked':'')+'> 집단군 전투 빠른 처리</label><p class="field-help">연속 전투의 주사위 연출을 묶고, 공세 종료 뒤 손실과 영토 변화를 요약합니다. 다음 국가 차례부터 적용합니다.</p>'+
+    '<label class="playback-option"><input type="checkbox" name="compactCampaigns" '+(playbackSettings.compactCampaigns?'checked':'')+'> 집단군 다이스 대결표</label><p class="field-help">다이스와 보정을 공유 대결표에서 보여준 뒤, 장수 이동·후퇴·점령은 지도에서 하나씩 재생합니다. 다음 국가 차례부터 적용합니다.</p>'+
     '<label class="playback-option"><input type="checkbox" name="kingChoiceNormalSpeed" '+(playbackSettings.kingChoiceNormalSpeed?'checked':'')+'> 국왕의 첫 행동 선택은 항상 1배속</label><p class="field-help">전쟁·내정 선택만 1배속으로 보여줍니다. 상대국 선택과 이후 전투는 선택한 배속으로 진행합니다.</p>','설정 저장');
    dialogHandler=data=>{const next={compactCampaigns:data.has('compactCampaigns'),kingChoiceNormalSpeed:data.has('kingChoiceNormalSpeed')};try{savePlaybackSettings(localStorage,next);playbackSettings=next;notify('관전 설정을 저장했습니다.');}catch{playbackSettings=next;notify('설정은 적용했지만 브라우저에 저장하지 못했습니다.',true);}render();};
   },
+  'focus-map-event':id=>{const display=playback.displayWorld||run?.world||world,entry=recentMapEvents(run,playback,display).find(e=>e.id===id);if(!entry)return;stop();ui.selectedMapEvent=id;mapCamera.inspect(display,entry.territoryId);render();},
+  'campaign-table':()=>{stop();playback.campaignExpanded=!playback.campaignExpanded;render();},
   'campaign-pause':()=>{stop();render();},
   'campaign-detail':()=>{stop();playback.showCampaignDetails();render();},
   'campaign-return':()=>{stop();playback.returnCampaignDetails();render();},

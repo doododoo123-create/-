@@ -4,12 +4,13 @@ import { atlasGeometry } from './atlas-cache.js';
 import { polylineAt, operationPath,armyArrowWidth } from './operation-geometry.js';
 // One presentation clock drives card pins, arrowheads and territory wipes.
 export class MapAnimation {
- constructor(){this.frame=null;this.root=null;this.playback=null;this.waves=[];}
- start(root,playback){this.stop();this.root=root;this.playback=playback;const world=playback.displayWorld,geometry=world?atlasGeometry(world):null;this.waves=[...root.querySelectorAll('[data-front-wave]')].map(e=>({element:e,index:Number(e.dataset.frontWave),model:buildFrontWave(world,geometry,Number(e.dataset.frontWave),e.dataset.waveFrom)}));this.tick();}
+ constructor(){this.frame=null;this.root=null;this.playback=null;this.waves=[];this.progressKey=null;}
+ start(root,playback){this.stop();this.root=root;this.playback=playback;const world=playback.displayWorld,geometry=world?atlasGeometry(world):null;this.waves=[...root.querySelectorAll('[data-front-wave]')].map(e=>({element:e,index:Number(e.dataset.frontWave),model:buildFrontWave(world,geometry,Number(e.dataset.frontWave),e.dataset.waveFrom)}));const list=root.querySelector('.campaign-duel-list'),row=list?.querySelector('[data-current-duel=true]');if(list&&row)list.scrollTop=Math.max(0,row.getBoundingClientRect().top-list.getBoundingClientRect().top+list.scrollTop-(list.clientHeight-row.clientHeight)/2);this.tick();}
  stop(){if(this.frame!==null)cancelAnimationFrame(this.frame);this.frame=null;}
  tick(){
   this.frame=null;const root=this.root,p=this.playback;if(!root?.isConnected||!p)return;
   const progress=p.sceneProgress,movement=p.movementProgress;
+  const progressKey=p.scene?.kind==='capture'?p.state.record.turn+':'+p.scene.id+':'+Math.floor(progress*(p.state.record.battles[p.scene.battleIndex]?.takenTerritoryIds?.length||1)):null;if(progressKey&&progressKey!==this.progressKey){this.progressKey=progressKey;this.onMapProgress?.();}
   for(const line of root.querySelectorAll('[data-campaign-countdown]'))line.style.transform='scaleX('+(1-progress)+')';
   const settling=p.scene?.kind==='round-settle',travel=settling?Math.max(0,(progress-.18)/.82):progress,highlight=settling&&progress<.18?Math.sin(progress/.18*Math.PI)*.85:0;
   for(const wave of this.waves){const e=wave.element;if(!e.isConnected)continue;const local=frontSequenceProgress(travel,Number(e.dataset.waveOrder),Number(e.dataset.waveCount)),shape=frontWaveAt(wave.model,local);e.setAttribute('d',shape.fill);e.setAttribute('width',String(Number(e.dataset.wipeSpan)*local));e.dataset.waveProgress=String(local);

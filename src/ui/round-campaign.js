@@ -26,7 +26,7 @@ export function roundCampaign(world,presentation){
  if(!before)for(const c of [...(record.changes||[])].reverse())baseOwners.set(c.territoryId,c.from);
  for(const r of [...past].reverse())for(const c of [...(r.changes||[])].reverse())baseOwners.set(c.territoryId,c.from);
  const captures=new Map(),routes=[],fronts=new Map(),movements=[],lanes=new Map(),battleSites=new Map(),pendingCaptures=new Map();
- const limit=complete?Infinity:scene?.event?.index??-1;
+ const limit=complete?Infinity:scene?.mapEventIndex??scene?.event?.index??-1;
  const applied=r=>r!==record||complete;
  for(const r of records){
   for(const motion of r.movements||[])for(const m of motion.moves)if(applied(r)||motion.eventIndex<limit||motion.eventIndex===limit&&(scene?.kind!=='movement'||['retreat','redeploy'].includes(m.kind)))movements.push({...m,army:r.frames?.[motion.eventIndex]?.before?.people.find(p=>p.id===m.personId)?.troops,turn:r.turn,key:`${r.turn}:${motion.eventIndex}:${m.personId}`});

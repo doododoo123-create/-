@@ -55,7 +55,7 @@ export function renderAtlas(world,{selected,observe=false,showNames=true,present
   const scene=presentation?.scenes[presentation.index],battle=record?.battles[scene?.battleIndex],readySides=scene?.readySides||['attack','defense'];
   const nextBorders=revealing.size?atlasBorders(world,geometry):[],nextGroups=new Map();for(const b of nextBorders){if(!nextGroups.has(b.ownerId))nextGroups.set(b.ownerId,[]);nextGroups.get(b.ownerId).push(b.path);}
   const nextBorderMarkup=[...nextGroups].map(([id,paths],i)=>`<clipPath id="capture-new-owner-${i}">${world.territories.flatMap((t,j)=>t.ownerId===id?[`<path d="${geometry.cells[j].path}"/>`]:[]).join('')}</clipPath><g clip-path="url(#capture-new-owner-${i})"><path d="${paths.join(' ')}" fill="none" stroke="#111e20" stroke-width="8"/><path class="country-border-color" d="${paths.join(' ')}" fill="none" stroke="${findCountry(world,id)?.color||'#c5bb96'}" stroke-width="5.5"/></g>`).join('');
-  const battleVisible=presentation?.phase!=='settled'&&!['arrival','capture','round-settle'].includes(scene?.kind)&&!!battle&&['territory','attack_roll','defense_roll','battle_auto','resolve'].includes(scene?.event?.type);
+  const battleVisible=!['dice','approach','automatic'].includes(scene?.campaignPhase)&&presentation?.phase!=='settled'&&!['arrival','capture','round-settle'].includes(scene?.kind)&&!!battle&&['territory','attack_roll','defense_roll','battle_auto','resolve'].includes(scene?.event?.type);
   const effectStage=presentation?.effectStage;
   const effects=mapEffects(presentation?.phase==='settled'?null:scene,effectStage,record),captured=new Set(effects.territories.map(e=>e.territoryId));
   const camps=scene?.camps||world.visualCamps||{};

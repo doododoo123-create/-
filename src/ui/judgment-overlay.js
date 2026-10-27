@@ -22,7 +22,7 @@ function judgmentTraits(person,role,country){
   return `<p class="judgment-feature">${esc(person?.feature||trait||'')}<span>${role==='minister'?`${esc(trait)} · 능력 ${judgmentSign(person?.ability)}`:role==='king'?esc(trait||''):`능력 ${judgmentSign(person?.ability)}`}</span></p>`;
 }
 export function renderJudgmentOverlay({world,playback}) {
-  if(playback.scene?.kind==='campaign')return renderCampaignOverlay({playback});
+  if(playback.scene?.campaign&&!(playback.scene.campaignPhase==='map'&&playback.scene.kind==='roll'))return renderCampaignOverlay({playback});
   if(!judgmentVisible(playback))return '';
   const state=playback.state,scene=playback.scene,event=scene.event||{},record=state.record;
   if(scene.kind==='season')return renderSeasonAnnouncement(scene);
