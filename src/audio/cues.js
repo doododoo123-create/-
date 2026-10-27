@@ -1,3 +1,4 @@
+import {campaignSummary} from '../ui/campaign-playback.js';
 import { SOUND_PACK } from '../data/sound-art.js';
 import { SOUND_DEFAULTS } from './settings.js';
 // Visible presentation only. Never import or advance the simulation RNG here.
@@ -13,7 +14,11 @@ export function presentationSoundCues(state,{speed=1,settings=SOUND_DEFAULTS,dur
  if(e.type==='elimination'){notable('country_eliminated','elimination',90);return result;}
  if(e.type==='finish'&&(e.result?.reason==='conquest'||record.result?.reason==='unification')){notable('campaign_complete','unification',100);return result;}
  if(scene.kind==='apply'&&e.type==='death'){notable('general_fallen','death',80);return result;}
- if(veryFast)return result;
+ if(scene.kind==='campaign'){
+  if(scene.campaignPhase==='combat'){const info=campaignSummary(scene);if(info.combats)cue('sword_clash','campaign-clash:'+scene.id,'battle',{maxDuration:.24});}
+  if(scene.campaignPhase==='summary'){const info=campaignSummary(scene);cue(info.notices.length?'battle_impact':info.net>0?'territory_capture':info.wins>info.losses?'battle_victory':info.wins<info.losses?'battle_defeat':'battle_draw','campaign-summary:'+scene.id,'battle',{priority:45,maxDuration:.65});}
+  return result;
+ }
  if(scene.kind==='apply'&&e.type==='roster'){const old=new Map(scene.worldBefore?.people.map(p=>[p.id,p])||[]);if(scene.worldAfter?.people.some(p=>p.role==='general'&&p.active&&p.alive&&(!old.get(p.id)?.active||old.get(p.id)?.generation<p.generation)))cue('general_appointed','roster-appointment','important',{priority:55,maxDuration:fast?.5:undefined});}
  if(scene.kind==='apply'&&e.type==='appointment')cue('general_appointed','appointment','important',{priority:55,maxDuration:fast?.5:undefined});
  if(scene.kind==='roll'||scene.kind==='reel'){
@@ -31,7 +36,7 @@ export function presentationSoundCues(state,{speed=1,settings=SOUND_DEFAULTS,dur
   }else if(phase==='raw'&&!fast&&!(['wood','cloth','alternate'].includes(settings.diceStyle)&&rollingDuration/Math.max(.1,speed)>=300))cue(settings.diceStyle==='ticks'?'dice_settle':'dice_land',scene.id+':raw','dice',{scope:'stage',maxDuration:actual/1000});
   else if(phase==='merging'&&!fast){const item=scene.bonusItems?.filter(i=>i.value)[state.mergeIndex||0];if(item)cue(item.value>0?'bonus_add':'bonus_penalty',scene.id+':merge:'+(state.mergeIndex||0),'dice',{...(item.value>0?{gain:1.5}:{}),scope:'stage',maxDuration:actual/1000});}
   else if(phase==='locked'){
-   if(scene.kind==='reel'){if(!fast)cue('ui_confirm',scene.id+':choice','ui');}
+   if(scene.kind==='reel'){cue('ui_confirm',scene.id+':choice','ui',{maxDuration:fast?.2:undefined});}
    else if(scene.bonusItems?.some(i=>i.value)||!(['wood','cloth','alternate'].includes(settings.diceStyle)&&rollingDuration/Math.max(.1,speed)>=300))cue(scene.bonusItems?.some(i=>i.value)?'score_lock':settings.diceStyle==='ticks'?'dice_settle':'dice_land',scene.id+':locked','dice',{maxDuration:fast?.16:undefined});
   }
   return result;
@@ -56,3 +61,4 @@ export function presentationSoundCues(state,{speed=1,settings=SOUND_DEFAULTS,dur
  if(scene.kind==='apply'&&e.type==='round_end'&&e.gains?.some(g=>g.gain>0))cue('production','season-production','battle',{maxDuration:fast?.3:undefined});
  return result;
 }
+

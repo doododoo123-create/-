@@ -13,7 +13,7 @@ export class SoundMixer {
    if(this.context.state!=='running')await this.context.resume();this.unlocked=this.context.state==='running';this.refreshMix();if(this.unlocked)this.prime();return this.unlocked;
   }catch{return false;}})();const pending=this.unlocking;try{return await pending;}finally{if(this.unlocking===pending)this.unlocking=null;}
  }
- prime(){for(const id of ['ui_click','ui_confirm','dice_drop_single','dice_tick','dice_land','bonus_add','bonus_penalty','score_lock'])void this.buffer(id).catch(()=>{});}
+ prime(){for(const id of ['ui_click','ui_confirm','dice_drop_single','dice_tick','dice_land','bonus_add','bonus_penalty','score_lock','sword_clash','battle_impact','battle_victory','battle_defeat','battle_draw','territory_capture','domestic_success','domestic_failure'])void this.buffer(id).catch(()=>{});}
  async buffer(id){
   if(this.buffers.has(id)){const b=this.buffers.get(id);this.buffers.delete(id);this.buffers.set(id,b);return b;}
   if(this.pending.has(id))return this.pending.get(id);const sound=this.sounds.get(id);if(!sound||!this.context)throw Error('오디오가 준비되지 않았습니다.');
@@ -28,6 +28,7 @@ export class SoundMixer {
  offsets(){return [...this.voices].filter(v=>v.kind==='game'&&v.cue.sustain).map(v=>({key:v.cue.key,cue:v.cue,offset:v.offset+Math.max(0,this.context.currentTime-v.started)}));}
  stopVoice(voice){if(voice.stopping)return;voice.stopping=true;this.voices.delete(voice);try{const t=this.context.currentTime;voice.gain.gain.cancelScheduledValues(t);voice.gain.gain.setValueAtTime(voice.gain.gain.value,t);voice.gain.gain.linearRampToValueAtTime(0,t+.025);voice.source.stop(t+.03);}catch{}this.refreshMix();}
  stopStage(){for(const v of [...this.voices])if(v.kind==='game'&&v.cue.scope==='stage')this.stopVoice(v);}
+ advanceRecord(){this.epochs.game++;this.stopStage();}
  stopGameplay(){this.epochs.game++;for(const v of [...this.voices])if(v.kind==='game')this.stopVoice(v);}
  stopPreview(){this.epochs.preview++;for(const v of [...this.voices])if(v.kind==='preview')this.stopVoice(v);}
  stopAll(){for(const kind of Object.keys(this.epochs))this.epochs[kind]++;for(const v of [...this.voices])this.stopVoice(v);}
@@ -52,3 +53,4 @@ export class SoundMixer {
  async action(id){await this.unlock();return this.play({id,group:'ui',priority:10,transport:false});}
  async preview(id){await this.unlock();this.stopPreview();return this.play({id,priority:110},{preview:true});}
 }
+

@@ -46,9 +46,10 @@ export function roundCampaign(world,presentation){
     const path=moving?.path?.length?[...moving.path]:[fromId];if(path.at(-1)!==b.territoryId)path.push(b.territoryId);
     routes.push({turn:r.turn,key:`${r.turn}-${b.index}-${side}`,path,side,countryId,fromId,frontId:b.fromId,personId:person?.id||(side==='attack'?b.attackerPersonId:b.defenderPersonId),toId:b.territoryId,lane,army:b[side]?.army||0,moving:r===record&&event?.index===limit&&scene?.kind==='movement'&&scene.movementSide===side,active:r===record&&scene?.battleIndex===b.index&&presentation.phase!=='settled'});
    }
-   const resolved=applied(r)||resolve&&(resolve.index<limit||resolve.index===limit&&(scene?.kind==='capture'||scene?.kind==='apply'&&(presentation.phase==='settled'||['territory','growth','all'].includes(presentation.effectStage))));
+   const compactApplied=scene?.kind==='campaign'&&scene.campaignPhase!=='approach';
+   const resolved=applied(r)||resolve&&(resolve.index<limit||resolve.index===limit&&(compactApplied||scene?.kind==='capture'||scene?.kind==='apply'&&(presentation.phase==='settled'||['territory','growth','all'].includes(presentation.effectStage))));
    if(!resolved)continue;
-   const arrival=captureArrival(r,b),arrived=applied(r)||(!arrival?scene?.kind==='capture'||resolve.index<limit:arrival.index<limit||arrival.index===limit&&!['movement','arrival'].includes(scene?.kind));
+   const arrival=captureArrival(r,b),arrived=applied(r)||(!arrival?compactApplied||scene?.kind==='capture'||resolve.index<limit:arrival.index<limit||arrival.index===limit&&!['movement','arrival'].includes(scene?.kind));
    if(!arrived){for(const id of b.takenTerritoryIds||[])pendingCaptures.set(id,{ownerId:b.captureOwner===b.target?b.actorId:b.defenderId});continue;}
    const taken=b.takenTerritoryIds||[];
    for(const [i,id] of taken.entries()){const to=world.territories.find(t=>t.id===id),prior=taken.slice(0,i),origin=i===0?(b.captureOwner===b.target?b.territoryId:b.fromId):prior.find(v=>{const t=world.territories.find(t=>t.id===v);return t&&neighbors(world,t).some(n=>n.id===to?.id);})||taken[0];captures.set(id,{territoryId:id,fromId:origin,ownerId:b.captureOwner===b.target?b.defenderId:b.actorId,baseOwnerId:baseOwners.get(id),fromOwnerId:b.captureOwner===b.target?b.actorId:b.defenderId,sequenceIndex:i,sequenceCount:taken.length,previousCapture:r===record&&scene?.kind==='capture'&&scene.battleIndex===b.index?captures.get(id):undefined,revealing:r===record&&scene?.kind==='capture'&&scene.battleIndex===b.index});}

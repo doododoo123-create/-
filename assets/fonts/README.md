@@ -14,3 +14,6 @@ WOFF2 변환·고정 굵기 생성·부분 글자 추출을 거쳐 내부 이름
 일반 빌드와 실행에는 Python·인터넷·설치 글꼴이 필요 없습니다. `npm run build`는 동봉된 파일의 해시를 검사하고 두 HTML에 내장합니다. 재생성할 때만 공식 TTF를 manifest의 sourceFile 이름으로 `/tmp`에 준비하고 `fonttools[woff]`를 설치한 Python에서 `python scripts/prepare-fonts.py`를 실행합니다. 지도 글자 윤곽선 재생성은 `scripts/outline-map-labels.py`, 모바일 지도 갱신은 `scripts/mobile-map.py`입니다. 원본·라이선스가 바뀌면 출처와 해시를 함께 검토합니다.
 
 이 문서는 글꼴의 사용 조건입니다. 사용자가 추가하는 지도·초상화·음악 등의 권리까지 판정하지 않습니다.
+
+
+v0.32.0: Korean Sans/Serif are rebuilt offline from the official OFL Noto CJK KR faces (NotoSansCJK-Regular.ttc and NotoSerifCJK-Bold.ttc), renamed Studio Sans/Serif. All modern Hangul syllables, KS X 1001 Hanja and available Latin/Japanese/symbol characters in the selected ranges are retained. The exact source hashes, resulting WOFF2 hashes, licenses and source URL are in manifest.json. They are static regular/bold faces; CSS supplies synthetic bold where needed. Symbols and Emoji are unchanged.

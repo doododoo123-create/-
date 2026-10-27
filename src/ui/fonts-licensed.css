@@ -1,6 +1,6 @@
 /* Google Noto derivatives; SIL OFL 1.1 notices are bundled in every release. */
-@font-face{font-family:'Studio Sans';src:url('../../assets/fonts/NotoSansKR.woff2') format('woff2');font-weight:100 900;font-style:normal;font-display:block}
-@font-face{font-family:'Studio Serif';src:url('../../assets/fonts/NotoSerifKR.woff2') format('woff2');font-weight:600;font-style:normal;font-display:block}
+@font-face{font-family:'Studio Sans';src:url('../../assets/fonts/NotoSansKR.woff2') format('woff2');font-weight:400;font-style:normal;font-display:block}
+@font-face{font-family:'Studio Serif';src:url('../../assets/fonts/NotoSerifKR.woff2') format('woff2');font-weight:700;font-style:normal;font-display:block}
 @font-face{font-family:'Studio Symbols';src:url('../../assets/fonts/NotoSymbols.woff2') format('woff2');font-weight:400;font-style:normal;font-display:block}
 @font-face{font-family:'Studio Emoji';src:url('../../assets/fonts/NotoEmoji.woff2') format('woff2');font-weight:300 700;font-style:normal;font-display:block}
 :root{--studio-sans:'Studio Sans','Studio Symbols','Studio Emoji';--studio-serif:'Studio Serif','Studio Sans','Studio Symbols','Studio Emoji'}

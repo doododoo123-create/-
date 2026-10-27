@@ -1,4 +1,5 @@
 import {animationRate} from './presentation-tempo.js';
+import {compactCampaignScenes,campaignSceneDuration} from './campaign-playback.js';
 import { movementScenes } from './movement-scenes.js';
 import { scoreBonusItems } from './score-accumulation.js';
 import { calendarAtRound } from '../model/calendar.js';
@@ -36,11 +37,12 @@ export function makeTurnScenes(record,before,history=[]) {
   return scenes;
 }
 export class TurnPlayback {
-  constructor({onChange=()=>{},onFinish=()=>{},speed=()=>1,reducedMotion=()=>false,schedule=(callback,delay)=>setTimeout(callback,delay),cancel=handle=>clearTimeout(handle),now=()=>Date.now()}={}) {
-    Object.assign(this,{onChange,onFinish,speed,reducedMotion,schedule,cancel,now});
+  constructor({onChange=()=>{},onFinish=()=>{},speed=()=>1,options=()=>({}),reducedMotion=()=>false,schedule=(callback,delay)=>setTimeout(callback,delay),cancel=handle=>clearTimeout(handle),now=()=>Date.now()}={}) {
+    Object.assign(this,{onChange,onFinish,speed,options,reducedMotion,schedule,cancel,now});
     this.groupEnd=null;this.groupDone=false;this.state=null;this.handle=null;this.remaining=0;this.deadline=0;this.scheduledSpeed=1;
   }
-  get animationSpeed(){return this.speed()*animationRate(this.scene);}
+  get effectiveSpeed(){return this.options().kingChoiceNormalSpeed&&this.scene?.kind==='reel'&&this.scene.event?.type==='king'?1:this.speed();}
+  get animationSpeed(){return this.effectiveSpeed*animationRate(this.scene);}
   get scene(){return this.state?.scenes[this.state.index]||null;}
   get playing(){return !!this.state?.playing;}
   get complete(){return !this.state||this.state.finished;}
@@ -48,14 +50,14 @@ export class TurnPlayback {
   get displayWorld(){return this.state?.finished?this.state.after:this.scene?.kind==='apply'&&this.state.phase!=='settled'?applicationWorld(this.scene,this.state.effectStage):this.scene?.worldAfter;}
   get movementProgress(){if(this.scene?.kind!=='movement')return 0;const left=this.playing&&this.handle!==null?Math.max(0,(this.deadline-this.now())*this.scheduledSpeed):this.remaining;return Math.max(0,Math.min(1,1-left/this.duration()));}
   get sceneProgress(){if(!this.scene)return 0;const left=this.playing&&this.handle!==null?Math.max(0,(this.deadline-this.now())*this.scheduledSpeed):this.remaining;return Math.max(0,Math.min(1,1-left/this.duration()));}
-  duration(){return observerDuration(this.scene,this.state.record,this.state.phase==='departing'?'departing':this.state.effectStage||this.state.phase,this.reducedMotion());}
+  duration(){return this.scene?.kind==='campaign'?campaignSceneDuration(this.scene):observerDuration(this.scene,this.state.record,this.state.phase==='departing'?'departing':this.state.effectStage||this.state.phase,this.reducedMotion());}
   clearTimer(){if(this.handle!==null)this.cancel(this.handle);this.handle=null;}
   load(record,before,after,play=true,history=[]){
-    this.clearTimer();this.groupEnd=null;this.groupDone=false;const scenes=makeTurnScenes(record,before,history);scenes.at(-1).worldAfter=after;
+    this.clearTimer();this.groupEnd=null;this.groupDone=false;this.detailReturn=null;const original=makeTurnScenes(record,before,history),scenes=this.options().compactCampaigns?compactCampaignScenes(original,record):original;scenes.at(-1).worldAfter=after;
     this.state={record,before,after,scenes,index:0,previousRoundRecords:history.filter(r=>r.round===record.round-1),roundRecords:history.filter(r=>r.round===record.round&&r.turn<record.turn),phase:['roll','reel'].includes(scenes[0].kind)?'rolling':'holding',playing:play,finished:false};
     this.remaining=this.duration();this.onChange();if(play)this.arm();
   }
-  arm(){if(!this.state?.playing||this.state.finished)return;this.clearTimer();this.scheduledSpeed=Math.max(.1,Number(this.speed())||1);this.deadline=this.now()+this.remaining/this.scheduledSpeed;this.handle=this.schedule(()=>{this.handle=null;this.advance();},this.remaining/this.scheduledSpeed);}
+  arm(){if(!this.state?.playing||this.state.finished)return;this.clearTimer();this.scheduledSpeed=Math.max(.1,Number(this.effectiveSpeed)||1);this.deadline=this.now()+this.remaining/this.scheduledSpeed;this.handle=this.schedule(()=>{this.handle=null;this.advance();},this.remaining/this.scheduledSpeed);}
   pause(){if(!this.state||!this.playing)return;if(this.handle!==null)this.remaining=Math.max(0,(this.deadline-this.now())*this.scheduledSpeed);this.clearTimer();this.state.playing=false;}
   resume(){if(!this.state||this.state.finished)return;this.groupEnd=null;this.groupDone=false;this.state.playing=true;this.onChange();this.arm();}
   advance(){
@@ -67,7 +69,7 @@ export class TurnPlayback {
     else if(this.state.phase!=='departing'&&this.state.scenes[this.state.index+1]?.kind==='apply')this.state.phase='departing';
     else if(this.groupEnd===this.state.index&&this.state.index<this.state.scenes.length-1){this.remaining=0;this.state.playing=false;this.groupDone=true;if(this.scene.kind==='apply')this.state.phase='settled';this.onChange();return;}
     else if(this.state.index<this.state.scenes.length-1){this.state.index++;this.state.mergeIndex=0;this.state.phase=['roll','reel'].includes(this.scene.kind)?'rolling':'holding';this.state.effectStage=this.scene.kind==='apply'?applicationSteps(this.scene,this.state.record)[0]:null;}
-    else{this.state.finished=true;this.state.playing=false;this.onChange();this.onFinish();return;}
+    else{if(this.detailReturn){this.returnCampaignDetails();return;}this.state.finished=true;this.state.playing=false;this.onChange();this.onFinish();return;}
     this.remaining=this.duration();this.onChange();if(this.state.playing)this.arm();
   }
   playGroup(){
@@ -83,6 +85,17 @@ export class TurnPlayback {
     this.groupEnd=end;this.state.playing=true;this.onChange();this.arm();
   }
   step(){this.pause();this.groupEnd=null;this.groupDone=false;this.advance();}
-  finish(){if(!this.state||this.state.finished)return;this.clearTimer();this.state.index=this.state.scenes.length-1;this.state.phase='holding';this.state.finished=true;this.state.playing=false;this.onChange();this.onFinish();}
-  reset(){this.clearTimer();this.state=null;this.remaining=0;}
+  showCampaignDetails(){
+    const scene=this.scene;if(scene?.kind!=='campaign'||scene.campaignPhase!=='summary')return;
+    this.pause();this.detailReturn={state:this.state,remaining:this.remaining,groupEnd:this.groupEnd,groupDone:this.groupDone};
+    const scenes=scene.campaign.originalScenes;
+    this.state={...this.state,scenes,index:0,phase:['roll','reel'].includes(scenes[0].kind)?'rolling':'holding',effectStage:null,playing:false,finished:false,campaignDetail:true};
+    this.groupEnd=null;this.groupDone=false;this.remaining=this.duration();this.onChange();
+  }
+  returnCampaignDetails(){
+    if(!this.detailReturn)return;this.clearTimer();Object.assign(this,this.detailReturn);this.detailReturn=null;this.state.playing=false;this.onChange();
+  }
+  finish(){if(this.detailReturn)this.returnCampaignDetails();if(!this.state||this.state.finished)return;this.clearTimer();this.state.index=this.state.scenes.length-1;this.state.phase='holding';this.state.finished=true;this.state.playing=false;this.onChange();this.onFinish();}
+  reset(){this.clearTimer();this.detailReturn=null;this.state=null;this.remaining=0;}
 }
+

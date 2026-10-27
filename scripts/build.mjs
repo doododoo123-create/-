@@ -1,3 +1,4 @@
+import {packStandalone} from './standalone-pack.mjs';
 import {syncLicensedFonts} from './licensed-fonts.mjs';
 import { syncSoundArt } from './sound-art.mjs';
 import { syncTextBoxArt } from './text-box-art.mjs';
@@ -41,6 +42,7 @@ async function bundle(path) {
 async function scriptFor(mobile){mobileBuild=mobile;visited.clear();chunks.length=0;await bundle(resolve(root,'src/app.js'));return `(() => {\n'use strict';\n${chunks.join('\n')}\n})();`.replace(/<\/script/gi,'<\\/script');}
 let fontCss=await readFile(resolve(root,'src/ui/fonts-licensed.css'),'utf8');
 for(const match of [...fontCss.matchAll(/url\('([^']+\.woff2)'\)/g)])fontCss=fontCss.replace(match[0],`url('data:font/woff2;base64,${(await readFile(resolve(root,'src/ui',match[1]))).toString('base64')}')`);
+const v32Css=await readFile(resolve(root,'src/ui/studio-v32.css'),'utf8');
 const v30Css=await readFile(resolve(root,'src/ui/studio-v30.css'),'utf8');
 const css = await readFile(resolve(root, 'src/ui/style.css'), 'utf8');
 const visuals = await readFile(resolve(root, 'src/ui/visuals.css'), 'utf8');
@@ -98,12 +100,14 @@ html = html.replace('<link rel="stylesheet" href="./src/ui/fonts-licensed.css">'
   .replace('<link rel="stylesheet" href="./src/ui/studio-v23.css">', `<style>${v23Css}</style>`)
   .replace('<link rel="stylesheet" href="./src/ui/studio-v24.css">', `<style>${v24Css}</style>`)
   .replace('<link rel="stylesheet" href="./src/ui/studio-v30.css">', `<style>${v30Css}</style>`)
+  .replace('<link rel="stylesheet" href="./src/ui/studio-v32.css">', '<style>'+v32Css+'</style>')
   .replace('href="./favicon.svg"', `href="data:image/svg+xml;base64,${favicon}"`);
 const dist = resolve(root, 'dist');
 await mkdir(dist, { recursive: true });
 for(const mobile of [false,true]){
  const script=await scriptFor(mobile),name=mobile?'사국쟁패 Studio 모바일 경량.html':'사국쟁패 Studio.html';
- const output=html.replace('<html lang="ko">',`<html lang="ko" data-performance="${mobile?'mobile':'normal'}">`).replace('<script type="module" src="./src/app.js"></script>',`<script>${script}</script>`);
+ const rawOutput=html.replace('<html lang="ko">',`<html lang="ko" data-performance="${mobile?'mobile':'normal'}">`).replace('<script type="module" src="./src/app.js"></script>',`<script>${script}</script>`);
+ const output=packStandalone(rawOutput,mobile);
  await writeFile(resolve(dist,name),output);
  if(process.argv.includes('--release'))await writeFile(resolve(root,name),output);
  console.log(`단독 실행본 생성: dist/${name} (${Math.ceil(Buffer.byteLength(output)/1024)}KB)`);

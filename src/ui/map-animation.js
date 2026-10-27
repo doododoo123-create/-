@@ -10,6 +10,7 @@ export class MapAnimation {
  tick(){
   this.frame=null;const root=this.root,p=this.playback;if(!root?.isConnected||!p)return;
   const progress=p.sceneProgress,movement=p.movementProgress;
+  for(const line of root.querySelectorAll('[data-campaign-countdown]'))line.style.transform='scaleX('+(1-progress)+')';
   const settling=p.scene?.kind==='round-settle',travel=settling?Math.max(0,(progress-.18)/.82):progress,highlight=settling&&progress<.18?Math.sin(progress/.18*Math.PI)*.85:0;
   for(const wave of this.waves){const e=wave.element;if(!e.isConnected)continue;const local=frontSequenceProgress(travel,Number(e.dataset.waveOrder),Number(e.dataset.waveCount)),shape=frontWaveAt(wave.model,local);e.setAttribute('d',shape.fill);e.setAttribute('width',String(Number(e.dataset.wipeSpan)*local));e.dataset.waveProgress=String(local);
    for(const line of root.querySelectorAll(`[data-wave-line="${wave.index}"]`))line.setAttribute('d',shape.front);
@@ -33,6 +34,6 @@ export class MapAnimation {
     if(node)node.style.transform=`translate(${(target[0]-final.x)*(1-progress)}px,${(target[1]-35*duelScale-final.y)*(1-progress)}px)`;
    }
   }
-  if(p.playing&&root.querySelector('[data-wipe-span],.clock-marching,[data-forming="true"]'))this.frame=requestAnimationFrame(()=>this.tick());
+  if(p.playing&&root.querySelector('[data-wipe-span],.clock-marching,[data-forming="true"],[data-campaign-countdown]'))this.frame=requestAnimationFrame(()=>this.tick());
  }
 }
