@@ -1,4 +1,4 @@
-import {PRESENTATION_RATE} from './presentation-tempo.js';
+import {PRESENTATION_RATE,movementRate} from './presentation-tempo.js';
 import { combatBonuses } from '../model/combat-rules.js';
 // Recorded results become a sequence of readable display steps. These previews never enter the engine.
 const observerWorlds=new WeakMap();
@@ -69,4 +69,4 @@ function baseDuration(scene,record,phase,reduced=false){
  return 150;
 }
 
-export function observerDuration(scene,record,phase,reduced=false){const duration=baseDuration(scene,record,phase,reduced);return scene.kind==='reel'?duration:duration/PRESENTATION_RATE;}
+export function observerDuration(scene,record,phase,reduced=false){const duration=baseDuration(scene,record,phase,reduced);return scene.kind==='reel'?duration:duration/PRESENTATION_RATE/movementRate(scene);}

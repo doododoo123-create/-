@@ -5,10 +5,11 @@ import {esc} from './icons.js';
 // Read only group events already applied to this visible map, never future dice.
 export function visibleArmyGroups(world,presentation){
  const record=presentation?.record,scene=presentation?.scenes?.[presentation.index],groups=new Map();
+ if(scene?.dissolveArmies)return [];
  if(!record||presentation.finished||scene?.kind==='summary')return [];
  const limit=scene?.mapEventIndex??scene?.event?.index??-1;
  for(const e of record.events||[]){
-  if(e.index>limit)break;if(!e.armyGroup)continue;
+  if(e.index>limit)break;if(e.type==='territory'){const b=record.battles[e.battleIndex];if(b?.armyPrepared){groups.delete(b.armyGroupId);for(const [id,g] of groups)if(g.nation===b.target&&g.members.some(m=>m.slot===b.defenseSlot))groups.delete(id);}}if(!e.armyGroup)continue;
   if(e.index===limit&&e.type==='army_assembly'&&scene.kind==='movement')continue;
   groups.set(e.armyGroup.id,e.armyGroup);
  }

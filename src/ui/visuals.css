@@ -21,7 +21,7 @@
 .atlas-scroll{overflow:auto;background:#81a5ab;scrollbar-width:thin;scrollbar-color:#526f7d #9bb8b8}
 .atlas-map{display:block;width:100%;height:auto;min-width:620px;aspect-ratio:1.5}
 .atlas-map .territory{display:block;background:none;border:0;border-radius:0;outline:0;fill:var(--nation);fill-opacity:.55;stroke:#f2e7c6;stroke-opacity:.75;stroke-width:1;transition:fill .5s,fill-opacity .25s,stroke .25s;box-shadow:none;transform:none;cursor:pointer}
-.atlas-cell:hover .territory{fill-opacity:.85;stroke:#fff4ce;stroke-width:3}
+body:not(.map-stage-open) .atlas-cell:hover .territory{fill-opacity:.85;stroke:#fff4ce;stroke-width:3}
 .atlas-cell:focus-visible{outline:none}
 .atlas-cell:focus-visible .territory,.atlas-map .territory.selected{stroke:#fff7c8;stroke-width:4;fill-opacity:.9;filter:drop-shadow(0 0 4px #f5eabc);outline:0;box-shadow:none}
 .atlas-map .territory.battle-target{stroke:#f34942;stroke-width:4;fill-opacity:.85;animation:territory-target 1s ease-in-out infinite}

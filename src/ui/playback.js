@@ -14,6 +14,8 @@ export function makeTurnScenes(record,before,history=[]) {
     const frame=record.frames?.[event.index]||{before,after:before};
     const motion=record.movements?.find(m=>m.eventIndex===event.index);
     if(motion||event.type==='territory'){const steps=movementScenes(event,frame,motion,camps,record.battles[event.battleIndex]);scenes.push(...steps.scenes);camps=steps.camps;}
+    if(event.formation&&['army_assembly','army_march'].includes(event.type)||event.type==='unit_spacing'){if(scenes.at(-1)?.event===event)scenes.at(-1).worldAfter=frame.after;else scenes.push({id:'formation-'+event.index,kind:'focus',event,title:event.title,worldBefore:frame.before,worldAfter:frame.after,camps});continue;}
+    if(event.type==='army_disband'&&event.armyGroup?.formation)continue;
     if(event.type==='expedition_roll')continue;
     const start=scenes.length;
     if(['war_recovery','season_recovery','desertion','production_settlement'].includes(event.type)){scenes.push({id:`apply-${event.index}`,kind:'apply',event,title:event.title,detail:event.detail,worldBefore:frame.before,worldAfter:frame.after,camps});continue;}
@@ -53,7 +55,7 @@ export class TurnPlayback {
   duration(){return this.scene?.kind==='campaign'?campaignSceneDuration(this.scene):observerDuration(this.scene,this.state.record,this.state.phase==='departing'?'departing':this.state.effectStage||this.state.phase,this.reducedMotion());}
   clearTimer(){if(this.handle!==null)this.cancel(this.handle);this.handle=null;}
   load(record,before,after,play=true,history=[]){
-    this.clearTimer();this.groupEnd=null;this.groupDone=false;this.detailReturn=null;this.campaignExpanded=false;const original=makeTurnScenes(record,before,history),scenes=this.options().compactCampaigns?compactCampaignScenes(original,record):original;scenes.at(-1).worldAfter=after;
+    this.clearTimer();this.groupEnd=null;this.groupDone=false;this.detailReturn=null;this.campaignExpanded=false;const modern=!!this.options().armyPresentation,original=makeTurnScenes(record,before,history).map(s=>modern?{...s,rapidMovement:true}:s),scenes=this.options().compactCampaigns?compactCampaignScenes(original,record,{modern}):original;scenes.at(-1).worldAfter=after;
     this.state={record,before,after,scenes,index:0,previousRoundRecords:history.filter(r=>r.round===record.round-1),roundRecords:history.filter(r=>r.round===record.round&&r.turn<record.turn),phase:['roll','reel'].includes(scenes[0].kind)?'rolling':'holding',playing:play,finished:false};
     this.remaining=this.duration();this.onChange();if(play)this.arm();
   }
@@ -86,7 +88,7 @@ export class TurnPlayback {
   }
   step(){this.pause();this.groupEnd=null;this.groupDone=false;this.advance();}
   showCampaignDetails(){
-    const scene=this.scene;if(scene?.kind!=='campaign'||scene.campaignPhase!=='summary')return;
+    const scene=this.scene;if(!scene?.campaign)return;
     this.pause();this.detailReturn={state:this.state,remaining:this.remaining,groupEnd:this.groupEnd,groupDone:this.groupDone};
     const scenes=scene.campaign.originalScenes;
     this.state={...this.state,scenes,index:0,phase:['roll','reel'].includes(scenes[0].kind)?'rolling':'holding',effectStage:null,playing:false,finished:false,campaignDetail:true};

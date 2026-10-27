@@ -10,7 +10,7 @@ function rowList(record,world){
   for(const [order,m] of (record.movements||[]).find(v=>v.eventIndex===e.index)?.moves.entries()||[]){
    const p=known.people.find(p=>p.id===m.personId),name=displayName(p,displayEventText(e.title||'지휘관'));
    if(m.kind==='army-march'&&order>0)continue;
-   const action=m.kind==='assembly'?'집결':m.kind==='army-march'?'집단군 진군':m.kind==='retreat'?'후퇴':m.kind==='royal-return'?'수도 복귀':m.kind==='occupation'?'점령지 진입':m.kind==='relief'||m.kind==='return'?'방어 이동':m.kind==='redeploy'?'재배치':m.kind==='home'||m.kind==='recovery'?'복귀':'진군';
+   const action=m.kind==='spacing'?'분산 배치':m.kind==='assembly'?'집결':m.kind==='army-march'?'집단군 진군':m.kind==='retreat'?'후퇴':m.kind==='royal-return'?'수도 복귀':m.kind==='occupation'?'점령지 진입':m.kind==='relief'||m.kind==='return'?'방어 이동':m.kind==='redeploy'?'재배치':m.kind==='home'||m.kind==='recovery'?'복귀':'진군';
    const destination=m.kind==='outbound'&&b?b.territoryId:m.toId;
    push(e,'move',`${m.kind==='army-march'?'집단군 '+e.armyGroup.members.length+'부대 · '+e.armyGroup.army+'만':name} · ${territory(destination)?.name||''} ${action}`,destination,{personId:m.personId,motionOrder:order,motionKind:m.kind});
   }

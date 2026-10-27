@@ -20,41 +20,42 @@ export function campaignGroups(scenes,record){
  }
  return clusters.filter(c=>c.length>=2||c[0].b.armyGroupId).map((c,i)=>{
   let start=c[0].start;
-  if(c[0].b.armyGroupId){for(let k=start-1;k>=0;k--){const e=scenes[k].event;if(e?.type==='army_assembly'||['king','war_target','army_disband'].includes(e?.type))break;if(['army_march','army_detach'].includes(e?.type)&&e.armyGroup?.id===c[0].b.armyGroupId)start=k;else if(scenes[k].battleIndex!==undefined)break;}}
+  if(c[0].b.armyGroupId&&!c[0].b.armyPrepared){for(let k=start-1;k>=0;k--){const e=scenes[k].event;if(e?.type==='army_assembly'||['king','war_target','army_disband'].includes(e?.type))break;if(['army_march','army_detach'].includes(e?.type)&&e.armyGroup?.id===c[0].b.armyGroupId)start=k;else if(scenes[k].battleIndex!==undefined)break;}}
   return ({
   id:'campaign-'+record.turn+'-'+i,actorId:record.actorId,opponentId:c[0].b.actorId===record.actorId?c[0].b.defenderId:c[0].b.actorId,
   start,end:c.at(-1).end,ranges:c,battles:c.map(v=>v.b),
-  originalScenes:scenes.slice(start,c.at(-1).end+1),
+  originalScenes:scenes.slice(start,c.at(-1).end+1),armyId:c[0].b.armyGroupId,assemblyMetadata:record.events.filter(e=>e.armyGroup?.id===c[0].b.armyGroupId).find(e=>e.type==='army_assembly')?.armyGroup,
  });});
 }
 // All combat dice first, on one frozen assembled map; original map scenes follow.
-export function compactCampaignScenes(scenes,record){
+export function compactCampaignScenes(scenes,record,{modern=false}={}){
  const groups=campaignGroups(scenes,record),starts=new Map(groups.map(g=>[g.start,g])),out=[];
  for(let i=0;i<scenes.length;i++){
-  const g=starts.get(i);if(!g){out.push(scenes[i]);continue;}
-  const first=scenes[g.start],last=scenes[g.end],frozen={campaign:g,camps:first.campsBefore||first.camps,mapEventIndex:first.event.index-1,worldBefore:first.worldBefore,worldAfter:first.worldBefore};
-  out.push({...frozen,id:g.id+'-approach',kind:'campaign',campaignPhase:'approach',campaignRow:0,battleIndex:g.battles[0].index,completedBattles:0,event:{type:'campaign_start',index:first.event.index-1},title:'집단군 전체 전투 판정'});
+  const g=starts.get(i);if(g)g.modern=modern;if(!g){out.push(scenes[i]);continue;}
+  const first=scenes[g.start],last=scenes[g.end],frozen={campaign:g,rapidMovement:modern,camps:first.campsBefore||first.camps,mapEventIndex:first.event.index-1,worldBefore:first.worldBefore,worldAfter:first.worldBefore};
+  out.push({...frozen,id:g.id+'-approach',kind:'campaign',campaignPhase:'approach',campaignRow:0,battleIndex:g.battles[0].index,rapidMovement:modern,completedBattles:0,event:{type:'campaign_start',index:first.event.index-1},title:'집단군 전체 전투 판정'});
   for(let j=0;j<g.ranges.length;j++){
    const range=g.ranges[j],original=scenes.slice(range.start,range.end+1),rolls=original.filter(s=>s.kind==='roll'&&['attack_roll','defense_roll'].includes(s.event.type));
    if(!rolls.length)out.push({...frozen,id:g.id+'-automatic-'+j,kind:'campaign',campaignPhase:'automatic',campaignRow:j,completedBattles:j+1,battleIndex:range.b.index,event:{type:'campaign_battle',index:first.event.index-1},title:'무방비 영토 진입 판정'});
    for(const roll of rolls)out.push({...roll,...frozen,campaignPhase:'dice',campaignRow:j,completedBattles:j});
   }
+  if(modern)out.push({...frozen,id:g.id+'-dissolve',kind:'focus',campaignPhase:'map',campaignRow:0,completedBattles:g.battles.length,battleIndex:g.battles[0].index,rapidMovement:true,dissolveArmies:true,event:{type:'army_dissolve',index:first.event.index-1},title:'양측 집단군 해체 · 개별 전투 배치'});
   for(const original of g.originalScenes){
    if(original.kind==='roll'&&['attack_roll','defense_roll'].includes(original.event.type))continue;
    const row=g.ranges.findIndex(r=>r.b.index===original.battleIndex),upcoming=g.ranges.findIndex(r=>scenes.indexOf(original)<r.start);
-   out.push({...original,campaign:g,campaignPhase:'map',campaignRow:row>=0?row:upcoming>=0?upcoming:g.ranges.length-1,battleIndex:original.battleIndex??g.battles[upcoming>=0?upcoming:g.ranges.length-1].index,completedBattles:g.battles.length});
+   out.push({...original,campaign:g,campaignPhase:'map',campaignRow:row>=0?row:upcoming>=0?upcoming:g.ranges.length-1,battleIndex:original.battleIndex??g.battles[upcoming>=0?upcoming:g.ranges.length-1].index,completedBattles:g.battles.length,...(modern?{dissolveArmies:true}:{} )});
   }
-  out.push({id:g.id+'-summary',kind:'campaign',campaign:g,campaignPhase:'summary',campaignRow:g.battles.length-1,completedBattles:g.battles.length,camps:last.camps,event:{type:'campaign_summary',index:last.event.index},worldBefore:first.worldBefore,worldAfter:last.worldAfter,title:'공세 종료'});
+  if(!modern)out.push({id:g.id+'-summary',kind:'campaign',campaign:g,campaignPhase:'summary',campaignRow:g.battles.length-1,completedBattles:g.battles.length,camps:last.camps,event:{type:'campaign_summary',index:last.event.index},worldBefore:first.worldBefore,worldAfter:last.worldAfter,title:'공세 종료'});
   i=g.end;
  }
  return out;
 }
-export function campaignSceneDuration(scene){return scene.campaignPhase==='approach'?100:scene.campaignPhase==='summary'?1800:160;}
+export function campaignSceneDuration(scene){return (scene.campaignPhase==='approach'?100:scene.campaignPhase==='summary'?1800:160)/(scene.rapidMovement?1.7:1);}
 export function judgedCampaignBattles(scene,phase){return (scene?.completedBattles||0)+(scene?.campaignPhase==='dice'&&scene.event?.type==='defense_roll'&&['locked','departing'].includes(phase)?1:0);}
 export function campaignSummary(scene){
  const g=scene.campaign,completed=scene.completedBattles||0,seen=g.battles.slice(0,completed),visible=g.battles.slice(0,Math.max(completed,(scene.campaignRow??-1)+1)),before=g.originalScenes[0].worldBefore,after=scene.worldAfter;
  const actor=new Map(),enemy=new Map();let wins=0,losses=0,draws=0,automatic=0,ownLoss=0,enemyLoss=0;
- const assembled=g.originalScenes.find(s=>s.event?.armyGroup)?.event.armyGroup;
+ const assembled=g.assemblyMetadata||g.originalScenes.find(s=>s.event?.armyGroup)?.event.armyGroup;
  if(assembled)for(const m of assembled.members){const p=before.people.find(p=>p.countryId===g.actorId&&p.role==='general'&&p.slot===m.slot&&p.generation===m.generation);if(p)actor.set(p.id+':'+(p.generation||0),{...p,startArmy:p.troops});}
  for(const b of visible){
   const frame=g.originalScenes.find(s=>s.battleIndex===b.index)?.worldBefore||before;

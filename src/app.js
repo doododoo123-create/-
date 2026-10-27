@@ -87,7 +87,7 @@ const playback = new TurnPlayback({
     if (ui.page === 'simulation') render();
   },
   speed: () => ui.speed,
-  options:()=>playbackSettings,
+  options:()=>({...playbackSettings,armyPresentation:true}),
   reducedMotion: () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
 });
 const soundPanel=new SoundPanel({mixer:soundMixer,getWorld:()=>ui.page==='simulation'?(playback.displayWorld||run?.world||world):world,onChange:()=>{soundDirector.suppressStage(playback);refreshSoundButtons(document,soundMixer.settings);}});
@@ -142,7 +142,7 @@ function render() {
   renderApp($('#app'), `
     <aside class="sidebar">
       <a class="brand" href="#" data-page="overview" aria-label="사국쟁패 Studio 세계 개요"><span class="brand-symbol">${icon('compass', 29)}</span><span><strong>사국쟁패</strong><small>HISTORY STUDIO</small></span></a>
-      <div class="workspace-label">WORKSPACE <span>v0.34.0${mobileProfile()?' · 경량판':' · 일반판'}</span></div>
+      <div class="workspace-label">WORKSPACE <span>v0.35.0${mobileProfile()?' · 경량판':' · 일반판'}</span></div>
       <button class="world-switch" data-action="world-meta"><span class="world-icon">${icon('globe', 19)}</span><span><b>${esc(world.name)}</b><small>나의 세계 · 편집 가능</small></span>${icon('edit', 13)}</button>
       <div class="nav-label">세계 만들기</div>
       <nav aria-label="주요 메뉴">${Object.entries(pages).slice(0, 5).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}<div class="nav-label nav-second">역사 관찰하기</div>${Object.entries(pages).slice(5).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}</nav>
@@ -154,7 +154,7 @@ function render() {
         ${pageHeading()}
         ${['overview','deployment'].includes(ui.page)?territoryPresetNotice():''}
         ${ui.page === 'overview' ? overview() : ui.page === 'countries' ? countriesPage() : ui.page === 'people' ? peoplePage() : ui.page === 'map' ? mapPage() : ui.page === 'deployment'?deploymentEditor.view():ui.page === 'simulation' ? simulationPage() : rulesPage()}
-        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.34.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><button type="button" class="text-button" data-action="font-licenses">글꼴 라이선스</button><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
+        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.35.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><button type="button" class="text-button" data-action="font-licenses">글꼴 라이선스</button><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
       </main>
     </div>`);
   mapCamera.restore();if(ui.page==='simulation')mapCamera.follow(playback);mapAnimation.start($('#app'),playback);
@@ -305,7 +305,7 @@ function beginTurn(play=true) {
   ensureRun();
   if(!playback.complete) { if(play) playback.resume(); return; }
   if(run.result) return;
-  const before=run.world;run=nextTurn(run,{armyAssembly:ui.armyAssembly});const record=run.history.at(-1);
+  const before=run.world;run=nextTurn(run,{armyAssembly:ui.armyAssembly,armyFormation:ui.armyAssembly,unitSpacing:true});const record=run.history.at(-1);
   ui.focusedCountry=record.actorId;playback.load(record,before,run.world,play,run.history);
 }
 function step() { stop();beginTurn(); }
@@ -338,7 +338,7 @@ const actions = {
   'playback-settings':()=>{
    stop();render();
    openDialog('관전 설정','현재 경기와 전투 결과는 유지하며, 재생 방식만 바꿉니다.',
-    '<label class="playback-option"><input type="checkbox" name="compactCampaigns" '+(playbackSettings.compactCampaigns?'checked':'')+'> 집단군 다이스 대결표</label><p class="field-help">집단군의 다이스를 모두 판정한 뒤, 판정 순서대로 이동·승패·후퇴·점령을 지도에서 보여줍니다. 다음 국가 차례부터 적용합니다.</p>'+
+    '<label class="playback-option"><input type="checkbox" name="compactCampaigns" '+(playbackSettings.compactCampaigns?'checked':'')+'> 집단군 다이스 대결표</label><p class="field-help">출정 판정과 양측 전선 배치 뒤 전체 다이스를 보여주고, 집단군을 해체해 개별 전투를 재생합니다. 다음 국가 차례부터 적용합니다.</p>'+
     '<label class="playback-option"><input type="checkbox" name="kingChoiceNormalSpeed" '+(playbackSettings.kingChoiceNormalSpeed?'checked':'')+'> 국왕의 첫 행동 선택은 항상 1배속</label><p class="field-help">전쟁·내정 선택만 1배속으로 보여줍니다. 상대국 선택과 이후 전투는 선택한 배속으로 진행합니다.</p>','설정 저장');
    dialogHandler=data=>{const next={compactCampaigns:data.has('compactCampaigns'),kingChoiceNormalSpeed:data.has('kingChoiceNormalSpeed')};try{savePlaybackSettings(localStorage,next);playbackSettings=next;notify('관전 설정을 저장했습니다.');}catch{playbackSettings=next;notify('설정은 적용했지만 브라우저에 저장하지 못했습니다.',true);}render();};
   },
