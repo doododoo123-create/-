@@ -5,6 +5,14 @@ export function campaignPerson(world,b,side){
  const countryId=side==='attack'?b.actorId:b.defenderId,slot=side==='attack'?b.slot:b.defenseSlot,role=side==='attack'?'general':b.defenseRole||'general';
  return world.people.find(p=>p.id===(side==='attack'?b.attackerPersonId:b.defenderPersonId))||world.people.find(p=>p.countryId===countryId&&p.slot===slot&&p.role===role);
 }
+function knownDefenseGroups(scenes,record,ranges,start){
+ const first=scenes[start],world=first.worldBefore;
+ return record.events.filter(e=>{
+  if(e.type!=='army_assembly'||e.index>=first.event.index||!e.armyGroup)return false;
+  const id=world.countries[e.armyGroup.nation]?.id;if(!id||id===record.actorId)return false;
+  return e.armyGroup.members.some(m=>ranges.some(({b})=>(b.defenderId===id&&b.defenseSlot===m.slot)||(b.actorId===id&&b.slot===m.slot)));
+ }).map(e=>e.armyGroup);
+}
 export function campaignGroups(scenes,record){
  const ranges=(record.battles||[]).map(b=>{
   const indexes=scenes.flatMap((s,i)=>s.battleIndex===b.index?[i]:[]);
@@ -24,12 +32,16 @@ export function campaignGroups(scenes,record){
   return ({
   id:'campaign-'+record.turn+'-'+i,actorId:record.actorId,opponentId:c[0].b.actorId===record.actorId?c[0].b.defenderId:c[0].b.actorId,
   start,end:c.at(-1).end,ranges:c,battles:c.map(v=>v.b),
-  originalScenes:scenes.slice(start,c.at(-1).end+1),armyId:c[0].b.armyGroupId,assemblyMetadata:record.events.filter(e=>e.armyGroup?.id===c[0].b.armyGroupId).find(e=>e.type==='army_assembly')?.armyGroup,
+  originalScenes:scenes.slice(start,c.at(-1).end+1),defenseMetadata:knownDefenseGroups(scenes,record,c,start),armyId:c[0].b.armyGroupId,assemblyMetadata:record.events.filter(e=>e.armyGroup?.id===c[0].b.armyGroupId).find(e=>e.type==='army_assembly')?.armyGroup,
  });});
 }
 // All combat dice first, on one frozen assembled map; original map scenes follow.
+export function isArmyCampaign(group){
+ const people=new Map();for(const b of group.battles){if(b.automatic)continue;for(const [country,key] of [[b.actorId,b.attackerPersonId||b.actorId+':'+b.slot],[b.defenderId,b.defenderPersonId||b.defenderId+':'+(b.defenseRole||'general')+':'+b.defenseSlot]]){if(!people.has(country))people.set(country,new Set());people.get(country).add(key);}}
+ return [...people.values()].some(p=>p.size>1);
+}
 export function compactCampaignScenes(scenes,record,{modern=false}={}){
- const groups=campaignGroups(scenes,record),starts=new Map(groups.map(g=>[g.start,g])),out=[];
+ const groups=campaignGroups(scenes,record).filter(g=>!modern||isArmyCampaign(g)),starts=new Map(groups.map(g=>[g.start,g])),out=[];
  for(let i=0;i<scenes.length;i++){
   const g=starts.get(i);if(g)g.modern=modern;if(!g){out.push(scenes[i]);continue;}
   const first=scenes[g.start],last=scenes[g.end],frozen={campaign:g,rapidMovement:modern,camps:first.campsBefore||first.camps,mapEventIndex:first.event.index-1,worldBefore:first.worldBefore,worldAfter:first.worldBefore};
@@ -50,13 +62,14 @@ export function compactCampaignScenes(scenes,record,{modern=false}={}){
  }
  return out;
 }
-export function campaignSceneDuration(scene){return (scene.campaignPhase==='approach'?100:scene.campaignPhase==='summary'?1800:160)/(scene.rapidMovement?1.7:1);}
+export function campaignSceneDuration(scene){return (scene.campaignPhase==='approach'?100:scene.campaignPhase==='summary'?1800:160)/(scene.rapidMovement?1.5:1);}
 export function judgedCampaignBattles(scene,phase){return (scene?.completedBattles||0)+(scene?.campaignPhase==='dice'&&scene.event?.type==='defense_roll'&&['locked','departing'].includes(phase)?1:0);}
 export function campaignSummary(scene){
  const g=scene.campaign,completed=scene.completedBattles||0,seen=g.battles.slice(0,completed),visible=g.battles.slice(0,Math.max(completed,(scene.campaignRow??-1)+1)),before=g.originalScenes[0].worldBefore,after=scene.worldAfter;
  const actor=new Map(),enemy=new Map();let wins=0,losses=0,draws=0,automatic=0,ownLoss=0,enemyLoss=0;
  const assembled=g.assemblyMetadata||g.originalScenes.find(s=>s.event?.armyGroup)?.event.armyGroup;
  if(assembled)for(const m of assembled.members){const p=before.people.find(p=>p.countryId===g.actorId&&p.role==='general'&&p.slot===m.slot&&p.generation===m.generation);if(p)actor.set(p.id+':'+(p.generation||0),{...p,startArmy:p.troops});}
+ for(const meta of g.defenseMetadata||[])for(const m of meta.members){const p=before.people.find(p=>p.countryId===g.opponentId&&p.role==='general'&&p.slot===m.slot&&p.generation===m.generation);if(p)enemy.set(p.id+':'+(p.generation||0),{...p,startArmy:p.troops});}
  for(const b of visible){
   const frame=g.originalScenes.find(s=>s.battleIndex===b.index)?.worldBefore||before;
   for(const side of ['attack','defense']){

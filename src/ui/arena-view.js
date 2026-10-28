@@ -26,7 +26,8 @@ export function renderArena({world,run,playback,showControls=true}) {
   const phase=state?.phase||'ready',locked=phase==='locked',summary=scene?.kind==='summary',result=scene?.kind==='result'||scene?.kind==='apply';
   const title=locked&&scene?.lockedTitle?scene.lockedTitle:scene?.title||`${actor?.name||'세계'}의 다음 선택`;
   let content='';
-  if(b) {
+  if(b?.automatic&&scene.automaticEntry){const c=findCountry(frame,b.actorId),p=countryPeople(frame,c.id).find(p=>p.id===b.attackerPersonId);content=`<div class="single-judgment unopposed-judgment">${character(p,c,'general',false,b.attack.army)}</div><div class="automatic-banner">${esc(b.territoryName)} · 수비대 없음${scene.kind==='capture'?' · '+b.takenTerritoryIds.length+'개 영토 점령':' · 바로 진입'}</div>`;}
+  else if(b) {
     const a=findCountry(frame,b.actorId),d=findCountry(frame,b.defenderId);
     const attack=countryPeople(frame,a.id).find(p=>(p.role==='general'||p.role==='king'&&p.slot===-1)&&p.slot===b.slot),defense=countryPeople(frame,d.id).find(p=>p.role===(b.defenseRole||'general')&&p.slot===b.defenseSlot);
     const side=(c,p,s,isAttack)=>{

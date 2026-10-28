@@ -1,4 +1,4 @@
-# 구조 · Studio v0.35.0
+# 구조 · Studio v0.36.0
 
 ## 데이터와 엔진
 
@@ -494,3 +494,14 @@ UI 모듈: campaign-playback.js는 확정된 장면을 묶고, campaign-view.js�
 앱의 `armyPresentation`은 현재 관전 모드다. 라이브러리의 이전 프레젠테이션 기본값은 회귀 검사/이전 동작 재현을 위해 보존한다. 새 모드는 준비 장면을 다이스 앞으로 두고 전체D30 뒤 dissolveArmies 장면/표시 상태로 양측 카드를 동시에 해체한다. 공세 종료 창을 넣지 않으며 지도 띠에서 개별 상세 재생에 접근한다.
 
 `movementRate`는 이 모드의 지도 연출에만1.7을 적용하고 roll/reel/계절 안내/주요 전사·수도·멸망 안내는 유지한다. 같은 배율이 재생 시간과 카드/화살표/점령 시계에 적용된다. `studio-v35.css`가 낮은 표·큰 초상/글씨·중앙 우세를 담당한다. hover 규칙은 body:not(.map-stage-open)으로 범위를 제한해 실제 선택/사건 스타일을 덮어쓰지 않는다.
+
+
+## v0.36 재생 정리·결성 효과·개별 대결
+
+`studio-scenes-v36.js`는 실제 자동 점령으로 확정된 기록의 화면 경로를 합친다. 중복 outbound/VS/resolve/occupation 화면을 단일 entry→capture로 교체하고 다른 수도/멸망/후퇴/재편 사건은 보존한다. entry는 원래 경로를 연결한 moves와 화면용 visitorIds/camps로 점령지까지 보이고,다음 capture가 실제 기록 세계/점령 전선을 표시한다. 실제 세계·기록·병력/거리·RNG를 쓰지 않는다. unitMarkers는 이 단계에만 명시한 방문 인물의 표시 위치를 허용한다.
+
+`isArmyCampaign`은 실제 D30 참가자의 국가별 생애 ID를 중복 없이 세어 어느 한쪽이2명 이상인 경우만 묶는다. 자동 점령만 있거나 같은 두 장수만 반복한 공세는 일반 연출이다. 이미 공개된 수비 집결 기록은 머리글 인원에 포함해1대다 전투를1대1처럼 보이지 않게 한다.
+
+집결 완료 후 army-forming 장면을 삽입한다. MapAnimation의 같은 재생 시계로 대표를1→1.7배로 키우고 보조 카드를 드러내며 해당 부대만 강조한다. pause 상태와 reducedMotion을 따르고,명시적인 형성 단계/집단군 ID 일치 없이는 효과를 그리지 않는다. cues.js의 군령 큐는 기존 turn_start 샘플/정규 음량을 사용하며 그룹별 ledger 키로 중복 재생을 막는다.
+
+movementRate와 campaignSceneDuration은 추가 가속1.5다. roll/reel 시간은 보존한다. studio-v36.css는 중앙 쪽 상단 결과/다이스 내부 여유 공간을 담당하고,군 전투창의 die-equation은 DOM에서 제거한다. 엔진31/기존 파일 형식과42개 효과음 원본은 유지한다.

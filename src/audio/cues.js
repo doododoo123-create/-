@@ -14,6 +14,7 @@ export function presentationSoundCues(state,{speed=1,settings=SOUND_DEFAULTS,dur
  if(e.type==='elimination'){notable('country_eliminated','elimination',90);return result;}
  if(e.type==='finish'&&(e.result?.reason==='conquest'||record.result?.reason==='unification')){notable('campaign_complete','unification',100);return result;}
  if(scene.kind==='apply'&&e.type==='death'){notable('general_fallen','death',80);return result;}
+ if(scene.kind==='army-forming'&&scene.formationGroup?.members.length>=2){cue('turn_start','army-formed:'+scene.formationGroup.id,'important',{priority:55,maxDuration:fast?.3:.85});return result;}
  if(scene.kind==='campaign'){
   if(scene.campaignPhase==='combat'){const info=campaignSummary(scene);if(info.combats)cue('sword_clash','campaign-clash:'+scene.id,'battle',{maxDuration:.24});}
   if(scene.campaignPhase==='summary'){const info=campaignSummary(scene);cue(info.notices.length?'battle_impact':info.net>0?'territory_capture':info.wins>info.losses?'battle_victory':info.wins<info.losses?'battle_defeat':'battle_draw','campaign-summary:'+scene.id,'battle',{priority:45,maxDuration:.65});}

@@ -19,6 +19,13 @@ export class MapAnimation {
   }
   const svg=root.querySelector('.atlas-map'),matrix=svg?.getScreenCTM?.();
   if(matrix){
+   for(const card of root.querySelectorAll('[data-army-forming="true"]')){
+    const t=p.reducedMotion?.()?1:progress,ease=1-Math.pow(1-t,3),factor=1+.7*ease,leader=card.querySelector('.army-leader-scale'),minis=[...card.querySelectorAll('.army-mini-unit')];
+    leader?.setAttribute('transform',`translate(0,${-35*(factor-1)}) scale(${factor})`);
+    minis.forEach((mini,i)=>{const delay=.35+i*.4/Math.max(1,minis.length-1);mini.style.opacity=String(Math.max(0,Math.min(1,(t-delay)/.25)));});
+    const ring=card.querySelector('.army-formation-ring');if(ring)ring.style.opacity=String(.95-.65*t);
+   }
+   for(const ring of root.querySelectorAll('[data-rally-spot] circle')){const t=p.reducedMotion?.()?0:progress;ring.setAttribute('r',String(16+7*Math.sin(Math.PI*t)));ring.style.opacity=String(.5+.35*Math.sin(Math.PI*t));}
    const duelScale=Number(svg.style.getPropertyValue('--duel-display-scale'))||1;
    const screenScale=Math.hypot(matrix.a,matrix.b);
    for(const arrow of root.querySelectorAll('.operation-arrow[data-route-points]')){
@@ -35,6 +42,6 @@ export class MapAnimation {
     if(node)node.style.transform=`translate(${(target[0]-final.x)*(1-progress)}px,${(target[1]-35*duelScale-final.y)*(1-progress)}px)`;
    }
   }
-  if(p.playing&&root.querySelector('[data-wipe-span],.clock-marching,[data-forming="true"],[data-campaign-countdown]'))this.frame=requestAnimationFrame(()=>this.tick());
+  if(p.playing&&root.querySelector('[data-wipe-span],.clock-marching,[data-forming="true"],[data-campaign-countdown],[data-army-forming=true],[data-rally-spot]'))this.frame=requestAnimationFrame(()=>this.tick());
  }
 }
