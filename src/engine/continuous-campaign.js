@@ -38,19 +38,20 @@ export function resolveContinuousCampaign(ctx){
   for(const nation of [b.actor,b.target])for(const g of fieldOfficers(s.countries[nation]))if(g.active&&g.alive&&Number.isInteger(g.position)&&s.cells[g.position].owner!==nation)retreat(nation,g,b);
   h.ensureStations(s);h.ensureFieldPositions(s);if(rules.royalDefense)h.ensureRoyals(s);
   if(rules.battlefieldRecovery)returnEmptyCommanders(s,Atlas,h.capitalCell,emit,undefined,b.index);
-  if(ctl.unitSpacing){const moves=spreadCommanders(s,Atlas,emit,{travel:operationTravel,battleIndex:b.index});for(const m of moves){const key=campaignOfficerKey(m.nation,s.countries[m.nation].generals[m.slot]);assembly.travel.set(key,(assembly.travel.get(key)||0)+m.path.length-1);}}
+  if(ctl.unitSpacing){const moves=spreadCommanders(s,Atlas,emit,{travel:operationTravel,battleIndex:b.index,protectedOfficers:assembly.heldMembers?.()||[]});for(const m of moves){const key=campaignOfficerKey(m.nation,s.countries[m.nation].generals[m.slot]);assembly.travel.set(key,(assembly.travel.get(key)||0)+m.path.length-1);}}
   for(const c of s.countries)h.syncArmy(c);
   if(h.aliveIds(s).length===1)h.finish(s,'conquest');
  };
  const assembly=ctl.armyAssembly&&ctl.armyFormation?prepareArmyCampaign({...ctx,defenderQueue:baseDefenders}):assembleArmies(ctx);
- const defenders=(nation,target,home,excluded)=>{const result=baseDefenders(nation,target,home,excluded);for(const g of nation===opponent?assembly.defenseRoster?.get(target)||[]:[]){if(g.role==='king'||!live(nation,g)||excluded.has(campaignOfficerKey(nation,g))||result.queue.some(e=>e.general===g))continue;const path=fieldPaths(s,Atlas,nation,g.position).get(target);if(path)result.queue.push({general:g,path,kind:'relief'});}return result;};
- if(ctl.unitSpacing&&!assembly.prepared)for(const e of events)for(const m of e.type==='unit_spacing'?e.moves||[]:[]){const key=campaignOfficerKey(m.nation,s.countries[m.nation].generals[m.slot]);assembly.travel.set(key,(assembly.travel.get(key)||0)+m.path.length-1);}
+ const defenders=(nation,target,home,excluded,frontId)=>{const result=baseDefenders(nation,target,home,excluded);for(const g of nation===opponent?assembly.defenseRoster?.get(target)||[]:[]){if(g.role==='king'||!live(nation,g)||excluded.has(campaignOfficerKey(nation,g))||result.queue.some(e=>e.general===g))continue;const path=fieldPaths(s,Atlas,nation,g.position).get(target);if(path)result.queue.push({general:g,path,kind:'relief'});}if(assembly.canDefend)result.queue=result.queue.filter(e=>assembly.canDefend(nation,e.general,target,frontId));return result;};
+ if(ctl.unitSpacing&&!assembly.prepared)for(const e of ctx.events)for(const m of e.type==='unit_spacing'?e.moves||[]:[]){const key=campaignOfficerKey(m.nation,s.countries[m.nation].generals[m.slot]);assembly.travel.set(key,(assembly.travel.get(key)||0)+m.path.length-1);}
  const originalSlots=s.countries[actor].generals.filter(g=>g.active&&g.alive).map(g=>g.slot);
  const slots=assembly.groups.length?[...assembly.groups.filter(group=>group.nation===undefined||group.nation===actor).flatMap(group=>group.members.map(g=>g.slot).sort((a,b)=>a-b)),...originalSlots.filter(slot=>!assembly.bySlot.has(slot))]:originalSlots;
  for(const slot of slots){
   if(s.result||!h.lands(s,actor))break;
   const planned=assembly.decisions?.get(slot);if(assembly.prepared&&!planned?.accepted)continue;
-  const initial=s.countries[actor].generals[slot],candidates=h.targets(s,actor,slot,opponent);
+  const initial=s.countries[actor].generals[slot];if(live(actor,initial))assembly.release?.(initial);
+  const candidates=assembly.targets?assembly.targets(slot,h.targets(s,actor,slot,opponent)):h.targets(s,actor,slot,opponent);
   if(!live(actor,initial)||!candidates.length){assembly.detach?.(initial);emit('skip',initial.name+' 공격 건너뜀',!initial.troops?'병력 0만명 · 충원 대기':initial.readiness?.resting?'이번 전쟁 정비 중':'도달 가능한 접경 영토 없음',{nation:actor,slot,role:'general'});continue;}
   const routes=new Map(candidates.map(id=>[id,expeditionRoute(s,Atlas,actor,initial,id)]));
   let target=chooseFrontier(s,Atlas,actor,candidates,{paths:new Map([...routes].map(([id,r])=>[id,r.path])),supply:h.connectedSupply,recoveryPriority:rules.recoveryPriority,recoveryBonus:rules.finishStrategy?rules.recoveryScoreCap:0},randomInt);
@@ -62,13 +63,13 @@ export function resolveContinuousCampaign(ctx){
   if(roll>chance){assembly.detach?.(initial);emit('hold',initial.name+' 출전하지 않음','선택한 목표를 포기하고 현재 위치에서 대기해.',{nation:actor,slot,role:'general',cellId:target});continue;}
   }
   assembly.march?.(initial,firstRoute.path);assembly.detach?.(initial);
-  const root={id:battles.length,defeated:new Set(),travel:new Map(assembly.travel),capitalFalls:new Set()};
+  const root={id:battles.length,defeated:new Set(),travel:new Map(assembly.travel),capitalFalls:new Set(),frontId:assembly.bySlot.get(slot)?.front?.id};
   let task={nation:actor,enemy:opponent,g:initial,target,budget:null,taken:[],special:[],counter:false};
   while(task&&!s.result){
    const {nation,enemy,g}=task;
    if(!live(nation,g)||root.defeated.has(campaignOfficerKey(nation,g))||!h.lands(s,enemy))break;
    const cellId=task.target,route=expeditionRoute(s,Atlas,nation,g,cellId);if(s.cells[cellId]?.owner!==enemy||!route)break;
-   const home=s.countries[enemy].generals[s.cells[cellId].commander],defense=defenders(enemy,cellId,home,root.defeated);
+   const home=s.countries[enemy].generals[s.cells[cellId].commander],defense=defenders(enemy,cellId,home,root.defeated,root.frontId);
    const queue=defense.queue.length?defense.queue:[{general:home,path:null,kind:'absent'}];let counter=null,captured=false;
    for(let wave=0;wave<queue.length;wave++){
     if(!live(nation,g))break;
@@ -77,7 +78,7 @@ export function resolveContinuousCampaign(ctx){
     if(!automatic)move(enemy,d,entry.path,entry.kind,moves,root.travel);
     const b={index,assaultId:root.id,operationId:root.id,continuation:task.counter?'counter':task.taken.length?'advance':'initial',wave:wave+1,defendersTotal:defense.queue.length,actor:nation,target:enemy,slot:g.slot,defenseSlot:d.slot,...(d.role==='king'?{defenseRole:'king'}:{}),regionSlot:home.slot,returnBlocked:defense.blocked,relief:entry.kind==='relief',cellId,from:route.from,candidates:[cellId],distance:route.distance,moves,automatic,winner:null,takenCells:[],captureOwner:nation,
      attack:{id:nation,slot:g.slot,name:g.name,ability:g.ability,army:g.troops},defense:{id:enemy,slot:d.slot,...(d.role==='king'?{role:'king',generation:d.generation}:{}),name:automatic?'방어 병력 없음':d.name,ability:d.ability,army:automatic?0:d.troops}};
-    if(assembly.bySlot.has(slot)){b.armyGroupId=assembly.bySlot.get(slot).id;if(assembly.prepared)b.armyPrepared=true;b.assemblyEdges=assembly.travel.get(campaignOfficerKey(nation,g))||0;}
+    if(assembly.bySlot.has(slot)){b.armyGroupId=assembly.bySlot.get(slot).id;if(assembly.bySlot.get(slot).front){b.frontId=assembly.bySlot.get(slot).front.id;b.frontName=assembly.bySlot.get(slot).front.name;}if(assembly.prepared)b.armyPrepared=true;b.assemblyEdges=assembly.travel.get(campaignOfficerKey(nation,g))||0;}
     battles.push(b);
     if(!automatic&&rules.warReadiness){beginReadiness(g);beginReadiness(d);}
     if(rules.strategicTargets&&cellId===h.capitalCell(s,enemy)){const strategy=initializeStrategy(s,enemy);if(!strategy.capitalAttackers.includes(nation))strategy.capitalAttackers.push(nation);}
@@ -104,7 +105,7 @@ export function resolveContinuousCampaign(ctx){
      b.captureLimit=task.budget;
      const take=id=>{
       const capital=h.capitalCell(s,enemy),neighborSnapshot=Atlas.cells[id].neighbors.filter(v=>s.cells[v].owner===enemy);
-      s.cells[id].owner=nation;s.cells[id].commander=g.slot;b.takenCells.push(id);task.taken.push(id);
+      s.cells[id].owner=nation;s.cells[id].commander=g.slot;b.takenCells.push(id);task.taken.push(id);if(nation===actor&&!task.counter)assembly.advance?.(slot,id);
       task.special=task.special.filter(v=>v!==id);if(task.budget>0)task.budget--;
       if(id===capital&&(rules.capitalDisruption||rules.capitalFallAnnexation&&!root.capitalFalls.has(enemy))){
        if(rules.capitalDisruption)s.countries[enemy].capitalShock=rules.capitalDisruptionSettlements;
@@ -114,8 +115,9 @@ export function resolveContinuousCampaign(ctx){
      take(cellId);
      // Consecutive empty provinces form one recorded advance and one flowing map animation.
      if(automatic)while(task.budget>0||task.special.length){
-      const options=s.cells.filter(c=>c.owner===enemy&&b.takenCells.some(id=>Atlas.cells[id].neighbors.includes(c.id))&&(task.budget>0||task.special.includes(c.id))).map(c=>c.id);
-      const open=options.filter(id=>!defenders(enemy,id,s.countries[enemy].generals[s.cells[id].commander],root.defeated).queue.length);
+      let options=s.cells.filter(c=>c.owner===enemy&&b.takenCells.some(id=>Atlas.cells[id].neighbors.includes(c.id))&&(task.budget>0||task.special.includes(c.id))).map(c=>c.id);
+      if(nation===actor&&!task.counter&&assembly.targets)options=options.filter(id=>task.special.includes(id)||assembly.targets(slot,[id]).length);
+      const open=options.filter(id=>!defenders(enemy,id,s.countries[enemy].generals[s.cells[id].commander],root.defeated,root.frontId).queue.length);
       if(!open.length)break;const next=chooseFrontier(s,Atlas,nation,open,{recent:task.taken,supply:h.connectedSupply,recoveryPriority:rules.recoveryPriority,recoveryBonus:rules.finishStrategy?rules.recoveryScoreCap:0},randomInt);take(next);
      }
      b.takenCell=b.takenCells[0];
@@ -148,7 +150,8 @@ export function resolveContinuousCampaign(ctx){
    }
    if(counter){task=counter;continue;}
    if(!captured||!live(nation,g)||!(task.budget>0||task.special.length)){task=null;continue;}
-   const options=s.cells.filter(c=>c.owner===enemy&&(task.budget>0||task.special.includes(c.id))&&Atlas.cells[c.id].neighbors.some(id=>s.cells[id].owner===nation&&task.taken.includes(id))).map(c=>c.id).filter(id=>expeditionRoute(s,Atlas,nation,g,id));
+   let options=s.cells.filter(c=>c.owner===enemy&&(task.budget>0||task.special.includes(c.id))&&Atlas.cells[c.id].neighbors.some(id=>s.cells[id].owner===nation&&task.taken.includes(id))).map(c=>c.id).filter(id=>expeditionRoute(s,Atlas,nation,g,id));
+   if(nation===actor&&!task.counter&&assembly.targets)options=options.filter(id=>task.special.includes(id)||assembly.targets(slot,[id]).length);
    if(!options.length){task=null;continue;}
    task.target=chooseFrontier(s,Atlas,nation,options,{recent:task.taken,supply:h.connectedSupply,recoveryPriority:rules.recoveryPriority,recoveryBonus:rules.finishStrategy?rules.recoveryScoreCap:0},randomInt);
   }

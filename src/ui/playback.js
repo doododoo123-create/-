@@ -15,7 +15,7 @@ export function makeTurnScenes(record,before,history=[]) {
     const frame=record.frames?.[event.index]||{before,after:before};
     const motion=record.movements?.find(m=>m.eventIndex===event.index);
     if(motion||event.type==='territory'){const steps=movementScenes(event,frame,motion,camps,record.battles[event.battleIndex]);scenes.push(...steps.scenes);camps=steps.camps;}
-    if(event.formation&&['army_assembly','army_march'].includes(event.type)||event.type==='unit_spacing'){if(scenes.at(-1)?.event===event)scenes.at(-1).worldAfter=frame.after;else scenes.push({id:'formation-'+event.index,kind:'focus',event,title:event.title,worldBefore:frame.before,worldAfter:frame.after,camps});continue;}
+    if(event.formation&&['army_assembly','army_march','army_release'].includes(event.type)||event.type==='unit_spacing'){if(scenes.at(-1)?.event===event)scenes.at(-1).worldAfter=frame.after;else scenes.push({id:'formation-'+event.index,kind:'focus',event,title:event.title,worldBefore:frame.before,worldAfter:frame.after,camps});continue;}
     if(event.type==='army_disband'&&event.armyGroup?.formation)continue;
     if(event.type==='expedition_roll')continue;
     const start=scenes.length;
@@ -57,7 +57,7 @@ export class TurnPlayback {
   clearTimer(){if(this.handle!==null)this.cancel(this.handle);this.handle=null;}
   load(record,before,after,play=true,history=[]){
     this.clearTimer();this.groupEnd=null;this.groupDone=false;this.detailReturn=null;this.campaignExpanded=false;const modern=!!this.options().armyPresentation,raw=makeTurnScenes(record,before,history),original=(modern?formationScenes(directUnopposedScenes(raw,record)):raw).map(s=>modern?{...s,rapidMovement:true}:s),scenes=this.options().compactCampaigns?compactCampaignScenes(original,record,{modern}):original;scenes.at(-1).worldAfter=after;
-    this.state={record,before,after,scenes,index:0,previousRoundRecords:history.filter(r=>r.round===record.round-1),roundRecords:history.filter(r=>r.round===record.round&&r.turn<record.turn),phase:['roll','reel'].includes(scenes[0].kind)?'rolling':'holding',playing:play,finished:false};
+    this.state={record,before,after,scenes,latestRoutes:modern,index:0,previousRoundRecords:history.filter(r=>r.round===record.round-1),roundRecords:history.filter(r=>r.round===record.round&&r.turn<record.turn),phase:['roll','reel'].includes(scenes[0].kind)?'rolling':'holding',playing:play,finished:false};
     this.remaining=this.duration();this.onChange();if(play)this.arm();
   }
   arm(){if(!this.state?.playing||this.state.finished)return;this.clearTimer();this.scheduledSpeed=Math.max(.1,Number(this.effectiveSpeed)||1);this.deadline=this.now()+this.remaining/this.scheduledSpeed;this.handle=this.schedule(()=>{this.handle=null;this.advance();},this.remaining/this.scheduledSpeed);}

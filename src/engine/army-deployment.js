@@ -3,10 +3,12 @@ import {battleReady} from './war-readiness.js';
 import {campaignOfficerKey} from './advance-defenders.js';
 import {chooseFrontier} from './frontier.js';
 import {centralRally,formationPositions} from './unit-spacing.js';
+import {prepareFrontCampaign} from './front-deployment.js';
 
 // v35 commands plan acceptance once, then physically deploy both sides before D30.
 // Older commands continue through army-assembly.js without changed RNG or paths.
 export function prepareArmyCampaign(ctx){
+ if(ctx.ctl.frontOperations)return prepareFrontCampaign(ctx);
  const {s,Atlas,actor,opponent,ctl,rules,helpers:h,emit,die,randomInt,defenderQueue}=ctx;
  const groups=[],bySlot=new Map(),travel=new Map(),decisions=new Map(),defenseRoster=new Map();
  const ready=g=>g?.active&&g.alive&&g.troops>0&&!g.stranded&&(!rules.warReadiness||battleReady(g));

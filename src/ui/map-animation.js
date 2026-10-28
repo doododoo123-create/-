@@ -29,7 +29,7 @@ export class MapAnimation {
    const duelScale=Number(svg.style.getPropertyValue('--duel-display-scale'))||1;
    const screenScale=Math.hypot(matrix.a,matrix.b);
    for(const arrow of root.querySelectorAll('.operation-arrow[data-route-points]')){
-    const moving=arrow.dataset.liveMarch==='true',points=JSON.parse(arrow.dataset.routePoints),part=polylineAt(points,moving?movement:1),width=Number(arrow.querySelector('.campaign-route-pair')?.dataset.arrowWidth)||armyArrowWidth(Number(arrow.querySelector('.campaign-route-pair')?.dataset.arrowArmy)||0),gap=arrow.dataset.routeTerminal==='false'?0:Math.min(part.total,(22+width*1.5)/screenScale),drawn=polylineAt(points,Math.min(moving?movement:1,part.total?(part.total-gap)/part.total:0));
+    const moving=arrow.dataset.liveMarch==='true',points=JSON.parse(arrow.dataset.routePoints),fraction=moving?Math.min(1,movement*(Number(arrow.dataset.arrivalFactor)||1)):1,part=polylineAt(points,fraction),width=Number(arrow.querySelector('.campaign-route-pair')?.dataset.arrowWidth)||armyArrowWidth(Number(arrow.querySelector('.campaign-route-pair')?.dataset.arrowArmy)||0),gap=arrow.dataset.routeTerminal==='false'?0:Math.min(part.total,(22+width*1.5)/screenScale),drawn=polylineAt(points,Math.min(fraction,part.total?(part.total-gap)/part.total:0));
     // Very short routes have no room for a shaft outside the enlarged battle icon.
     for(const path of arrow.querySelectorAll('.campaign-route,.campaign-route-shadow'))path.setAttribute('d',part.total>gap?(arrow.dataset.smoothRoute==='true'?roundedRoutePath(drawn.path):operationPath(drawn.path)):'');
     const card=[...root.querySelectorAll('.map-unit-position')].find(c=>c.dataset.person===arrow.dataset.routePerson),node=card?.querySelector('.clock-marching');

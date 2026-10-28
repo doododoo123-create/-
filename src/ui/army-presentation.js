@@ -11,7 +11,7 @@ export function visibleArmyGroups(world,presentation){
  for(const e of record.events||[]){
   if(e.index>limit)break;if(e.type==='territory'){const b=record.battles[e.battleIndex];if(b?.armyPrepared){groups.delete(b.armyGroupId);for(const [id,g] of groups)if(g.nation===b.target&&g.members.some(m=>m.slot===b.defenseSlot))groups.delete(id);}}if(!e.armyGroup)continue;
   if(e.index===limit&&e.type==='army_assembly'&&scene.kind==='movement')continue;
-  groups.set(e.armyGroup.id,e.armyGroup);
+  if(e.armyGroup.released)groups.delete(e.armyGroup.id);else groups.set(e.armyGroup.id,e.armyGroup);
  }
  return [...groups.values()].flatMap(group=>{
   const countryId=world.countries[group.nation]?.id,members=group.members.map(m=>world.people.find(p=>p.countryId===countryId&&p.role==='general'&&p.slot===m.slot&&p.generation===m.generation)).filter(p=>p?.active&&p.alive&&p.troops>0);

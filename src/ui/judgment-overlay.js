@@ -1,3 +1,4 @@
+import {portraitConfusion} from './readiness-display.js';
 import { renderAccumulatingDie, scoreBonusItems } from './score-accumulation.js';
 import {renderCampaignOverlay} from './campaign-view.js';
 import { royalRoleForScene,royalCommandPerson } from './royal-presentation.js';
@@ -16,7 +17,7 @@ export function judgmentVisible(playback){
   return !!(playback.state&&!playback.complete&&!(playback.groupDone&&!playback.playing)&&scene&& !['apply','summary','movement','route','arrival','capture','round-settle'].includes(scene.kind)&&scene.event?.type!=='territory');
 }
 function judgmentPerson(world,country,role,slot){return royalCommandPerson(countryPeople(world,country?.id).find(p=>p.role===role&&(role!=='general'||p.slot===slot)),world);}
-function judgmentPortrait(person,country,role,army=null){return `<figure class="judgment-person" style="--nation:${country?.color||'#c0b698'}"><div class="framed-portrait">${portraitImage(person,country,role)}</div><figcaption><strong>${esc(displayName(person,ROLES[role]))}${role==='general'?veteranStars(person):''}</strong><small>${role==='general'?`병력 ${army??person?.troops??0}만`:esc(country?.name||'')+' · '+ROLES[role]}</small></figcaption></figure>`;}
+function judgmentPortrait(person,country,role,army=null){return `<figure class="judgment-person" style="--nation:${country?.color||'#c0b698'}"><div class="framed-portrait">${portraitImage(person,country,role)}${portraitConfusion(person)}</div><figcaption><strong>${esc(displayName(person,ROLES[role]))}${role==='general'?veteranStars(person):''}</strong><small>${role==='general'?`병력 ${army??person?.troops??0}만`:esc(country?.name||'')+' · '+ROLES[role]}</small></figcaption></figure>`;}
 function judgmentTraits(person,role,country){
   const trait=role==='king'?PERSONALITIES[person?.personality||country?.personality]:role==='minister'?MINISTER_STYLES[person?.ministerStyle||'balanced']:`능력 ${judgmentSign(person?.ability)}`;
   return `<p class="judgment-feature">${esc(person?.feature||trait||'')}<span>${role==='minister'?`${esc(trait)} · 능력 ${judgmentSign(person?.ability)}`:role==='king'?esc(trait||''):`능력 ${judgmentSign(person?.ability)}`}</span></p>`;

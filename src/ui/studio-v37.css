@@ -1,0 +1,5 @@
+.campaign-v36 .campaign-roster p{font-size:13px;line-height:17px;margin:3px 0}.campaign-v36 .campaign-roster p b{font-size:14px}
+.campaign-portrait,.framed-portrait{position:relative;overflow:visible}
+.portrait-confusion{position:absolute;right:-5px;bottom:1px;z-index:3;display:inline-flex;align-items:center;justify-content:center;min-width:12px;padding:1px 3px;box-sizing:border-box;border:1px solid #e09b67;border-radius:3px;background:#18242def;color:#ffb37c;font:bold 11px/13px var(--studio-sans);text-shadow:0 1px #000;white-space:nowrap;pointer-events:none}
+.campaign-portrait>img,.framed-portrait>img{border-radius:inherit}
+@media(max-width:760px),(max-height:540px){.campaign-v36 .campaign-roster p{font-size:11px;line-height:15px}.campaign-v36 .campaign-roster p b{font-size:12px}.portrait-confusion{right:-4px;font-size:10px;line-height:12px;padding:1px 2px}}

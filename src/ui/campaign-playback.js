@@ -28,9 +28,10 @@ export function campaignGroups(scenes,record){
  }
  return clusters.filter(c=>c.length>=2||c[0].b.armyGroupId).map((c,i)=>{
   let start=c[0].start;
+  if(c[0].b.frontId){for(let k=start-1;k>=0;k--){const e=scenes[k].event;if(e?.type==='army_release'&&e.armyGroup?.frontId===c[0].b.frontId)start=k;else if(scenes[k].battleIndex!==undefined||['army_assembly','army_march','war_target'].includes(e?.type))break;}}
   if(c[0].b.armyGroupId&&!c[0].b.armyPrepared){for(let k=start-1;k>=0;k--){const e=scenes[k].event;if(e?.type==='army_assembly'||['king','war_target','army_disband'].includes(e?.type))break;if(['army_march','army_detach'].includes(e?.type)&&e.armyGroup?.id===c[0].b.armyGroupId)start=k;else if(scenes[k].battleIndex!==undefined)break;}}
   return ({
-  id:'campaign-'+record.turn+'-'+i,actorId:record.actorId,opponentId:c[0].b.actorId===record.actorId?c[0].b.defenderId:c[0].b.actorId,
+  frontId:c[0].b.frontId,frontName:c[0].b.frontName,id:'campaign-'+record.turn+'-'+i,actorId:record.actorId,opponentId:c[0].b.actorId===record.actorId?c[0].b.defenderId:c[0].b.actorId,
   start,end:c.at(-1).end,ranges:c,battles:c.map(v=>v.b),
   originalScenes:scenes.slice(start,c.at(-1).end+1),defenseMetadata:knownDefenseGroups(scenes,record,c,start),armyId:c[0].b.armyGroupId,assemblyMetadata:record.events.filter(e=>e.armyGroup?.id===c[0].b.armyGroupId).find(e=>e.type==='army_assembly')?.armyGroup,
  });});

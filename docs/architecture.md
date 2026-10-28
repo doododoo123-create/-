@@ -505,3 +505,14 @@ UI 모듈: campaign-playback.js는 확정된 장면을 묶고, campaign-view.js�
 집결 완료 후 army-forming 장면을 삽입한다. MapAnimation의 같은 재생 시계로 대표를1→1.7배로 키우고 보조 카드를 드러내며 해당 부대만 강조한다. pause 상태와 reducedMotion을 따르고,명시적인 형성 단계/집단군 ID 일치 없이는 효과를 그리지 않는다. cues.js의 군령 큐는 기존 turn_start 샘플/정규 음량을 사용하며 그룹별 ledger 키로 중복 재생을 막는다.
 
 movementRate와 campaignSceneDuration은 추가 가속1.5다. roll/reel 시간은 보존한다. studio-v36.css는 중앙 쪽 상단 결과/다이스 내부 여유 공간을 담당하고,군 전투창의 die-equation은 DOM에서 제거한다. 엔진31/기존 파일 형식과42개 효과음 원본은 유지한다.
+
+
+## v0.37 전선별 실제 집결
+
+- `engine/front-operations.js`: 접촉쌍의 양측 인접 그래프,반경2 구간,최단 거리 장수 배정,고정 담당 전선/연속 점령지 기반 목표 필터다. 화면 좌표로 전선을 합치거나 이동 경로를 만들지 않는다.
+- `engine/front-deployment.js`: 새 controls.frontOperations 명령의 거부 선행/구간별 전원 집결/공동 전진/중복 없는 수비 편성,실제 분산 해체 및 누적 이동 비용을 기록한다. `army-deployment.js`의 기존 경로는 과거 명령 재생용으로 보존한다.
+- `continuous-campaign.js`: 전선별 초기/재선정/추가 목표 제한과 전진 지점 갱신,현재 전선 수비 자격을 적용한다. `army_release`의 실제 분산도 전투 전에 계산해 피로에 포함한다. 다른 대기 집단군은 `spreadCommanders`의 보호 목록으로 중간 분산에서 제외한다.
+- 관전은 그 계산된 release 장면을 전체D30 뒤에 재생하고,다이스 동안은 release 직전 세계/camps/공개 커서로 고정한다. 전선 ID/이름을 군 대결표와 묶음 기준에 전달한다. 전원 실제 도착 뒤 결성하며 개인 집결 경로 길이로 조기 도착/대기를 표시한다.
+- `round-campaign.js`는 공개된 사건에서 개인의 가장 최근 활동 차례를 구해 이전 경로만 걸러낸다. `campaign-routes.js`는 공유 군 진군의 남은 인원/병력을 다시 합산한다. 점령/전투 흔적 목록은 별도 유지한다.
+- `mountain-labels.js`는 지도 카메라 갱신 후 실제 지명 화면 경계를 측정해4px 옆에 산악 문자를 둔다. 역변환으로 표시 좌표만 변경하며 지명/영토/카드 고정점은 바꾸지 않는다. `portraitConfusion`과 `studio-v37.css`는 초상 바깥 혼란 배지·큰 참전/장수 수를 담당한다.
+- 엔진32/기존 세계schema2·진행schema1·역사schema2를 유지한다. 기존31 명령은 frontOperations 누락false로 동일 계산,새 명령만true를 기록한다. 효과음·시드·전투 가산/손실·전사·정비 규칙은 변경하지 않는다.

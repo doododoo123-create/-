@@ -9,13 +9,13 @@ import { captureLayerAttributes } from './capture-transition.js';
 // Only revealed events are read. This round-long display never changes engine ownership or RNG.
 export function completedRoundPresentation(run){
  const record=run?.history?.at(-1);if(!record)return null;
- return {record,scenes:[],index:0,finished:true,roundRecords:run.history.filter(r=>r.round===record.round&&r.turn<record.turn)};
+ return {record,scenes:[],index:0,finished:true,latestRoutes:true,roundRecords:run.history.filter(r=>r.round===record.round&&r.turn<record.turn)};
 }
 export function roundCampaign(world,presentation){
  const record=presentation?.record,empty={captures:new Map(),routes:[],fronts:[],movements:[],battleSites:[],pendingCaptures:new Map(),baseOwners:new Map(),settled:true};
  if(!record)return empty;
  const scene=presentation.scenes?.[presentation.index],events=record.events||[];
- if(['season','round-settle'].includes(scene?.kind)&&presentation.previousRoundRecords?.length){const previous=presentation.previousRoundRecords,last=previous.at(-1),old=roundCampaign(world,{record:last,scenes:[],index:0,finished:true,roundRecords:previous.slice(0,-1)});return {...old,settling:scene.kind==='round-settle',routes:old.routes.map(r=>({...r,active:false,moving:false}))};}
+ if(['season','round-settle'].includes(scene?.kind)&&presentation.previousRoundRecords?.length){const previous=presentation.previousRoundRecords,last=previous.at(-1),old=roundCampaign(world,{record:last,scenes:[],index:0,finished:true,latestRoutes:presentation.latestRoutes,roundRecords:previous.slice(0,-1)});return {...old,settling:scene.kind==='round-settle',routes:old.routes.map(r=>({...r,active:false,moving:false}))};}
  // A summary has no event index: it still contains every revealed result of this turn.
  // Keep season effects through production and the inter-turn pause. The next round's
  // first record naturally starts with an empty history at its season announcement.
@@ -25,6 +25,7 @@ export function roundCampaign(world,presentation){
  const baseOwners=new Map((before||world).territories.map(t=>[t.id,t.ownerId]));
  if(!before)for(const c of [...(record.changes||[])].reverse())baseOwners.set(c.territoryId,c.from);
  for(const r of [...past].reverse())for(const c of [...(r.changes||[])].reverse())baseOwners.set(c.territoryId,c.from);
+ const latest=new Map(),activity=(id,turn)=>{if(id)latest.set(id,Math.max(latest.get(id)||0,turn));};
  const captures=new Map(),routes=[],fronts=new Map(),movements=[],lanes=new Map(),battleSites=new Map(),pendingCaptures=new Map();
  const limit=complete?Infinity:scene?.mapEventIndex??scene?.event?.index??-1;
  const applied=r=>r!==record||complete;
@@ -41,6 +42,7 @@ export function roundCampaign(world,presentation){
     if(r===record&&event?.index===limit&&scene?.revealedRoutes&&!scene.revealedRoutes.includes(side)&&scene?.movementSide!==side)continue;
     const moving=motion?.moves.find(m=>m.countryId===countryId&&m.slot===slot),person=frame?.people.find(p=>p.role===(side==='defense'?b.defenseRole||'general':'general')&&p.countryId===countryId&&p.slot===slot);
     const fromId=moving?.fromId||person?.positionId||person?.stationId||(side==='attack'?b.fromId:b.territoryId);
+    activity(person?.id||(side==='attack'?b.attackerPersonId:b.defenderPersonId),r.turn);
     if(side==='defense'&&fromId===b.territoryId)continue;
     const laneKey=`${side}:${fromId}:${b.territoryId}`,lane=lanes.get(laneKey)||0;lanes.set(laneKey,lane+1);
     const path=moving?.path?.length?[...moving.path]:[fromId];if(path.at(-1)!==b.territoryId)path.push(b.territoryId);
@@ -60,6 +62,12 @@ export function roundCampaign(world,presentation){
    const key=[b.fromId,b.territoryId].sort().join('|');
    if(b.winner===null)fronts.set(key,{fromId:b.fromId,toId:b.territoryId});else fronts.delete(key);
   }
+ }
+ if(presentation.latestRoutes){
+  for(const m of movements)activity(m.personId,m.turn);
+  if(!complete)for(const m of scene?.moves||[])activity(m.personId,record.turn);
+  for(let i=routes.length-1;i>=0;i--)if(routes[i].turn<latest.get(routes[i].personId))routes.splice(i,1);
+  for(let i=movements.length-1;i>=0;i--)if(movements[i].turn<latest.get(movements[i].personId))movements.splice(i,1);
  }
  const owned=new Map(world.territories.map(t=>[t.id,t.ownerId]));
  for(const [id,c] of captures)if(owned.get(id)!==c.ownerId&&!pendingCaptures.has(id))captures.delete(id);

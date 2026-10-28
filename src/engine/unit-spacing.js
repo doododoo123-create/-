@@ -13,13 +13,13 @@ export function openPosition(state,atlas,nation,g,preferred=g.position,counts=pl
  const candidates=[...paths.keys()].sort((a,b)=>Number((counts.get(a)||0)>=2)-Number((counts.get(b)||0)>=2)||(distance.get(a)?.length??Infinity)-(distance.get(b)?.length??Infinity)||(counts.get(a)||0)-(counts.get(b)||0)||paths.get(a).length-paths.get(b).length||a-b);
  return candidates.length?paths.get(candidates[0]):null;
 }
-export function spreadCommanders(state,atlas,emit,{travel=null,nations=state.countries.map(c=>c.id),battleIndex}={}){
+export function spreadCommanders(state,atlas,emit,{travel=null,nations=state.countries.map(c=>c.id),battleIndex,protectedOfficers=[]}={}){
  const all=[];
  for(const nation of nations){
   const officers=stationedOfficers(state,nation),counts=placementCounts(state,nation);
   // A king keeps the capital; move excess generals rather than displacing the king.
   for(const g of officers.sort((a,b)=>Number(b.role==='king')-Number(a.role==='king')||a.slot-b.slot)){
-   if(g.role==='king'||(counts.get(g.position)||0)<=2)continue;
+   if(g.role==='king'||protectedOfficers.includes(g)||(counts.get(g.position)||0)<=2)continue;
    counts.set(g.position,counts.get(g.position)-1);const path=openPosition(state,atlas,nation,g,g.position,counts);
    if(path?.length>1){const from=g.position;g.position=path.at(-1);g.stranded=false;all.push({nation,slot:g.slot,generation:g.generation,kind:'spacing',from,to:g.position,path});if(travel){const key=`${nation}:${g.slot}:${g.generation}`;travel.set(key,(travel.get(key)||0)+path.length-1);}}
    counts.set(g.position,(counts.get(g.position)||0)+1);
