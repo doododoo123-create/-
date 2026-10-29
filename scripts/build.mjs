@@ -42,6 +42,7 @@ async function bundle(path) {
 async function scriptFor(mobile){mobileBuild=mobile;visited.clear();chunks.length=0;await bundle(resolve(root,'src/app.js'));return `(() => {\n'use strict';\n${chunks.join('\n')}\n})();`.replace(/<\/script/gi,'<\\/script');}
 let fontCss=await readFile(resolve(root,'src/ui/fonts-licensed.css'),'utf8');
 for(const match of [...fontCss.matchAll(/url\('([^']+\.woff2)'\)/g)])fontCss=fontCss.replace(match[0],`url('data:font/woff2;base64,${(await readFile(resolve(root,'src/ui',match[1]))).toString('base64')}')`);
+const v38Css=await readFile(resolve(root,'src/ui/studio-v38.css'),'utf8');
 const v37Css=await readFile(resolve(root,'src/ui/studio-v37.css'),'utf8');
 const v36Css=await readFile(resolve(root,'src/ui/studio-v36.css'),'utf8');
 const v35Css=await readFile(resolve(root,'src/ui/studio-v35.css'),'utf8');
@@ -111,6 +112,7 @@ html = html.replace('<link rel="stylesheet" href="./src/ui/fonts-licensed.css">'
   .replace('<link rel="stylesheet" href="./src/ui/studio-v35.css">', '<style>'+v35Css+'</style>')
   .replace('<link rel="stylesheet" href="./src/ui/studio-v36.css">', '<style>'+v36Css+'</style>')
   .replace('<link rel="stylesheet" href="./src/ui/studio-v37.css">', '<style>'+v37Css+'</style>')
+  .replace('<link rel="stylesheet" href="./src/ui/studio-v38.css">', '<style>'+v38Css+'</style>')
   .replace('href="./favicon.svg"', `href="data:image/svg+xml;base64,${favicon}"`);
 const dist = resolve(root, 'dist');
 await mkdir(dist, { recursive: true });

@@ -38,7 +38,7 @@ export function resolveContinuousCampaign(ctx){
   for(const nation of [b.actor,b.target])for(const g of fieldOfficers(s.countries[nation]))if(g.active&&g.alive&&Number.isInteger(g.position)&&s.cells[g.position].owner!==nation)retreat(nation,g,b);
   h.ensureStations(s);h.ensureFieldPositions(s);if(rules.royalDefense)h.ensureRoyals(s);
   if(rules.battlefieldRecovery)returnEmptyCommanders(s,Atlas,h.capitalCell,emit,undefined,b.index);
-  if(ctl.unitSpacing){const moves=spreadCommanders(s,Atlas,emit,{travel:operationTravel,battleIndex:b.index,protectedOfficers:assembly.heldMembers?.()||[]});for(const m of moves){const key=campaignOfficerKey(m.nation,s.countries[m.nation].generals[m.slot]);assembly.travel.set(key,(assembly.travel.get(key)||0)+m.path.length-1);}}
+  if(ctl.unitSpacing&&!ctl.directArmyRelease){const moves=spreadCommanders(s,Atlas,emit,{travel:operationTravel,battleIndex:b.index,protectedOfficers:assembly.heldMembers?.()||[]});for(const m of moves){const key=campaignOfficerKey(m.nation,s.countries[m.nation].generals[m.slot]);assembly.travel.set(key,(assembly.travel.get(key)||0)+m.path.length-1);}}
   for(const c of s.countries)h.syncArmy(c);
   if(h.aliveIds(s).length===1)h.finish(s,'conquest');
  };

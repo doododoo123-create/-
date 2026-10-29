@@ -27,7 +27,7 @@ export function renderOperationalFront(world,geometry,campaign,frontPath){
 }
 export function renderCampaignRouteLayers(world,geometry,campaign,{frontPath,scene,progress=0,selectedPersonId=null,speed=1,routeMode='all'}={}){
  const country=id=>world.countries.find(c=>c.id===id),anchor=(id,kind='station')=>mapAnchor(world,id,kind,geometry);
- const summary=routeMode==='summary',individual=groupedOperations(campaign).filter(r=>!summary||r.moving||r.personId===selectedPersonId);
+ const summary=routeMode==='summary',individual=groupedOperations(campaign).filter(r=>!(scene?.parallelDefense&&r.moving&&r.side==='defense')).filter(r=>!summary||r.moving||r.personId===selectedPersonId);
  const operationLabels=[];
  const operations=operationGeometry(world,geometry,individual).map(r=>{
   const from=anchor(r.fromId,'reference'),to=anchor(r.toId,'battle');if(!from||!to)return '';
@@ -43,7 +43,7 @@ export function renderCampaignRouteLayers(world,geometry,campaign,{frontPath,sce
  const armyArrows=renderArmyMarches(world,geometry,campaign,scene);
  const moving=scene?.kind==='movement'?scene.moves||[]:[],shown=new Map();
  for(const m of campaign.movements)if(['retreat','redeploy','assembly','spacing','formation-release'].includes(m.kind)||selectedPersonId===m.personId&&!['outbound','return','relief'].includes(m.kind))shown.set(m.key,m);
- for(const m of moving)if(!['outbound','return','relief','army-march'].includes(m.kind))shown.set(`live:${m.personId}`,{...m,key:`live:${m.personId}`,live:true});
+ for(const m of moving)if(scene?.parallelDefense||!['outbound','return','relief','army-march'].includes(m.kind))shown.set(`live:${m.personId}`,{...m,key:`live:${m.personId}`,live:true});
  const pastRetreats=summary?[...shown.values()].filter(m=>m.kind==='retreat'&&!m.live&&m.personId!==selectedPersonId).map(m=>({...m,side:'retreat',path:m.visualFromId?[m.visualFromId,m.toId]:m.path,fromId:m.visualFromId||m.fromId,army:m.army??world.people.find(p=>p.id===m.personId)?.troops??0})):[];
  const bundles=summary?bundledGeometry(world,geometry,bundleRouteSegments([...campaign.routes.filter(r=>!r.moving&&r.personId!==selectedPersonId),...pastRetreats])):[],summaryLayers=renderBundledRoutes(world,bundles,campaign.turn);
  const liveIds=new Set(moving.map(m=>m.personId)),dedup=new Set();
@@ -51,11 +51,11 @@ export function renderCampaignRouteLayers(world,geometry,campaign,{frontPath,sce
   if(!m.live&&liveIds.has(m.personId)||summary&&m.kind==='retreat'&&!m.live&&m.personId!==selectedPersonId)return '';
   const key=[m.kind,m.countryId,m.fromId,m.toId].join(':');if(dedup.has(key)&&!m.live)return '';dedup.add(key);
   const visualFrom=m.visualFromId||m.fromId,visualPath=m.visualFromId?[visualFrom,m.toId]:m.path;
-  const points=visualPath.map((id,i)=>{if(['assembly','spacing','formation-release'].includes(m.kind)&&(i===0||i===visualPath.length-1)){const p=anchor(id,'label');return [p[0],p[1]-12];}return anchor(id,i===0&&m.visualFromId?'battle':'station');}).filter(Boolean);if(points.length<2||visualFrom===m.toId)return '';
+  const points=visualPath.map((id,i)=>{if((['assembly','spacing','formation-release'].includes(m.kind)||m.kind==='home'&&scene?.parallelReturn&&m.live)&&(i===0||i===visualPath.length-1)){const p=anchor(id,'label');return [p[0],p[1]-12];}return anchor(id,i===0&&m.visualFromId?'battle':'station');}).filter(Boolean);if(points.length<2||visualFrom===m.toId)return '';
   const color=country(m.countryId)?.color||'#fff',person=world.people.find(p=>p.id===m.personId),label=esc(person?.name||'지휘관');
   if(m.kind==='redeploy')return `<g opacity="${m.live?1:routeOpacity(m.turn,campaign.turn)}" class="round-relocation ${m.live?'is-moving':''}" data-relocation-from="${esc(m.fromId)}" data-relocation-to="${esc(m.toId)}"><title>${label} · 경로 없는 재배치</title>${[points[0],points.at(-1)].map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="7" style="stroke:${color}"/>`).join('')}</g>`;
   const d=`M${points.map(p=>p.join(',')).join(' L')}`;
-  if(['assembly','spacing','formation-release'].includes(m.kind)){return `<g class="operation-arrow army-assembly-route" opacity="${m.live?1:routeOpacity(m.turn,campaign.turn)}" data-live-march="${!!m.live}" data-route-person="${esc(m.personId)}" data-arrival-factor="${m.live&&m.kind==='assembly'?Math.max(...(scene.moves||[]).map(v=>v.path.length-1))/Math.max(1,m.path.length-1):1}" data-route-terminal="false" data-route-points="${esc(JSON.stringify(points))}"><title>${label} · ${m.kind==='formation-release'?'전투 배치':m.kind==='spacing'?'분산 배치':'집결'}</title>${battleRoute(points[0],points.at(-1),'attack',color,{id:'assembly-'+m.key,points,army:person?.troops||0})}</g>`;}
+  if((['assembly','spacing','formation-release'].includes(m.kind)||m.kind==='home'&&scene?.parallelReturn&&m.live)||scene?.parallelDefense&&m.live){return `<g class="operation-arrow army-assembly-route" opacity="${m.live?1:routeOpacity(m.turn,campaign.turn)}" data-live-march="${!!m.live}" data-route-person="${esc(m.personId)}" data-arrival-factor="${m.live&&m.kind==='assembly'?Math.max(...(scene.moves||[]).map(v=>v.path.length-1))/Math.max(1,m.path.length-1):1}" data-route-terminal="false" data-route-points="${esc(JSON.stringify(points))}"><title>${label} · ${m.kind==='home'?'주둔지 복귀':scene?.parallelDefense?'수비대 합류':m.kind==='formation-release'?'전투 배치':m.kind==='spacing'?'분산 배치':'집결'}</title>${battleRoute(points[0],points.at(-1),'attack',color,{id:'assembly-'+m.key,points,army:person?.troops||0})}</g>`;}
   if(m.kind==='retreat'){
    return `<g class="round-retreat" opacity="${m.live?1:routeOpacity(m.turn,campaign.turn)}" data-retreat-from="${esc(visualFrom)}" data-retreat-actual-from="${esc(m.fromId)}" data-retreat-to="${esc(m.toId)}" data-retreat-person="${esc(m.personId)}"><title>${label} · 후퇴</title>${battleRoute(points[0],points.at(-1),'attack',color,{id:'retreat-'+m.key,active:true,army:person?.troops||0})}</g>`;
   }

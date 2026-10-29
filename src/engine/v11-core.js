@@ -298,7 +298,7 @@ function prepareTurn(input,controls){
  const record={number:s.turns+1,round:s.round,actor,kind:null,action:null,before:stats(input),events,battles,summary:''};
  function die(label,sides=10){const drawn=randomInt(s,sides)+1;if(ctl.rolls&&has(ctl.rolls,label)&&!used.has(label)){used.add(label);const value=ctl.rolls[label];if(!Number.isInteger(value)||value<1||value>sides)throw Error('잘못된 지정 주사위');return value;}return drawn;}
  function emit(type,title,detail,data,frame){const e={type,title,detail:detail||'',actor,...(data||{})};if(frame)e.view=snapshot(s);events.push(e);return e;}
- if(ctl.unitSpacing&&advanced)spreadCommanders(s,Atlas,emit);
+ if(ctl.unitSpacing&&advanced&&!ctl.directArmyRelease)spreadCommanders(s,Atlas,emit);
  const royalWaitingAtStart=!!me.royal&&!me.royal.alive;
  if(me.royal&&!me.royal.alive&&me.royal.waited>=3){const g=me.royal,raw=die('royal_successor'),given=['연','진','현','윤','우','찬','겸','하','율','원'];g.generation++;g.name=(NATIONS[actor].kingName.slice(0,1)||'왕')+given[(g.generation*3+raw)%10];g.ability=raw<=2?-4:raw>=9?4:0;g.alive=true;g.waited=0;g.troops=0;g.position=g.station=capitalCell(s,actor);g.confusion=0;delete g.readiness;delete g.restedThisSeason;g.wins=0;g.underdogWins=0;me.kingName=g.name;emit('appointment',g.name+' 새 국왕 즉위','자국 차례 3회 경과 · 기존 국가 성향 유지',{nation:actor,slot:-1,role:'king',roll:raw,faces:10},true);}
  function appoint(){for(const g of me.generals){if(!g.active||g.alive||g.waited<3)continue;const raw=die('successor:'+g.slot),ability=raw<=2?-2:raw>=9?2:0,commandBonus=raw>=7&&raw<=8?1:0;g.generation++;const family=['서','강','유','백','영','현','사'][actor]||NATIONS[actor].kingName.slice(0,1),given=['연','진','현','윤','우','찬','겸','하','율','원'];g.name=family+given[(g.slot+g.generation*3)%10]+'·'+(g.slot+1)+'대'+g.generation;g.ability=modern?ability*2:ability;if(modern)g.wins=0;if(modern&&V11_RULES.underdogExperience)g.underdogWins=0;g.commandBonus=commandBonus;g.feature=raw<=2?'미숙형':raw<=6?'균형형':raw<=8?'통솔형':'명장형';g.alive=true;g.troops=0;g.waited=0;g.appointed=true;if(field)g.position=g.station;if(advanced)g.stranded=false;if(V11_RULES.warReadiness){g.confusion=0;delete g.readiness;delete g.restedThisSeason;}emit('appointment',g.name+' 후임 부임','자국 3턴 대기 완료 · 병력 0만명 · 다음 배분부터 충원',{nation:actor,slot:g.slot,role:'general',roll:raw,faces:10},true);}}
@@ -391,7 +391,7 @@ function prepareTurn(input,controls){
   if(moves.length)emit('home_return','전투 없는 턴 · 담당 주둔지 복귀','열린 자국 육지 경로를 따라 복귀해.',{nation:actor,moves},true);
  }
  if(advanced&&(V11_RULES.strategicTargets||V11_RULES.recoveryPriority))finishStrategicTurn(s,actor,kind,input.cells.map(c=>c.owner),record.target,ctl.targetId!==undefined);
- if(ctl.unitSpacing&&advanced)spreadCommanders(s,Atlas,emit);
+ if(ctl.unitSpacing&&advanced&&(!ctl.directArmyRelease||kind==='domestic'))spreadCommanders(s,Atlas,emit,ctl.directArmyRelease?{nations:[actor]}:undefined);
  record.actionAfter=stats(s);
  me.ownTurns++;if(royalWaitingAtStart&&me.royal&&!me.royal.alive){me.royal.waited=Math.min(3,me.royal.waited+1);emit('waiting','새 국왕 대기',`자국 차례 ${me.royal.waited}/3회 · 기존 성향의 섭정 명령`,{nation:actor,slot:-1,role:'king'},true);}for(const slot of waitingAtStart){const g=me.generals[slot];if(!g.alive)g.waited=Math.min(3,g.waited+1);}
  if(waitingAtStart.length)emit('waiting','후임 대기 진행',waitingAtStart.map(k=>me.generals[k]).filter(g=>!g.alive).map(g=>(g.slot+1)+'번 자리 '+g.waited+'/3턴').join(' · '),{},true);

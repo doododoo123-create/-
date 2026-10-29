@@ -27,7 +27,7 @@ function rowList(record,world){
  return rows.sort((a,b)=>a.eventIndex-b.eventIndex||({move:0,battle:1,capture:2}[a.kind]??3)-({move:0,battle:1,capture:2}[b.kind]??3)||(a.motionOrder??a.captureOrder??0)-(b.motionOrder??b.captureOrder??0));
 }
 function mapRevealed(row,record,playback){
- const scene=playback.scene,state=playback.state;if(!state||state.finished||scene?.kind==='summary')return true;
+ const scene=playback.scene,state=playback.state;if(scene?.engagement&&row.kind==='move'&&scene.engagement.deferred?.some(s=>s.event.index===row.eventIndex&&s.moves.some(m=>m.personId===row.personId)))return false;if(scene?.parallelRetreat&&row.kind==='move'&&scene.moves.some(m=>m.personId===row.personId))return playback.movementProgress>=1;if(!state||state.finished||scene?.kind==='summary')return true;
  const cursor=scene?.mapEventIndex??scene?.event?.index??-1;if(scene?.mapEventIndex!==undefined||scene?.campaignPhase==='summary')return row.eventIndex<=cursor;if(row.eventIndex<cursor)return true;if(row.eventIndex>cursor)return false;
  if(row.kind==='capture'){
   if(scene.kind==='capture'&&scene.battleIndex===row.battleIndex)return Math.floor((playback.sceneProgress||0)*row.captureCount+1e-8)>row.captureOrder;

@@ -2,7 +2,7 @@ import test from 'node:test';import assert from 'node:assert/strict';
 import {borderFronts,planFrontOperations} from '../src/engine/front-operations.js';
 import {studio37Fixture,studio37Controls} from './studio-v37-fixture.mjs';
 import {studio36Fixture,studio36Controls} from './studio-v36-fixture.mjs';
-import {createRun,engineFor,nextTurn,restoreRun} from '../src/engine/simulation.js';
+import {createRun,engineFor,nextTurn,restoreRun,ENGINE_VERSION} from '../src/engine/simulation.js';
 import {runSaveData} from '../src/storage/run-store.js';
 import {replayTurn} from '../src/engine/replay.js';
 import {TurnPlayback} from '../src/ui/playback.js';
@@ -45,7 +45,7 @@ test('all dice remain before releases/map application, frozen on the fully assem
 test('old controls and engine31 saves keep their exact previous battle calculations and RNG',async()=>{
  const old=nextTurn(studio36Fixture(),studio36Controls()),data=runSaveData(old);data.engineVersion='studio-v11-31';const restored=restoreRun(data);assert.deepEqual(restored.engineState,old.engineState);const replay=await replayTurn(restored,1);assert.deepEqual(replay.record.battles,old.history[0].battles);assert(!replay.record.events.some(e=>e.type==='army_release'));assert.deepEqual(nextTurn(old).engineState,nextTurn(restored).engineState);
 });
-test('front controls and exact movements reconstruct from exported records without initial-state patches',async()=>{const r=nextTurn(studio37Fixture({twoFronts:true}),studio37Controls({twoFronts:true})),restored=restoreRun(runSaveData(r)),rebuilt=await replayTurn(restored,1);assert.equal(r.engineVersion,'studio-v11-32');assert.equal(r.history[0].controls.frontOperations,true);assert.deepEqual(rebuilt.record.battles,r.history[0].battles);assert.deepEqual(rebuilt.record.movements,r.history[0].movements);assert.deepEqual(rebuilt.after.people,r.world.people);});
+test('front controls and exact movements reconstruct from exported records without initial-state patches',async()=>{const r=nextTurn(studio37Fixture({twoFronts:true}),studio37Controls({twoFronts:true})),restored=restoreRun(runSaveData(r)),rebuilt=await replayTurn(restored,1);assert.equal(r.engineVersion,ENGINE_VERSION);assert.equal(r.history[0].controls.frontOperations,true);assert.deepEqual(rebuilt.record.battles,r.history[0].battles);assert.deepEqual(rebuilt.record.movements,r.history[0].movements);assert.deepEqual(rebuilt.after.people,r.world.people);});
 test('new activity removes only that commanders older routes, including stationary defense; hatches/sites stay',()=>{
  const world={territories:[{id:'a',ownerId:'x'},{id:'b',ownerId:'y'}],countries:[],people:[]},person={id:'p',countryId:'x',role:'general',slot:0,positionId:'a'},other={id:'q',countryId:'y',role:'general',slot:0,positionId:'b'},frame={before:{...world,people:[person,other]}};
  const battle={index:0,actorId:'x',defenderId:'y',slot:0,defenseSlot:0,attackerPersonId:'p',defenderPersonId:'q',fromId:'a',territoryId:'b',attack:{army:5},defense:{army:5},winner:null};

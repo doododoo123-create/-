@@ -9,13 +9,13 @@ import { captureLayerAttributes } from './capture-transition.js';
 // Only revealed events are read. This round-long display never changes engine ownership or RNG.
 export function completedRoundPresentation(run){
  const record=run?.history?.at(-1);if(!record)return null;
- return {record,scenes:[],index:0,finished:true,latestRoutes:true,roundRecords:run.history.filter(r=>r.round===record.round&&r.turn<record.turn)};
+ return {record,scenes:[],index:0,finished:true,latestRoutes:true,turnRoutes:true,roundRecords:run.history.filter(r=>r.round===record.round&&r.turn<record.turn)};
 }
 export function roundCampaign(world,presentation){
  const record=presentation?.record,empty={captures:new Map(),routes:[],fronts:[],movements:[],battleSites:[],pendingCaptures:new Map(),baseOwners:new Map(),settled:true};
  if(!record)return empty;
  const scene=presentation.scenes?.[presentation.index],events=record.events||[];
- if(['season','round-settle'].includes(scene?.kind)&&presentation.previousRoundRecords?.length){const previous=presentation.previousRoundRecords,last=previous.at(-1),old=roundCampaign(world,{record:last,scenes:[],index:0,finished:true,latestRoutes:presentation.latestRoutes,roundRecords:previous.slice(0,-1)});return {...old,settling:scene.kind==='round-settle',routes:old.routes.map(r=>({...r,active:false,moving:false}))};}
+ if(['season','round-settle'].includes(scene?.kind)&&presentation.previousRoundRecords?.length){const previous=presentation.previousRoundRecords,last=previous.at(-1),old=roundCampaign(world,{record:last,scenes:[],index:0,finished:true,latestRoutes:presentation.latestRoutes,turnRoutes:presentation.turnRoutes,roundRecords:previous.slice(0,-1)});return {...old,settling:scene.kind==='round-settle',routes:presentation.turnRoutes?[]:old.routes.map(r=>({...r,active:false,moving:false})),movements:presentation.turnRoutes?[]:old.movements,fronts:old.fronts};}
  // A summary has no event index: it still contains every revealed result of this turn.
  // Keep season effects through production and the inter-turn pause. The next round's
  // first record naturally starts with an empty history at its season announcement.
@@ -63,6 +63,7 @@ export function roundCampaign(world,presentation){
    if(b.winner===null)fronts.set(key,{fromId:b.fromId,toId:b.territoryId});else fronts.delete(key);
   }
  }
+ if(presentation.turnRoutes){for(let i=routes.length-1;i>=0;i--)if(routes[i].turn!==record.turn)routes.splice(i,1);for(let i=movements.length-1;i>=0;i--)if(movements[i].turn!==record.turn)movements.splice(i,1);}
  if(presentation.latestRoutes){
   for(const m of movements)activity(m.personId,m.turn);
   if(!complete)for(const m of scene?.moves||[])activity(m.personId,record.turn);

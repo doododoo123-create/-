@@ -52,14 +52,14 @@ export function prepareFrontCampaign(ctx){
  }
  const releaseGroup=group=>{
   if(group.released)return;group.released=true;
-  const members=group.members.filter(g=>g.active&&g.alive&&s.cells[g.position]?.owner===group.nation),moves=relocate(group,formationPositions(s,Atlas,group.nation,members,group.location),'formation-release');
+  const members=group.members.filter(g=>g.active&&g.alive&&s.cells[g.position]?.owner===group.nation),moves=ctl.directArmyRelease?[]:relocate(group,formationPositions(s,Atlas,group.nation,members,group.location),'formation-release');
   emit('army_release','집단군 개별 전투 배치',group.front.name,{nation:group.nation,armyGroup:{...meta(group),released:true},moves,formation:true},true);
  };
  return {groups,bySlot,travel,decisions,defenseRoster,prepared:true,fronts,
   targets:(slot,ids)=>fronts.targets(slot,ids),advance:(slot,id)=>fronts.advance(slot,id),
   canDefend:(nation,g,target,frontId)=>!frontId||g.role==='king'||g.position===target||!officerFront.has(campaignOfficerKey(nation,g))||officerFront.get(campaignOfficerKey(nation,g))===frontId,
   release:g=>{const group=bySlot.get(g.slot);if(group)for(const other of groups)if(other.front===group.front)releaseGroup(other);},
-  heldMembers:()=>groups.filter(g=>!g.released).flatMap(g=>g.members),march:()=>{},detach:()=>{},
+  heldMembers:()=>groups.filter(g=>ctl.directArmyRelease||!g.released).flatMap(g=>g.members),march:()=>{},detach:()=>{},
   finish:()=>{for(const group of groups){releaseGroup(group);emit('army_disband','집단군 해체','개별 전투 배치로 전환했어.',{nation:group.nation,armyGroup:{...meta(group),members:[],army:0}},false);}}
  };
 }

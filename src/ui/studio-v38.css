@@ -1,0 +1,8 @@
+.token-copy:has(.token-army-caption){padding-block:0!important;gap:0!important;line-height:1!important}
+.token-army-caption{display:block;position:static;color:#fff;font-size:5px;line-height:6px;letter-spacing:0;text-align:center}
+.token-copy:has(.token-army-caption) b{line-height:10px!important;margin:0!important}
+.token-copy:has(.token-army-caption)>strong{line-height:9px!important;margin:0!important}
+.campaign-reinforcement{display:flex;align-items:center;justify-content:center;gap:8px;margin:2px 0 4px;padding:4px 7px;border:1px solid #73bbdf;border-radius:3px;background:#163746ee;color:#fff;font-size:12px;line-height:16px}
+.campaign-reinforcement b{color:#94ddff}.campaign-reinforcement span{font-size:11px}
+.map-unit-position[data-engagement] .unit-combat-role{font-size:8px}
+@media(max-width:600px){.campaign-reinforcement{font-size:11px;gap:5px;padding:3px 5px}.campaign-reinforcement span{font-size:10px}}
