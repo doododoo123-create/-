@@ -55,6 +55,9 @@ function baseDuration(scene,record,phase,reduced=false){
  if(phase==='locked')return scene.kind==='reel'?160:180;
  const b=observerBattle(scene,record),capital=b?.takenTerritoryIds?.some(id=>scene.worldBefore.countries.some(c=>c.capitalId===id));
  if(scene.kind==='apply'){
+  // Whole-unit rounding can omit the casualty step entirely. Keep the final
+  // local winner readable inside this existing step, without adding a stop.
+  if(scene.cohortComplete&&scene.event?.type==='resolve'&&phase==='territory'&&!applicationSteps(scene,record).includes('troops'))return 720;
   if(['war_recovery','season_recovery'].includes(scene.event?.type))return reduced?50:250;
   if(['desertion','production_settlement'].includes(scene.event?.type))return reduced?80:650;
   if(scene.event?.type==='death'||scene.event?.type==='elimination')return reduced?140:2800;

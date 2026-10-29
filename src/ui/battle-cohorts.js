@@ -14,7 +14,8 @@ export function cohortMapScenes(scenes,record){
    for(const b of battles){const e=record.events.find(e=>e.type==='territory'&&e.battleIndex===b.index),world=record.frames?.[e?.index]?.before||scenes[indexes[0]].worldBefore;for(const id of [b.attackerPersonId,b.defenderPersonId]){const p=world.people.find(p=>p.id===id);if(p&&!people.has(id))people.set(id,p);}for(const m of record.movements?.find(m=>m.eventIndex===e?.index)?.moves||[])if(m.kind!=='outbound'&&!defenseMoves.some(v=>v.personId===m.personId))defenseMoves.push(m);}
    for(const i of indexes){const scene=scenes[i];if(scene.kind==='movement'&&scene.event?.type==='territory')for(const m of scene.moves||[])if(m.kind==='outbound'&&!attackMoves.some(v=>v.personId===m.personId))attackMoves.push(m);}
    const start=indexes[0],last=indexes.at(-1),attackAt=indexes.find(i=>scenes[i].kind==='movement'&&scenes[i].movementSide==='attack'||scenes[i].kind==='route'&&scenes[i].formationSide==='attack'),defenseAt=indexes.find(i=>scenes[i].kind==='movement'&&scenes[i].movementSide==='defense'||scenes[i].kind==='route'&&scenes[i].formationSide==='defense'),flush=indexes.find(i=>scenes[i].event?.type==='occupation')??last+1;
-   cohorts.push({id:'cohort-'+campaign.id+'-'+first.index,first,ids,battles,people:[...people.values()],defenseMoves,attackMoves,start,last,attackAt,defenseAt,flush});
+   const resultAt=indexes.findLast(i=>scenes[i].kind==='apply'&&scenes[i].event?.type==='resolve');
+   cohorts.push({id:'cohort-'+campaign.id+'-'+first.index,first,ids,battles,people:[...people.values()],defenseMoves,attackMoves,start,last,attackAt,defenseAt,flush,resultAt});
   }
  }
  const flushDeferred=c=>{
@@ -39,10 +40,19 @@ export function cohortMapScenes(scenes,record){
   }
   if(s.event?.type==='territory'&&(s.kind==='movement'||!first&&s.kind==='route'))continue;
   const engagement=i>=(c.attackAt??c.start)&&i<c.flush?c:undefined;
-  out.push({...s,...(engagement?{engagement}:{} )});
+  out.push({...s,...(engagement?{engagement,cohortComplete:i>=c.resultAt}:{} )});
  }
  for(const pending of cohorts.filter(c=>c.flush===scenes.length))out.push(...flushDeferred(pending));
  return out;
+}
+
+// This battlefield's last resolved duel decides whether the assault broke
+// through. Do not substitute the army table's overall win count or margin.
+export function cohortWinner(scene,presentation){
+ const c=scene?.engagement;if(!c||!scene.cohortComplete||presentation?.phase==='settled')return null;
+ if(scene.event?.type==='resolve'&&scene.kind==='apply'&&(!presentation?.effectStage||presentation.effectStage==='outcome'))return null;
+ const last=c.battles.at(-1);if(last.winner===null)return null;
+ return last.winner===last.actor?last.actorId:last.defenderId;
 }
 
 export function cohortMarkers(world,geometry,markers,scene){

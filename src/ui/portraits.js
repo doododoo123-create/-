@@ -3,6 +3,7 @@ import { BUILTIN_PORTRAITS } from '../data/portraits.js';
 import { GENERAL_PORTRAITS, GENERAL_PORTRAIT_LABELS } from '../data/general-portraits.js';
 import { esc } from './icons.js';
 import { displayName } from './display-names.js';
+import {localImageURL} from './local-image-url.js';
 export function generalPortraitKey(person,country){
   const roster=/^general-(\d+)-(\d+)$/.exec(person?.id||'');
   if(roster)return `general-${String((Number(roster[1])*5+Number(roster[2]))%50+1).padStart(3,'0')}`;
@@ -27,7 +28,7 @@ export function resolvedPortraitKey(person,country,role='king'){
   return Object.hasOwn(BUILTIN_PORTRAITS,person?.portraitKey||'')?person.portraitKey:defaultPortraitKey(country?.id,leaderRole);
 }
 export function portraitSource(person, country, role = 'king') {
-  const key=resolvedPortraitKey(person,country,role);return LEADER_PORTRAITS[key]||GENERAL_PORTRAITS[key]||BUILTIN_PORTRAITS[key];
+  const key=resolvedPortraitKey(person,country,role);return localImageURL(LEADER_PORTRAITS[key]||GENERAL_PORTRAITS[key]||BUILTIN_PORTRAITS[key]);
 }
 export function portraitImage(person, country, role = 'king', className = '') {
   const label = displayName(person,role === 'king' ? '국왕 미배치' : role === 'minister' ? '승상 미배치' : '장군 미배치');

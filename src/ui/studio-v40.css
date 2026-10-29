@@ -1,0 +1,18 @@
+/* The user's six lightweight textures are shared by all matching surfaces. */
+.game-skin .panel,.game-skin #editor-dialog,.game-skin .file-import-dialog{background-image:linear-gradient(#08151cb8,#08151cb8),var(--texture-info);background-size:auto,384px}
+.game-skin .map-unit-token,.game-skin .map-unit-token[data-role=king],.game-skin .map-unit-token[data-role=minister],.game-skin .army-mini-card{background-color:#14211b!important;background-image:linear-gradient(#08130e65,#08130e65),var(--texture-person)!important;background-size:auto,96px!important}
+.game-skin .commander-card,.game-skin .commander-overview{background-image:linear-gradient(#09151b9c,#09151b9c),var(--texture-person);background-size:auto,384px}
+.game-skin .campaign-popup,.game-skin .arena-panel,.game-skin .map-judgment{background-image:linear-gradient(#07151bc2,#07151bc2),var(--texture-battle);background-size:auto,384px}
+.game-skin .campaign-score,.game-skin .bonus-flight{background-image:linear-gradient(#09192399,#09192399),var(--texture-battle);background-size:auto,192px}
+.game-skin .map-judgment.is-royal-choice,.game-skin .map-judgment.is-royal-die,.game-skin .commander-overview[data-person-role=minister]{background-image:linear-gradient(#081911aa,#081911aa),var(--texture-domestic)}
+.game-skin .history-entry,.game-skin .map-recent-events,.game-skin .history-panel{background-image:linear-gradient(#08151bb8,#08151bb8),var(--texture-history);background-size:auto,384px}
+.game-skin .global-history-notice,.game-skin .season-announcement,.game-skin .campaign-reinforcement{background-image:linear-gradient(#130e0ab0,#130e0ab0),var(--texture-war);background-size:auto,384px}
+/* Only the army representative needs more room; ordinary pins stay unchanged. */
+.game-skin .is-army-group .army-leader-scale .token-wrap{height:76px}
+.game-skin .is-army-group .army-leader-scale .map-unit-token{width:38px;height:72px;padding:2px 1px;gap:2px}
+.game-skin .is-army-group .army-leader-scale .token-copy:has(.token-army-caption){padding-block:1px!important;gap:1px!important;line-height:1.2!important}
+.game-skin .is-army-group .army-leader-scale .token-army-caption{font-size:6px;line-height:8px}
+.game-skin .is-army-group .army-leader-scale .token-copy b{width:34px;max-width:34px;font-size:7px;line-height:11px!important;overflow:visible}
+.game-skin .is-army-group .army-leader-scale .token-copy>strong{font-size:9px;line-height:12px!important;letter-spacing:0;white-space:nowrap}
+.unit-offensive-advantage{font:800 9px var(--studio-sans);fill:#fff;stroke:#071016;stroke-width:2px;paint-order:stroke;letter-spacing:.25px}
+.card-label-badge:has(.unit-offensive-advantage) .card-label-background{stroke:#ffd56b;stroke-width:1px;fill-opacity:1}
