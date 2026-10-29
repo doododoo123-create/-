@@ -1,0 +1,20 @@
+{
+  "version": "Han-natural-cultivation-margins-500-v1",
+  "sourceSha256": "0cb641940438f4a821f575e6922005e55943cd4ac46acee5d9c709cc0a677359",
+  "territories": 160,
+  "landLinks": 357,
+  "textures": 476,
+  "nativePixelsPerWorldUnit": 5,
+  "viewBox": [
+    0,
+    0,
+    1800,
+    1060
+  ],
+  "transform": {
+    "scale": 0.6666666666666666,
+    "translateY": 46.666666666666664
+  },
+  "svgSha256": "054bb902e594a4288a5f5a4531bf2de5a168b20ef1e4aa795487bd4c6f013aed",
+  "textureBankSha256": "a84310fac022c8cad0024e47ec617f32194852cb9927831a43240563f1165697"
+}

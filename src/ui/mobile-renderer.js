@@ -1,6 +1,7 @@
+import {preserveHanMaps,mountHanMaps} from './han-map.js';
 import { mobileProfile } from './performance-profile.js';
-// Keep unchanged SVG layers and decoded pictures alive during mobile playback.
-// The normal edition continues to use its original rendering path.
+// The normal edition retains the imported Han artwork while updating game UI.
+// The legacy display-profile diff path remains available for old tooling.
 const mobileMarkup=new WeakMap();
 function syncAttributes(old,next){for(const a of [...old.attributes])if(!next.hasAttribute(a.name))old.removeAttribute(a.name);for(const a of next.attributes)if(old.getAttribute(a.name)!==a.value)old.setAttribute(a.name,a.value);}
 function updateMobileUnits(old,next){
@@ -29,7 +30,7 @@ function updateMobileMap(old,next){
  return old;
 }
 export function renderApp(root,html){
- if(!mobileProfile()){root.innerHTML=html;return;}
+ if(!mobileProfile()){preserveHanMaps(root);root.innerHTML=html;mountHanMaps(root);return;}
  const template=document.createElement('template');template.innerHTML=html;
  for(const next of template.content.querySelectorAll('.atlas-scroll[data-map-camera]')){
   const old=[...root.querySelectorAll('.atlas-scroll[data-map-camera]')].find(n=>n.dataset.mapCamera===next.dataset.mapCamera);

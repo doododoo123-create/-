@@ -1,0 +1,8 @@
+.han-map-host{pointer-events:none}.han-map-surface{width:100%;height:100%;pointer-events:none}
+.game-skin .han-map-atlas .atlas-cell .atlas-territory{fill-opacity:.16;stroke-opacity:.27;transition:none}
+body:not(.map-stage-open) .han-map-atlas .atlas-cell:hover .atlas-territory{fill-opacity:.29}
+.game-skin .han-map-atlas.editing-atlas .atlas-cell .atlas-territory.selected{fill-opacity:.3;stroke-opacity:1}
+.nation-fall-announcement{border-color:var(--fallen-color);box-shadow:0 12px 55px #0009,inset 0 0 25px #0006;z-index:90}
+.nation-fall-announcement .season-symbol{color:var(--fallen-color)}
+.nation-fall-announcement strong{color:white;text-shadow:0 2px 3px #000}
+.game-skin .han-map-atlas .country-outlines path,.game-skin .han-map-atlas .capture-border-advance path,.game-skin .han-map-atlas .atlas-cell .atlas-territory{vector-effect:non-scaling-stroke}

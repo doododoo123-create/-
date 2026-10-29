@@ -19,6 +19,7 @@ export function makeTurnScenes(record,before,history=[]) {
     if(event.formation&&['army_assembly','army_march','army_release'].includes(event.type)||event.type==='unit_spacing'){if(scenes.at(-1)?.event===event)scenes.at(-1).worldAfter=frame.after;else scenes.push({id:'formation-'+event.index,kind:'focus',event,title:event.title,worldBefore:frame.before,worldAfter:frame.after,camps});continue;}
     if(event.type==='army_disband'&&event.armyGroup?.formation)continue;
     if(event.type==='expedition_roll')continue;
+    if(event.type==='elimination'){scenes.push({id:'nation-fall-'+event.index,kind:'elimination',event,battleIndex:event.battleIndex,title:event.title,worldBefore:frame.before,worldAfter:frame.after,camps});continue;}
     const start=scenes.length;
     if(['war_recovery','season_recovery','desertion','production_settlement'].includes(event.type)){scenes.push({id:`apply-${event.index}`,kind:'apply',event,title:event.title,detail:event.detail,worldBefore:frame.before,worldAfter:frame.after,camps});continue;}
     const roll=record.rolls[event.rollIndex];

@@ -25,9 +25,9 @@ test('uploaded vector source supplies exactly 160 unique provinces, 357 symmetri
  assert.equal(CONTINENT160_CELLS[0].id,'territory-001');assert.equal(CONTINENT160_CELLS.at(-1).id,'territory-160');
  for(const t of w.territories){assert(pointInShape(w.cartography.polygons[t.id].center,w.cartography.polygons[t.id]));assert.deepEqual(neighbors(w,t).map(n=>n.id).sort(),[...CONTINENT160_CELLS.find(c=>c.id===t.id).neighbors].sort());}
 });
-test('vector artwork remains inert, shares one ocean/land image and keeps exact editing alignment',()=>{
+test('legacy vector art remains inert and the Han replacement keeps the same editing viewport',()=>{
  const source=Buffer.from(CONTINENT160_ART.split(',')[1],'base64').toString();assert(!/<script|foreignObject|\son\w+=|https?:\/\//i.test(source.replace('http://www.w3.org/2000/svg','')));assert(source.includes('viewBox="-1800 -1270 5400 3600"'));
- const image=Buffer.from(continent160MapImage().split(',')[1],'base64').toString();assert(image.includes('viewBox="0 -70 1800 1200"'));const html=renderAtlas(createRun(createContinent160World(),7).world);assert(html.includes('data-vector-plate="continent160" x="-1200" y="-800" width="3600" height="2400"'));assert(!html.includes('ocean-repeat'));assert(!html.includes('class="map-compass"'));
+ const image=Buffer.from(continent160MapImage().split(',')[1],'base64').toString();assert(image.includes('viewBox="0 -70 1800 1200"'));const html=renderAtlas(createRun(createContinent160World(),7).world);assert(html.includes('class="han-map-host" x="-1200" y="-800" width="3600" height="2400"'));assert(!html.includes('ocean-repeat'));assert(!html.includes('class="map-compass"'));
 });
 test('layout preserves edited countries and people, assigns connected countries, and produces 22 initial districts',()=>{
  const old=createReferenceWorld(),before=JSON.stringify(old);old.people[0].name='테스트왕';old.countries[0].name='새나라';const w=continent160Layout(old);assert.equal(w.countries[0].name,'새나라');assert.deepEqual(w.people,old.people);assert(w.countries.every(c=>connected(w,c)));assert.equal(w.countries.reduce((n,c)=>n+Math.ceil(w.territories.filter(t=>t.ownerId===c.id).length/8),0),22);

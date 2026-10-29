@@ -4,7 +4,7 @@ import { syncSoundArt } from './sound-art.mjs';
 import { syncTextBoxArt } from './text-box-art.mjs';
 // Minimal bundling for this dependency-free application. The modular source is authoritative.
 // Only local named ESM imports and direct named exports are supported intentionally.
-import { readFile, writeFile, mkdir, cp } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, cp, rm } from 'node:fs/promises';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
@@ -18,9 +18,9 @@ await syncTextBoxArt(root);
 await syncSoundArt(root);
 await syncKitIcons(root);
 await syncGeneralPortraits(root);
-const mobileMeta=JSON.parse(await readFile(resolve(root,'assets/maps/continent_160.mobile.json'),'utf8'));
-const sourceHash=createHash('sha256').update(await readFile(resolve(root,'assets/maps/continent_160.art.svg'))).digest('hex');
-if(mobileMeta.sourceSha256!==sourceHash)throw new Error('지도 원본이 바뀌었습니다. python scripts/mobile-map.py로 모바일 배경을 다시 생성해 주세요.');
+const hanMapData=await readFile(resolve(root,'assets/maps/han/art.json'),'utf8');
+const hanManifest=JSON.parse(await readFile(resolve(root,'assets/maps/han/manifest.json'),'utf8'));
+if(createHash('sha256').update(await readFile(resolve(root,'assets/maps/han/original.zip'))).digest('hex')!==hanManifest.sourceSha256)throw Error('지도 원본이 바뀌었습니다. python scripts/import-han-map.py로 내장 자료를 갱신해 주세요.');
 const visited = new Set(), chunks = [];
 let mobileBuild=false;
 async function bundle(path) {
@@ -42,6 +42,7 @@ async function bundle(path) {
 async function scriptFor(mobile){mobileBuild=mobile;visited.clear();chunks.length=0;await bundle(resolve(root,'src/app.js'));return `(() => {\n'use strict';\n${chunks.join('\n')}\n})();`.replace(/<\/script/gi,'<\\/script');}
 let fontCss=await readFile(resolve(root,'src/ui/fonts-licensed.css'),'utf8');
 for(const match of [...fontCss.matchAll(/url\('([^']+\.woff2)'\)/g)])fontCss=fontCss.replace(match[0],`url('data:font/woff2;base64,${(await readFile(resolve(root,'src/ui',match[1]))).toString('base64')}')`);
+const v39Css=await readFile(resolve(root,'src/ui/studio-v39.css'),'utf8');
 const v38Css=await readFile(resolve(root,'src/ui/studio-v38.css'),'utf8');
 const v37Css=await readFile(resolve(root,'src/ui/studio-v37.css'),'utf8');
 const v36Css=await readFile(resolve(root,'src/ui/studio-v36.css'),'utf8');
@@ -113,17 +114,20 @@ html = html.replace('<link rel="stylesheet" href="./src/ui/fonts-licensed.css">'
   .replace('<link rel="stylesheet" href="./src/ui/studio-v36.css">', '<style>'+v36Css+'</style>')
   .replace('<link rel="stylesheet" href="./src/ui/studio-v37.css">', '<style>'+v37Css+'</style>')
   .replace('<link rel="stylesheet" href="./src/ui/studio-v38.css">', '<style>'+v38Css+'</style>')
+  .replace('<link rel="stylesheet" href="./src/ui/studio-v39.css">', '<style>'+v39Css+'</style>')
   .replace('href="./favicon.svg"', `href="data:image/svg+xml;base64,${favicon}"`);
 const dist = resolve(root, 'dist');
 await mkdir(dist, { recursive: true });
-for(const mobile of [false,true]){
- const script=await scriptFor(mobile),name=mobile?'사국쟁패 Studio 모바일 경량.html':'사국쟁패 Studio.html';
- const rawOutput=html.replace('<html lang="ko">',`<html lang="ko" data-performance="${mobile?'mobile':'normal'}">`).replace('<script type="module" src="./src/app.js"></script>',`<script>${script}</script>`);
- const output=packStandalone(rawOutput,mobile);
+await rm(resolve(dist,'사국쟁패 Studio 모바일 경량.html'),{force:true});
+{
+ const script=await scriptFor(false),name='사국쟁패 Studio.html';
+ const mapData='<script id="studio-han-art" type="application/json">'+hanMapData.replace(/<\/script/gi,'<\\/script')+'<'+'/script>';
+ const rawOutput=html.replace('<html lang="ko">','<html lang="ko" data-performance="normal">').replace('<script type="module" src="./src/app.js"></script>',mapData+`<script>${script}</script>`);
+ const output=packStandalone(rawOutput,false);
  await writeFile(resolve(dist,name),output);
  if(process.argv.includes('--release'))await writeFile(resolve(root,name),output);
  console.log(`단독 실행본 생성: dist/${name} (${Math.ceil(Buffer.byteLength(output)/1024)}KB)`);
 }
 await mkdir(resolve(dist, 'docs'), { recursive: true });
 await cp(resolve(root, 'docs/reference'), resolve(dist, 'docs/reference'), { recursive: true });
-console.log('일반판과 모바일 경량판은 같은 규칙과 저장 형식으로 작동합니다. 외부 서비스와 설치가 필요 없습니다.');
+console.log('일반판 HTML만 제작합니다. 첨부 지도와 질감은 내장되어 인터넷 없이 실행됩니다.');

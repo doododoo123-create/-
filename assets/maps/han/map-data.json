@@ -1,0 +1,6189 @@
+{
+  "schemaVersion": 1,
+  "mapId": "saguk-continental-atlas-160-v1-20d1f8e196b5",
+  "title": "대륙 지도",
+  "viewBox": [
+    0,
+    0,
+    1800,
+    1060
+  ],
+  "territoryCount": 160,
+  "maxZoom": 5,
+  "units": "SVG user units; area is geometric, not km²",
+  "territories": [
+    {
+      "id": "territory-001",
+      "number": 1,
+      "name": "영지 001",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 4386.99,
+      "center": [
+        267.75,
+        161.37
+      ],
+      "centroid": [
+        264.08,
+        157.83
+      ],
+      "bounds": [
+        212.5,
+        109.5,
+        307.22,
+        198.42
+      ],
+      "neighbors": [
+        "territory-002",
+        "territory-007",
+        "territory-008",
+        "territory-009"
+      ]
+    },
+    {
+      "id": "territory-002",
+      "number": 2,
+      "name": "영지 002",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 3697.49,
+      "center": [
+        319.2,
+        134.99
+      ],
+      "centroid": [
+        322.39,
+        130.0
+      ],
+      "bounds": [
+        281.12,
+        98.5,
+        372.5,
+        171.49
+      ],
+      "neighbors": [
+        "territory-001",
+        "territory-009"
+      ],
+      "settlementId": "settlement-02"
+    },
+    {
+      "id": "territory-003",
+      "number": 3,
+      "name": "영지 003",
+      "terrain": "초원",
+      "coastal": true,
+      "area": 5036.98,
+      "center": [
+        488.82,
+        131.37
+      ],
+      "centroid": [
+        480.77,
+        126.07
+      ],
+      "bounds": [
+        430.5,
+        81.5,
+        524.26,
+        182.14
+      ],
+      "neighbors": [
+        "territory-004",
+        "territory-012"
+      ]
+    },
+    {
+      "id": "territory-004",
+      "number": 4,
+      "name": "영지 004",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 4691.0,
+      "center": [
+        549.42,
+        150.38
+      ],
+      "centroid": [
+        550.63,
+        152.19
+      ],
+      "bounds": [
+        505.68,
+        108.5,
+        597.55,
+        191.98
+      ],
+      "neighbors": [
+        "territory-003",
+        "territory-012",
+        "territory-013",
+        "territory-014"
+      ],
+      "settlementId": "settlement-03"
+    },
+    {
+      "id": "territory-005",
+      "number": 5,
+      "name": "영지 005",
+      "terrain": "구릉",
+      "coastal": true,
+      "area": 3852.89,
+      "center": [
+        1171.4,
+        110.89
+      ],
+      "centroid": [
+        1172.79,
+        109.76
+      ],
+      "bounds": [
+        1131.5,
+        71.5,
+        1227.27,
+        150.29
+      ],
+      "neighbors": [
+        "territory-006",
+        "territory-023"
+      ],
+      "settlementId": "settlement-01"
+    },
+    {
+      "id": "territory-006",
+      "number": 6,
+      "name": "영지 006",
+      "terrain": "초원",
+      "coastal": true,
+      "area": 4763.54,
+      "center": [
+        1211.15,
+        153.3
+      ],
+      "centroid": [
+        1222.75,
+        146.35
+      ],
+      "bounds": [
+        1178.97,
+        94.19,
+        1275.5,
+        182.86
+      ],
+      "neighbors": [
+        "territory-005",
+        "territory-023",
+        "territory-025",
+        "territory-026"
+      ]
+    },
+    {
+      "id": "territory-007",
+      "number": 7,
+      "name": "영지 007",
+      "terrain": "초원",
+      "coastal": true,
+      "area": 2740.1,
+      "center": [
+        242.36,
+        204.43
+      ],
+      "centroid": [
+        225.54,
+        208.65
+      ],
+      "bounds": [
+        180.5,
+        173.57,
+        262.98,
+        247.64
+      ],
+      "neighbors": [
+        "territory-001",
+        "territory-008"
+      ]
+    },
+    {
+      "id": "territory-008",
+      "number": 8,
+      "name": "영지 008",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 5445.11,
+      "center": [
+        303.54,
+        222.0
+      ],
+      "centroid": [
+        297.74,
+        227.64
+      ],
+      "bounds": [
+        246.26,
+        178.78,
+        344.46,
+        282.5
+      ],
+      "neighbors": [
+        "territory-001",
+        "territory-007",
+        "territory-009",
+        "territory-010"
+      ]
+    },
+    {
+      "id": "territory-009",
+      "number": 9,
+      "name": "영지 009",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 4473.96,
+      "center": [
+        355.06,
+        186.15
+      ],
+      "centroid": [
+        352.3,
+        183.29
+      ],
+      "bounds": [
+        305.3,
+        145.37,
+        390.61,
+        226.92
+      ],
+      "neighbors": [
+        "territory-001",
+        "territory-002",
+        "territory-008",
+        "territory-010",
+        "territory-011"
+      ]
+    },
+    {
+      "id": "territory-010",
+      "number": 10,
+      "name": "영지 010",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 5449.01,
+      "center": [
+        397.05,
+        244.34
+      ],
+      "centroid": [
+        391.08,
+        244.86
+      ],
+      "bounds": [
+        337.59,
+        201.62,
+        439.52,
+        287.07
+      ],
+      "neighbors": [
+        "territory-008",
+        "territory-009",
+        "territory-011",
+        "territory-035",
+        "territory-036"
+      ]
+    },
+    {
+      "id": "territory-011",
+      "number": 11,
+      "name": "영지 011",
+      "terrain": "초원",
+      "coastal": true,
+      "area": 2222.41,
+      "center": [
+        405.24,
+        174.66
+      ],
+      "centroid": [
+        414.91,
+        187.86
+      ],
+      "bounds": [
+        388.0,
+        147.5,
+        456.95,
+        228.97
+      ],
+      "neighbors": [
+        "territory-009",
+        "territory-010",
+        "territory-036"
+      ]
+    },
+    {
+      "id": "territory-012",
+      "number": 12,
+      "name": "영지 012",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 3969.92,
+      "center": [
+        503.41,
+        179.52
+      ],
+      "centroid": [
+        503.7,
+        200.71
+      ],
+      "bounds": [
+        461.54,
+        155.73,
+        545.28,
+        250.87
+      ],
+      "neighbors": [
+        "territory-003",
+        "territory-004",
+        "territory-013",
+        "territory-036",
+        "territory-037"
+      ]
+    },
+    {
+      "id": "territory-013",
+      "number": 13,
+      "name": "영지 013",
+      "terrain": "삼림",
+      "coastal": false,
+      "area": 5508.77,
+      "center": [
+        572.78,
+        223.74
+      ],
+      "centroid": [
+        570.95,
+        226.62
+      ],
+      "bounds": [
+        521.77,
+        181.35,
+        614.15,
+        272.65
+      ],
+      "neighbors": [
+        "territory-004",
+        "territory-012",
+        "territory-014",
+        "territory-015",
+        "territory-037",
+        "territory-039"
+      ]
+    },
+    {
+      "id": "territory-014",
+      "number": 14,
+      "name": "영지 014",
+      "terrain": "산악",
+      "coastal": true,
+      "area": 4428.65,
+      "center": [
+        630.96,
+        186.21
+      ],
+      "centroid": [
+        635.45,
+        183.59
+      ],
+      "bounds": [
+        587.51,
+        152.06,
+        691.8,
+        220.36
+      ],
+      "neighbors": [
+        "territory-004",
+        "territory-013",
+        "territory-015",
+        "territory-017"
+      ]
+    },
+    {
+      "id": "territory-015",
+      "number": 15,
+      "name": "영지 015",
+      "terrain": "평야",
+      "coastal": false,
+      "area": 4883.48,
+      "center": [
+        660.2,
+        237.89
+      ],
+      "centroid": [
+        657.72,
+        236.63
+      ],
+      "bounds": [
+        610.66,
+        193.53,
+        695.59,
+        282.25
+      ],
+      "neighbors": [
+        "territory-013",
+        "territory-014",
+        "territory-016",
+        "territory-017",
+        "territory-039",
+        "territory-041"
+      ],
+      "settlementId": "settlement-07"
+    },
+    {
+      "id": "territory-016",
+      "number": 16,
+      "name": "영지 016",
+      "terrain": "구릉",
+      "coastal": false,
+      "area": 4339.51,
+      "center": [
+        716.42,
+        245.34
+      ],
+      "centroid": [
+        725.78,
+        244.74
+      ],
+      "bounds": [
+        688.05,
+        206.01,
+        773.17,
+        284.66
+      ],
+      "neighbors": [
+        "territory-015",
+        "territory-017",
+        "territory-018",
+        "territory-041",
+        "territory-043"
+      ]
+    },
+    {
+      "id": "territory-017",
+      "number": 17,
+      "name": "영지 017",
+      "terrain": "산악",
+      "coastal": true,
+      "area": 4311.36,
+      "center": [
+        754.03,
+        201.05
+      ],
+      "centroid": [
+        744.05,
+        194.09
+      ],
+      "bounds": [
+        688.69,
+        159.5,
+        800.7,
+        230.73
+      ],
+      "neighbors": [
+        "territory-014",
+        "territory-015",
+        "territory-016",
+        "territory-018"
+      ]
+    },
+    {
+      "id": "territory-018",
+      "number": 18,
+      "name": "영지 018",
+      "terrain": "산악",
+      "coastal": true,
+      "area": 6927.13,
+      "center": [
+        815.47,
+        223.53
+      ],
+      "centroid": [
+        818.94,
+        225.51
+      ],
+      "bounds": [
+        770.71,
+        165.13,
+        860.46,
+        281.09
+      ],
+      "neighbors": [
+        "territory-016",
+        "territory-017",
+        "territory-019",
+        "territory-043",
+        "territory-044",
+        "territory-045"
+      ],
+      "settlementId": "settlement-06"
+    },
+    {
+      "id": "territory-019",
+      "number": 19,
+      "name": "영지 019",
+      "terrain": "평야",
+      "coastal": true,
+      "area": 5374.49,
+      "center": [
+        886.24,
+        216.82
+      ],
+      "centroid": [
+        891.2,
+        216.63
+      ],
+      "bounds": [
+        843.88,
+        175.5,
+        945.54,
+        258.14
+      ],
+      "neighbors": [
+        "territory-018",
+        "territory-020",
+        "territory-045"
+      ]
+    },
+    {
+      "id": "territory-020",
+      "number": 20,
+      "name": "영지 020",
+      "terrain": "초원",
+      "coastal": true,
+      "area": 7501.1,
+      "center": [
+        974.65,
+        238.55
+      ],
+      "centroid": [
+        972.38,
+        237.63
+      ],
+      "bounds": [
+        925.62,
+        178.5,
+        1022.99,
+        297.17
+      ],
+      "neighbors": [
+        "territory-019",
+        "territory-021",
+        "territory-022",
+        "territory-045",
+        "territory-046"
+      ],
+      "settlementId": "settlement-08"
+    },
+    {
+      "id": "territory-021",
+      "number": 21,
+      "name": "영지 021",
+      "terrain": "초원",
+      "coastal": true,
+      "area": 4993.93,
+      "center": [
+        1031.36,
+        207.94
+      ],
+      "centroid": [
+        1043.22,
+        198.94
+      ],
+      "bounds": [
+        985.05,
+        160.5,
+        1096.18,
+        241.83
+      ],
+      "neighbors": [
+        "territory-020",
+        "territory-022",
+        "territory-023"
+      ]
+    },
+    {
+      "id": "territory-022",
+      "number": 22,
+      "name": "영지 022",
+      "terrain": "삼림",
+      "coastal": false,
+      "area": 6762.62,
+      "center": [
+        1067.45,
+        260.8
+      ],
+      "centroid": [
+        1071.52,
+        260.12
+      ],
+      "bounds": [
+        1017.75,
+        206.9,
+        1117.16,
+        314.7
+      ],
+      "neighbors": [
+        "territory-020",
+        "territory-021",
+        "territory-023",
+        "territory-024",
+        "territory-046",
+        "territory-047"
+      ]
+    },
+    {
+      "id": "territory-023",
+      "number": 23,
+      "name": "영지 023",
+      "terrain": "산악",
+      "coastal": true,
+      "area": 5878.9,
+      "center": [
+        1145.12,
+        176.44
+      ],
+      "centroid": [
+        1139.03,
+        174.19
+      ],
+      "bounds": [
+        1085.24,
+        121.98,
+        1187.89,
+        215.34
+      ],
+      "neighbors": [
+        "territory-005",
+        "territory-006",
+        "territory-021",
+        "territory-022",
+        "territory-024",
+        "territory-025"
+      ]
+    },
+    {
+      "id": "territory-024",
+      "number": 24,
+      "name": "영지 024",
+      "terrain": "구릉",
+      "coastal": false,
+      "area": 6200.57,
+      "center": [
+        1155.82,
+        246.54
+      ],
+      "centroid": [
+        1153.27,
+        245.97
+      ],
+      "bounds": [
+        1106.71,
+        200.53,
+        1204.93,
+        292.55
+      ],
+      "neighbors": [
+        "territory-022",
+        "territory-023",
+        "territory-025",
+        "territory-047",
+        "territory-048"
+      ],
+      "settlementId": "settlement-09"
+    },
+    {
+      "id": "territory-025",
+      "number": 25,
+      "name": "영지 025",
+      "terrain": "구릉",
+      "coastal": false,
+      "area": 5975.36,
+      "center": [
+        1227.45,
+        218.22
+      ],
+      "centroid": [
+        1229.0,
+        214.46
+      ],
+      "bounds": [
+        1179.76,
+        174.63,
+        1275.14,
+        261.81
+      ],
+      "neighbors": [
+        "territory-006",
+        "territory-023",
+        "territory-024",
+        "territory-026",
+        "territory-048",
+        "territory-049"
+      ]
+    },
+    {
+      "id": "territory-026",
+      "number": 26,
+      "name": "영지 026",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 6067.13,
+      "center": [
+        1317.62,
+        202.27
+      ],
+      "centroid": [
+        1313.98,
+        202.71
+      ],
+      "bounds": [
+        1268.14,
+        152.5,
+        1352.96,
+        252.04
+      ],
+      "neighbors": [
+        "territory-006",
+        "territory-025",
+        "territory-027",
+        "territory-028",
+        "territory-049",
+        "territory-051"
+      ]
+    },
+    {
+      "id": "territory-027",
+      "number": 27,
+      "name": "영지 027",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 3690.09,
+      "center": [
+        1377.49,
+        206.54
+      ],
+      "centroid": [
+        1383.54,
+        206.03
+      ],
+      "bounds": [
+        1350.4,
+        172.55,
+        1431.68,
+        240.54
+      ],
+      "neighbors": [
+        "territory-026",
+        "territory-028",
+        "territory-029",
+        "territory-051"
+      ]
+    },
+    {
+      "id": "territory-028",
+      "number": 28,
+      "name": "영지 028",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 3089.24,
+      "center": [
+        1397.27,
+        160.48
+      ],
+      "centroid": [
+        1397.46,
+        155.92
+      ],
+      "bounds": [
+        1350.05,
+        127.5,
+        1444.5,
+        184.04
+      ],
+      "neighbors": [
+        "territory-026",
+        "territory-027"
+      ],
+      "settlementId": "settlement-04"
+    },
+    {
+      "id": "territory-029",
+      "number": 29,
+      "name": "영지 029",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 4196.78,
+      "center": [
+        1427.85,
+        246.82
+      ],
+      "centroid": [
+        1426.77,
+        253.1
+      ],
+      "bounds": [
+        1389.18,
+        207.18,
+        1466.51,
+        302.31
+      ],
+      "neighbors": [
+        "territory-027",
+        "territory-030",
+        "territory-051",
+        "territory-052",
+        "territory-053"
+      ]
+    },
+    {
+      "id": "territory-030",
+      "number": 30,
+      "name": "영지 030",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 4458.52,
+      "center": [
+        1490.71,
+        216.28
+      ],
+      "centroid": [
+        1483.4,
+        208.13
+      ],
+      "bounds": [
+        1442.04,
+        158.5,
+        1525.47,
+        245.16
+      ],
+      "neighbors": [
+        "territory-029",
+        "territory-031",
+        "territory-032",
+        "territory-053"
+      ]
+    },
+    {
+      "id": "territory-031",
+      "number": 31,
+      "name": "영지 031",
+      "terrain": "초원",
+      "coastal": true,
+      "area": 3449.29,
+      "center": [
+        1525.87,
+        177.13
+      ],
+      "centroid": [
+        1528.66,
+        174.28
+      ],
+      "bounds": [
+        1490.23,
+        132.5,
+        1561.5,
+        221.75
+      ],
+      "neighbors": [
+        "territory-030",
+        "territory-032"
+      ],
+      "settlementId": "settlement-05"
+    },
+    {
+      "id": "territory-032",
+      "number": 32,
+      "name": "영지 032",
+      "terrain": "초원",
+      "coastal": true,
+      "area": 1433.57,
+      "center": [
+        1543.36,
+        230.36
+      ],
+      "centroid": [
+        1552.19,
+        230.42
+      ],
+      "bounds": [
+        1520.29,
+        210.22,
+        1589.5,
+        250.5
+      ],
+      "neighbors": [
+        "territory-030",
+        "territory-031"
+      ]
+    },
+    {
+      "id": "territory-033",
+      "number": 33,
+      "name": "영지 033",
+      "terrain": "산악",
+      "coastal": true,
+      "area": 2773.55,
+      "center": [
+        157.09,
+        321.23
+      ],
+      "centroid": [
+        152.63,
+        318.92
+      ],
+      "bounds": [
+        108.5,
+        281.5,
+        191.8,
+        349.6
+      ],
+      "neighbors": [
+        "territory-034",
+        "territory-057"
+      ]
+    },
+    {
+      "id": "territory-034",
+      "number": 34,
+      "name": "영지 034",
+      "terrain": "산악",
+      "coastal": true,
+      "area": 2853.59,
+      "center": [
+        194.72,
+        351.86
+      ],
+      "centroid": [
+        201.62,
+        346.41
+      ],
+      "bounds": [
+        170.02,
+        300.5,
+        244.14,
+        377.53
+      ],
+      "neighbors": [
+        "territory-033",
+        "territory-057",
+        "territory-058"
+      ]
+    },
+    {
+      "id": "territory-035",
+      "number": 35,
+      "name": "영지 035",
+      "terrain": "초원",
+      "coastal": true,
+      "area": 6084.26,
+      "center": [
+        402.24,
+        322.3
+      ],
+      "centroid": [
+        396.06,
+        326.82
+      ],
+      "bounds": [
+        341.5,
+        282.88,
+        445.62,
+        377.5
+      ],
+      "neighbors": [
+        "territory-010",
+        "territory-036",
+        "territory-061"
+      ],
+      "settlementId": "settlement-11"
+    },
+    {
+      "id": "territory-036",
+      "number": 36,
+      "name": "영지 036",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 6341.76,
+      "center": [
+        461.35,
+        274.54
+      ],
+      "centroid": [
+        462.77,
+        275.03
+      ],
+      "bounds": [
+        416.73,
+        221.45,
+        509.08,
+        323.9
+      ],
+      "neighbors": [
+        "territory-010",
+        "territory-011",
+        "territory-012",
+        "territory-035",
+        "territory-037",
+        "territory-061"
+      ]
+    },
+    {
+      "id": "territory-037",
+      "number": 37,
+      "name": "영지 037",
+      "terrain": "삼림",
+      "coastal": false,
+      "area": 5720.63,
+      "center": [
+        533.69,
+        288.51
+      ],
+      "centroid": [
+        532.33,
+        294.93
+      ],
+      "bounds": [
+        489.8,
+        246.96,
+        577.58,
+        346.69
+      ],
+      "neighbors": [
+        "territory-012",
+        "territory-013",
+        "territory-036",
+        "territory-038",
+        "territory-039",
+        "territory-061"
+      ]
+    },
+    {
+      "id": "territory-038",
+      "number": 38,
+      "name": "영지 038",
+      "terrain": "삼림",
+      "coastal": false,
+      "area": 5560.19,
+      "center": [
+        579.54,
+        353.84
+      ],
+      "centroid": [
+        573.34,
+        354.13
+      ],
+      "bounds": [
+        521.21,
+        309.36,
+        621.2,
+        398.32
+      ],
+      "neighbors": [
+        "territory-037",
+        "territory-039",
+        "territory-040",
+        "territory-061",
+        "territory-063",
+        "territory-064"
+      ],
+      "settlementId": "settlement-13"
+    },
+    {
+      "id": "territory-039",
+      "number": 39,
+      "name": "영지 039",
+      "terrain": "삼림",
+      "coastal": false,
+      "area": 5444.81,
+      "center": [
+        618.33,
+        294.65
+      ],
+      "centroid": [
+        617.31,
+        294.57
+      ],
+      "bounds": [
+        574.99,
+        246.74,
+        661.67,
+        342.57
+      ],
+      "neighbors": [
+        "territory-013",
+        "territory-015",
+        "territory-037",
+        "territory-038",
+        "territory-040",
+        "territory-041"
+      ]
+    },
+    {
+      "id": "territory-040",
+      "number": 40,
+      "name": "영지 040",
+      "terrain": "삼림",
+      "coastal": false,
+      "area": 5594.57,
+      "center": [
+        665.69,
+        364.88
+      ],
+      "centroid": [
+        665.02,
+        363.66
+      ],
+      "bounds": [
+        619.21,
+        316.61,
+        712.16,
+        413.14
+      ],
+      "neighbors": [
+        "territory-038",
+        "territory-039",
+        "territory-041",
+        "territory-042",
+        "territory-064",
+        "territory-066"
+      ]
+    },
+    {
+      "id": "territory-041",
+      "number": 41,
+      "name": "영지 041",
+      "terrain": "초원",
+      "coastal": false,
+      "area": 4751.84,
+      "center": [
+        692.18,
+        300.35
+      ],
+      "centroid": [
+        699.42,
+        305.91
+      ],
+      "bounds": [
+        657.14,
+        265.26,
+        741.24,
+        349.48
+      ],
+      "neighbors": [
+        "territory-015",
+        "territory-016",
+        "territory-039",
+        "territory-040",
+        "territory-042",
+        "territory-043"
+      ]
+    },
+    {
+      "id": "territory-042",
+      "number": 42,
+      "name": "영지 042",
+      "terrain": "평야",
+      "coastal": true,
+      "area": 5073.39,
+      "center": [
+        755.49,
+        365.27
+      ],
+      "centroid": [
+        754.21,
+        362.95
+      ],
+      "bounds": [
+        710.5,
+        322.89,
+        800.48,
+        407.64
+      ],
+      "neighbors": [
+        "territory-040",
+        "territory-041",
+        "territory-043",
+        "territory-044",
+        "territory-066",
+        "territory-067"
+      ],
+      "settlementId": "settlement-15"
+    },
+    {
+      "id": "territory-043",
+      "number": 43,
+      "name": "영지 043",
+      "terrain": "평야",
+      "coastal": false,
+      "area": 5210.99,
+      "center": [
+        773.05,
+        296.09
+      ],
+      "centroid": [
+        777.0,
+        291.79
+      ],
+      "bounds": [
+        734.44,
+        242.66,
+        827.1,
+        334.26
+      ],
+      "neighbors": [
+        "territory-016",
+        "territory-018",
+        "territory-041",
+        "territory-042",
+        "territory-044"
+      ]
+    },
+    {
+      "id": "territory-044",
+      "number": 44,
+      "name": "영지 044",
+      "terrain": "평야",
+      "coastal": false,
+      "area": 5633.11,
+      "center": [
+        835.2,
+        337.76
+      ],
+      "centroid": [
+        834.95,
+        332.14
+      ],
+      "bounds": [
+        789.36,
+        278.57,
+        881.05,
+        380.05
+      ],
+      "neighbors": [
+        "territory-018",
+        "territory-042",
+        "territory-043",
+        "territory-045",
+        "territory-067",
+        "territory-068"
+      ]
+    },
+    {
+      "id": "territory-045",
+      "number": 45,
+      "name": "영지 045",
+      "terrain": "평야",
+      "coastal": false,
+      "area": 6990.89,
+      "center": [
+        903.79,
+        291.03
+      ],
+      "centroid": [
+        903.96,
+        291.94
+      ],
+      "bounds": [
+        844.52,
+        248.43,
+        960.3,
+        334.38
+      ],
+      "neighbors": [
+        "territory-018",
+        "territory-019",
+        "territory-020",
+        "territory-044",
+        "territory-046",
+        "territory-068",
+        "territory-070"
+      ]
+    },
+    {
+      "id": "territory-046",
+      "number": 46,
+      "name": "영지 046",
+      "terrain": "초원",
+      "coastal": false,
+      "area": 7510.04,
+      "center": [
+        1023.18,
+        324.49
+      ],
+      "centroid": [
+        1016.88,
+        321.68
+      ],
+      "bounds": [
+        955.57,
+        268.35,
+        1071.48,
+        380.63
+      ],
+      "neighbors": [
+        "territory-020",
+        "territory-022",
+        "territory-045",
+        "territory-047",
+        "territory-070",
+        "territory-071",
+        "territory-073"
+      ]
+    },
+    {
+      "id": "territory-047",
+      "number": 47,
+      "name": "영지 047",
+      "terrain": "평야",
+      "coastal": false,
+      "area": 6484.51,
+      "center": [
+        1121.66,
+        327.96
+      ],
+      "centroid": [
+        1121.91,
+        327.39
+      ],
+      "bounds": [
+        1069.3,
+        278.71,
+        1174.03,
+        377.22
+      ],
+      "neighbors": [
+        "territory-022",
+        "territory-024",
+        "territory-046",
+        "territory-048",
+        "territory-073",
+        "territory-074"
+      ]
+    },
+    {
+      "id": "territory-048",
+      "number": 48,
+      "name": "영지 048",
+      "terrain": "삼림",
+      "coastal": false,
+      "area": 6406.36,
+      "center": [
+        1205.24,
+        309.72
+      ],
+      "centroid": [
+        1204.69,
+        308.11
+      ],
+      "bounds": [
+        1158.47,
+        255.5,
+        1252.43,
+        360.22
+      ],
+      "neighbors": [
+        "territory-024",
+        "territory-025",
+        "territory-047",
+        "territory-049",
+        "territory-074",
+        "territory-076"
+      ]
+    },
+    {
+      "id": "territory-049",
+      "number": 49,
+      "name": "영지 049",
+      "terrain": "산악",
+      "coastal": false,
+      "area": 6600.07,
+      "center": [
+        1279.0,
+        279.3
+      ],
+      "centroid": [
+        1280.61,
+        279.16
+      ],
+      "bounds": [
+        1231.02,
+        229.47,
+        1326.97,
+        329.14
+      ],
+      "neighbors": [
+        "territory-025",
+        "territory-026",
+        "territory-048",
+        "territory-050",
+        "territory-051",
+        "territory-076"
+      ],
+      "settlementId": "settlement-10"
+    },
+    {
+      "id": "territory-050",
+      "number": 50,
+      "name": "영지 050",
+      "terrain": "삼림",
+      "coastal": false,
+      "area": 6099.28,
+      "center": [
+        1340.38,
+        338.9
+      ],
+      "centroid": [
+        1340.58,
+        339.71
+      ],
+      "bounds": [
+        1291.88,
+        291.3,
+        1388.89,
+        386.5
+      ],
+      "neighbors": [
+        "territory-049",
+        "territory-051",
+        "territory-052",
+        "territory-076",
+        "territory-077"
+      ]
+    },
+    {
+      "id": "territory-051",
+      "number": 51,
+      "name": "영지 051",
+      "terrain": "삼림",
+      "coastal": false,
+      "area": 5306.27,
+      "center": [
+        1362.44,
+        269.54
+      ],
+      "centroid": [
+        1367.62,
+        275.51
+      ],
+      "bounds": [
+        1323.9,
+        232.53,
+        1416.39,
+        321.36
+      ],
+      "neighbors": [
+        "territory-026",
+        "territory-027",
+        "territory-029",
+        "territory-049",
+        "territory-050",
+        "territory-052"
+      ]
+    },
+    {
+      "id": "territory-052",
+      "number": 52,
+      "name": "영지 052",
+      "terrain": "삼림",
+      "coastal": false,
+      "area": 6801.72,
+      "center": [
+        1429.36,
+        354.78
+      ],
+      "centroid": [
+        1428.23,
+        351.93
+      ],
+      "bounds": [
+        1381.29,
+        301.47,
+        1477.43,
+        408.09
+      ],
+      "neighbors": [
+        "territory-029",
+        "territory-050",
+        "territory-051",
+        "territory-053",
+        "territory-054",
+        "territory-077",
+        "territory-078"
+      ],
+      "settlementId": "settlement-14"
+    },
+    {
+      "id": "territory-053",
+      "number": 53,
+      "name": "영지 053",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 4586.54,
+      "center": [
+        1468.7,
+        290.12
+      ],
+      "centroid": [
+        1473.89,
+        291.43
+      ],
+      "bounds": [
+        1429.22,
+        243.91,
+        1516.82,
+        336.58
+      ],
+      "neighbors": [
+        "territory-029",
+        "territory-030",
+        "territory-052",
+        "territory-054"
+      ]
+    },
+    {
+      "id": "territory-054",
+      "number": 54,
+      "name": "영지 054",
+      "terrain": "삼림",
+      "coastal": false,
+      "area": 6317.08,
+      "center": [
+        1521.87,
+        366.86
+      ],
+      "centroid": [
+        1520.32,
+        365.24
+      ],
+      "bounds": [
+        1472.96,
+        312.19,
+        1574.39,
+        419.03
+      ],
+      "neighbors": [
+        "territory-052",
+        "territory-053",
+        "territory-055",
+        "territory-078",
+        "territory-079"
+      ]
+    },
+    {
+      "id": "territory-055",
+      "number": 55,
+      "name": "영지 055",
+      "terrain": "산악",
+      "coastal": true,
+      "area": 3907.08,
+      "center": [
+        1574.21,
+        332.14
+      ],
+      "centroid": [
+        1568.19,
+        321.96
+      ],
+      "bounds": [
+        1518.94,
+        278.08,
+        1601.85,
+        370.74
+      ],
+      "neighbors": [
+        "territory-054",
+        "territory-056",
+        "territory-079"
+      ],
+      "settlementId": "settlement-12"
+    },
+    {
+      "id": "territory-056",
+      "number": 56,
+      "name": "영지 056",
+      "terrain": "구릉",
+      "coastal": true,
+      "area": 6211.18,
+      "center": [
+        1618.5,
+        341.48
+      ],
+      "centroid": [
+        1618.19,
+        313.72
+      ],
+      "bounds": [
+        1574.5,
+        234.5,
+        1662.5,
+        377.14
+      ],
+      "neighbors": [
+        "territory-055",
+        "territory-079",
+        "territory-080"
+      ]
+    },
+    {
+      "id": "territory-057",
+      "number": 57,
+      "name": "영지 057",
+      "terrain": "산악",
+      "coastal": true,
+      "area": 3520.35,
+      "center": [
+        156.57,
+        367.86
+      ],
+      "centroid": [
+        146.05,
+        371.92
+      ],
+      "bounds": [
+        101.5,
+        334.55,
+        184.1,
+        414.5
+      ],
+      "neighbors": [
+        "territory-033",
+        "territory-034",
+        "territory-058"
+      ],
+      "settlementId": "settlement-16"
+    },
+    {
+      "id": "territory-058",
+      "number": 58,
+      "name": "영지 058",
+      "terrain": "산악",
+      "coastal": true,
+      "area": 5185.39,
+      "center": [
+        212.39,
+        407.23
+      ],
+      "centroid": [
+        212.49,
+        411.41
+      ],
+      "bounds": [
+        161.6,
+        369.64,
+        248.66,
+        459.85
+      ],
+      "neighbors": [
+        "territory-034",
+        "territory-057",
+        "territory-059",
+        "territory-082",
+        "territory-084"
+      ]
+    },
+    {
+      "id": "territory-059",
+      "number": 59,
+      "name": "영지 059",
+      "terrain": "구릉",
+      "coastal": true,
+      "area": 5722.91,
+      "center": [
+        276.41,
+        402.0
+      ],
+      "centroid": [
+        285.65,
+        402.64
+      ],
+      "bounds": [
+        244.91,
+        352.5,
+        329.5,
+        450.91
+      ],
+      "neighbors": [
+        "territory-058",
+        "territory-084",
+        "territory-086"
+      ]
+    },
+    {
+      "id": "territory-060",
+      "number": 60,
+      "name": "영지 060",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 5929.84,
+      "center": [
+        412.56,
+        463.68
+      ],
+      "centroid": [
+        412.05,
+        448.43
+      ],
+      "bounds": [
+        351.16,
+        390.81,
+        456.42,
+        500.12
+      ],
+      "neighbors": [
+        "territory-061",
+        "territory-062",
+        "territory-086",
+        "territory-087"
+      ]
+    },
+    {
+      "id": "territory-061",
+      "number": 61,
+      "name": "영지 061",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 7384.41,
+      "center": [
+        473.1,
+        369.81
+      ],
+      "centroid": [
+        471.83,
+        369.13
+      ],
+      "bounds": [
+        415.69,
+        319.52,
+        524.15,
+        421.05
+      ],
+      "neighbors": [
+        "territory-035",
+        "territory-036",
+        "territory-037",
+        "territory-038",
+        "territory-060",
+        "territory-062",
+        "territory-063"
+      ]
+    },
+    {
+      "id": "territory-062",
+      "number": 62,
+      "name": "영지 062",
+      "terrain": "삼림",
+      "coastal": false,
+      "area": 6760.69,
+      "center": [
+        483.65,
+        479.16
+      ],
+      "centroid": [
+        481.68,
+        472.67
+      ],
+      "bounds": [
+        437.03,
+        418.32,
+        530.27,
+        522.62
+      ],
+      "neighbors": [
+        "territory-060",
+        "territory-061",
+        "territory-063",
+        "territory-087",
+        "territory-088",
+        "territory-089"
+      ]
+    },
+    {
+      "id": "territory-063",
+      "number": 63,
+      "name": "영지 063",
+      "terrain": "삼림",
+      "coastal": false,
+      "area": 5541.51,
+      "center": [
+        536.78,
+        416.54
+      ],
+      "centroid": [
+        534.43,
+        417.84
+      ],
+      "bounds": [
+        483.13,
+        367.91,
+        575.1,
+        465.17
+      ],
+      "neighbors": [
+        "territory-038",
+        "territory-061",
+        "territory-062",
+        "territory-064",
+        "territory-089"
+      ]
+    },
+    {
+      "id": "territory-064",
+      "number": 64,
+      "name": "영지 064",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 4966.13,
+      "center": [
+        611.88,
+        404.1
+      ],
+      "centroid": [
+        612.28,
+        417.23
+      ],
+      "bounds": [
+        571.93,
+        369.79,
+        667.81,
+        472.72
+      ],
+      "neighbors": [
+        "territory-038",
+        "territory-040",
+        "territory-063",
+        "territory-065",
+        "territory-066",
+        "territory-089"
+      ]
+    },
+    {
+      "id": "territory-065",
+      "number": 65,
+      "name": "영지 065",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 3280.95,
+      "center": [
+        687.8,
+        461.48
+      ],
+      "centroid": [
+        687.68,
+        461.96
+      ],
+      "bounds": [
+        643.5,
+        420.45,
+        732.11,
+        502.5
+      ],
+      "neighbors": [
+        "territory-064",
+        "territory-066",
+        "territory-091"
+      ]
+    },
+    {
+      "id": "territory-066",
+      "number": 66,
+      "name": "영지 066",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 5132.03,
+      "center": [
+        710.03,
+        414.69
+      ],
+      "centroid": [
+        721.21,
+        421.7
+      ],
+      "bounds": [
+        667.36,
+        377.88,
+        769.78,
+        466.22
+      ],
+      "neighbors": [
+        "territory-040",
+        "territory-042",
+        "territory-064",
+        "territory-065",
+        "territory-091"
+      ]
+    },
+    {
+      "id": "territory-067",
+      "number": 67,
+      "name": "영지 067",
+      "terrain": "평야",
+      "coastal": true,
+      "area": 3500.06,
+      "center": [
+        812.77,
+        393.52
+      ],
+      "centroid": [
+        817.94,
+        397.48
+      ],
+      "bounds": [
+        776.84,
+        363.54,
+        863.07,
+        435.5
+      ],
+      "neighbors": [
+        "territory-042",
+        "territory-044",
+        "territory-068"
+      ]
+    },
+    {
+      "id": "territory-068",
+      "number": 68,
+      "name": "영지 068",
+      "terrain": "평야",
+      "coastal": true,
+      "area": 4969.52,
+      "center": [
+        898.97,
+        368.09
+      ],
+      "centroid": [
+        895.57,
+        371.52
+      ],
+      "bounds": [
+        851.21,
+        332.09,
+        933.09,
+        418.5
+      ],
+      "neighbors": [
+        "territory-044",
+        "territory-045",
+        "territory-067",
+        "territory-069",
+        "territory-070"
+      ]
+    },
+    {
+      "id": "territory-069",
+      "number": 69,
+      "name": "영지 069",
+      "terrain": "평야",
+      "coastal": true,
+      "area": 3311.59,
+      "center": [
+        931.47,
+        429.43
+      ],
+      "centroid": [
+        924.99,
+        440.95
+      ],
+      "bounds": [
+        890.5,
+        401.39,
+        960.73,
+        485.5
+      ],
+      "neighbors": [
+        "territory-068",
+        "territory-070",
+        "territory-071"
+      ],
+      "settlementId": "settlement-17"
+    },
+    {
+      "id": "territory-070",
+      "number": 70,
+      "name": "영지 070",
+      "terrain": "평야",
+      "coastal": false,
+      "area": 5649.57,
+      "center": [
+        968.32,
+        374.36
+      ],
+      "centroid": [
+        965.68,
+        368.94
+      ],
+      "bounds": [
+        928.47,
+        314.52,
+        1024.11,
+        417.1
+      ],
+      "neighbors": [
+        "territory-045",
+        "territory-046",
+        "territory-068",
+        "territory-069",
+        "territory-071"
+      ]
+    },
+    {
+      "id": "territory-071",
+      "number": 71,
+      "name": "영지 071",
+      "terrain": "초원",
+      "coastal": true,
+      "area": 3007.59,
+      "center": [
+        983.92,
+        426.02
+      ],
+      "centroid": [
+        994.61,
+        418.83
+      ],
+      "bounds": [
+        957.96,
+        380.56,
+        1035.85,
+        458.5
+      ],
+      "neighbors": [
+        "territory-046",
+        "territory-069",
+        "territory-070",
+        "territory-073"
+      ]
+    },
+    {
+      "id": "territory-072",
+      "number": 72,
+      "name": "영지 072",
+      "terrain": "평야",
+      "coastal": true,
+      "area": 6708.5,
+      "center": [
+        1070.9,
+        469.04
+      ],
+      "centroid": [
+        1060.39,
+        470.57
+      ],
+      "bounds": [
+        990.5,
+        423.86,
+        1111.09,
+        514.22
+      ],
+      "neighbors": [
+        "territory-073",
+        "territory-093",
+        "territory-094",
+        "territory-095"
+      ]
+    },
+    {
+      "id": "territory-073",
+      "number": 73,
+      "name": "영지 073",
+      "terrain": "초원",
+      "coastal": true,
+      "area": 6679.31,
+      "center": [
+        1076.23,
+        389.45
+      ],
+      "centroid": [
+        1079.79,
+        394.46
+      ],
+      "bounds": [
+        1024.59,
+        341.69,
+        1125.78,
+        439.76
+      ],
+      "neighbors": [
+        "territory-046",
+        "territory-047",
+        "territory-071",
+        "territory-072",
+        "territory-074",
+        "territory-095"
+      ]
+    },
+    {
+      "id": "territory-074",
+      "number": 74,
+      "name": "영지 074",
+      "terrain": "초원",
+      "coastal": false,
+      "area": 6706.97,
+      "center": [
+        1170.58,
+        396.18
+      ],
+      "centroid": [
+        1170.5,
+        396.3
+      ],
+      "bounds": [
+        1122.87,
+        346.36,
+        1218.28,
+        446.01
+      ],
+      "neighbors": [
+        "territory-047",
+        "territory-048",
+        "territory-073",
+        "territory-075",
+        "territory-076",
+        "territory-095"
+      ]
+    },
+    {
+      "id": "territory-075",
+      "number": 75,
+      "name": "영지 075",
+      "terrain": "삼림",
+      "coastal": false,
+      "area": 6758.48,
+      "center": [
+        1239.09,
+        443.92
+      ],
+      "centroid": [
+        1245.38,
+        439.71
+      ],
+      "bounds": [
+        1192.27,
+        396.37,
+        1304.64,
+        491.47
+      ],
+      "neighbors": [
+        "territory-074",
+        "territory-076",
+        "territory-077",
+        "territory-095",
+        "territory-096",
+        "territory-098"
+      ]
+    },
+    {
+      "id": "territory-076",
+      "number": 76,
+      "name": "영지 076",
+      "terrain": "평야",
+      "coastal": false,
+      "area": 6648.11,
+      "center": [
+        1269.68,
+        367.03
+      ],
+      "centroid": [
+        1263.36,
+        368.23
+      ],
+      "bounds": [
+        1207.59,
+        320.72,
+        1314.03,
+        413.35
+      ],
+      "neighbors": [
+        "territory-048",
+        "territory-049",
+        "territory-050",
+        "territory-074",
+        "territory-075",
+        "territory-077"
+      ]
+    },
+    {
+      "id": "territory-077",
+      "number": 77,
+      "name": "영지 077",
+      "terrain": "삼림",
+      "coastal": false,
+      "area": 7245.6,
+      "center": [
+        1371.25,
+        413.05
+      ],
+      "centroid": [
+        1362.72,
+        413.24
+      ],
+      "bounds": [
+        1302.68,
+        367.18,
+        1420.23,
+        458.91
+      ],
+      "neighbors": [
+        "territory-050",
+        "territory-052",
+        "territory-075",
+        "territory-076",
+        "territory-078",
+        "territory-098",
+        "territory-099"
+      ]
+    },
+    {
+      "id": "territory-078",
+      "number": 78,
+      "name": "영지 078",
+      "terrain": "삼림",
+      "coastal": false,
+      "area": 7062.92,
+      "center": [
+        1464.22,
+        423.44
+      ],
+      "centroid": [
+        1468.81,
+        426.52
+      ],
+      "bounds": [
+        1416.23,
+        376.4,
+        1531.4,
+        470.49
+      ],
+      "neighbors": [
+        "territory-052",
+        "territory-054",
+        "territory-077",
+        "territory-079",
+        "territory-099",
+        "territory-100",
+        "territory-102"
+      ]
+    },
+    {
+      "id": "territory-079",
+      "number": 79,
+      "name": "영지 079",
+      "terrain": "구릉",
+      "coastal": false,
+      "area": 5781.46,
+      "center": [
+        1579.56,
+        417.81
+      ],
+      "centroid": [
+        1585.55,
+        417.76
+      ],
+      "bounds": [
+        1531.36,
+        368.17,
+        1627.76,
+        467.44
+      ],
+      "neighbors": [
+        "territory-054",
+        "territory-055",
+        "territory-056",
+        "territory-078",
+        "territory-080",
+        "territory-102",
+        "territory-104"
+      ]
+    },
+    {
+      "id": "territory-080",
+      "number": 80,
+      "name": "영지 080",
+      "terrain": "산악",
+      "coastal": true,
+      "area": 5181.73,
+      "center": [
+        1644.71,
+        411.55
+      ],
+      "centroid": [
+        1649.84,
+        410.97
+      ],
+      "bounds": [
+        1613.09,
+        359.38,
+        1691.5,
+        464.5
+      ],
+      "neighbors": [
+        "territory-056",
+        "territory-079",
+        "territory-104"
+      ]
+    },
+    {
+      "id": "territory-081",
+      "number": 81,
+      "name": "영지 081",
+      "terrain": "산악",
+      "coastal": true,
+      "area": 3881.25,
+      "center": [
+        149.13,
+        517.5
+      ],
+      "centroid": [
+        136.18,
+        511.92
+      ],
+      "bounds": [
+        92.5,
+        463.5,
+        168.0,
+        571.5
+      ],
+      "neighbors": [
+        "territory-082",
+        "territory-083"
+      ]
+    },
+    {
+      "id": "territory-082",
+      "number": 82,
+      "name": "영지 082",
+      "terrain": "산악",
+      "coastal": true,
+      "area": 5355.76,
+      "center": [
+        198.22,
+        510.55
+      ],
+      "centroid": [
+        198.97,
+        510.34
+      ],
+      "bounds": [
+        162.58,
+        459.13,
+        248.13,
+        561.97
+      ],
+      "neighbors": [
+        "territory-058",
+        "territory-081",
+        "territory-083",
+        "territory-084"
+      ]
+    },
+    {
+      "id": "territory-083",
+      "number": 83,
+      "name": "영지 083",
+      "terrain": "산악",
+      "coastal": true,
+      "area": 5949.26,
+      "center": [
+        224.93,
+        574.45
+      ],
+      "centroid": [
+        225.01,
+        573.2
+      ],
+      "bounds": [
+        159.49,
+        527.94,
+        271.66,
+        620.97
+      ],
+      "neighbors": [
+        "territory-081",
+        "territory-082",
+        "territory-084",
+        "territory-085",
+        "territory-106",
+        "territory-108"
+      ]
+    },
+    {
+      "id": "territory-084",
+      "number": 84,
+      "name": "영지 084",
+      "terrain": "구릉",
+      "coastal": false,
+      "area": 6124.48,
+      "center": [
+        268.35,
+        484.12
+      ],
+      "centroid": [
+        264.29,
+        480.87
+      ],
+      "bounds": [
+        214.88,
+        434.6,
+        306.54,
+        533.64
+      ],
+      "neighbors": [
+        "territory-058",
+        "territory-059",
+        "territory-082",
+        "territory-083",
+        "territory-085",
+        "territory-086"
+      ],
+      "settlementId": "settlement-20"
+    },
+    {
+      "id": "territory-085",
+      "number": 85,
+      "name": "영지 085",
+      "terrain": "구릉",
+      "coastal": false,
+      "area": 6602.26,
+      "center": [
+        306.06,
+        561.7
+      ],
+      "centroid": [
+        310.96,
+        558.3
+      ],
+      "bounds": [
+        262.91,
+        511.09,
+        366.46,
+        612.31
+      ],
+      "neighbors": [
+        "territory-083",
+        "territory-084",
+        "territory-086",
+        "territory-087",
+        "territory-108",
+        "territory-109"
+      ]
+    },
+    {
+      "id": "territory-086",
+      "number": 86,
+      "name": "영지 086",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 7113.3,
+      "center": [
+        347.96,
+        488.23
+      ],
+      "centroid": [
+        344.77,
+        482.17
+      ],
+      "bounds": [
+        301.83,
+        418.42,
+        394.08,
+        538.1
+      ],
+      "neighbors": [
+        "territory-059",
+        "territory-060",
+        "territory-084",
+        "territory-085",
+        "territory-087"
+      ]
+    },
+    {
+      "id": "territory-087",
+      "number": 87,
+      "name": "영지 087",
+      "terrain": "평야",
+      "coastal": false,
+      "area": 7573.58,
+      "center": [
+        415.92,
+        543.89
+      ],
+      "centroid": [
+        417.54,
+        543.35
+      ],
+      "bounds": [
+        363.05,
+        495.09,
+        468.79,
+        592.7
+      ],
+      "neighbors": [
+        "territory-060",
+        "territory-062",
+        "territory-085",
+        "territory-086",
+        "territory-088",
+        "territory-109",
+        "territory-110"
+      ],
+      "settlementId": "settlement-22"
+    },
+    {
+      "id": "territory-088",
+      "number": 88,
+      "name": "영지 088",
+      "terrain": "평야",
+      "coastal": false,
+      "area": 6954.45,
+      "center": [
+        507.28,
+        558.68
+      ],
+      "centroid": [
+        506.79,
+        558.0
+      ],
+      "bounds": [
+        460.29,
+        507.63,
+        554.26,
+        609.72
+      ],
+      "neighbors": [
+        "territory-062",
+        "territory-087",
+        "territory-089",
+        "territory-090",
+        "territory-110",
+        "territory-111"
+      ]
+    },
+    {
+      "id": "territory-089",
+      "number": 89,
+      "name": "영지 089",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 6362.58,
+      "center": [
+        567.9,
+        490.56
+      ],
+      "centroid": [
+        570.41,
+        491.91
+      ],
+      "bounds": [
+        519.72,
+        444.08,
+        626.35,
+        537.93
+      ],
+      "neighbors": [
+        "territory-062",
+        "territory-063",
+        "territory-064",
+        "territory-088",
+        "territory-090"
+      ]
+    },
+    {
+      "id": "territory-090",
+      "number": 90,
+      "name": "영지 090",
+      "terrain": "초원",
+      "coastal": true,
+      "area": 6496.49,
+      "center": [
+        585.01,
+        574.59
+      ],
+      "centroid": [
+        597.03,
+        562.52
+      ],
+      "bounds": [
+        550.77,
+        512.85,
+        653.5,
+        618.68
+      ],
+      "neighbors": [
+        "territory-088",
+        "territory-089",
+        "territory-111",
+        "territory-112"
+      ],
+      "settlementId": "settlement-25"
+    },
+    {
+      "id": "territory-091",
+      "number": 91,
+      "name": "영지 091",
+      "terrain": "초원",
+      "coastal": true,
+      "area": 5534.25,
+      "center": [
+        774.0,
+        481.59
+      ],
+      "centroid": [
+        770.94,
+        478.34
+      ],
+      "bounds": [
+        728.5,
+        412.5,
+        819.5,
+        530.94
+      ],
+      "neighbors": [
+        "territory-065",
+        "territory-066",
+        "territory-092"
+      ]
+    },
+    {
+      "id": "territory-092",
+      "number": 92,
+      "name": "영지 092",
+      "terrain": "초원",
+      "coastal": true,
+      "area": 4049.23,
+      "center": [
+        791.0,
+        544.83
+      ],
+      "centroid": [
+        794.48,
+        548.57
+      ],
+      "bounds": [
+        748.5,
+        506.5,
+        850.5,
+        598.5
+      ],
+      "neighbors": [
+        "territory-091"
+      ],
+      "settlementId": "settlement-23"
+    },
+    {
+      "id": "territory-093",
+      "number": 93,
+      "name": "영지 093",
+      "terrain": "평야",
+      "coastal": true,
+      "area": 5419.4,
+      "center": [
+        1060.22,
+        540.0
+      ],
+      "centroid": [
+        1057.64,
+        538.58
+      ],
+      "bounds": [
+        1008.5,
+        492.19,
+        1100.68,
+        587.5
+      ],
+      "neighbors": [
+        "territory-072",
+        "territory-094"
+      ]
+    },
+    {
+      "id": "territory-094",
+      "number": 94,
+      "name": "영지 094",
+      "terrain": "평야",
+      "coastal": true,
+      "area": 4701.77,
+      "center": [
+        1144.4,
+        540.62
+      ],
+      "centroid": [
+        1142.59,
+        544.08
+      ],
+      "bounds": [
+        1097.72,
+        510.7,
+        1191.07,
+        582.5
+      ],
+      "neighbors": [
+        "territory-072",
+        "territory-093",
+        "territory-095",
+        "territory-096",
+        "territory-118"
+      ]
+    },
+    {
+      "id": "territory-095",
+      "number": 95,
+      "name": "영지 095",
+      "terrain": "삼림",
+      "coastal": false,
+      "area": 6184.25,
+      "center": [
+        1151.76,
+        470.31
+      ],
+      "centroid": [
+        1147.8,
+        472.38
+      ],
+      "bounds": [
+        1103.94,
+        426.45,
+        1199.57,
+        514.17
+      ],
+      "neighbors": [
+        "territory-072",
+        "territory-073",
+        "territory-074",
+        "territory-075",
+        "territory-094",
+        "territory-096"
+      ],
+      "settlementId": "settlement-18"
+    },
+    {
+      "id": "territory-096",
+      "number": 96,
+      "name": "영지 096",
+      "terrain": "삼림",
+      "coastal": false,
+      "area": 6468.22,
+      "center": [
+        1214.43,
+        517.09
+      ],
+      "centroid": [
+        1214.6,
+        520.07
+      ],
+      "bounds": [
+        1167.05,
+        466.04,
+        1263.02,
+        567.86
+      ],
+      "neighbors": [
+        "territory-075",
+        "territory-094",
+        "territory-095",
+        "territory-097",
+        "territory-098",
+        "territory-118"
+      ]
+    },
+    {
+      "id": "territory-097",
+      "number": 97,
+      "name": "영지 097",
+      "terrain": "삼림",
+      "coastal": false,
+      "area": 6869.07,
+      "center": [
+        1286.08,
+        562.44
+      ],
+      "centroid": [
+        1291.96,
+        556.39
+      ],
+      "bounds": [
+        1238.47,
+        508.28,
+        1352.73,
+        601.12
+      ],
+      "neighbors": [
+        "territory-096",
+        "territory-098",
+        "territory-099",
+        "territory-118",
+        "territory-119",
+        "territory-120"
+      ]
+    },
+    {
+      "id": "territory-098",
+      "number": 98,
+      "name": "영지 098",
+      "terrain": "삼림",
+      "coastal": false,
+      "area": 6506.78,
+      "center": [
+        1312.28,
+        477.12
+      ],
+      "centroid": [
+        1309.37,
+        482.42
+      ],
+      "bounds": [
+        1256.71,
+        422.65,
+        1351.97,
+        531.6
+      ],
+      "neighbors": [
+        "territory-075",
+        "territory-077",
+        "territory-096",
+        "territory-097",
+        "territory-099"
+      ],
+      "settlementId": "settlement-19"
+    },
+    {
+      "id": "territory-099",
+      "number": 99,
+      "name": "영지 099",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 6986.4,
+      "center": [
+        1392.62,
+        489.55
+      ],
+      "centroid": [
+        1390.86,
+        489.54
+      ],
+      "bounds": [
+        1345.14,
+        437.22,
+        1440.1,
+        541.89
+      ],
+      "neighbors": [
+        "territory-077",
+        "territory-078",
+        "territory-097",
+        "territory-098",
+        "territory-100",
+        "territory-120"
+      ]
+    },
+    {
+      "id": "territory-100",
+      "number": 100,
+      "name": "영지 100",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 4565.89,
+      "center": [
+        1493.51,
+        494.9
+      ],
+      "centroid": [
+        1484.36,
+        500.26
+      ],
+      "bounds": [
+        1432.6,
+        460.95,
+        1523.97,
+        562.8
+      ],
+      "neighbors": [
+        "territory-078",
+        "territory-099",
+        "territory-101",
+        "territory-102"
+      ],
+      "settlementId": "settlement-21"
+    },
+    {
+      "id": "territory-101",
+      "number": 101,
+      "name": "영지 101",
+      "terrain": "초원",
+      "coastal": true,
+      "area": 5646.35,
+      "center": [
+        1541.43,
+        542.07
+      ],
+      "centroid": [
+        1537.1,
+        547.99
+      ],
+      "bounds": [
+        1482.3,
+        506.77,
+        1583.66,
+        591.5
+      ],
+      "neighbors": [
+        "territory-100",
+        "territory-102",
+        "territory-103",
+        "territory-104"
+      ]
+    },
+    {
+      "id": "territory-102",
+      "number": 102,
+      "name": "영지 102",
+      "terrain": "삼림",
+      "coastal": false,
+      "area": 5324.26,
+      "center": [
+        1550.24,
+        474.59
+      ],
+      "centroid": [
+        1548.09,
+        471.99
+      ],
+      "bounds": [
+        1505.45,
+        419.47,
+        1595.03,
+        513.95
+      ],
+      "neighbors": [
+        "territory-078",
+        "territory-079",
+        "territory-100",
+        "territory-101",
+        "territory-104"
+      ]
+    },
+    {
+      "id": "territory-103",
+      "number": 103,
+      "name": "영지 103",
+      "terrain": "평야",
+      "coastal": true,
+      "area": 3672.16,
+      "center": [
+        1613.83,
+        552.29
+      ],
+      "centroid": [
+        1614.53,
+        554.17
+      ],
+      "bounds": [
+        1575.21,
+        523.94,
+        1652.46,
+        591.98
+      ],
+      "neighbors": [
+        "territory-101",
+        "territory-104",
+        "territory-105"
+      ]
+    },
+    {
+      "id": "territory-104",
+      "number": 104,
+      "name": "영지 104",
+      "terrain": "구릉",
+      "coastal": true,
+      "area": 4263.73,
+      "center": [
+        1616.3,
+        498.22
+      ],
+      "centroid": [
+        1620.92,
+        496.63
+      ],
+      "bounds": [
+        1578.3,
+        453.31,
+        1669.5,
+        530.3
+      ],
+      "neighbors": [
+        "territory-079",
+        "territory-080",
+        "territory-101",
+        "territory-102",
+        "territory-103",
+        "territory-105"
+      ]
+    },
+    {
+      "id": "territory-105",
+      "number": 105,
+      "name": "영지 105",
+      "terrain": "평야",
+      "coastal": true,
+      "area": 2893.2,
+      "center": [
+        1657.82,
+        573.97
+      ],
+      "centroid": [
+        1669.66,
+        567.44
+      ],
+      "bounds": [
+        1636.48,
+        525.64,
+        1700.5,
+        608.5
+      ],
+      "neighbors": [
+        "territory-103",
+        "territory-104"
+      ],
+      "settlementId": "settlement-24"
+    },
+    {
+      "id": "territory-106",
+      "number": 106,
+      "name": "영지 106",
+      "terrain": "초원",
+      "coastal": true,
+      "area": 3567.92,
+      "center": [
+        161.87,
+        647.5
+      ],
+      "centroid": [
+        163.25,
+        643.09
+      ],
+      "bounds": [
+        114.5,
+        603.5,
+        209.24,
+        691.5
+      ],
+      "neighbors": [
+        "territory-083",
+        "territory-107",
+        "territory-108"
+      ],
+      "settlementId": "settlement-27"
+    },
+    {
+      "id": "territory-107",
+      "number": 107,
+      "name": "영지 107",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 3090.4,
+      "center": [
+        194.21,
+        668.59
+      ],
+      "centroid": [
+        193.26,
+        672.14
+      ],
+      "bounds": [
+        144.44,
+        629.67,
+        229.76,
+        707.5
+      ],
+      "neighbors": [
+        "territory-106",
+        "territory-108"
+      ]
+    },
+    {
+      "id": "territory-108",
+      "number": 108,
+      "name": "영지 108",
+      "terrain": "산악",
+      "coastal": true,
+      "area": 4864.54,
+      "center": [
+        266.7,
+        626.33
+      ],
+      "centroid": [
+        261.99,
+        627.57
+      ],
+      "bounds": [
+        208.1,
+        586.17,
+        308.56,
+        666.5
+      ],
+      "neighbors": [
+        "territory-083",
+        "territory-085",
+        "territory-106",
+        "territory-107",
+        "territory-109"
+      ]
+    },
+    {
+      "id": "territory-109",
+      "number": 109,
+      "name": "영지 109",
+      "terrain": "평야",
+      "coastal": true,
+      "area": 5521.83,
+      "center": [
+        369.47,
+        602.33
+      ],
+      "centroid": [
+        360.64,
+        612.83
+      ],
+      "bounds": [
+        304.93,
+        561.49,
+        401.74,
+        659.5
+      ],
+      "neighbors": [
+        "territory-085",
+        "territory-087",
+        "territory-108",
+        "territory-110"
+      ]
+    },
+    {
+      "id": "territory-110",
+      "number": 110,
+      "name": "영지 110",
+      "terrain": "평야",
+      "coastal": true,
+      "area": 6824.5,
+      "center": [
+        434.31,
+        625.29
+      ],
+      "centroid": [
+        441.07,
+        625.76
+      ],
+      "bounds": [
+        393.94,
+        578.16,
+        490.83,
+        672.41
+      ],
+      "neighbors": [
+        "territory-087",
+        "territory-088",
+        "territory-109",
+        "territory-111",
+        "territory-124",
+        "territory-125"
+      ]
+    },
+    {
+      "id": "territory-111",
+      "number": 111,
+      "name": "영지 111",
+      "terrain": "평야",
+      "coastal": false,
+      "area": 7051.05,
+      "center": [
+        540.17,
+        630.31
+      ],
+      "centroid": [
+        539.75,
+        634.31
+      ],
+      "bounds": [
+        487.99,
+        585.22,
+        592.36,
+        675.41
+      ],
+      "neighbors": [
+        "territory-088",
+        "territory-090",
+        "territory-110",
+        "territory-112",
+        "territory-125",
+        "territory-127"
+      ]
+    },
+    {
+      "id": "territory-112",
+      "number": 112,
+      "name": "영지 112",
+      "terrain": "평야",
+      "coastal": true,
+      "area": 6544.89,
+      "center": [
+        633.08,
+        643.94
+      ],
+      "centroid": [
+        634.07,
+        646.3
+      ],
+      "bounds": [
+        584.69,
+        596.5,
+        681.48,
+        691.37
+      ],
+      "neighbors": [
+        "territory-090",
+        "territory-111",
+        "territory-113",
+        "territory-127",
+        "territory-128",
+        "territory-130"
+      ]
+    },
+    {
+      "id": "territory-113",
+      "number": 113,
+      "name": "영지 113",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 5000.69,
+      "center": [
+        701.31,
+        639.82
+      ],
+      "centroid": [
+        704.85,
+        635.86
+      ],
+      "bounds": [
+        664.03,
+        586.5,
+        753.5,
+        677.9
+      ],
+      "neighbors": [
+        "territory-112",
+        "territory-130"
+      ]
+    },
+    {
+      "id": "territory-114",
+      "number": 114,
+      "name": "영지 114",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 1515.48,
+      "center": [
+        763.5,
+        698.03
+      ],
+      "centroid": [
+        778.25,
+        688.67
+      ],
+      "bounds": [
+        749.84,
+        651.5,
+        804.5,
+        721.3
+      ],
+      "neighbors": [
+        "territory-130",
+        "territory-131"
+      ]
+    },
+    {
+      "id": "territory-115",
+      "number": 115,
+      "name": "영지 115",
+      "terrain": "평야",
+      "coastal": true,
+      "area": 5441.77,
+      "center": [
+        1020.88,
+        678.59
+      ],
+      "centroid": [
+        1015.97,
+        670.04
+      ],
+      "bounds": [
+        978.23,
+        608.75,
+        1063.54,
+        713.51
+      ],
+      "neighbors": [
+        "territory-116",
+        "territory-132",
+        "territory-134",
+        "territory-135"
+      ]
+    },
+    {
+      "id": "territory-116",
+      "number": 116,
+      "name": "영지 116",
+      "terrain": "평야",
+      "coastal": true,
+      "area": 5219.46,
+      "center": [
+        1073.35,
+        640.06
+      ],
+      "centroid": [
+        1058.84,
+        630.29
+      ],
+      "bounds": [
+        994.75,
+        590.5,
+        1112.66,
+        675.46
+      ],
+      "neighbors": [
+        "territory-115",
+        "territory-117",
+        "territory-135"
+      ]
+    },
+    {
+      "id": "territory-117",
+      "number": 117,
+      "name": "영지 117",
+      "terrain": "구릉",
+      "coastal": true,
+      "area": 6212.78,
+      "center": [
+        1141.15,
+        643.52
+      ],
+      "centroid": [
+        1144.19,
+        642.28
+      ],
+      "bounds": [
+        1101.1,
+        591.5,
+        1197.23,
+        695.53
+      ],
+      "neighbors": [
+        "territory-116",
+        "territory-118",
+        "territory-135",
+        "territory-136"
+      ],
+      "settlementId": "settlement-26"
+    },
+    {
+      "id": "territory-118",
+      "number": 118,
+      "name": "영지 118",
+      "terrain": "초원",
+      "coastal": true,
+      "area": 6211.3,
+      "center": [
+        1220.07,
+        624.28
+      ],
+      "centroid": [
+        1220.7,
+        614.54
+      ],
+      "bounds": [
+        1173.83,
+        564.15,
+        1266.31,
+        667.22
+      ],
+      "neighbors": [
+        "territory-094",
+        "territory-096",
+        "territory-097",
+        "territory-117",
+        "territory-119",
+        "territory-136",
+        "territory-137"
+      ]
+    },
+    {
+      "id": "territory-119",
+      "number": 119,
+      "name": "영지 119",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 6355.35,
+      "center": [
+        1294.78,
+        643.06
+      ],
+      "centroid": [
+        1296.06,
+        642.73
+      ],
+      "bounds": [
+        1243.11,
+        597.57,
+        1346.46,
+        688.55
+      ],
+      "neighbors": [
+        "territory-097",
+        "territory-118",
+        "territory-120",
+        "territory-121",
+        "territory-137"
+      ]
+    },
+    {
+      "id": "territory-120",
+      "number": 120,
+      "name": "영지 120",
+      "terrain": "초원",
+      "coastal": true,
+      "area": 6391.4,
+      "center": [
+        1358.21,
+        607.18
+      ],
+      "centroid": [
+        1363.7,
+        603.76
+      ],
+      "bounds": [
+        1315.86,
+        541.06,
+        1417.5,
+        654.42
+      ],
+      "neighbors": [
+        "territory-097",
+        "territory-099",
+        "territory-119",
+        "territory-121",
+        "territory-122"
+      ]
+    },
+    {
+      "id": "territory-121",
+      "number": 121,
+      "name": "영지 121",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 4186.3,
+      "center": [
+        1386.81,
+        666.31
+      ],
+      "centroid": [
+        1392.55,
+        675.92
+      ],
+      "bounds": [
+        1335.26,
+        629.71,
+        1423.62,
+        739.5
+      ],
+      "neighbors": [
+        "territory-119",
+        "territory-120",
+        "territory-122",
+        "territory-138"
+      ],
+      "settlementId": "settlement-28"
+    },
+    {
+      "id": "territory-122",
+      "number": 122,
+      "name": "영지 122",
+      "terrain": "초원",
+      "coastal": true,
+      "area": 3985.95,
+      "center": [
+        1441.39,
+        668.02
+      ],
+      "centroid": [
+        1441.21,
+        674.83
+      ],
+      "bounds": [
+        1413.46,
+        626.5,
+        1480.5,
+        726.16
+      ],
+      "neighbors": [
+        "territory-120",
+        "territory-121",
+        "territory-138"
+      ]
+    },
+    {
+      "id": "territory-123",
+      "number": 123,
+      "name": "영지 123",
+      "terrain": "산악",
+      "coastal": true,
+      "area": 5938.91,
+      "center": [
+        295.56,
+        722.31
+      ],
+      "centroid": [
+        296.88,
+        721.93
+      ],
+      "bounds": [
+        235.5,
+        667.5,
+        338.46,
+        777.13
+      ],
+      "neighbors": [
+        "territory-124",
+        "territory-141"
+      ]
+    },
+    {
+      "id": "territory-124",
+      "number": 124,
+      "name": "영지 124",
+      "terrain": "산악",
+      "coastal": true,
+      "area": 7225.68,
+      "center": [
+        377.58,
+        714.71
+      ],
+      "centroid": [
+        378.61,
+        714.48
+      ],
+      "bounds": [
+        329.97,
+        663.24,
+        425.18,
+        766.17
+      ],
+      "neighbors": [
+        "territory-110",
+        "territory-123",
+        "territory-125",
+        "territory-126",
+        "territory-141",
+        "territory-143"
+      ],
+      "settlementId": "settlement-30"
+    },
+    {
+      "id": "territory-125",
+      "number": 125,
+      "name": "영지 125",
+      "terrain": "평야",
+      "coastal": false,
+      "area": 6427.2,
+      "center": [
+        459.46,
+        698.47
+      ],
+      "centroid": [
+        459.43,
+        698.73
+      ],
+      "bounds": [
+        412.0,
+        652.35,
+        504.81,
+        744.14
+      ],
+      "neighbors": [
+        "territory-110",
+        "territory-111",
+        "territory-124",
+        "territory-126",
+        "territory-127"
+      ]
+    },
+    {
+      "id": "territory-126",
+      "number": 126,
+      "name": "영지 126",
+      "terrain": "구릉",
+      "coastal": true,
+      "area": 6317.1,
+      "center": [
+        472.83,
+        778.02
+      ],
+      "centroid": [
+        471.52,
+        775.67
+      ],
+      "bounds": [
+        417.2,
+        733.57,
+        521.45,
+        824.33
+      ],
+      "neighbors": [
+        "territory-124",
+        "territory-125",
+        "territory-127",
+        "territory-143",
+        "territory-144",
+        "territory-145"
+      ]
+    },
+    {
+      "id": "territory-127",
+      "number": 127,
+      "name": "영지 127",
+      "terrain": "평야",
+      "coastal": true,
+      "area": 6477.08,
+      "center": [
+        540.16,
+        707.68
+      ],
+      "centroid": [
+        540.25,
+        711.93
+      ],
+      "bounds": [
+        494.63,
+        668.63,
+        585.68,
+        762.34
+      ],
+      "neighbors": [
+        "territory-111",
+        "territory-112",
+        "territory-125",
+        "territory-126",
+        "territory-128",
+        "territory-145"
+      ]
+    },
+    {
+      "id": "territory-128",
+      "number": 128,
+      "name": "영지 128",
+      "terrain": "초원",
+      "coastal": true,
+      "area": 6726.08,
+      "center": [
+        625.06,
+        722.67
+      ],
+      "centroid": [
+        625.49,
+        721.14
+      ],
+      "bounds": [
+        576.78,
+        673.94,
+        673.85,
+        773.5
+      ],
+      "neighbors": [
+        "territory-112",
+        "territory-127",
+        "territory-129",
+        "territory-130"
+      ],
+      "settlementId": "settlement-31"
+    },
+    {
+      "id": "territory-129",
+      "number": 129,
+      "name": "영지 129",
+      "terrain": "초원",
+      "coastal": true,
+      "area": 4658.88,
+      "center": [
+        681.96,
+        763.44
+      ],
+      "centroid": [
+        690.44,
+        783.21
+      ],
+      "bounds": [
+        641.86,
+        735.42,
+        738.1,
+        847.5
+      ],
+      "neighbors": [
+        "territory-128",
+        "territory-130",
+        "territory-146"
+      ]
+    },
+    {
+      "id": "territory-130",
+      "number": 130,
+      "name": "영지 130",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 6317.08,
+      "center": [
+        717.86,
+        714.93
+      ],
+      "centroid": [
+        716.32,
+        714.49
+      ],
+      "bounds": [
+        669.79,
+        667.14,
+        765.93,
+        762.72
+      ],
+      "neighbors": [
+        "territory-112",
+        "territory-113",
+        "territory-114",
+        "territory-128",
+        "territory-129",
+        "territory-131",
+        "territory-146"
+      ]
+    },
+    {
+      "id": "territory-131",
+      "number": 131,
+      "name": "영지 131",
+      "terrain": "초원",
+      "coastal": true,
+      "area": 4948.83,
+      "center": [
+        786.53,
+        756.8
+      ],
+      "centroid": [
+        790.88,
+        757.14
+      ],
+      "bounds": [
+        740.56,
+        716.48,
+        832.5,
+        797.13
+      ],
+      "neighbors": [
+        "territory-114",
+        "territory-130",
+        "territory-146",
+        "territory-147"
+      ],
+      "settlementId": "settlement-32"
+    },
+    {
+      "id": "territory-132",
+      "number": 132,
+      "name": "영지 132",
+      "terrain": "평야",
+      "coastal": true,
+      "area": 6297.78,
+      "center": [
+        948.97,
+        694.09
+      ],
+      "centroid": [
+        941.71,
+        689.06
+      ],
+      "bounds": [
+        893.5,
+        633.5,
+        988.6,
+        737.36
+      ],
+      "neighbors": [
+        "territory-115",
+        "territory-133",
+        "territory-134"
+      ]
+    },
+    {
+      "id": "territory-133",
+      "number": 133,
+      "name": "영지 133",
+      "terrain": "평야",
+      "coastal": true,
+      "area": 4854.84,
+      "center": [
+        961.2,
+        767.47
+      ],
+      "centroid": [
+        959.5,
+        764.32
+      ],
+      "bounds": [
+        913.5,
+        722.11,
+        1001.77,
+        810.31
+      ],
+      "neighbors": [
+        "territory-132",
+        "territory-134",
+        "territory-148"
+      ],
+      "settlementId": "settlement-33"
+    },
+    {
+      "id": "territory-134",
+      "number": 134,
+      "name": "영지 134",
+      "terrain": "평야",
+      "coastal": false,
+      "area": 6207.26,
+      "center": [
+        1030.22,
+        754.74
+      ],
+      "centroid": [
+        1030.08,
+        751.36
+      ],
+      "bounds": [
+        982.0,
+        708.74,
+        1078.45,
+        800.75
+      ],
+      "neighbors": [
+        "territory-115",
+        "territory-132",
+        "territory-133",
+        "territory-135",
+        "territory-148",
+        "territory-150",
+        "territory-151"
+      ]
+    },
+    {
+      "id": "territory-135",
+      "number": 135,
+      "name": "영지 135",
+      "terrain": "구릉",
+      "coastal": false,
+      "area": 6257.33,
+      "center": [
+        1095.9,
+        708.93
+      ],
+      "centroid": [
+        1097.46,
+        709.07
+      ],
+      "bounds": [
+        1049.43,
+        658.42,
+        1142.38,
+        759.44
+      ],
+      "neighbors": [
+        "territory-115",
+        "territory-116",
+        "territory-117",
+        "territory-134",
+        "territory-136",
+        "territory-151"
+      ]
+    },
+    {
+      "id": "territory-136",
+      "number": 136,
+      "name": "영지 136",
+      "terrain": "구릉",
+      "coastal": false,
+      "area": 6680.81,
+      "center": [
+        1193.73,
+        707.54
+      ],
+      "centroid": [
+        1188.26,
+        708.66
+      ],
+      "bounds": [
+        1140.68,
+        657.48,
+        1231.62,
+        757.6
+      ],
+      "neighbors": [
+        "territory-117",
+        "territory-118",
+        "territory-135",
+        "territory-137",
+        "territory-151",
+        "territory-153"
+      ]
+    },
+    {
+      "id": "territory-137",
+      "number": 137,
+      "name": "영지 137",
+      "terrain": "초원",
+      "coastal": true,
+      "area": 5359.4,
+      "center": [
+        1256.99,
+        690.41
+      ],
+      "centroid": [
+        1266.57,
+        705.58
+      ],
+      "bounds": [
+        1227.74,
+        659.58,
+        1315.5,
+        752.06
+      ],
+      "neighbors": [
+        "territory-118",
+        "territory-119",
+        "territory-136",
+        "territory-153"
+      ],
+      "settlementId": "settlement-29"
+    },
+    {
+      "id": "territory-138",
+      "number": 138,
+      "name": "영지 138",
+      "terrain": "평야",
+      "coastal": true,
+      "area": 4555.27,
+      "center": [
+        1462.02,
+        740.42
+      ],
+      "centroid": [
+        1467.71,
+        750.35
+      ],
+      "bounds": [
+        1412.54,
+        707.08,
+        1511.5,
+        807.09
+      ],
+      "neighbors": [
+        "territory-121",
+        "territory-122",
+        "territory-157"
+      ]
+    },
+    {
+      "id": "territory-139",
+      "number": 139,
+      "name": "영지 139",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 3270.3,
+      "center": [
+        274.24,
+        838.1
+      ],
+      "centroid": [
+        280.51,
+        829.63
+      ],
+      "bounds": [
+        240.5,
+        785.29,
+        321.49,
+        864.5
+      ],
+      "neighbors": [
+        "territory-140",
+        "territory-141",
+        "territory-142"
+      ]
+    },
+    {
+      "id": "territory-140",
+      "number": 140,
+      "name": "영지 140",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 2721.28,
+      "center": [
+        306.97,
+        875.41
+      ],
+      "centroid": [
+        301.56,
+        876.45
+      ],
+      "bounds": [
+        268.5,
+        841.35,
+        334.46,
+        909.47
+      ],
+      "neighbors": [
+        "territory-139",
+        "territory-142",
+        "territory-158"
+      ]
+    },
+    {
+      "id": "territory-141",
+      "number": 141,
+      "name": "영지 141",
+      "terrain": "초원",
+      "coastal": true,
+      "area": 5383.58,
+      "center": [
+        333.99,
+        789.89
+      ],
+      "centroid": [
+        336.78,
+        788.79
+      ],
+      "bounds": [
+        286.63,
+        744.83,
+        381.34,
+        834.94
+      ],
+      "neighbors": [
+        "territory-123",
+        "territory-124",
+        "territory-139",
+        "territory-142",
+        "territory-143"
+      ]
+    },
+    {
+      "id": "territory-142",
+      "number": 142,
+      "name": "영지 142",
+      "terrain": "구릉",
+      "coastal": true,
+      "area": 4198.56,
+      "center": [
+        364.45,
+        847.41
+      ],
+      "centroid": [
+        366.75,
+        858.12
+      ],
+      "bounds": [
+        319.4,
+        819.36,
+        409.5,
+        903.5
+      ],
+      "neighbors": [
+        "territory-139",
+        "territory-140",
+        "territory-141",
+        "territory-143",
+        "territory-144",
+        "territory-158"
+      ]
+    },
+    {
+      "id": "territory-143",
+      "number": 143,
+      "name": "영지 143",
+      "terrain": "산악",
+      "coastal": false,
+      "area": 5431.83,
+      "center": [
+        408.26,
+        809.72
+      ],
+      "centroid": [
+        407.89,
+        807.35
+      ],
+      "bounds": [
+        368.27,
+        755.67,
+        452.22,
+        863.78
+      ],
+      "neighbors": [
+        "territory-124",
+        "territory-126",
+        "territory-141",
+        "territory-142",
+        "territory-144"
+      ]
+    },
+    {
+      "id": "territory-144",
+      "number": 144,
+      "name": "영지 144",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 1655.92,
+      "center": [
+        440.3,
+        855.66
+      ],
+      "centroid": [
+        441.3,
+        854.85
+      ],
+      "bounds": [
+        407.66,
+        819.81,
+        472.95,
+        891.5
+      ],
+      "neighbors": [
+        "territory-126",
+        "territory-142",
+        "territory-143"
+      ]
+    },
+    {
+      "id": "territory-145",
+      "number": 145,
+      "name": "영지 145",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 4308.54,
+      "center": [
+        525.71,
+        798.36
+      ],
+      "centroid": [
+        535.17,
+        811.54
+      ],
+      "bounds": [
+        478.72,
+        761.12,
+        591.5,
+        850.5
+      ],
+      "neighbors": [
+        "territory-126",
+        "territory-127"
+      ],
+      "settlementId": "settlement-35"
+    },
+    {
+      "id": "territory-146",
+      "number": 146,
+      "name": "영지 146",
+      "terrain": "초원",
+      "coastal": true,
+      "area": 3971.11,
+      "center": [
+        754.69,
+        809.81
+      ],
+      "centroid": [
+        753.35,
+        809.28
+      ],
+      "bounds": [
+        717.5,
+        761.86,
+        791.87,
+        858.78
+      ],
+      "neighbors": [
+        "territory-129",
+        "territory-130",
+        "territory-131",
+        "territory-147"
+      ]
+    },
+    {
+      "id": "territory-147",
+      "number": 147,
+      "name": "영지 147",
+      "terrain": "평야",
+      "coastal": true,
+      "area": 4601.94,
+      "center": [
+        812.92,
+        828.29
+      ],
+      "centroid": [
+        807.52,
+        833.74
+      ],
+      "bounds": [
+        764.5,
+        791.17,
+        847.5,
+        880.25
+      ],
+      "neighbors": [
+        "territory-131",
+        "territory-146",
+        "territory-159"
+      ]
+    },
+    {
+      "id": "territory-148",
+      "number": 148,
+      "name": "영지 148",
+      "terrain": "평야",
+      "coastal": true,
+      "area": 4820.02,
+      "center": [
+        998.48,
+        822.43
+      ],
+      "centroid": [
+        993.04,
+        826.71
+      ],
+      "bounds": [
+        947.45,
+        786.86,
+        1034.93,
+        872.23
+      ],
+      "neighbors": [
+        "territory-133",
+        "territory-134",
+        "territory-149",
+        "territory-150"
+      ]
+    },
+    {
+      "id": "territory-149",
+      "number": 149,
+      "name": "영지 149",
+      "terrain": "평야",
+      "coastal": true,
+      "area": 3188.69,
+      "center": [
+        1018.84,
+        877.9
+      ],
+      "centroid": [
+        1019.5,
+        883.13
+      ],
+      "bounds": [
+        977.04,
+        846.76,
+        1060.65,
+        921.5
+      ],
+      "neighbors": [
+        "territory-148",
+        "territory-150"
+      ],
+      "settlementId": "settlement-38"
+    },
+    {
+      "id": "territory-150",
+      "number": 150,
+      "name": "영지 150",
+      "terrain": "평야",
+      "coastal": true,
+      "area": 5994.42,
+      "center": [
+        1065.35,
+        835.38
+      ],
+      "centroid": [
+        1069.74,
+        837.81
+      ],
+      "bounds": [
+        1027.67,
+        785.27,
+        1118.1,
+        885.5
+      ],
+      "neighbors": [
+        "territory-134",
+        "territory-148",
+        "territory-149",
+        "territory-151",
+        "territory-152"
+      ]
+    },
+    {
+      "id": "territory-151",
+      "number": 151,
+      "name": "영지 151",
+      "terrain": "평야",
+      "coastal": false,
+      "area": 7070.96,
+      "center": [
+        1128.21,
+        787.46
+      ],
+      "centroid": [
+        1124.71,
+        785.59
+      ],
+      "bounds": [
+        1067.81,
+        736.64,
+        1171.35,
+        838.28
+      ],
+      "neighbors": [
+        "territory-134",
+        "territory-135",
+        "territory-136",
+        "territory-150",
+        "territory-152",
+        "territory-153"
+      ],
+      "settlementId": "settlement-34"
+    },
+    {
+      "id": "territory-152",
+      "number": 152,
+      "name": "영지 152",
+      "terrain": "평야",
+      "coastal": true,
+      "area": 5549.18,
+      "center": [
+        1160.15,
+        858.05
+      ],
+      "centroid": [
+        1157.29,
+        862.04
+      ],
+      "bounds": [
+        1108.87,
+        815.59,
+        1196.78,
+        917.5
+      ],
+      "neighbors": [
+        "territory-150",
+        "territory-151",
+        "territory-153",
+        "territory-154"
+      ]
+    },
+    {
+      "id": "territory-153",
+      "number": 153,
+      "name": "영지 153",
+      "terrain": "산악",
+      "coastal": true,
+      "area": 6796.0,
+      "center": [
+        1215.72,
+        786.92
+      ],
+      "centroid": [
+        1212.75,
+        788.21
+      ],
+      "bounds": [
+        1167.93,
+        739.96,
+        1263.5,
+        833.88
+      ],
+      "neighbors": [
+        "territory-136",
+        "territory-137",
+        "territory-151",
+        "territory-152",
+        "territory-154"
+      ]
+    },
+    {
+      "id": "territory-154",
+      "number": 154,
+      "name": "영지 154",
+      "terrain": "산악",
+      "coastal": true,
+      "area": 4947.52,
+      "center": [
+        1227.28,
+        868.85
+      ],
+      "centroid": [
+        1224.53,
+        868.18
+      ],
+      "bounds": [
+        1188.72,
+        824.0,
+        1263.5,
+        916.32
+      ],
+      "neighbors": [
+        "territory-152",
+        "territory-153",
+        "territory-155",
+        "territory-160"
+      ],
+      "settlementId": "settlement-37"
+    },
+    {
+      "id": "territory-155",
+      "number": 155,
+      "name": "영지 155",
+      "terrain": "구릉",
+      "coastal": true,
+      "area": 2450.51,
+      "center": [
+        1282.28,
+        873.37
+      ],
+      "centroid": [
+        1286.67,
+        868.85
+      ],
+      "bounds": [
+        1258.32,
+        830.5,
+        1315.82,
+        904.0
+      ],
+      "neighbors": [
+        "territory-154",
+        "territory-156",
+        "territory-160"
+      ]
+    },
+    {
+      "id": "territory-156",
+      "number": 156,
+      "name": "영지 156",
+      "terrain": "삼림",
+      "coastal": true,
+      "area": 1240.66,
+      "center": [
+        1311.73,
+        886.94
+      ],
+      "centroid": [
+        1321.12,
+        891.72
+      ],
+      "bounds": [
+        1290.35,
+        868.32,
+        1354.5,
+        913.02
+      ],
+      "neighbors": [
+        "territory-155",
+        "territory-160"
+      ]
+    },
+    {
+      "id": "territory-157",
+      "number": 157,
+      "name": "영지 157",
+      "terrain": "평야",
+      "coastal": true,
+      "area": 2520.19,
+      "center": [
+        1528.71,
+        844.5
+      ],
+      "centroid": [
+        1517.12,
+        823.19
+      ],
+      "bounds": [
+        1472.32,
+        784.5,
+        1547.5,
+        864.5
+      ],
+      "neighbors": [
+        "territory-138"
+      ],
+      "settlementId": "settlement-36"
+    },
+    {
+      "id": "territory-158",
+      "number": 158,
+      "name": "영지 158",
+      "terrain": "평야",
+      "coastal": true,
+      "area": 2189.39,
+      "center": [
+        318.0,
+        909.36
+      ],
+      "centroid": [
+        316.43,
+        919.7
+      ],
+      "bounds": [
+        284.5,
+        886.29,
+        351.5,
+        955.5
+      ],
+      "neighbors": [
+        "territory-140",
+        "territory-142"
+      ],
+      "settlementId": "settlement-40"
+    },
+    {
+      "id": "territory-159",
+      "number": 159,
+      "name": "영지 159",
+      "terrain": "평야",
+      "coastal": true,
+      "area": 3139.26,
+      "center": [
+        844.19,
+        893.47
+      ],
+      "centroid": [
+        834.47,
+        893.33
+      ],
+      "bounds": [
+        771.26,
+        859.16,
+        868.5,
+        941.5
+      ],
+      "neighbors": [
+        "territory-147"
+      ],
+      "settlementId": "settlement-39"
+    },
+    {
+      "id": "territory-160",
+      "number": 160,
+      "name": "영지 160",
+      "terrain": "산악",
+      "coastal": true,
+      "area": 3999.64,
+      "center": [
+        1267.0,
+        923.51
+      ],
+      "centroid": [
+        1265.32,
+        925.87
+      ],
+      "bounds": [
+        1214.5,
+        888.52,
+        1319.5,
+        958.5
+      ],
+      "neighbors": [
+        "territory-154",
+        "territory-155",
+        "territory-156"
+      ]
+    }
+  ],
+  "layers": {
+    "ocean": true,
+    "land": true,
+    "terrain": true,
+    "relief": true,
+    "forests": true,
+    "rivers": true,
+    "paper": true,
+    "coast": true,
+    "boundaries": true,
+    "labels": false,
+    "settlements": true,
+    "cartography": true,
+    "ground": true,
+    "sea-texture": true,
+    "roads": true,
+    "hillshade": true,
+    "details": true,
+    "shadows": true,
+    "landuse": true,
+    "cultivation": true
+  },
+  "artVersion": "Han-natural-cultivation-margins-500-v1",
+  "textureMode": "Native SVG political and field geometry with optimized embedded painted assets; visible 5-pixel-per-world-unit ground and sea cells; maximum zoom 500%",
+  "groundTexture": {
+    "style": "terrain",
+    "strength": 90
+  },
+  "textureSampling": {
+    "pixelsPerWorldUnit": 5,
+    "atlasPixels": [
+      9000,
+      5300
+    ],
+    "maxZoom": 5,
+    "target": "500% at a 1800 CSS-pixel map width, DPR1",
+    "regionPixels": [
+      4500,
+      2650
+    ],
+    "previewPixelsPerWorldUnit": 1.25,
+    "cellWorldSize": 128,
+    "encoding": "JPEG78 optimized; original 8px/unit surfaces resampled to 5px/unit",
+    "nativeDecode": "visible cells only",
+    "nativePaddingPixels": 5,
+    "nativePixelsPerWorldUnit": 5
+  },
+  "seaTexture": {
+    "strength": 90
+  },
+  "settlements": [
+    {
+      "id": "settlement-01",
+      "territoryId": "territory-005",
+      "territoryNumber": 5,
+      "type": "농촌 취락",
+      "variant": 0,
+      "center": [
+        1171.4,
+        115.67
+      ],
+      "width": 46,
+      "height": 28.151,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 4.78,
+      "assetId": "village-01",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-02",
+      "territoryId": "territory-002",
+      "territoryNumber": 2,
+      "type": "장터 마을",
+      "variant": 1,
+      "center": [
+        319.2,
+        130.308
+      ],
+      "width": 48,
+      "height": 29.875,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 4.682,
+      "assetId": "village-02",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-03",
+      "territoryId": "territory-004",
+      "territoryNumber": 4,
+      "type": "관아 취락",
+      "variant": 2,
+      "center": [
+        549.42,
+        150.38
+      ],
+      "width": 48,
+      "height": 30.5,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 0.0,
+      "assetId": "village-03",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-04",
+      "territoryId": "territory-028",
+      "territoryNumber": 28,
+      "type": "목책 취락",
+      "variant": 3,
+      "center": [
+        1395.13,
+        156.774
+      ],
+      "width": 48,
+      "height": 30.875,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 4.279,
+      "assetId": "village-04",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-05",
+      "territoryId": "territory-031",
+      "territoryNumber": 31,
+      "type": "나루터 취락",
+      "variant": 4,
+      "center": [
+        1521.954,
+        174.869
+      ],
+      "width": 46,
+      "height": 24.677,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 4.522,
+      "assetId": "village-05",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-06",
+      "territoryId": "territory-018",
+      "territoryNumber": 18,
+      "type": "산촌 취락",
+      "variant": 5,
+      "center": [
+        815.47,
+        223.53
+      ],
+      "width": 44,
+      "height": 27.156,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 0.0,
+      "assetId": "village-06",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-07",
+      "territoryId": "territory-015",
+      "territoryNumber": 15,
+      "type": "역참 취락",
+      "variant": 6,
+      "center": [
+        660.2,
+        253.264
+      ],
+      "width": 48,
+      "height": 24.25,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 15.374,
+      "assetId": "village-07",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-08",
+      "territoryId": "territory-020",
+      "territoryNumber": 20,
+      "type": "농촌 취락",
+      "variant": 0,
+      "center": [
+        974.65,
+        238.55
+      ],
+      "width": 46,
+      "height": 28.151,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 0.0,
+      "assetId": "village-01",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-09",
+      "territoryId": "territory-024",
+      "territoryNumber": 24,
+      "type": "장터 마을",
+      "variant": 1,
+      "center": [
+        1150.644,
+        227.221
+      ],
+      "width": 44,
+      "height": 27.385,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 20.0,
+      "assetId": "village-02",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-10",
+      "territoryId": "territory-049",
+      "territoryNumber": 49,
+      "type": "관아 취락",
+      "variant": 2,
+      "center": [
+        1268.165,
+        285.556
+      ],
+      "width": 48,
+      "height": 30.5,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 12.511,
+      "assetId": "village-03",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-11",
+      "territoryId": "territory-035",
+      "territoryNumber": 35,
+      "type": "목책 취락",
+      "variant": 3,
+      "center": [
+        402.24,
+        322.3
+      ],
+      "width": 48,
+      "height": 30.875,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 0.0,
+      "assetId": "village-04",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-12",
+      "territoryId": "territory-055",
+      "territoryNumber": 55,
+      "type": "나루터 취락",
+      "variant": 4,
+      "center": [
+        1574.21,
+        327.327
+      ],
+      "width": 46,
+      "height": 24.677,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 4.813,
+      "assetId": "village-05",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-13",
+      "territoryId": "territory-038",
+      "territoryNumber": 38,
+      "type": "산촌 취락",
+      "variant": 5,
+      "center": [
+        585.282,
+        363.785
+      ],
+      "width": 44,
+      "height": 27.156,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 11.484,
+      "assetId": "village-06",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-14",
+      "territoryId": "territory-052",
+      "territoryNumber": 52,
+      "type": "역참 취락",
+      "variant": 6,
+      "center": [
+        1408.11,
+        360.474
+      ],
+      "width": 38,
+      "height": 19.198,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 22.0,
+      "assetId": "village-07",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-15",
+      "territoryId": "territory-042",
+      "territoryNumber": 42,
+      "type": "농촌 취락",
+      "variant": 0,
+      "center": [
+        755.49,
+        365.27
+      ],
+      "width": 46,
+      "height": 28.151,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 0.0,
+      "assetId": "village-01",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-16",
+      "territoryId": "territory-057",
+      "territoryNumber": 57,
+      "type": "장터 마을",
+      "variant": 1,
+      "center": [
+        152.57,
+        360.932
+      ],
+      "width": 48,
+      "height": 29.875,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 8.0,
+      "assetId": "village-02",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-17",
+      "territoryId": "territory-069",
+      "territoryNumber": 69,
+      "type": "관아 취락",
+      "variant": 2,
+      "center": [
+        933.402,
+        428.912
+      ],
+      "width": 48,
+      "height": 30.5,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 2.0,
+      "assetId": "village-03",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-18",
+      "territoryId": "territory-095",
+      "territoryNumber": 95,
+      "type": "목책 취락",
+      "variant": 3,
+      "center": [
+        1160.41,
+        485.293
+      ],
+      "width": 48,
+      "height": 30.875,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 17.301,
+      "assetId": "village-04",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-19",
+      "territoryId": "territory-098",
+      "territoryNumber": 98,
+      "type": "나루터 취락",
+      "variant": 4,
+      "center": [
+        1312.28,
+        477.12
+      ],
+      "width": 46,
+      "height": 24.677,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 0.0,
+      "assetId": "village-05",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-20",
+      "territoryId": "territory-084",
+      "territoryNumber": 84,
+      "type": "산촌 취락",
+      "variant": 5,
+      "center": [
+        273.569,
+        481.107
+      ],
+      "width": 44,
+      "height": 27.156,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 6.026,
+      "assetId": "village-06",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-21",
+      "territoryId": "territory-100",
+      "territoryNumber": 100,
+      "type": "역참 취락",
+      "variant": 6,
+      "center": [
+        1486.077,
+        482.026
+      ],
+      "width": 48,
+      "height": 24.25,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 14.866,
+      "assetId": "village-07",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-22",
+      "territoryId": "territory-087",
+      "territoryNumber": 87,
+      "type": "농촌 취락",
+      "variant": 0,
+      "center": [
+        406.347,
+        560.471
+      ],
+      "width": 46,
+      "height": 28.151,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 19.146,
+      "assetId": "village-01",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-23",
+      "territoryId": "territory-092",
+      "territoryNumber": 92,
+      "type": "장터 마을",
+      "variant": 1,
+      "center": [
+        786.757,
+        542.38
+      ],
+      "width": 48,
+      "height": 29.875,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 4.9,
+      "assetId": "village-02",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-24",
+      "territoryId": "territory-105",
+      "territoryNumber": 105,
+      "type": "관아 취락",
+      "variant": 2,
+      "center": [
+        1657.82,
+        569.97
+      ],
+      "width": 48,
+      "height": 30.5,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 4.0,
+      "assetId": "village-03",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-25",
+      "territoryId": "territory-090",
+      "territoryNumber": 90,
+      "type": "목책 취락",
+      "variant": 3,
+      "center": [
+        585.01,
+        574.59
+      ],
+      "width": 48,
+      "height": 30.875,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 0.0,
+      "assetId": "village-04",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-26",
+      "territoryId": "territory-117",
+      "territoryNumber": 117,
+      "type": "나루터 취락",
+      "variant": 4,
+      "center": [
+        1141.15,
+        643.52
+      ],
+      "width": 46,
+      "height": 24.677,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 0.0,
+      "assetId": "village-05",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-27",
+      "territoryId": "territory-106",
+      "territoryNumber": 106,
+      "type": "산촌 취락",
+      "variant": 5,
+      "center": [
+        161.87,
+        647.5
+      ],
+      "width": 44,
+      "height": 27.156,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 0.0,
+      "assetId": "village-06",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-28",
+      "territoryId": "territory-121",
+      "territoryNumber": 121,
+      "type": "역참 취락",
+      "variant": 6,
+      "center": [
+        1386.81,
+        666.31
+      ],
+      "width": 48,
+      "height": 24.25,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 0.0,
+      "assetId": "village-07",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-29",
+      "territoryId": "territory-137",
+      "territoryNumber": 137,
+      "type": "농촌 취락",
+      "variant": 0,
+      "center": [
+        1270.938,
+        698.463
+      ],
+      "width": 46,
+      "height": 28.151,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 16.106,
+      "assetId": "village-01",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-30",
+      "territoryId": "territory-124",
+      "territoryNumber": 124,
+      "type": "장터 마을",
+      "variant": 1,
+      "center": [
+        380.853,
+        720.378
+      ],
+      "width": 48,
+      "height": 29.875,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 6.545,
+      "assetId": "village-02",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-31",
+      "territoryId": "territory-128",
+      "territoryNumber": 128,
+      "type": "관아 취락",
+      "variant": 2,
+      "center": [
+        625.06,
+        740.713
+      ],
+      "width": 48,
+      "height": 30.5,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 18.043,
+      "assetId": "village-03",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-32",
+      "territoryId": "territory-131",
+      "territoryNumber": 131,
+      "type": "목책 취락",
+      "variant": 3,
+      "center": [
+        786.53,
+        756.8
+      ],
+      "width": 48,
+      "height": 30.875,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 0.0,
+      "assetId": "village-04",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-33",
+      "territoryId": "territory-133",
+      "territoryNumber": 133,
+      "type": "나루터 취락",
+      "variant": 4,
+      "center": [
+        961.2,
+        767.47
+      ],
+      "width": 46,
+      "height": 24.677,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 0.0,
+      "assetId": "village-05",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-34",
+      "territoryId": "territory-151",
+      "territoryNumber": 151,
+      "type": "산촌 취락",
+      "variant": 5,
+      "center": [
+        1128.21,
+        787.46
+      ],
+      "width": 44,
+      "height": 27.156,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 0.0,
+      "assetId": "village-06",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-35",
+      "territoryId": "territory-145",
+      "territoryNumber": 145,
+      "type": "역참 취락",
+      "variant": 6,
+      "center": [
+        511.854,
+        806.36
+      ],
+      "width": 48,
+      "height": 24.25,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 16.0,
+      "assetId": "village-07",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-36",
+      "territoryId": "territory-157",
+      "territoryNumber": 157,
+      "type": "농촌 취락",
+      "variant": 0,
+      "center": [
+        1530.71,
+        841.036
+      ],
+      "width": 32,
+      "height": 19.583,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 4.0,
+      "assetId": "village-01",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-37",
+      "territoryId": "territory-154",
+      "territoryNumber": 154,
+      "type": "장터 마을",
+      "variant": 1,
+      "center": [
+        1222.59,
+        871.558
+      ],
+      "width": 48,
+      "height": 29.875,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 5.416,
+      "assetId": "village-02",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-38",
+      "territoryId": "territory-149",
+      "territoryNumber": 149,
+      "type": "관아 취락",
+      "variant": 2,
+      "center": [
+        1016.666,
+        874.134
+      ],
+      "width": 48,
+      "height": 30.5,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 4.348,
+      "assetId": "village-03",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-39",
+      "territoryId": "territory-159",
+      "territoryNumber": 159,
+      "type": "목책 취락",
+      "variant": 3,
+      "center": [
+        842.19,
+        893.47
+      ],
+      "width": 36,
+      "height": 23.156,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 2.0,
+      "assetId": "village-04",
+      "movedInlandForCoast": false
+    },
+    {
+      "id": "settlement-40",
+      "territoryId": "territory-158",
+      "territoryNumber": 158,
+      "type": "나루터 취락",
+      "variant": 4,
+      "center": [
+        318.0,
+        903.36
+      ],
+      "width": 46,
+      "height": 24.677,
+      "anchor": "readable symbol centred in its territory",
+      "centerOffset": 6.0,
+      "assetId": "village-05",
+      "movedInlandForCoast": false
+    }
+  ],
+  "symbolArt": {
+    "style": "Three Kingdoms hand-painted campaign atlas",
+    "encoding": "reusable embedded transparent production sprites with native SVG terrain transitions",
+    "maxZoom": 5,
+    "rangeInstances": 45,
+    "ridgeBelts": 6,
+    "forestInstances": 84,
+    "villages": 40,
+    "villageVariants": 7,
+    "forestVariants": 7,
+    "mountainVariants": 7,
+    "light": "north",
+    "detailVariants": 7,
+    "totalVariants": 28,
+    "materialVariants": 7,
+    "trueVector": false
+  },
+  "landscape": {
+    "seed": 28012026,
+    "ridgeBelts": 6,
+    "forestGroves": 84,
+    "roadConnections": 39,
+    "bridges": 21,
+    "villageCount": 40,
+    "assetVariants": 21,
+    "maxZoom": 5,
+    "hillshade": "north illumination; connected terrain gradients; river valleys",
+    "detailVariants": 7,
+    "detailPlacements": {
+      "hamlet": 12,
+      "granary": 13,
+      "woodcut": 8,
+      "watchpost": 6,
+      "landing": 6
+    },
+    "farmTracks": 0,
+    "narrowPathFragments": 0,
+    "light": "north; short southward contact and field-bund shadows",
+    "farmingDistricts": 24,
+    "joinedParcels": 714,
+    "materialTypes": 7,
+    "landuse": "connected cultivated districts, rough grass, bare soil, scree, marsh and functional settlements",
+    "fieldStyle": "landform-following irregular crop parcels with selective earth bunds",
+    "objectIntegration": "shared earth, woodland floor, connected foothills and contact fringes",
+    "groundRichness": "original painted surface strengths restored; integrated object contact retained",
+    "cropRelief": "deeper crop and loam colours, visible painted plants and furrows, north-lit raised earth bunds",
+    "fieldMargins": "external crop contours, staggered crop-row tips, interrupted loam banks and foreground weeds"
+  },
+  "landuse": {
+    "districts": [
+      {
+        "id": "farm-02",
+        "settlementId": "settlement-02",
+        "area": 5047.71,
+        "parcels": 20,
+        "angle": -13
+      },
+      {
+        "id": "farm-03",
+        "settlementId": "settlement-03",
+        "area": 4395.59,
+        "parcels": 17,
+        "angle": 9
+      },
+      {
+        "id": "farm-06",
+        "settlementId": "settlement-06",
+        "area": 18093.61,
+        "parcels": 85,
+        "angle": -8
+      },
+      {
+        "id": "farm-07",
+        "settlementId": "settlement-07",
+        "area": 6962.3,
+        "parcels": 33,
+        "angle": 14
+      },
+      {
+        "id": "farm-08",
+        "settlementId": "settlement-08",
+        "area": 12051.22,
+        "parcels": 58,
+        "angle": -10
+      },
+      {
+        "id": "farm-11",
+        "settlementId": "settlement-11",
+        "area": 5446.72,
+        "parcels": 27,
+        "angle": 11
+      },
+      {
+        "id": "farm-13",
+        "settlementId": "settlement-13",
+        "area": 6171.16,
+        "parcels": 32,
+        "angle": -18
+      },
+      {
+        "id": "farm-15",
+        "settlementId": "settlement-15",
+        "area": 8481.09,
+        "parcels": 45,
+        "angle": 7
+      },
+      {
+        "id": "farm-19",
+        "settlementId": "settlement-19",
+        "area": 9321.83,
+        "parcels": 37,
+        "angle": -11
+      },
+      {
+        "id": "farm-20",
+        "settlementId": "settlement-20",
+        "area": 4895.26,
+        "parcels": 18,
+        "angle": 12
+      },
+      {
+        "id": "farm-22",
+        "settlementId": "settlement-22",
+        "area": 7049.65,
+        "parcels": 28,
+        "angle": -8
+      },
+      {
+        "id": "farm-23",
+        "settlementId": "settlement-23",
+        "area": 2809.58,
+        "parcels": 14,
+        "angle": 14
+      },
+      {
+        "id": "farm-25",
+        "settlementId": "settlement-25",
+        "area": 8234.41,
+        "parcels": 41,
+        "angle": 3
+      },
+      {
+        "id": "farm-26",
+        "settlementId": "settlement-26",
+        "area": 7588.17,
+        "parcels": 36,
+        "angle": -15
+      },
+      {
+        "id": "farm-28",
+        "settlementId": "settlement-28",
+        "area": 4739.98,
+        "parcels": 20,
+        "angle": 9
+      },
+      {
+        "id": "farm-29",
+        "settlementId": "settlement-29",
+        "area": 4447.18,
+        "parcels": 21,
+        "angle": -9
+      },
+      {
+        "id": "farm-30",
+        "settlementId": "settlement-30",
+        "area": 6857.99,
+        "parcels": 30,
+        "angle": 7
+      },
+      {
+        "id": "farm-31",
+        "settlementId": "settlement-31",
+        "area": 3759.98,
+        "parcels": 15,
+        "angle": -12
+      },
+      {
+        "id": "farm-32",
+        "settlementId": "settlement-32",
+        "area": 6074.24,
+        "parcels": 26,
+        "angle": 11
+      },
+      {
+        "id": "farm-33",
+        "settlementId": "settlement-33",
+        "area": 6339.05,
+        "parcels": 25,
+        "angle": -7
+      },
+      {
+        "id": "farm-34",
+        "settlementId": "settlement-34",
+        "area": 4928.61,
+        "parcels": 30,
+        "angle": 8
+      },
+      {
+        "id": "farm-37",
+        "settlementId": "settlement-37",
+        "area": 3315.28,
+        "parcels": 17,
+        "angle": -14
+      },
+      {
+        "id": "farm-38",
+        "settlementId": "settlement-38",
+        "area": 3870.82,
+        "parcels": 16,
+        "angle": 10
+      },
+      {
+        "id": "farm-18",
+        "settlementId": "settlement-18",
+        "area": 3956.94,
+        "parcels": 23,
+        "angle": 8
+      }
+    ],
+    "sites": [
+      {
+        "id": "site-001",
+        "assetId": "hamlet-01",
+        "category": "hamlet",
+        "centerX": 861.0,
+        "bottom": 288.648,
+        "width": 38,
+        "height": 20.682,
+        "association": "farm-06",
+        "reason": "hamlet at cultivated edge"
+      },
+      {
+        "id": "site-002",
+        "assetId": "hamlet-02",
+        "category": "hamlet",
+        "centerX": 937.0,
+        "bottom": 313.984,
+        "width": 36,
+        "height": 16.969,
+        "association": "farm-08",
+        "reason": "hamlet at cultivated edge"
+      },
+      {
+        "id": "site-003",
+        "assetId": "hamlet-02",
+        "category": "hamlet",
+        "centerX": 818.934,
+        "bottom": 353.342,
+        "width": 36,
+        "height": 16.969,
+        "association": "farm-15",
+        "reason": "hamlet at cultivated edge"
+      },
+      {
+        "id": "site-004",
+        "assetId": "hamlet-03",
+        "category": "hamlet",
+        "centerX": 1361.0,
+        "bottom": 474.641,
+        "width": 36,
+        "height": 21.375,
+        "association": "farm-19",
+        "reason": "hamlet at cultivated edge"
+      },
+      {
+        "id": "site-005",
+        "assetId": "hamlet-01",
+        "category": "hamlet",
+        "centerX": 338.784,
+        "bottom": 452.836,
+        "width": 38,
+        "height": 20.682,
+        "association": "farm-20",
+        "reason": "hamlet at cultivated edge"
+      },
+      {
+        "id": "site-006",
+        "assetId": "hamlet-02",
+        "category": "hamlet",
+        "centerX": 463.246,
+        "bottom": 566.42,
+        "width": 36,
+        "height": 16.969,
+        "association": "farm-22",
+        "reason": "hamlet at cultivated edge"
+      },
+      {
+        "id": "site-007",
+        "assetId": "hamlet-02",
+        "category": "hamlet",
+        "centerX": 1089.0,
+        "bottom": 657.984,
+        "width": 36,
+        "height": 16.969,
+        "association": "farm-26",
+        "reason": "hamlet at cultivated edge"
+      },
+      {
+        "id": "site-008",
+        "assetId": "hamlet-03",
+        "category": "hamlet",
+        "centerX": 1431.246,
+        "bottom": 674.205,
+        "width": 36,
+        "height": 21.375,
+        "association": "farm-28",
+        "reason": "hamlet at cultivated edge"
+      },
+      {
+        "id": "site-009",
+        "assetId": "hamlet-02",
+        "category": "hamlet",
+        "centerX": 443.934,
+        "bottom": 717.342,
+        "width": 36,
+        "height": 16.969,
+        "association": "farm-30",
+        "reason": "hamlet at cultivated edge"
+      },
+      {
+        "id": "site-010",
+        "assetId": "hamlet-03",
+        "category": "hamlet",
+        "centerX": 693.0,
+        "bottom": 779.641,
+        "width": 36,
+        "height": 21.375,
+        "association": "farm-31",
+        "reason": "hamlet at cultivated edge"
+      },
+      {
+        "id": "site-011",
+        "assetId": "hamlet-01",
+        "category": "hamlet",
+        "centerX": 763.061,
+        "bottom": 818.039,
+        "width": 38,
+        "height": 20.682,
+        "association": "farm-32",
+        "reason": "hamlet at cultivated edge"
+      },
+      {
+        "id": "site-012",
+        "assetId": "hamlet-03",
+        "category": "hamlet",
+        "centerX": 1087.0,
+        "bottom": 821.641,
+        "width": 36,
+        "height": 21.375,
+        "association": "farm-34",
+        "reason": "hamlet at cultivated edge"
+      },
+      {
+        "id": "site-013",
+        "assetId": "work-granary",
+        "category": "granary",
+        "centerX": 360.83,
+        "bottom": 171.386,
+        "width": 28,
+        "height": 15.094,
+        "association": "farm-02",
+        "reason": "grain storage by farming village"
+      },
+      {
+        "id": "site-014",
+        "assetId": "work-granary",
+        "category": "granary",
+        "centerX": 573.446,
+        "bottom": 185.915,
+        "width": 28,
+        "height": 15.094,
+        "association": "farm-03",
+        "reason": "grain storage by farming village"
+      },
+      {
+        "id": "site-015",
+        "assetId": "work-granary",
+        "category": "granary",
+        "centerX": 701.779,
+        "bottom": 260.422,
+        "width": 28,
+        "height": 15.094,
+        "association": "farm-07",
+        "reason": "grain storage by farming village"
+      },
+      {
+        "id": "site-016",
+        "assetId": "work-granary",
+        "category": "granary",
+        "centerX": 1014.909,
+        "bottom": 245.708,
+        "width": 28,
+        "height": 15.094,
+        "association": "farm-08",
+        "reason": "grain storage by farming village"
+      },
+      {
+        "id": "site-017",
+        "assetId": "work-granary",
+        "category": "granary",
+        "centerX": 627.256,
+        "bottom": 375.485,
+        "width": 28,
+        "height": 15.094,
+        "association": "farm-13",
+        "reason": "grain storage by farming village"
+      },
+      {
+        "id": "site-018",
+        "assetId": "work-granary",
+        "category": "granary",
+        "centerX": 793.85,
+        "bottom": 382.327,
+        "width": 28,
+        "height": 15.094,
+        "association": "farm-15",
+        "reason": "grain storage by farming village"
+      },
+      {
+        "id": "site-019",
+        "assetId": "work-granary",
+        "category": "granary",
+        "centerX": 310.609,
+        "bottom": 498.164,
+        "width": 28,
+        "height": 15.094,
+        "association": "farm-20",
+        "reason": "grain storage by farming village"
+      },
+      {
+        "id": "site-020",
+        "assetId": "work-granary",
+        "category": "granary",
+        "centerX": 414.08,
+        "bottom": 600.156,
+        "width": 28,
+        "height": 15.094,
+        "association": "farm-22",
+        "reason": "grain storage by farming village"
+      },
+      {
+        "id": "site-021",
+        "assetId": "work-granary",
+        "category": "granary",
+        "centerX": 1178.901,
+        "bottom": 663.639,
+        "width": 28,
+        "height": 15.094,
+        "association": "farm-26",
+        "reason": "grain storage by farming village"
+      },
+      {
+        "id": "site-022",
+        "assetId": "work-granary",
+        "category": "granary",
+        "centerX": 420.187,
+        "bottom": 755.913,
+        "width": 28,
+        "height": 15.094,
+        "association": "farm-30",
+        "reason": "grain storage by farming village"
+      },
+      {
+        "id": "site-023",
+        "assetId": "work-granary",
+        "category": "granary",
+        "centerX": 999.56,
+        "bottom": 784.527,
+        "width": 28,
+        "height": 15.094,
+        "association": "farm-33",
+        "reason": "grain storage by farming village"
+      },
+      {
+        "id": "site-024",
+        "assetId": "work-granary",
+        "category": "granary",
+        "centerX": 1268.412,
+        "bottom": 874.473,
+        "width": 28,
+        "height": 15.094,
+        "association": "farm-37",
+        "reason": "grain storage by farming village"
+      },
+      {
+        "id": "site-025",
+        "assetId": "work-granary",
+        "category": "granary",
+        "centerX": 1277.066,
+        "bottom": 452.552,
+        "width": 25,
+        "height": 13.477,
+        "association": "farm-19",
+        "reason": "grain storage at the edge of the eastern farming village"
+      },
+      {
+        "id": "site-026",
+        "assetId": "work-woodcut",
+        "category": "woodcut",
+        "centerX": 299.0,
+        "bottom": 225.773,
+        "width": 30,
+        "height": 17.891,
+        "association": "woodland-edge",
+        "reason": "woodcutters at forest margin"
+      },
+      {
+        "id": "site-027",
+        "assetId": "work-woodcut",
+        "category": "woodcut",
+        "centerX": 497.246,
+        "bottom": 513.338,
+        "width": 30,
+        "height": 17.891,
+        "association": "woodland-edge",
+        "reason": "woodcutters at forest margin"
+      },
+      {
+        "id": "site-028",
+        "assetId": "work-woodcut",
+        "category": "woodcut",
+        "centerX": 630.343,
+        "bottom": 702.43,
+        "width": 30,
+        "height": 17.891,
+        "association": "woodland-edge",
+        "reason": "woodcutters at forest margin"
+      },
+      {
+        "id": "site-029",
+        "assetId": "work-woodcut",
+        "category": "woodcut",
+        "centerX": 708.358,
+        "bottom": 743.839,
+        "width": 30,
+        "height": 17.891,
+        "association": "woodland-edge",
+        "reason": "woodcutters at forest margin"
+      },
+      {
+        "id": "site-030",
+        "assetId": "work-woodcut",
+        "category": "woodcut",
+        "centerX": 1110.0,
+        "bottom": 343.773,
+        "width": 30,
+        "height": 17.891,
+        "association": "woodland-edge",
+        "reason": "woodcutters at forest margin"
+      },
+      {
+        "id": "site-031",
+        "assetId": "work-woodcut",
+        "category": "woodcut",
+        "centerX": 1265.061,
+        "bottom": 578.164,
+        "width": 30,
+        "height": 17.891,
+        "association": "woodland-edge",
+        "reason": "woodcutters at forest margin"
+      },
+      {
+        "id": "site-032",
+        "assetId": "work-woodcut",
+        "category": "woodcut",
+        "centerX": 1396.858,
+        "bottom": 643.916,
+        "width": 30,
+        "height": 17.891,
+        "association": "woodland-edge",
+        "reason": "woodcutters at forest margin"
+      },
+      {
+        "id": "site-033",
+        "assetId": "work-woodcut",
+        "category": "woodcut",
+        "centerX": 1273.654,
+        "bottom": 924.251,
+        "width": 30,
+        "height": 17.891,
+        "association": "woodland-edge",
+        "reason": "woodcutters at forest margin"
+      },
+      {
+        "id": "site-034",
+        "assetId": "work-watchpost",
+        "category": "watchpost",
+        "centerX": 228.0,
+        "bottom": 474.177,
+        "width": 26,
+        "height": 16.182,
+        "association": "pass-or-crossing",
+        "reason": "minor lookout near ridge/crossing"
+      },
+      {
+        "id": "site-035",
+        "assetId": "work-watchpost",
+        "category": "watchpost",
+        "centerX": 604.061,
+        "bottom": 230.568,
+        "width": 26,
+        "height": 16.182,
+        "association": "pass-or-crossing",
+        "reason": "minor lookout near ridge/crossing"
+      },
+      {
+        "id": "site-036",
+        "assetId": "work-watchpost",
+        "category": "watchpost",
+        "centerX": 1229.066,
+        "bottom": 316.82,
+        "width": 26,
+        "height": 16.182,
+        "association": "pass-or-crossing",
+        "reason": "minor lookout near ridge/crossing"
+      },
+      {
+        "id": "site-037",
+        "assetId": "work-watchpost",
+        "category": "watchpost",
+        "centerX": 1414.0,
+        "bottom": 409.177,
+        "width": 26,
+        "height": 16.182,
+        "association": "pass-or-crossing",
+        "reason": "minor lookout near ridge/crossing"
+      },
+      {
+        "id": "site-038",
+        "assetId": "work-watchpost",
+        "category": "watchpost",
+        "centerX": 1092.05,
+        "bottom": 751.198,
+        "width": 26,
+        "height": 16.182,
+        "association": "pass-or-crossing",
+        "reason": "minor lookout near ridge/crossing"
+      },
+      {
+        "id": "site-039",
+        "assetId": "work-watchpost",
+        "category": "watchpost",
+        "centerX": 1046.609,
+        "bottom": 659.116,
+        "width": 26,
+        "height": 16.182,
+        "association": "pass-or-crossing",
+        "reason": "minor lookout near ridge/crossing"
+      },
+      {
+        "id": "site-040",
+        "assetId": "work-landing",
+        "category": "landing",
+        "centerX": 1407.077,
+        "bottom": 535.30449,
+        "width": 32,
+        "height": 18.333,
+        "association": "coast",
+        "reason": "dry bank upper-left, boats on water lower-right",
+        "shoreAnchor": [
+          1406.117,
+          525.588
+        ]
+      },
+      {
+        "id": "site-041",
+        "assetId": "work-landing",
+        "category": "landing",
+        "centerX": 320.46,
+        "bottom": 940.84849,
+        "width": 32,
+        "height": 18.333,
+        "association": "coast",
+        "reason": "dry bank upper-left, boats on water lower-right",
+        "shoreAnchor": [
+          319.5,
+          931.132
+        ]
+      },
+      {
+        "id": "site-042",
+        "assetId": "work-landing",
+        "category": "landing",
+        "centerX": 846.998,
+        "bottom": 543.2724900000001,
+        "width": 32,
+        "height": 18.333,
+        "association": "coast",
+        "reason": "dry bank upper-left, boats on water lower-right",
+        "shoreAnchor": [
+          846.038,
+          533.556
+        ]
+      },
+      {
+        "id": "site-043",
+        "assetId": "work-landing",
+        "category": "landing",
+        "centerX": 1194.645,
+        "bottom": 923.83849,
+        "width": 32,
+        "height": 18.333,
+        "association": "coast",
+        "reason": "dry bank upper-left, boats on water lower-right",
+        "shoreAnchor": [
+          1193.685,
+          914.122
+        ]
+      },
+      {
+        "id": "site-044",
+        "assetId": "work-landing",
+        "category": "landing",
+        "centerX": 645.277,
+        "bottom": 431.89949,
+        "width": 32,
+        "height": 18.333,
+        "association": "coast",
+        "reason": "dry bank upper-left, boats on water lower-right",
+        "shoreAnchor": [
+          644.317,
+          422.183
+        ]
+      },
+      {
+        "id": "site-045",
+        "assetId": "work-landing",
+        "category": "landing",
+        "centerX": 1578.871,
+        "bottom": 585.05849,
+        "width": 32,
+        "height": 18.333,
+        "association": "coast",
+        "reason": "dry bank upper-left, boats on water lower-right",
+        "shoreAnchor": [
+          1577.911,
+          575.342
+        ]
+      }
+    ],
+    "materials": [
+      {
+        "id": "ground-grass",
+        "name": "삼국지 지도용 잉크풍 거친 초원",
+        "worldTileWidth": 130,
+        "nativePixelsPerWorldUnit": 7.876923076923077
+      },
+      {
+        "id": "ground-earth",
+        "name": "삼국지 지도용 건조 흙 텍스처",
+        "worldTileWidth": 130,
+        "nativePixelsPerWorldUnit": 7.876923076923077
+      },
+      {
+        "id": "ground-scree",
+        "name": "고운 돌조각이 섞인 황갈색 흙바닥",
+        "worldTileWidth": 130,
+        "nativePixelsPerWorldUnit": 7.876923076923077
+      },
+      {
+        "id": "ground-marsh",
+        "name": "세밀한 올리브 갈대 습지 바닥",
+        "worldTileWidth": 130,
+        "nativePixelsPerWorldUnit": 7.876923076923077
+      },
+      {
+        "id": "crop-straw",
+        "name": "황금빛 기장밭 잉크 텍스처",
+        "worldTileWidth": 130,
+        "nativePixelsPerWorldUnit": 7.876923076923077
+      },
+      {
+        "id": "crop-green",
+        "name": "잉크화풍 올리브빛 논밭 텍스처",
+        "worldTileWidth": 130,
+        "nativePixelsPerWorldUnit": 7.876923076923077
+      },
+      {
+        "id": "crop-soil",
+        "name": "삼국지 지도용 갈색 밭고랑 텍스처",
+        "worldTileWidth": 130,
+        "nativePixelsPerWorldUnit": 7.876923076923077
+      }
+    ],
+    "fieldMargins": {
+      "version": "2.3.0",
+      "districts": 24,
+      "cropTips": 1827,
+      "weedClumps": 1620,
+      "soilRuns": 168,
+      "bankRuns": 133,
+      "cropCorePreserved": true,
+      "newRasterAssets": 0,
+      "light": "north",
+      "method": "external crop contours, staggered crop-row tips, interrupted loam banks and foreground weeds",
+      "protected": "coast, rivers and established main roads"
+    }
+  },
+  "surfaceRevision": {
+    "version": "2.2.0",
+    "ground": "original surface strengths",
+    "crops": {
+      "grain": {
+        "base": "#9f8b4d",
+        "opacity": ".78",
+        "texture": ".80",
+        "contrast": 1.16,
+        "offset": -0.065
+      },
+      "paddy": {
+        "base": "#71825f",
+        "opacity": ".79",
+        "texture": ".82",
+        "contrast": 1.13,
+        "offset": -0.055
+      },
+      "green": {
+        "base": "#788550",
+        "opacity": ".78",
+        "texture": ".80",
+        "contrast": 1.13,
+        "offset": -0.055
+      },
+      "tilled": {
+        "base": "#8a704d",
+        "opacity": ".82",
+        "texture": ".84",
+        "contrast": 1.14,
+        "offset": -0.06
+      }
+    },
+    "light": "north",
+    "newRasterAssets": 0
+  },
+  "fieldMargins": {
+    "version": "2.3.0",
+    "districts": 24,
+    "cropTips": 1827,
+    "weedClumps": 1620,
+    "soilRuns": 168,
+    "bankRuns": 133,
+    "cropCorePreserved": true,
+    "newRasterAssets": 0,
+    "light": "north",
+    "method": "external crop contours, staggered crop-row tips, interrupted loam banks and foreground weeds",
+    "protected": "coast, rivers and established main roads"
+  }
+}
