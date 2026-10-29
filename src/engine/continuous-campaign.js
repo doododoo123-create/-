@@ -1,3 +1,4 @@
+import {officerAbility,officerFatigue} from '../model/officer-traits.js';
 import {beginReadiness,recordDefeat,clearReadiness,battleReady,fieldOfficers} from './war-readiness.js';
 import {royalDefender,returnRoyalToCapital} from './royal-army.js';
 import { expeditionRoute,expeditionChance,fieldPaths } from './field-command.js';
@@ -54,7 +55,7 @@ export function resolveContinuousCampaign(ctx){
   const candidates=assembly.targets?assembly.targets(slot,h.targets(s,actor,slot,opponent)):h.targets(s,actor,slot,opponent);
   if(!live(actor,initial)||!candidates.length){assembly.detach?.(initial);emit('skip',initial.name+' 공격 건너뜀',!initial.troops?'병력 0만명 · 충원 대기':initial.readiness?.resting?'이번 전쟁 정비 중':'도달 가능한 접경 영토 없음',{nation:actor,slot,role:'general'});continue;}
   const routes=new Map(candidates.map(id=>[id,expeditionRoute(s,Atlas,actor,initial,id)]));
-  let target=chooseFrontier(s,Atlas,actor,candidates,{paths:new Map([...routes].map(([id,r])=>[id,r.path])),supply:h.connectedSupply,recoveryPriority:rules.recoveryPriority,recoveryBonus:rules.finishStrategy?rules.recoveryScoreCap:0},randomInt);
+  let target=chooseFrontier(s,Atlas,actor,candidates,{paths:new Map([...routes].map(([id,r])=>[id,r.path])),supply:h.connectedSupply,recoveryPriority:rules.recoveryPriority,officer:rules.officerTraits?initial:null,recoveryBonus:rules.finishStrategy?rules.recoveryScoreCap:0},randomInt);
   if(assembly.prepared&&candidates.includes(planned.target))target=planned.target;
   if(!assembly.prepared&&ctl.targetCells?.[slot]!==undefined){target=ctl.targetCells[slot];if(!candidates.includes(target))throw Error('인접하지 않은 대상 영지');}
   const firstRoute=routes.get(target);
@@ -87,10 +88,10 @@ export function resolveContinuousCampaign(ctx){
     else{
      b.sides=rules.combatSides;b.terrain=ctx.terrains?.[cellId]||'plain';
      const av=die('attack:'+g.slot+suffix,b.sides),dv=die('defense:'+g.slot+suffix,b.sides);
-     Object.assign(b.attack,{raw:av,wins:g.wins,...(rules.underdogExperience?{underdogWins:g.underdogWins||0}:{}),...combatBonuses(g.troops,d.troops,g.ability,g.wins,'plain',rules,g.underdogWins||0),movementEdges:root.travel.get(campaignOfficerKey(nation,g))||0});
-     Object.assign(b.defense,{raw:dv,wins:d.wins,...(rules.underdogExperience?{underdogWins:d.underdogWins||0}:{}),...combatBonuses(d.troops,g.troops,d.ability,d.wins,b.terrain,rules,d.underdogWins||0),movementEdges:root.travel.get(campaignOfficerKey(enemy,d))||0});
+     Object.assign(b.attack,{raw:av,wins:g.wins,...(rules.underdogExperience?{underdogWins:g.underdogWins||0}:{}),...combatBonuses(g.troops,d.troops,officerAbility(g,'attack',rules),g.wins,'plain',rules,g.underdogWins||0),movementEdges:root.travel.get(campaignOfficerKey(nation,g))||0});
+     Object.assign(b.defense,{raw:dv,wins:d.wins,...(rules.underdogExperience?{underdogWins:d.underdogWins||0}:{}),...combatBonuses(d.troops,g.troops,officerAbility(d,'defense',rules),d.wins,b.terrain,rules,d.underdogWins||0),movementEdges:root.travel.get(campaignOfficerKey(enemy,d))||0});
      if(rules.warReadiness){b.attack.confusionBonus=g.confusion?-g.confusion:0;b.defense.confusionBonus=d.confusion?-d.confusion:0;}
-     for(const side of [b.attack,b.defense]){side.bonus+=side.confusionBonus||0;side.fatigueBonus=movementFatigue(side.movementEdges,rules);side.bonus+=side.fatigueBonus;side.score=side.raw+side.bonus;}
+     for(const side of [b.attack,b.defense]){if(rules.officerTraits){side.officerRole=side===b.attack?'attack':'defense';side.mobility=(side===b.attack?g:d).mobility??3;}side.bonus+=side.confusionBonus||0;side.fatigueBonus=officerFatigue(movementFatigue(side.movementEdges,rules),side===b.attack?g:d,rules);side.bonus+=side.fatigueBonus;side.score=side.raw+side.bonus;}
      b.winner=b.attack.score===b.defense.score?null:b.attack.score>b.defense.score?nation:enemy;
      emit('attack_roll',g.name+' 공격 주사위','실제 이동의 누적 피로 포함',{battleIndex:index,nation,slot:g.slot,role:'general',roll:av,faces:b.sides,side:b.attack});
      emit('defense_roll',d.name+' 방어 주사위','현지·복귀·구원 수비',{battleIndex:index,nation:enemy,slot:d.slot,role:d.role||'general',roll:dv,faces:b.sides,side:b.defense});
@@ -118,7 +119,7 @@ export function resolveContinuousCampaign(ctx){
       let options=s.cells.filter(c=>c.owner===enemy&&b.takenCells.some(id=>Atlas.cells[id].neighbors.includes(c.id))&&(task.budget>0||task.special.includes(c.id))).map(c=>c.id);
       if(nation===actor&&!task.counter&&assembly.targets)options=options.filter(id=>task.special.includes(id)||assembly.targets(slot,[id]).length);
       const open=options.filter(id=>!defenders(enemy,id,s.countries[enemy].generals[s.cells[id].commander],root.defeated,root.frontId).queue.length);
-      if(!open.length)break;const next=chooseFrontier(s,Atlas,nation,open,{recent:task.taken,supply:h.connectedSupply,recoveryPriority:rules.recoveryPriority,recoveryBonus:rules.finishStrategy?rules.recoveryScoreCap:0},randomInt);take(next);
+      if(!open.length)break;const next=chooseFrontier(s,Atlas,nation,open,{...(rules.officerTraits?{paths:new Map(open.map(id=>[id,expeditionRoute(s,Atlas,nation,g,id)?.path||[]]))}:{}),officer:rules.officerTraits?g:null,recent:task.taken,supply:h.connectedSupply,recoveryPriority:rules.recoveryPriority,recoveryBonus:rules.finishStrategy?rules.recoveryScoreCap:0},randomInt);take(next);
      }
      b.takenCell=b.takenCells[0];
     }else b.captureLimit=0;
@@ -153,7 +154,7 @@ export function resolveContinuousCampaign(ctx){
    let options=s.cells.filter(c=>c.owner===enemy&&(task.budget>0||task.special.includes(c.id))&&Atlas.cells[c.id].neighbors.some(id=>s.cells[id].owner===nation&&task.taken.includes(id))).map(c=>c.id).filter(id=>expeditionRoute(s,Atlas,nation,g,id));
    if(nation===actor&&!task.counter&&assembly.targets)options=options.filter(id=>task.special.includes(id)||assembly.targets(slot,[id]).length);
    if(!options.length){task=null;continue;}
-   task.target=chooseFrontier(s,Atlas,nation,options,{recent:task.taken,supply:h.connectedSupply,recoveryPriority:rules.recoveryPriority,recoveryBonus:rules.finishStrategy?rules.recoveryScoreCap:0},randomInt);
+   task.target=chooseFrontier(s,Atlas,nation,options,{...(rules.officerTraits?{paths:new Map(options.map(id=>[id,expeditionRoute(s,Atlas,nation,g,id).path]))}:{}),officer:rules.officerTraits?g:null,recent:task.taken,supply:h.connectedSupply,recoveryPriority:rules.recoveryPriority,recoveryBonus:rules.finishStrategy?rules.recoveryScoreCap:0},randomInt);
   }
  }
  assembly.finish?.();

@@ -17,7 +17,7 @@ export function prepareArmyCampaign(ctx){
  for(const g of generals){
   const candidates=h.targets(s,actor,g.slot,opponent);if(!candidates.length)continue;
   const routes=new Map(candidates.map(id=>[id,expeditionRoute(s,Atlas,actor,g,id)]));
-  let target=chooseFrontier(s,Atlas,actor,candidates,{paths:new Map([...routes].map(([id,r])=>[id,r.path])),supply:h.connectedSupply,recoveryPriority:rules.recoveryPriority,recoveryBonus:rules.finishStrategy?rules.recoveryScoreCap:0},randomInt);
+  let target=chooseFrontier(s,Atlas,actor,candidates,{paths:new Map([...routes].map(([id,r])=>[id,r.path])),supply:h.connectedSupply,recoveryPriority:rules.recoveryPriority,officer:rules.officerTraits?g:null,recoveryBonus:rules.finishStrategy?rules.recoveryScoreCap:0},randomInt);
   if(ctl.targetCells?.[g.slot]!==undefined){target=ctl.targetCells[g.slot];if(!candidates.includes(target))throw Error('인접하지 않은 대상 영지');}
   const distance=routes.get(target).distance,chance=expeditionChance(distance,rules),roll=die('expedition:'+g.slot,100),accepted=roll<=chance;
   decisions.set(g.slot,{target,distance,chance,roll,accepted});

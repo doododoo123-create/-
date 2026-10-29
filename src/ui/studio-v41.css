@@ -1,0 +1,18 @@
+.game-skin .is-army-group .army-leader-scale .token-wrap{height:58px}
+.game-skin .is-army-group .army-leader-scale .map-unit-token{width:32px;height:54px;padding:1px;gap:0}
+.game-skin .is-army-group .army-leader-scale .token-portraits{width:26px;height:22px;flex-basis:22px}
+.game-skin .is-army-group .army-leader-scale .token-copy:has(.token-army-caption){padding-block:0!important;gap:1px!important}
+.game-skin .is-army-group .army-leader-scale .token-army-caption{font-size:5px;line-height:6px}
+.game-skin .is-army-group .army-leader-scale .token-copy b{width:28px;max-width:28px;font-size:7px;line-height:9px!important}
+.game-skin .is-army-group .army-leader-scale .token-copy>strong{font-size:9px;line-height:10px!important}
+.cohort-advantage .unit-offensive-advantage{font-size:16px}
+.campaign-score{position:relative}
+.campaign-score-verdict{position:absolute;z-index:6;top:18px;left:50%;transform:translateX(-50%);min-width:60px;padding:3px 12px;border:1px solid #f2dcb0;border-radius:4px;background:linear-gradient(#17232a90,#17232a90),var(--texture-war);color:white;box-shadow:0 2px 5px #0008;text-align:center;pointer-events:none}
+.campaign-score-verdict strong{display:block;font:900 28px/32px var(--studio-sans);text-shadow:0 2px 2px #000}
+.campaign-score-verdict small{display:block;font:700 10px/12px var(--studio-sans)}
+.campaign-score-verdict.is-win{background-image:linear-gradient(#8e1818d9,#641313d9),var(--texture-war);border-color:#ff8171}
+.campaign-score-verdict.is-loss{background-image:linear-gradient(#293139eb,#293139eb),var(--texture-war);border-color:#8f9ca3}
+.campaign-score-verdict.is-draw{border-color:#c4b694}
+.campaign-score:has(.campaign-score-verdict) .visual-die{opacity:.12}
+[data-officer-fields]{border:1px solid #69716a;padding:10px;margin-top:8px}
+[data-officer-fields][hidden]{display:none}

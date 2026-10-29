@@ -17,7 +17,7 @@ export function prepareFrontCampaign(ctx){
   if(ctl.targetCells?.[g.slot]!==undefined&&!candidates.includes(ctl.targetCells[g.slot]))throw Error('인접하지 않은 대상 영지');
   if(!candidates.length)continue;
   const routes=new Map(candidates.map(id=>[id,expeditionRoute(s,Atlas,actor,g,id)]));
-  const target=ctl.targetCells?.[g.slot]??chooseFrontier(s,Atlas,actor,candidates,{paths:new Map([...routes].map(([id,r])=>[id,r.path])),supply:h.connectedSupply,recoveryPriority:rules.recoveryPriority,recoveryBonus:rules.finishStrategy?rules.recoveryScoreCap:0},randomInt);
+  const target=ctl.targetCells?.[g.slot]??chooseFrontier(s,Atlas,actor,candidates,{paths:new Map([...routes].map(([id,r])=>[id,r.path])),supply:h.connectedSupply,recoveryPriority:rules.recoveryPriority,officer:rules.officerTraits?g:null,recoveryBonus:rules.finishStrategy?rules.recoveryScoreCap:0},randomInt);
   const distance=routes.get(target).distance,chance=expeditionChance(distance,rules),roll=die('expedition:'+g.slot,100),accepted=roll<=chance;
   decisions.set(g.slot,{target,distance,chance,roll,accepted});
   emit('expedition_roll',g.name+' 출전 판정',`현재 위치에서 목표까지 ${distance}칸 · 출전 확률 ${chance}%`,{nation:actor,slot:g.slot,role:'general',roll,faces:100,distance,chance,accepted,cellId:target});

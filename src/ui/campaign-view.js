@@ -19,7 +19,7 @@ export function campaignAdvantage(scene,completed){
  const value=wins||margin,id=value>0?g.actorId:value<0?g.opponentId:null,country=scene.worldBefore.countries.find(c=>c.id===id);
  return {id,label:country?country.name+' 우세':'백중세',color:country?.color||'#e1e8ea'};
 }
-function battleRow(b,index,scene,playback,completed){
+function battleRowUncached(b,index,scene,playback,completed){
  const group=scene.campaign,source=group.originalScenes.find(s=>s.battleIndex===b.index)?.worldBefore||scene.worldBefore,current=index===scene.campaignRow,done=index<completed,highlight=current&&scene.campaignPhase==='dice'&&!done;
  const sideCell=side=>{
   const countryId=side==='attack'?b.actorId:b.defenderId,country=source.countries.find(c=>c.id===countryId),initial=campaignPerson(source,b,side),latest=(done?group.originalScenes.find(s=>s.kind==='apply'&&s.event.type==='resolve'&&s.battleIndex===b.index)?.worldAfter:playback.displayWorld||scene.worldAfter)?.people.find(p=>p.id===initial?.id),person=latest||initial;
@@ -28,13 +28,19 @@ function battleRow(b,index,scene,playback,completed){
   const result=!done||b.automatic?'':b.winner===null?'무':b.winner===(side==='attack'?b.actor:b.target)?'승':'패';
   const raw=active||known?b[side].raw:null,die=b.automatic?`<div class="campaign-automatic">${side==='attack'?'무방비 진입':'수비대 없음'}</div>`:renderAccumulatingDie(raw,b.sides||30,phase,side==='attack'?'공격':'수비',scoreBonusItems(b[side]),{mergeIndex:playback.state.mergeIndex||0,progress:active?playback.sceneProgress:0,speed:playback.animationSpeed||1});
   const compactDie=group.modern?die.replace(/<div class="die-equation">[^<]*<\/div>/g,''):die;
-  return {face:portrait(empty?null:person,country,{result,army:empty?null:b[side].army,role:side==='attack'?'공격':'수비'}),score:`<div class="campaign-score ${active?'is-rolling':''}" data-duel-side="${side}" style="--nation:${esc(country?.color||'#87969f')}">${compactDie}${!b.automatic?renderObserverBonuses(b[side],{all:true}):''}</div>`};
+  return {face:portrait(empty?null:person,country,{result,army:empty?null:b[side].army,role:side==='attack'?'공격':'수비'}),score:`<div class="campaign-score ${active?'is-rolling':''}" data-duel-side="${side}" style="--nation:${esc(country?.color||'#87969f')}">${compactDie}${result?`<div class="campaign-score-verdict ${result==='승'?'is-win':result==='패'?'is-loss':'is-draw'}" data-score-verdict="${result}"><strong>${result}</strong><small>${b[side].score}점</small></div>`:''}${!b.automatic?renderObserverBonuses(b[side],{all:true}):''}</div>`};
  };
  const attack=sideCell('attack'),defense=sideCell('defense'),left=b.actorId===group.actorId?attack:defense,right=b.actorId===group.actorId?defense:attack;
  return `<article class="campaign-duel ${highlight?'is-current':''}" data-current-duel="${current}" data-active-roll="${highlight}" data-duel-index="${b.index}" data-duel-complete="${done}" aria-label="${esc(b.territoryName)} 대결"><div class="campaign-duel-location">${index+1}. ${esc(b.territoryName)}${b.continuation==='counter'?' · 역공':b.continuation==='advance'?' · 추가 진격':''}</div>${left.face}${left.score}<span class="campaign-vs">VS</span>${right.score}${right.face}</article>`;
 }
+const completedRowCache=new WeakMap();
+function battleRow(b,index,scene,playback,completed){
+ if(index>=completed)return battleRowUncached(b,index,scene,playback,completed);
+ const g=scene.campaign;let cache=completedRowCache.get(g);if(!cache){cache=new Map();completedRowCache.set(g,cache);}
+ const key=index+':'+(index===scene.campaignRow);if(!cache.has(key))cache.set(key,battleRowUncached(b,index,scene,playback,completed));return cache.get(key);
+}
 export function renderCampaignOverlay({playback,inline=false}){
- const scene=playback?.scene;if(!scene?.campaign)return '';
+ const scene=playback?.scene;if(!scene?.campaign)return '';if(scene.campaignPhase==='map'&&!playback.campaignExpanded&&!inline)return '';
  const completed=judgedCampaignBattles(scene,playback.state.phase),info=campaignSummary({...scene,completedBattles:completed}),g=scene.campaign,end=scene.campaignPhase==='summary',map=scene.campaignPhase==='map',expanded=!!playback.campaignExpanded;
  const advantage=campaignAdvantage(scene,completed),country=scene.worldBefore.countries.find(c=>c.id===g.actorId),other=scene.worldBefore.countries.find(c=>c.id===g.opponentId),row=g.battles[scene.campaignRow||0];
  if(map&&!expanded&&!inline)return "";

@@ -38,4 +38,6 @@ export function fitMapUnits(element){
   card.style.setProperty(`--battle-${side}-y`,`${point.y-Number(card.dataset.mapY)}px`);
   card.dataset.combatScreenX=String(x);card.dataset.combatScreenY=String(y);
  }
+ const badge=svg.querySelector('.cohort-advantage');if(badge){const winners=cards.filter(c=>c.dataset.country===badge.dataset.cohortWinner);if(winners.length){const place=layout[winners[0].dataset.combatSide],x=place.x+place.sign*(winners.length-1)*place.step/2,point=new DOMPoint(x,cy).matrixTransform(inverse);badge.setAttribute('transform',`translate(${point.x},${point.y}) scale(${1/scale})`);}}
+
 }

@@ -1,3 +1,4 @@
+import {OFFICER_STYLES} from './officer-traits.js';
 import {validateBalanceV27} from './balance-v27.js';
 import { validateDeployment,synchronizeDeployment } from './deployment.js';
 import { MAP_SCALE_DEFAULTS, scaledProduction } from './map-scale.js';
@@ -68,6 +69,7 @@ export function validateWorld(source) {
     if((p.role==='general'||p.role==='king'&&input.rules.royalDefense)&&isModernCombat({...ADDITIVE_COMBAT_DEFAULTS,...input.rules})){number(p.ability,'장군 능력 보정',-4,4);}else if(![-2,0,2].includes(p.ability))fail('국왕·승상과 원본 v11 능력은 −2 / 0 / +2 중에서 선택해 주세요.');
     if(p.portraitKey!==undefined&&p.portraitKey!==''&&(typeof p.portraitKey!=='string'||!/^(?:n[0-3]-(king|minister|general)|general-(?:00[1-9]|0[1-6][0-9]|070)|(king|minister)-(?:00[1-9]|010))$/.test(p.portraitKey)))fail('인물 초상화 선택이 올바르지 않습니다.');
     const result={id:text(p.id,'인물 ID',100),name:text(p.name,'인물명',40),countryId:owner(p.countryId,'인물 소속'),role:p.role,ability:p.ability,personality:p.personality,feature:optionalText(p.feature),...(p.portraitKey?{portraitKey:p.portraitKey}:{})};
+    if(p.role==='general'&&p.combatStyle!==undefined){if(!Object.hasOwn(OFFICER_STYLES,p.combatStyle))fail('장군 성향이 올바르지 않습니다.');Object.assign(result,{combatStyle:p.combatStyle,attackAbility:number(p.attackAbility,'공격 보정',-4,4),defenseAbility:number(p.defenseAbility,'방어 보정',-4,4),mobility:number(p.mobility,'기동력',1,5)});}
     if(p.role==='minister'){const style=p.ministerStyle||'balanced';if(!Object.hasOwn(MINISTER_STYLES,style))fail('승상 성향이 올바르지 않습니다.');result.ministerStyle=style;}
     if(p.role==='general'){const slot=number(p.slot??counters.get(p.countryId)??0,'장군 자리 번호',0,Math.max(19,Math.ceil((mapKind==='free'?input.territories?.length||0:rows*cols)/4)-1));counters.set(p.countryId,Math.max(counters.get(p.countryId)||0,slot+1));result.slot=slot;result.commandBonus=number(p.commandBonus??0,'개인 지휘한도 보정',-1,1);}
     return result;
@@ -105,6 +107,7 @@ export function validateWorld(source) {
   if(!['v11','additive30'].includes(combat.battleMode))fail('지원하지 않는 전투 방식입니다.');rules.battleMode=combat.battleMode;
   if(typeof combat.fieldCommand!=='boolean')fail('실제 출정·복귀 설정을 확인해 주세요.');rules.fieldCommand=combat.fieldCommand;
   if(!['soldier','ten-thousand'].includes(combat.troopRounding))fail('병력 반올림 단위를 확인해 주세요.');rules.troopRounding=combat.troopRounding;
+  if(r.officerTraits!==undefined&&typeof r.officerTraits!=='boolean')fail('장군 성향 규칙이 올바르지 않습니다.');rules.officerTraits=r.officerTraits??false;
   if(typeof combat.advancedCampaign!=='boolean')fail('새 원정 규칙 설정을 확인해 주세요.');rules.advancedCampaign=combat.advancedCampaign;
   for(const [key,label,min,max] of [['territoryArmyLimit','영토당 충원 상한',1,10000],['fatigueStep','피로 적용 이동 칸',1,100],['fatiguePenalty','피로 감점',0,100]])rules[key]=number(combat[key],label,min,max);
   rules.supplyGainRange=array(combat.supplyGainRange,'보급 강화 한도 범위',2).map(v=>number(v,'지휘한도 증가',1,3));if(rules.supplyGainRange.length!==2||rules.supplyGainRange[0]>rules.supplyGainRange[1])fail('지휘한도 증가 범위를 1~3만 내에서 지정해 주세요.');

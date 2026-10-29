@@ -58,7 +58,7 @@ test('map playback has no reflection strip, route selector or spectator options;
  for(const text of ['map-play-toggle','map-calendar','map-recent-events','sound-settings','toggle-camera-follow'])assert(html.includes(text),text);
 });
 test('army representative grows only its information box and keeps ordinary cards and portrait content',()=>{
- const {p}=setup();p.state.index=p.state.scenes.findIndex(s=>s.kind==='army-forming');assert(p.state.index>=0);const html=renderAtlas(p.displayWorld,{presentation:p.state});assert(html.includes('width="38" height="76"'));assert(html.includes('width="32" height="58"'));assert(html.includes('token-army-caption'));
+ const {p}=setup();p.state.index=p.state.scenes.findIndex(s=>s.kind==='army-forming');assert(p.state.index>=0);const html=renderAtlas(p.displayWorld,{presentation:p.state});assert(!html.includes('width="38" height="76"'));assert(html.includes('scale(1.7)'));assert(html.includes('width="32" height="58"'));assert(html.includes('token-army-caption'));
 });
 test('optimized presentation, final banner, save restoration and replay leave combat and future RNG unchanged',async()=>{
  const {p,run,record}=setup({cohort:true}),snapshot=JSON.stringify(run);for(let i=0;i<5000&&!p.complete;i++)p.step();assert(p.complete);assert.equal(JSON.stringify(run),snapshot);

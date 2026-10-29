@@ -1,6 +1,7 @@
+import {officerTargetPreference} from '../model/officer-traits.js';
 import { recoveryTerritoryCandidates } from './recovery-priority.js';
 // Rank only legal land-front targets. Shape preferences never bypass defenders or paths.
-export function frontierScores(state,atlas,actor,candidates,{paths=new Map(),recent=[],supply=null,recoveryBonus=0}={}){
+export function frontierScores(state,atlas,actor,candidates,{paths=new Map(),recent=[],supply=null,recoveryBonus=0,officer=null}={}){
  const enemySize=id=>supply?supply(state,state.cells[id].owner,id).length:state.cells.filter(c=>c.owner===state.cells[id].owner).length;
  const distances=candidates.map(id=>paths.get(id)?.length??0),nearest=Math.min(...distances);
  return candidates.map((id,i)=>{
@@ -18,7 +19,8 @@ export function frontierScores(state,atlas,actor,candidates,{paths=new Map(),rec
   // A nearby concavity beats a one-edge spearhead. Long detours and strong garrisons cost points.
   const distance=distances[i],close=distance<=nearest+2;
   const recovery=cell.owner!==actor&&atlas.cells[id].owner===actor?recoveryBonus:0;
-  const score=recovery+own*12+(close&&pocket?30:0)+(close&&recent.some(v=>near.includes(v))?5:0)
+  const preference=officer?officerTargetPreference(officer.combatStyle,{defenders,distance,nearest,nearCapital:near.includes(state.capitals[actor])||near.some(v=>atlas.cells[v].neighbors.includes(state.capitals[actor]))}):0;
+  const score=preference+recovery+own*12+(close&&pocket?30:0)+(close&&recent.some(v=>near.includes(v))?5:0)
    -Math.max(0,distance-nearest)*5-(own===1?8:0)-cutPenalty-defenders.reduce((n,g)=>n+g.troops,0)*.1;
   return {id,score,distance,pocket,own,cutPenalty};
  }).sort((a,b)=>b.score-a.score||a.distance-b.distance||a.id-b.id);

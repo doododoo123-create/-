@@ -35,6 +35,19 @@ function updateMobileMap(old,next){
  for(const n of [...next.children])if(n!==nextSvg)old.append(n);
  return old;
 }
+function updateCampaignPanel(old,next){
+ syncAttributes(old,next);const previous=new Map(mapLayerEntries(old));let cursor=old.firstElementChild;
+ for(const [key,n] of mapLayerEntries(next)){const existing=previous.get(key),markup=n.outerHTML;let live=n;
+  if(existing){previous.delete(key);if(n.classList.contains('campaign-duel-list')){
+   const rows=new Map([...existing.children].map(r=>[r.dataset.duelIndex,r]));let at=existing.firstElementChild;
+   for(const row of [...n.children]){const prior=rows.get(row.dataset.duelIndex),source=row.outerHTML;rows.delete(row.dataset.duelIndex);const keep=prior&&mobileMarkup.get(prior)===source?prior:row;
+    if(prior&&keep!==prior){prior.replaceWith(keep);if(at===prior)at=keep;}mobileMarkup.set(keep,source);if(keep!==at)existing.insertBefore(keep,at);at=keep.nextElementSibling;
+   }for(const row of rows.values())row.remove();syncAttributes(existing,n);live=existing;
+  }else if(mobileMarkup.get(existing)===markup)live=existing;
+  if(live!==existing){existing.replaceWith(live);if(cursor===existing)cursor=live;}}
+  mobileMarkup.set(live,markup);if(live!==cursor)old.insertBefore(live,cursor);cursor=live.nextElementSibling;
+ }for(const n of previous.values())n.remove();
+}
 function updateFullscreenStage(old,next){
  syncAttributes(old,next);const previous=new Map(mapLayerEntries(old));let cursor=old.firstElementChild;
  for(const [key,n] of mapLayerEntries(next)){
@@ -43,7 +56,7 @@ function updateFullscreenStage(old,next){
    if(n.classList.contains('map-stage-atlas')){
     const map=existing.querySelector('.atlas-scroll'),nextMap=n.querySelector('.atlas-scroll');
     if(map&&nextMap){const patched=updateMobileMap(map,nextMap);if(patched!==map)map.replaceWith(patched);syncAttributes(existing,n);live=existing;}
-   }else if(mobileMarkup.get(existing)===markup)live=existing;
+   }else if(n.classList.contains('campaign-popup')){updateCampaignPanel(existing,n);live=existing;}else if(mobileMarkup.get(existing)===markup)live=existing;
    if(live!==existing){existing.replaceWith(live);if(cursor===existing)cursor=live;}
   }
   mobileMarkup.set(live,markup);if(live!==cursor)old.insertBefore(live,cursor);cursor=live.nextElementSibling;
@@ -55,6 +68,7 @@ export function renderApp(root,html){
  const template=document.createElement('template');template.innerHTML=html;
  const stage=root.querySelector(':scope > .map-stage'),first=template.content.firstElementChild,nextStage=first?.matches('.map-stage')?first:null;
  if(stage&&nextStage){updateFullscreenStage(stage,nextStage);mountHanMaps(root);return;}
+ for(const next of template.content.querySelectorAll('.campaign-popup')){const old=root.querySelector('.campaign-popup');if(old){updateCampaignPanel(old,next);next.replaceWith(old);}}
  for(const next of template.content.querySelectorAll('.atlas-scroll[data-map-camera]')){
   const old=[...root.querySelectorAll('.atlas-scroll[data-map-camera]')].find(n=>n.dataset.mapCamera===next.dataset.mapCamera);
   if(old){const map=updateMobileMap(old,next);if(map===old)next.replaceWith(old);}
