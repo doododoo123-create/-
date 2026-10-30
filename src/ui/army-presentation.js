@@ -2,6 +2,9 @@ import {portraitImage} from './portraits.js';
 import {displayName} from './display-names.js';
 import {esc} from './icons.js';
 
+export const ARMY_CARD_SCALE=1.4,ARMY_HEADER_HEIGHT=8;
+export function armyLeaderTransform(scale=ARMY_CARD_SCALE){return `translate(0,${Number((35*(1-scale)).toFixed(6))}) scale(${Number(scale.toFixed(6))})`;}
+
 // Read only group events already applied to this visible map, never future dice.
 export function visibleArmyGroups(world,presentation){
  const record=presentation?.record,scene=presentation?.scenes?.[presentation.index],groups=new Map();
@@ -22,5 +25,5 @@ export function visibleArmyGroups(world,presentation){
 }
 export function armyCompanions(group,country){
  if(!group)return '';
- return group.members.filter(p=>p.id!==group.leader.id).map((p,i)=>`<g class="army-mini-unit" transform="translate(${31+i*11},-12) scale(.5)" data-army-companion="${esc(p.id)}"><foreignObject x="-16" y="-27" width="32" height="58"><div xmlns="http://www.w3.org/1999/xhtml" class="token-wrap"><button class="map-unit-token army-mini-card" data-action="focus-unit" data-id="${esc(p.id)}" style="--nation:${country.color}" title="${esc(displayName(p))}"><span class="token-portraits">${portraitImage(p,country,p.role)}</span><span class="token-copy"><b>${esc(displayName(p))}</b></span></button></div></foreignObject></g>`).join('');
+ return group.members.filter(p=>p.id!==group.leader.id).map((p,i)=>`<g class="army-mini-unit" transform="translate(${25+i*11},-12) scale(.5)" data-army-companion="${esc(p.id)}"><foreignObject x="-16" y="-27" width="32" height="58"><div xmlns="http://www.w3.org/1999/xhtml" class="token-wrap"><button class="map-unit-token army-mini-card" data-action="focus-unit" data-id="${esc(p.id)}" style="--nation:${country.color}" title="${esc(displayName(p))}"><span class="token-portraits">${portraitImage(p,country,p.role)}</span><span class="token-copy"><b>${esc(displayName(p))}</b></span></button></div></foreignObject></g>`).join('');
 }

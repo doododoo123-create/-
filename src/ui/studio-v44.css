@@ -1,0 +1,12 @@
+/* Face frames reach the inside of the national border, without side padding. */
+.game-skin .map-unit-token{padding-inline:0}
+.game-skin .map-unit-token .token-portraits{width:100%;border:0;align-self:stretch}
+.game-skin .is-army-group .army-leader-scale .token-wrap{height:66px;padding-top:8px}
+.game-skin .is-army-group .army-leader-scale .map-unit-token{position:relative;width:32px;height:54px;padding:1px 0;gap:0;overflow:visible;clip-path:none;border-radius:3px}
+.game-skin .is-army-group .army-leader-scale .token-portraits{width:100%;height:27px;flex:0 0 27px}
+.game-skin .is-army-group .army-leader-scale .token-copy{padding:0;gap:0}
+.game-skin .is-army-group .army-leader-scale .token-copy b{font-size:7px;line-height:10px!important}
+.game-skin .is-army-group .army-leader-scale .token-copy>strong{font-size:9px;line-height:11px!important}
+.game-skin .is-army-group .army-leader-scale .token-army-caption{position:absolute;left:-1.2px;right:-1.2px;top:-8px;height:8px;box-sizing:border-box;display:block;border:1px solid var(--nation);border-bottom:0;border-radius:3px 3px 0 0;background:linear-gradient(#08130ec9,#08130ec9),var(--texture-person);color:white;font:600 5.5px/7px var(--studio-sans);letter-spacing:.3px;pointer-events:auto}
+.game-skin .army-mini-card .token-portraits{flex-basis:35px}
+.map-stage[data-army-aware=true] .campaign-popup.campaign-table{top:var(--army-pane-top);left:var(--army-pane-left,50%);max-height:min(363px,var(--army-pane-height))}

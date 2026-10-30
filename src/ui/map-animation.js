@@ -1,3 +1,4 @@
+import {ARMY_CARD_SCALE,armyLeaderTransform} from './army-presentation.js';
 import {roundedRoutePath} from './route-bundles.js';
 import { buildFrontWave,frontWaveAt,frontSequenceProgress } from './front-wave.js';
 import { atlasGeometry } from './atlas-cache.js';
@@ -27,8 +28,8 @@ export class MapAnimation {
   const svg=nodes.svg,matrix=svg?.isConnected?svg.getScreenCTM?.():null;
   if(matrix){
    for(const {leader,minis,ring} of nodes.armies){
-    const t=p.reducedMotion?.()?1:progress,ease=1-Math.pow(1-t,3),factor=1+.7*ease;
-    leader?.setAttribute('transform',`translate(0,${-35*(factor-1)}) scale(${factor})`);
+    const t=p.reducedMotion?.()?1:progress,ease=1-Math.pow(1-t,3),factor=1+(ARMY_CARD_SCALE-1)*ease;
+    leader?.setAttribute('transform',armyLeaderTransform(factor));
     minis.forEach((mini,i)=>{const delay=.35+i*.4/Math.max(1,minis.length-1);mini.style.opacity=String(Math.max(0,Math.min(1,(t-delay)/.25)));});
     if(ring)ring.style.opacity=String(.95-.65*t);
    }
