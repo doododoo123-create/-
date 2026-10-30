@@ -19,9 +19,10 @@ export class MapAnimation {
   const progressKey=p.scene?.kind==='capture'?p.state.record.turn+':'+p.scene.id+':'+Math.floor(progress*(p.state.record.battles[p.scene.battleIndex]?.takenTerritoryIds?.length||1)):null;if(progressKey&&progressKey!==this.progressKey){this.progressKey=progressKey;this.onMapProgress?.();}
   for(const line of nodes.countdowns)line.style.transform='scaleX('+(1-progress)+')';
   const settling=p.scene?.kind==='round-settle',travel=settling?Math.max(0,(progress-.18)/.82):progress,highlight=settling&&progress<.18?Math.sin(progress/.18*Math.PI)*.85:0;
-  for(const wave of this.waves){const e=wave.element;if(!e.isConnected)continue;const local=frontSequenceProgress(travel,wave.order,wave.count),shape=frontWaveAt(wave.model,local);e.setAttribute('d',shape.fill);e.setAttribute('width',String(wave.span*local));e.dataset.waveProgress=String(local);
-   for(const line of wave.lines)line.setAttribute('d',shape.front);
-   for(const glow of wave.glows)glow.setAttribute('opacity',String(Math.max(highlight,settling?Math.sin(local*Math.PI)*.6:0)));
+  for(const wave of this.waves){
+   const e=wave.element;if(!e.isConnected)continue;const local=frontSequenceProgress(travel,wave.order,wave.count);
+   if(wave.progress!==local){const shape=frontWaveAt(wave.model,local);e.setAttribute('d',shape.fill);e.setAttribute('width',String(wave.span*local));e.dataset.waveProgress=String(local);for(const line of wave.lines)line.setAttribute('d',shape.front);wave.progress=local;}
+   const glow=Math.max(highlight,settling?Math.sin(local*Math.PI)*.6:0);if(wave.glow!==glow){for(const node of wave.glows)node.setAttribute('opacity',String(glow));wave.glow=glow;}
   }
   const svg=nodes.svg,matrix=svg?.isConnected?svg.getScreenCTM?.():null;
   if(matrix){

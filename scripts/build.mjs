@@ -18,9 +18,11 @@ await syncTextBoxArt(root);
 await syncSoundArt(root);
 await syncKitIcons(root);
 await syncGeneralPortraits(root);
-const hanMapData=await readFile(resolve(root,'assets/maps/han/art.json'),'utf8');
+const hanMapData=await readFile(resolve(root,'assets/maps/han/raster.json'),'utf8');
 const hanManifest=JSON.parse(await readFile(resolve(root,'assets/maps/han/manifest.json'),'utf8'));
 if(createHash('sha256').update(await readFile(resolve(root,'assets/maps/han/original.zip'))).digest('hex')!==hanManifest.sourceSha256)throw Error('지도 원본이 바뀌었습니다. python scripts/import-han-map.py로 내장 자료를 갱신해 주세요.');
+const bakedHan=JSON.parse(hanMapData).manifest;
+if(bakedHan.sourceSha256!==hanManifest.sourceSha256||bakedHan.sourceSvgSha256!==hanManifest.svgSha256||bakedHan.fontSha256!==createHash('sha256').update(await readFile(resolve(root,'assets/fonts/NotoSerifKR.woff2'))).digest('hex'))throw Error('지도 배경 자료를 python3 scripts/bake-han-map.py로 다시 만들어 주세요.');
 const visited = new Set(), chunks = [];
 let mobileBuild=false;
 async function bundle(path) {

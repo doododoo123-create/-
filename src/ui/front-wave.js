@@ -28,15 +28,33 @@ function smoothFront(segments){
   let d='M'+chain[0].map(frontNumber).join(',');for(let i=1;i<chain.length-1;i++){const mid=chain[i].map((v,k)=>(v+chain[i+1][k])/2);d+=` Q${chain[i].map(frontNumber)} ${mid.map(frontNumber)}`;}d+=' L'+chain.at(-1).map(frontNumber).join(',');paths.push(d);
  }return paths.join(' ');
 }
+// Trace the boundary of the filled region rather than emitting a separate
+// filled triangle for every grid cell. Shared triangle edges never become
+// antialiased seams in the hatch mask.
+function closedWaveRings(segments){
+ const links=new Map();for(let i=0;i<segments.length;i++)for(const p of segments[i]){if(!links.has(p.key))links.set(p.key,[]);links.get(p.key).push(i);}
+ const used=new Set(),rings=[];
+ for(let first=0;first<segments.length;first++)if(!used.has(first)){
+  const ring=[segments[first][0],segments[first][1]];used.add(first);
+  while(ring.at(-1).key!==ring[0].key){const end=ring.at(-1),next=links.get(end.key)?.find(i=>!used.has(i));if(next===undefined)break;used.add(next);const pair=segments[next];ring.push(pair[0].key===end.key?pair[1]:pair[0]);}
+  if(ring.length>=4&&ring.at(-1).key===ring[0].key)rings.push('M'+ring.slice(0,-1).map(v=>v.p.map(frontNumber).join(',')).join(' L')+' Z');
+ }
+ return rings.join(' ');
+}
 export function frontWaveAt(model,progress){
  if(progress<=0)return {fill:'',front:''};if(progress>=1)return {fill:model.path,front:''};
- const threshold=progress*model.maximum,filled=[],segments=[];
- const triangle=indices=>{
-  const verts=indices.map(i=>({p:model.nodes[i],v:model.distance[i]})),output=[],cuts=[];
-  for(let i=0;i<3;i++){const a=verts[i],b=verts[(i+1)%3],ain=a.v<=threshold,bin=b.v<=threshold;if(ain)output.push(a.p);if(ain!==bin){const t=(threshold-a.v)/(b.v-a.v),p=a.p.map((v,k)=>v+(b.p[k]-v)*t);output.push(p);cuts.push(p);}}
-  if(output.length>=3)filled.push('M'+output.map(p=>p.map(frontNumber).join(',')).join(' L')+'Z');if(cuts.length===2)segments.push(cuts);
+ const threshold=progress*model.maximum,segments=[],boundary=[],crossings=new Map();
+ const vertex=i=>({key:'n'+i,p:model.nodes[i]});
+ const crossing=(a,b)=>{
+  if(model.distance[a]===threshold)return vertex(a);if(model.distance[b]===threshold)return vertex(b);
+  const lo=Math.min(a,b),hi=Math.max(a,b),key=lo+':'+hi;if(crossings.has(key))return crossings.get(key);
+  const t=(threshold-model.distance[lo])/(model.distance[hi]-model.distance[lo]),p=model.nodes[lo].map((n,k)=>n+(model.nodes[hi][k]-n)*t),v={key,p};crossings.set(key,v);return v;
  };
- for(let y=0;y<model.rows-1;y++)for(let x=0;x<model.cols-1;x++){const a=y*model.cols+x,b=a+1,c=a+model.cols,d=c+1;triangle([a,b,d]);triangle([a,d,c]);}
- return {fill:filled.join(''),front:smoothFront(segments)};
+ const triangle=(a,b,c)=>{const ids=[a,b,c],cuts=[];for(let i=0;i<3;i++){const p=ids[i],q=ids[(i+1)%3];if((model.distance[p]<=threshold)!==(model.distance[q]<=threshold))cuts.push(crossing(p,q));}if(cuts.length===2&&cuts[0].key!==cuts[1].key)segments.push(cuts);};
+ for(let y=0;y<model.rows-1;y++)for(let x=0;x<model.cols-1;x++){const a=y*model.cols+x,b=a+1,c=a+model.cols,d=c+1;triangle(a,b,d);triangle(a,d,c);}
+ const edge=(a,b)=>{const insideA=model.distance[a]<=threshold,insideB=model.distance[b]<=threshold;if(insideA&&insideB)boundary.push([vertex(a),vertex(b)]);else if(insideA!==insideB){const cut=crossing(a,b),v=vertex(insideA?a:b);if(v.key!==cut.key)boundary.push([v,cut]);}};
+ for(let x=0;x<model.cols-1;x++){edge(x,x+1);const y=(model.rows-1)*model.cols;edge(y+x,y+x+1);}
+ for(let y=0;y<model.rows-1;y++){edge(y*model.cols,(y+1)*model.cols);edge(y*model.cols+model.cols-1,(y+1)*model.cols+model.cols-1);}
+ return {fill:closedWaveRings([...segments,...boundary]),front:smoothFront(segments.map(pair=>pair.map(v=>v.p)))};
 }
 export function frontSequenceProgress(progress,index,count){return Math.max(0,Math.min(1,progress*Math.max(1,count)-index));}
