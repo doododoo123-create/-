@@ -45,11 +45,20 @@ function createHanManager(host,data){
  };
  return {update,dispose:()=>{disposed=true;if(decodeFrame!==null)cancelAnimationFrame(decodeFrame);cells.forEach(release);}};
 }
+// Keep the expensive, unchanging source art in its own SVG paint surface.
+// Both SVGs use the exact same viewBox; only the foreground has game hit areas.
+function isolateHanBackground(host){
+ const map=host.closest('.atlas-scroll'),foreground=map?.querySelector('.atlas-map');if(!foreground)return;
+ let art=map.querySelector(':scope > .atlas-art-surface');
+ if(!art){art=document.createElementNS('http://www.w3.org/2000/svg','svg');art.setAttribute('class','atlas-art-surface');art.setAttribute('aria-hidden','true');map.append(art);}
+ const view=foreground.getAttribute('viewBox');if(art.getAttribute('viewBox')!==view)art.setAttribute('viewBox',view);
+ if(host.parentNode!==art)art.append(host);
+}
 export function mountHanMaps(root){
  for(const placeholder of root.querySelectorAll('.han-map-host')){
   const context=placeholder.closest('[data-map-camera]')?.dataset.mapCamera,previous=hanHosts.get(context);let host=placeholder;
   if(previous&&previous!==placeholder){placeholder.replaceWith(previous);host=previous;}
-  hanHosts.set(context,host);
+  hanHosts.set(context,host);isolateHanBackground(host);
   if(!hanManagers.has(host))loadHanData().then(data=>{if(!host.isConnected||hanManagers.has(host))return;const manager=createHanManager(host,data);hanManagers.set(host,manager);manager.update();}).catch(error=>{host.dataset.hanError=error.message;});
  }
  // Retain decoded art only for maps that are actually present, including during

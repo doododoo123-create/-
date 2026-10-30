@@ -1,0 +1,2 @@
+/* A separate paint surface preserves the exact source map while units move. */
+.atlas-scroll>.atlas-art-surface{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;contain:strict;transform:translateZ(0)}

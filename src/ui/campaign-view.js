@@ -1,3 +1,4 @@
+import {retainCampaignRow} from './campaign-fragments.js';
 import {campaignReinforcement} from './campaign-reinforcements.js';
 import {campaignSummary,campaignPerson,judgedCampaignBattles} from './campaign-playback.js';
 import {renderAccumulatingDie,scoreBonusItems} from './score-accumulation.js';
@@ -37,7 +38,7 @@ const completedRowCache=new WeakMap();
 function battleRow(b,index,scene,playback,completed){
  if(index>=completed)return battleRowUncached(b,index,scene,playback,completed);
  const g=scene.campaign;let cache=completedRowCache.get(g);if(!cache){cache=new Map();completedRowCache.set(g,cache);}
- const key=index+':'+(index===scene.campaignRow);if(!cache.has(key))cache.set(key,battleRowUncached(b,index,scene,playback,completed));return cache.get(key);
+ const key=index+':'+(index===scene.campaignRow);if(!cache.has(key))cache.set(key,battleRowUncached(b,index,scene,playback,completed));return retainCampaignRow(g,index,cache.get(key));
 }
 export function renderCampaignOverlay({playback,inline=false}){
  const scene=playback?.scene;if(!scene?.campaign)return '';if(scene.campaignPhase==='map'&&!playback.campaignExpanded&&!inline)return '';

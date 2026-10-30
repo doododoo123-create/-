@@ -1,9 +1,11 @@
+import {campaignFragmentSource,materializeCampaignFragment,hydrateCampaignFragments,releaseCampaignFragments} from './campaign-fragments.js';
+import {atlasFragmentSource,materializeAtlasFragment,hydrateAtlasFragments} from './atlas-fragments.js';
 import {preserveHanMaps,mountHanMaps} from './han-map.js';
 // Reuse unchanged map layers/cards in the normal edition. Compare generated
 // markup, so transforms written by the camera and animation clock survive.
 const mobileMarkup=new WeakMap();
 const generatedAttributes=new WeakMap();
-function mapLayerEntries(svg){const seen=new Map();return [...svg.children].map(n=>{const name=n.getAttribute('class')||n.tagName,order=seen.get(name)||0;seen.set(name,order+1);return [name+':'+order,n];});}
+function mapLayerEntries(svg){const seen=new Map();return [...svg.children].map(n=>{const name=n.dataset.atlasFragment||n.getAttribute('class')||n.tagName,order=seen.get(name)||0;seen.set(name,order+1);return [name+':'+order,n];});}
 function syncAttributes(old,next){
  const before=generatedAttributes.get(old)||new Map([...old.attributes].map(a=>[a.name,a.value])),after=new Map([...next.attributes].map(a=>[a.name,a.value]));
  for(const name of before.keys())if(!after.has(name))old.removeAttribute(name);
@@ -22,16 +24,22 @@ function updateMobileMap(old,next){
  // Layer names are stable; children such as cards and their event listeners are delegated.
  const previous=new Map(mapLayerEntries(svg));
  let cursor=svg.firstElementChild;
- for(const [key,n] of mapLayerEntries(nextSvg)){
-  const existing=previous.get(key),markup=n.outerHTML;
+ for(const [key,placeholder] of mapLayerEntries(nextSvg)){
+  const existing=previous.get(key),source=atlasFragmentSource(placeholder),markup=source?.html||placeholder.outerHTML;
   let live=existing;
-  if(existing){previous.delete(key);if(mobileMarkup.get(existing)!==markup){if(n.classList.contains('country-tokens')){updateMobileUnits(existing,n);mobileMarkup.set(existing,markup);}else{existing.replaceWith(n);mobileMarkup.set(n,markup);if(cursor===existing)cursor=n;live=n;}}}
-  else{live=n;mobileMarkup.set(n,markup);if(n.classList.contains('country-tokens'))for(const card of n.children)mobileMarkup.set(card,card.outerHTML);}
+  if(existing){
+   previous.delete(key);
+   if(mobileMarkup.get(existing)!==markup){
+    const n=source?materializeAtlasFragment(placeholder):placeholder;
+    if(n.classList.contains('country-tokens')){updateMobileUnits(existing,n);existing.dataset.atlasRevision=n.dataset.atlasRevision;mobileMarkup.set(existing,markup);}
+    else{existing.replaceWith(n);mobileMarkup.set(n,markup);if(cursor===existing)cursor=n;live=n;}
+   }
+  }else{live=source?materializeAtlasFragment(placeholder):placeholder;mobileMarkup.set(live,markup);if(live.classList.contains('country-tokens'))for(const card of live.children)mobileMarkup.set(card,card.outerHTML);}
   if(live!==cursor)svg.insertBefore(live,cursor);
   cursor=live.nextElementSibling;
  }
  for(const n of previous.values())n.remove();
- for(const n of [...old.children])if(n!==svg)n.remove();
+ for(const n of [...old.children])if(n!==svg&&(!n.classList.contains('atlas-art-surface')||!nextSvg.classList.contains('han-map-atlas')))n.remove();
  for(const n of [...next.children])if(n!==nextSvg)old.append(n);
  return old;
 }
@@ -40,7 +48,7 @@ function updateCampaignPanel(old,next){
  for(const [key,n] of mapLayerEntries(next)){const existing=previous.get(key),markup=n.outerHTML;let live=n;
   if(existing){previous.delete(key);if(n.classList.contains('campaign-duel-list')){
    const rows=new Map([...existing.children].map(r=>[r.dataset.duelIndex,r]));let at=existing.firstElementChild;
-   for(const row of [...n.children]){const prior=rows.get(row.dataset.duelIndex),source=row.outerHTML;rows.delete(row.dataset.duelIndex);const keep=prior&&mobileMarkup.get(prior)===source?prior:row;
+   for(const row of [...n.children]){const prior=rows.get(row.dataset.duelIndex),source=campaignFragmentSource(row)||row.outerHTML;rows.delete(row.dataset.duelIndex);const keep=prior&&mobileMarkup.get(prior)===source?prior:materializeCampaignFragment(row);
     if(prior&&keep!==prior){prior.replaceWith(keep);if(at===prior)at=keep;}mobileMarkup.set(keep,source);if(keep!==at)existing.insertBefore(keep,at);at=keep.nextElementSibling;
    }for(const row of rows.values())row.remove();syncAttributes(existing,n);live=existing;
   }else if(mobileMarkup.get(existing)===markup)live=existing;
@@ -67,13 +75,19 @@ export function renderApp(root,html){
  preserveHanMaps(root);
  const template=document.createElement('template');template.innerHTML=html;
  const stage=root.querySelector(':scope > .map-stage'),first=template.content.firstElementChild,nextStage=first?.matches('.map-stage')?first:null;
- if(stage&&nextStage){updateFullscreenStage(stage,nextStage);mountHanMaps(root);return;}
+ if(stage&&nextStage){updateFullscreenStage(stage,nextStage);hydrateAtlasFragments(root);hydrateCampaignFragments(root);releaseCampaignFragments();mountHanMaps(root);return;}
  for(const next of template.content.querySelectorAll('.campaign-popup')){const old=root.querySelector('.campaign-popup');if(old){updateCampaignPanel(old,next);next.replaceWith(old);}}
  for(const next of template.content.querySelectorAll('.atlas-scroll[data-map-camera]')){
   const old=[...root.querySelectorAll('.atlas-scroll[data-map-camera]')].find(n=>n.dataset.mapCamera===next.dataset.mapCamera);
   if(old){const map=updateMobileMap(old,next);if(map===old)next.replaceWith(old);}
   else for(const n of next.querySelector('.atlas-map')?.children||[]){mobileMarkup.set(n,n.outerHTML);if(n.classList.contains('country-tokens'))for(const card of n.children)mobileMarkup.set(card,card.outerHTML);}
  }
+ hydrateAtlasFragments(template.content);hydrateCampaignFragments(template.content);
+ for(const row of template.content.querySelectorAll('.campaign-duel'))if(!mobileMarkup.has(row))mobileMarkup.set(row,row.outerHTML);
+ for(const map of template.content.querySelectorAll('.atlas-map'))for(const [,layer] of mapLayerEntries(map)){
+  if(!mobileMarkup.has(layer))mobileMarkup.set(layer,atlasFragmentSource(layer)?.html||layer.outerHTML);
+  if(layer.classList.contains('country-tokens'))for(const card of layer.children)if(!mobileMarkup.has(card))mobileMarkup.set(card,card.outerHTML);
+ }
  root.replaceChildren(template.content);
- mountHanMaps(root);
+ releaseCampaignFragments();mountHanMaps(root);
 }
