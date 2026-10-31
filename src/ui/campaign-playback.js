@@ -65,7 +65,7 @@ export function compactCampaignScenes(scenes,record,{modern=false,reportAfterMap
  }
  return out;
 }
-export function campaignSceneDuration(scene){return (scene.campaignPhase==='approach'?100:scene.campaignPhase==='report'?3200:scene.campaignPhase==='summary'?1800:160)/(scene.rapidMovement?1.5:1);}
+export function campaignSceneDuration(scene){return (scene.campaignPhase==='approach'?100:scene.campaignPhase==='report'?1000:scene.campaignPhase==='summary'?1800:160)/(scene.rapidMovement&&scene.campaignPhase!=='report'?1.5:1);}
 export function judgedCampaignBattles(scene,phase){return (scene?.completedBattles||0)+(scene?.campaignPhase==='dice'&&scene.event?.type==='defense_roll'&&['locked','departing'].includes(phase)?1:0);}
 export function campaignSummary(scene){
  const g=scene.campaign,completed=scene.completedBattles||0,seen=g.battles.slice(0,completed),visible=g.battles.slice(0,Math.max(completed,(scene.campaignRow??-1)+1)),before=g.originalScenes[0].worldBefore,after=scene.worldAfter;

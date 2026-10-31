@@ -1,4 +1,4 @@
-# 구조 · Studio v0.45.1
+# 구조 · Studio v0.46.0
 
 ## 데이터와 엔진
 
@@ -613,3 +613,13 @@ movementRate와 campaignSceneDuration은 추가 가속1.5다. roll/reel 시간�
 ## v0.45.1 해상 보급 중단
 
 `model/land-supply.landSupplyWorld`는 편집 세계의 seaSupply를false로 준비하며 원래 객체를 수정하지 않는다. 기존 실행은 초기 세계/이전 명령을 변경하지 않는다. 엔진36은 새 controls.landSupplyOnly를 검증해 차례 시작 복사 상태에 지속 landSupplyOnly:true를 남긴다. connectedSupply/supplyComponents는 해당 상태부터 육지 그래프를 사용하며 projection은 현재 유효 seaSupply:false를 표시한다. 이후 저장/재개 및 unsigned 역사 재구성도 같은 제어 경계로 복원한다. 이전 명령에 필드가 없으면 기존 해상 보급을 유지한다. 새 UI 스위치나 보급권별 탈영 계산은 추가하지 않았다.
+
+
+## v0.46 권역과 불변 인물 신원
+
+- `engine/supply-regions.js`는 정산/생산에 같은 regionalAccounts를 제공한다. 실제 육지 연결 묶음의 크기·한도·소속 병력/여유 공간을 계산하고 임시 position을 장군의 보급 기준으로 사용하지 않는다. `economy-v27`은 기존 국가 분기를 유지하며 새 지속 상태에서만 권역별 탈영/생산을 사용한다. 각 권역의 largest-remainder 분배로 전체 손실을 먼저 정해 부대별 반올림 과다 손실을 피한다.
+- `engine/exile-officers.js`는 첫 경계의 명시 신원 목록을 바인딩하고 멸망 국가의 생존 임관 장수 한 명을 실제 빈 슬롯으로 옮긴다. 원래 슬롯의 transferredTo가 재등용/중복 투영을 막으며 새 슬롯은 같은 identity.id/능력/전적을 갖는다. source identity는 이력용으로 남긴다. identity와 serviceHistory는 일반 엔진 상태에 저장된다.
+- normalization은 전장 시점 view의 identity로 attackerPersonId/defenderPersonId를 확정한다. 투영은 슬롯 기반 임시 ID보다 불변 ID를 우선하며 과거의 전투 조회도 같은 ID로 이어진다. 실제 새 후임은 별도 ID로 만든다. runtime 생성 ID는 국가 숫자/자리/출생 차례와 충돌 회피 접미사를 사용한다.
+- 첫 `controls.recruitExiles:true`의 exileIdentities에 실제 기존 ID/사진과 초기 인물 여부를 기록한다. 이전 사진 대여 충돌은 원래 인물 우선으로 정리한다. 신원이 알려진 살아 있는 후보의 portraitClaims를 예약하고 투영에서 배정한 실제 키는 엔진 신원에 동기화한다. 새 모드 정렬은 코드 단위 비교로 Node/브라우저 locale 차이를 피한다. 신원/사진은 게임 난수를 소비하지 않는다.
+- TurnPlayback은 report만 effectiveSpeed=1,1000ms로 예약하고 다음 apply 앞의 departing 대기를 생략한다. 재등용 roster의 국가 이동도 criticalScene 임관으로 판단한다. 기존 UI 박스를 사용하며 지역 탈영의 일반 병력 증감 문구와 원인 문구를 중복 표시하지 않는다. 대기 풀 손실은 왕의 실제 병력과 구분한다.
+- 엔진37이36 이하를 읽으며 과거 controls 누락은 기존 분기다. 세계2/진행1/역사2 형식을 유지하고 엔진 상태의 optional 지속 플래그/신원 metadata를 저장한다. UI에 규칙 스위치/모바일판을 추가하지 않는다.

@@ -1,0 +1,58 @@
+{
+  "budget": 1000,
+  "results": [
+    {
+      "seed": 123456,
+      "turn": 302,
+      "result": {
+        "reason": "unification",
+        "winnerIds": [
+          "nation-1"
+        ],
+        "round": 92,
+        "turn": 302
+      },
+      "hires": 13,
+      "desertionTenThousands": 44,
+      "boundaries": [
+        255,
+        256
+      ]
+    },
+    {
+      "seed": 20261017,
+      "turn": 715,
+      "result": {
+        "reason": "unification",
+        "winnerIds": [
+          "nation-5"
+        ],
+        "round": 295,
+        "turn": 715
+      },
+      "hires": 13,
+      "desertionTenThousands": 152,
+      "boundaries": [
+        255,
+        256,
+        512
+      ]
+    },
+    {
+      "seed": 20261031,
+      "turn": 248,
+      "result": {
+        "reason": "unification",
+        "winnerIds": [
+          "nation-5"
+        ],
+        "round": 78,
+        "turn": 248
+      },
+      "hires": 15,
+      "desertionTenThousands": 15,
+      "boundaries": []
+    }
+  ],
+  "failures": 0
+}

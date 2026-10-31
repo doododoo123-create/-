@@ -48,7 +48,7 @@ export class TurnPlayback {
     Object.assign(this,{onChange,onFinish,speed,options,reducedMotion,schedule,cancel,now});
     this.groupEnd=null;this.groupDone=false;this.state=null;this.handle=null;this.remaining=0;this.deadline=0;this.scheduledSpeed=1;
   }
-  get effectiveSpeed(){if(criticalScene(this.scene))return 1;return this.options().kingChoiceNormalSpeed&&this.scene?.kind==='reel'&&this.scene.event?.type==='king'?1:this.speed();}
+  get effectiveSpeed(){if(this.scene?.campaignPhase==='report'||criticalScene(this.scene))return 1;return this.options().kingChoiceNormalSpeed&&this.scene?.kind==='reel'&&this.scene.event?.type==='king'?1:this.speed();}
   get animationSpeed(){return this.effectiveSpeed*animationRate(this.scene);}
   get scene(){return this.state?.scenes[this.state.index]||null;}
   get playing(){return !!this.state?.playing;}
@@ -73,7 +73,7 @@ export class TurnPlayback {
     if(this.state.phase==='rolling')this.state.phase=this.scene.bonusItems?.some(i=>i.value)||this.scene.bonus?'raw':'locked';
     else if(this.state.phase==='raw'){this.state.phase='merging';this.state.mergeIndex=0;}
     else if(this.state.phase==='merging'){const count=this.scene.bonusItems?.filter(i=>i.value).length||1;if((this.state.mergeIndex||0)<count-1)this.state.mergeIndex++;else this.state.phase='locked';}
-    else if(this.state.phase!=='departing'&&this.state.scenes[this.state.index+1]?.kind==='apply')this.state.phase='departing';
+    else if(this.scene.campaignPhase!=='report'&&this.state.phase!=='departing'&&this.state.scenes[this.state.index+1]?.kind==='apply')this.state.phase='departing';
     else if(this.groupEnd===this.state.index&&this.state.index<this.state.scenes.length-1){this.remaining=0;this.state.playing=false;this.groupDone=true;if(this.scene.kind==='apply')this.state.phase='settled';this.onChange();return;}
     else if(this.state.index<this.state.scenes.length-1){this.state.index++;this.campaignExpanded=false;this.state.mergeIndex=0;this.state.phase=['roll','reel'].includes(this.scene.kind)?'rolling':'holding';this.state.effectStage=this.scene.kind==='apply'?applicationSteps(this.scene,this.state.record)[0]:null;}
     else{if(this.detailReturn){this.returnCampaignDetails();return;}this.state.finished=true;this.state.playing=false;this.onChange();this.onFinish();return;}

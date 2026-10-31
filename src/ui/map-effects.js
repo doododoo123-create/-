@@ -28,7 +28,7 @@ export function mapEffects(scene,stage=null,record=null) {
   for(const key of new Set([...oldGenerals.keys(),...nextGenerals.keys()])){
     const prev=oldGenerals.get(key),next=nextGenerals.get(key),p=next||prev;
     const delta=(next?.troops??0)-(prev?.troops??0);
-    if(delta)add(p.countryId,p.role,p.slot,'army',delta,`${event.type==='desertion'?'탈영 ':event.type==='death'&&event.survivors?'이관 ':event.type==='roster'?'이관 ':event.type==='resupply'?'배분 ':''}${effectSign(delta)}만명`,delta>0?'positive':event.type==='roster'?'transfer':'negative');
+    if(delta&&!(event.type==='desertion'&&event.loss?.regions))add(p.countryId,p.role,p.slot,'army',delta,`${event.type==='desertion'?'탈영 ':event.type==='death'&&event.survivors?'이관 ':event.type==='roster'?'이관 ':event.type==='resupply'?'배분 ':''}${effectSign(delta)}만명`,delta>0?'positive':event.type==='roster'?'transfer':'negative');
     if(event.type==='resolve'&&next?.alive!==false&&prev&&next?.generation===prev.generation&&(next.confusion||0)>(prev.confusion||0))add(p.countryId,p.role,p.slot,'confusion',next.confusion-(prev.confusion||0),'혼란 −'+(next.confusion-(prev.confusion||0)),'negative');
     const capacity=(next?.capacity??0)-(prev?.capacity??0);
     if(capacity&&next?.active&&next?.alive&&event.type==='resolve')add(p.countryId,p.role,p.slot,'capacity',capacity,`한도 ${effectSign(capacity)}만`,'upgrade');

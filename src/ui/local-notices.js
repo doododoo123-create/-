@@ -16,10 +16,11 @@ export function localNotices(scene,record,world){
  if(e.type==='reorganization')add('생존 병력 재편','king');
  if(e.type==='resolve'&&record?.type==='domestic')add(`${record.action} ${e.success?'성공':'실패'}`,'minister',e.success?'positive':'negative');
  if(e.type==='resupply')add(world?.rules.royalDefense?'미배치 병력 충원':'수도 병력 배분','king');
- if(e.type==='desertion')add('국가 탈영 −'+e.loss.amount+'만','king','negative');
+ if(e.type==='desertion'){if(e.loss.regions){for(const region of e.loss.regions.filter(g=>g.amount))for(const cut of region.cuts.filter(c=>['general','king'].includes(c.role)))add(`${region.central?'수도권':'고립지'} ${region.territories}칸 · 유지 ${region.limit}만 · 탈영 −${cut.amount}만`,cut.role,'negative',countryId,cut.slot);const pooled=e.loss.cuts.filter(c=>['pool','reorganization'].includes(c.role)).reduce((n,c)=>n+c.amount,0);if(pooled)add('수도권 대기병 탈영 −'+pooled+'만','king','negative');}else add('국가 탈영 −'+e.loss.amount+'만','king','negative');}
  if(e.type==='production_settlement')add('실제 충원 +'+e.gain.gain+'만','king','positive');
  if(e.type==='round_end')for(const g of record?.production||[])add('계절 병력 생산','king','neutral',g.countryId,null);
  if(e.type==='roster')add('지휘 구역 재편','king');
+ if(e.type==='appointment'&&e.recruitedFrom!==undefined)add('재등용','general','positive');
  if(e.type==='waiting')add('후임 대기','king');
  if(e.type==='finish')for(const id of record?.result?.winnerIds||[])add(record.result.reason==='unification'?'천하 통일':'최종 우승','king','positive',id,null);
  return items;
