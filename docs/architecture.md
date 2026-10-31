@@ -1,4 +1,4 @@
-# 구조 · Studio v0.45.0
+# 구조 · Studio v0.45.1
 
 ## 데이터와 엔진
 
@@ -608,3 +608,8 @@ movementRate와 campaignSceneDuration은 추가 가속1.5다. roll/reel 시간�
 - 엔진35는34 이하를 계속 읽는다. 개인 능력은 `model/officer-traits.personalAbility/addPersonalBonus`에서 계산하고 세계 검증은 optional personalAbility 정수−4~+4를 보존한다. `nextTurn`의 controls.personalAbility를 검증하며 연속 공세/순차 방어/단순 D30 세 경로에 동일한 별도 항을 더한다. 이전 controls 누락은false이며 기록의 초기 세계/RNG를 마이그레이션하지 않는다.
 - `model/portrait-keys.js`는 이미지 바이트와 독립적인90개 ID/기본 키 규칙이다. `model/portrait-allocation.js`는 전 국가의 살아 있는 인물 배정을 한 번에 계산한다. 직전 표시 세계에서 살아남은 사람의 키→선호 키→역할 우선 빈 풀 순으로 배정하고,없으면 portraitMissing으로 이름 약자를 렌더한다. 멸망/전사 인물은 키를 독점하지 않는다.
 - projection은 시각 배정만 붙이며 엔진 상태나 난수를 바꾸지 않는다. 사건 frame은 시간 순서로 직전 frame의 키를 사용하고 최종 world에도 마지막 배정을 반영한다. 진행 저장/큰 저장소/역사2의 optional portraitWorld에 ID별 키를 보존하여 재개 후 얼굴이 바뀌지 않게 한다. 과거 파일에 이 항목이 없어도 전역 중복 없는 배정을 재구성한다. 세계2/진행1/역사2의 버전은 유지하되 새 전투는 엔진35가 필요하다.
+
+
+## v0.45.1 해상 보급 중단
+
+`model/land-supply.landSupplyWorld`는 편집 세계의 seaSupply를false로 준비하며 원래 객체를 수정하지 않는다. 기존 실행은 초기 세계/이전 명령을 변경하지 않는다. 엔진36은 새 controls.landSupplyOnly를 검증해 차례 시작 복사 상태에 지속 landSupplyOnly:true를 남긴다. connectedSupply/supplyComponents는 해당 상태부터 육지 그래프를 사용하며 projection은 현재 유효 seaSupply:false를 표시한다. 이후 저장/재개 및 unsigned 역사 재구성도 같은 제어 경계로 복원한다. 이전 명령에 필드가 없으면 기존 해상 보급을 유지한다. 새 UI 스위치나 보급권별 탈영 계산은 추가하지 않았다.

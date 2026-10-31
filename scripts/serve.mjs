@@ -19,4 +19,4 @@ const server = createServer(async (req, res) => {
   } catch { res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' }); res.end('파일을 찾을 수 없습니다.'); }
 });
 server.on('error', error => { console.error(error.code === 'EADDRINUSE' ? `${port}번 포트를 사용 중입니다. 기존 실행 창을 닫거나 PORT 환경변수를 바꿔 주세요.` : error.message); process.exitCode = 1; });
-server.listen(port, process.env.HOST || '127.0.0.1', () => console.log(`사국쟁패 Studio v0.45.0 실행 중\n브라우저 주소: http://localhost:${port}\n종료: Ctrl+C`));
+server.listen(port, process.env.HOST || '127.0.0.1', () => console.log(`사국쟁패 Studio v0.45.1 실행 중\n브라우저 주소: http://localhost:${port}\n종료: Ctrl+C`));

@@ -34,5 +34,5 @@ const stream=new Blob([out.subarray(0,at)]).stream().pipeThrough(new Decompressi
 const html=await new Response(stream).text();document.open();document.write(html);document.close();
 }catch(error){document.getElementById('saguk-load-status').textContent='게임을 불러오지 못했습니다. '+error.message;}
 })();`;
- return '<!doctype html><html lang="ko" data-performance="'+(mobile?'mobile':'normal')+'"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>사국쟁패 Studio v0.45.0</title></head><body style="margin:0;background:#10212a;color:#e9d4a7;display:grid;place-items:center;min-height:100vh"><p id="saguk-load-status">사국쟁패 Studio v0.45.0 · 세계를 준비하고 있습니다.</p><script id="saguk-standalone-data" type="application/octet-stream">'+data+'<'+'/script><script>'+loader+'<'+'/script></body></html>';
+ return '<!doctype html><html lang="ko" data-performance="'+(mobile?'mobile':'normal')+'"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>사국쟁패 Studio v0.45.1</title></head><body style="margin:0;background:#10212a;color:#e9d4a7;display:grid;place-items:center;min-height:100vh"><p id="saguk-load-status">사국쟁패 Studio v0.45.1 · 세계를 준비하고 있습니다.</p><script id="saguk-standalone-data" type="application/octet-stream">'+data+'<'+'/script><script>'+loader+'<'+'/script></body></html>';
 }

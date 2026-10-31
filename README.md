@@ -1,8 +1,16 @@
-# 사국쟁패 Studio v0.45.0 · 지도 선행 공세와 개인 무장 능력
+# 사국쟁패 Studio v0.45.1 · 육지 보급 적용
 
-**[바로 실행할 HTML 다운로드](https://github.com/doododoo123-create/-/raw/refs/tags/v0.45.0/사국쟁패%20Studio.html)**
+**[바로 실행할 HTML 다운로드](https://github.com/doododoo123-create/-/raw/refs/tags/v0.45.1/사국쟁패%20Studio.html)**
 
 HTML을 저장해 최신 Chrome·Edge에서 여세요. 설치·인터넷 연결 없이 실행하는 일반판 하나입니다.
+
+## v0.45.1 변경
+
+- 해상 보급을 끕니다. 수도와 바다로만 연결되던 해안 영토는 이제 육지로 이어진 영토끼리 자체 생산을 사용합니다.
+- 기존 경기를 이어가면 다음 차례부터 적용하고, 완료된 역사 기록은 당시 해상 보급으로 그대로 재생합니다. 새 실행이 필요 없습니다.
+- 현재 유지 한도는 기존처럼 국가 영토 수×5만 명이며 계절 종료 때 초과분의25%가 탈영합니다. 고립지별 별도 유지 한도는 아직 검토안입니다.
+
+[적용과 검증](docs/validation-v0.45.1.md)
 
 ## v0.45.0 변경
 
@@ -82,7 +90,7 @@ HTML을 저장해 최신 Chrome·Edge에서 여세요. 설치·인터넷 연결 
 
 ## 설치 없이 실행
 
-**[일반판 HTML 다운로드](https://github.com/doododoo123-create/-/raw/refs/tags/v0.45.0/사국쟁패%20Studio.html)**
+**[일반판 HTML 다운로드](https://github.com/doododoo123-create/-/raw/refs/tags/v0.45.1/사국쟁패%20Studio.html)**
 
 모바일 경량판은 v0.38을 마지막으로 제작을 종료했습니다. 이전 배포본은 당시 Git 태그에 보존되어 있습니다. 새 배포에는 일반판 하나만 포함합니다.
 

@@ -7,7 +7,7 @@ import { clone,validateWorld,landCount,countryPeople,neighbors } from '../model/
 import { V11_ATLAS,V11_NATIONS } from '../data/v11-preset.js';
 import { seaSupplyPorts } from '../model/sea-supply.js';
 import { createV11Engine } from './v11-core.js';
-export const ENGINE_VERSION='studio-v11-35';
+export const ENGINE_VERSION='studio-v11-36';
 const engineCache=new WeakMap();
 export const livingCountries=world=>world.countries.filter(c=>landCount(world,c.id)>0);
 export function numericSeed(seed){const text=String(seed??123456).trim();if(!/^\d+$/.test(text)||Number(text)>4294967295)throw new Error('원본과 같은 난수를 사용하려면 시드를 0~4294967295 정수로 입력해 주세요.');return Number(text)>>>0;}
@@ -42,7 +42,7 @@ export function projectWorld(definition,state,providedEngine=null,previousWorld=
     for(const g of state.countries[i].generals){const original=configured.find(p=>p.role==='general'&&p.slot===g.slot);if(!original&&!g.active&&!g.generation)continue;const station=engine.stationCell(state,i,g.slot),displaced=g.active&&g.alive&&Number.isInteger(g.position)&&state.cells[g.position]?.owner!==i,stranded=!!g.stranded||(definition.rules.retreatMode==='blocked'&&g.stranded!==undefined&&displaced);people.push({...(original||{}),id:g.generation||!original?`officer-${ids[i]}-${g.slot}-${g.generation}`:original.id,countryId:ids[i],name:g.name,role:'general',...(definition.rules.officerTraits?{combatStyle:g.combatStyle,attackAbility:g.attackAbility,defenseAbility:g.defenseAbility,mobility:g.mobility}:{}),personality:original?.personality||'balanced',feature:g.feature,ability:g.ability,...(definition.rules.battleMode==='additive30'?{personalAbility:personalAbility(g)}:{}),commandBonus:g.commandBonus,slot:g.slot,...(g.confusion!==undefined?{confusion:g.confusion,...(g.restedThisSeason!==undefined?{restedThisSeason:g.restedThisSeason}:{}),readiness:g.readiness?clone(g.readiness):null}:{}),troops:g.troops,capacity:engine.capacity(state.countries[i],g),active:g.active,alive:g.alive,waited:g.waited,generation:g.generation,...(g.wins!==undefined?{wins:g.wins}:{}),...(g.underdogWins!==undefined?{underdogWins:g.underdogWins}:{}),...(g.stranded!==undefined?{stranded,displaced}:{}),stationId:territoryIds[station]||null,...(definition.rules.battleMode==='additive30'&&definition.rules.fieldCommand?{positionId:territoryIds[g.position]||null}:{}),connected:g.active&&!stranded&&station!==null?engine.capitalConnected(state,i,g.slot):false,territoryIds:state.cells.filter(t=>t.owner===i&&t.commander===g.slot).map(t=>territoryIds[t.id])});}
   }
   const territories=definition.territories.map((t,i)=>{const cell=state.cells[i],commander=people.find(p=>p.countryId===ids[cell.owner]&&p.role==='general'&&p.slot===cell.commander);return {...t,ownerId:ids[cell.owner],commanderSlot:cell.commander,commanderId:commander?.id||null};});
-  return allocateWorldPortraits({...definition,rules:{...definition.rules,roundLimit:state.roundLimit},countries,people,territories},previousWorld||definition);
+  return allocateWorldPortraits({...definition,rules:{...definition.rules,seaSupply:definition.rules.seaSupply&&!state.landSupplyOnly,roundLimit:state.roundLimit},countries,people,territories},previousWorld||definition);
 }
 function resultFor(state,ids){return state.result?{reason:state.result.reason==='conquest'?'unification':'limit',winnerIds:state.result.winners.map(i=>ids[i]),round:state.result.round,turn:state.result.turns}:null;}
 function normalizeRecord(raw,before,after,definition,state,context){
@@ -69,7 +69,7 @@ export function createRun(input,seed=123456){
 export function currentActor(run){return run.result?null:run.world.countries.find(c=>c.id===run.schedule[run.scheduleIndex])||null;}
 export function nextTurn(input,controls){
   if(input.result)return input;
-  if(['armyAssembly','armyFormation','unitSpacing','frontOperations','directArmyRelease','royalCapitalSync','personalAbility'].some(key=>controls?.[key]!==undefined&&typeof controls[key]!=='boolean'))throw Error('집단군 집결 설정이 올바르지 않습니다.');
+  if(['armyAssembly','armyFormation','unitSpacing','frontOperations','directArmyRelease','royalCapitalSync','personalAbility','landSupplyOnly'].some(key=>controls?.[key]!==undefined&&typeof controls[key]!=='boolean'))throw Error('집단군 집결 설정이 올바르지 않습니다.');
   const context=engineFor(input.initialWorld),ctl=controls?{...controls}:undefined;
   if(ctl?.targetId!==undefined&&typeof ctl.targetId==='string')ctl.targetId=context.ids.indexOf(ctl.targetId);
   if(ctl?.targetCells)ctl.targetCells=Object.fromEntries(Object.entries(ctl.targetCells).map(([slot,id])=>[slot,typeof id==='string'?context.territoryIds.indexOf(id):id]));
@@ -92,7 +92,7 @@ export function removeRunLimit(run){
 export function casualty(own,enemy,rate){const base=rate*100;if(!own||!enemy||!base)return 0;const n=own*base*enemy*2,d=(own+enemy)*100;return Math.min(own,Math.max(1,Math.floor((n*2+d)/(d*2))));}
 export function borderTargets(world,id){return world.territories.filter(t=>t.ownerId!==id&&neighbors(world,t).some(n=>n.ownerId===id));}
 export function definitionForVersion(initialWorld,engineVersion){
-  if(![ENGINE_VERSION,'studio-v11-34','studio-v11-33','studio-v11-32','studio-v11-31','studio-v11-30','studio-v11-29','studio-v11-28','studio-v11-27','studio-v11-26','studio-v11-25','studio-v11-24','studio-v11-23','studio-v11-22','studio-v11-21','studio-v11-20','studio-v11-19','studio-v11-18','studio-v11-17','studio-v11-16','studio-v11-15','studio-v11-14','studio-v11-13','studio-v11-12','studio-v11-11'].includes(engineVersion))throw new Error('현재 v11 엔진과 다른 실행 저장입니다.');
+  if(![ENGINE_VERSION,'studio-v11-35','studio-v11-34','studio-v11-33','studio-v11-32','studio-v11-31','studio-v11-30','studio-v11-29','studio-v11-28','studio-v11-27','studio-v11-26','studio-v11-25','studio-v11-24','studio-v11-23','studio-v11-22','studio-v11-21','studio-v11-20','studio-v11-19','studio-v11-18','studio-v11-17','studio-v11-16','studio-v11-15','studio-v11-14','studio-v11-13','studio-v11-12','studio-v11-11'].includes(engineVersion))throw new Error('현재 v11 엔진과 다른 실행 저장입니다.');
   const source=clone(initialWorld),revision=Number(engineVersion.split('-').at(-1));if(revision<34&&source?.rules)source.rules.officerTraits=false;
   if(revision<29&&source?.rules)for(const key of ['seasonRestConfusion','royalCapitalGuard'])source.rules[key]??=false;
   if(revision<28&&source?.rules)source.rules.resetConfusionOnRest??=false;

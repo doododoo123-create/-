@@ -1,3 +1,4 @@
+import {landSupplyWorld} from './model/land-supply.js';
 import {allocateWorldPortraits} from './model/portrait-allocation.js';
 import {enableRetainedAtlas} from './ui/atlas-fragments.js';
 import {enablePersonalAbilities,personalAbility,enableOfficerTraits,OFFICER_STYLES,officerProfile} from './model/officer-traits.js';
@@ -57,7 +58,7 @@ let initialError = '';
 let territoryPresetUndo=null;
 let deploymentV30Undo=null;
 let world;
-try { world = vividWorld(allocateWorldPortraits(enablePersonalAbilities(enableOfficerTraits(prepareV13World(loadWorld(localStorage) || createContinentV31World()))))); } catch (error) { world = createDemoWorld(); initialError = error.message + ' 시작 예제를 표시합니다. 기존 저장 데이터는 덮어쓰지 않았습니다.'; }
+try { world = vividWorld(allocateWorldPortraits(enablePersonalAbilities(enableOfficerTraits(prepareV13World(loadWorld(localStorage) || createContinentV31World())))));world=landSupplyWorld(world); } catch (error) { world = createDemoWorld(); initialError = error.message + ' 시작 예제를 표시합니다. 기존 저장 데이터는 덮어쓰지 않았습니다.'; }
 const ui = { page: 'overview', selected: world.territories[0]?.id, paint: false, brush: world.countries[0]?.id || '', countryFilter: '', roleFilter: '', search: '', showNames: true, mapFullscreen:false, seed: '20261017', speed: 1, mapStyle: 'atlas', editorView:'atlas', focusedCountry: null, focusedPerson:null, inspectedPerson:null, speedHint:0, historyOffset:0, replayLoading:false,stackFocus:{},routeMode:'summary',selectedMapEvent:'' };
 const playbackSettings=Object.freeze({compactCampaigns:true,kingChoiceNormalSpeed:true});
 const soundMixer=new SoundMixer({settings:loadSoundSettings(localStorage)});
@@ -88,7 +89,7 @@ const playback = new TurnPlayback({
 const soundPanel=new SoundPanel({mixer:soundMixer,getWorld:()=>ui.page==='simulation'?(playback.displayWorld||run?.world||world):world,onChange:()=>{soundDirector.suppressStage(playback);refreshSoundButtons(document,soundMixer.settings);}});
 const fileImportPanel=new FileImportPanel({notify,commit:async(prepared,signal)=>{
  await commitFileImport(localStorage,prepared,{signal});
- stop();playback.reset();soundDirector.reset();mapEditor.reset();deploymentEditor.reset();mapCamera.resetAll();territoryPresetUndo=null;deploymentV30Undo=null;replaySession=null;replayToken++;world=vividWorld(allocateWorldPortraits(enablePersonalAbilities(enableOfficerTraits(prepared.world))));run=prepared.run;ui.seed=run?.seed||ui.seed;ui.historyOffset=0;ui.selected=world.territories[0]?.id;ui.brush=world.countries[0]?.id||'';ui.paint=false;ui.search='';ui.countryFilter='';ui.roleFilter='';ui.inspectedPerson=null;ui.page=run?'simulation':'overview';saveStatus='브라우저에 자동 저장';render();void pruneStoredWorlds(localStorage).catch(()=>{});void pruneArchivedRuns(localStorage).catch(()=>{});
+ stop();playback.reset();soundDirector.reset();mapEditor.reset();deploymentEditor.reset();mapCamera.resetAll();territoryPresetUndo=null;deploymentV30Undo=null;replaySession=null;replayToken++;world=vividWorld(allocateWorldPortraits(enablePersonalAbilities(enableOfficerTraits(prepared.world))));world=landSupplyWorld(world);run=prepared.run;ui.seed=run?.seed||ui.seed;ui.historyOffset=0;ui.selected=world.territories[0]?.id;ui.brush=world.countries[0]?.id||'';ui.paint=false;ui.search='';ui.countryFilter='';ui.roleFilter='';ui.inspectedPerson=null;ui.page=run?'simulation':'overview';saveStatus='브라우저에 자동 저장';render();void pruneStoredWorlds(localStorage).catch(()=>{});void pruneArchivedRuns(localStorage).catch(()=>{});
 }});
 mapAnimation.onMapProgress=()=>refreshRecentMapEvents(run,playback,playback.displayWorld||run?.world||world,ui.selectedMapEvent);
 const pages = { overview: ['globe', '세계 개요'], countries: ['flag', '국가 관리'], people: ['people', '인물 관리'], map: ['map', '지도 · 영토'], deployment:['people','시작 배치'], simulation: ['play', '시뮬레이션'] };
@@ -106,10 +107,11 @@ async function persist(showMessage = false) {
  catch(error){if(world!==saving)return;saveStatus='저장 실패 · 파일로 내보내 주세요';notify(error.message,true);}
  const label=$('.save-status');if(label)label.textContent=saveStatus;
 }
-function updateWorld(next,{preserveDeployment=false}={}) { if(!preserveDeployment)next=synchronizeDeployment(next,world);if(ui.page!=='deployment')deploymentEditor.reset();world = vividWorld(allocateWorldPortraits(validateWorld(enablePersonalAbilities(enableOfficerTraits(next)))));if(!world.territories.some(t=>t.id===ui.selected))ui.selected=world.territories[0]?.id; if(!mapEditor.committing)mapEditor.history=[]; persist(); render(); }
+function updateWorld(next,{preserveDeployment=false}={}) { next=landSupplyWorld(next); if(!preserveDeployment)next=synchronizeDeployment(next,world);if(ui.page!=='deployment')deploymentEditor.reset();world = vividWorld(allocateWorldPortraits(validateWorld(enablePersonalAbilities(enableOfficerTraits(next)))));if(!world.territories.some(t=>t.id===ui.selected))ui.selected=world.territories[0]?.id; if(!mapEditor.committing)mapEditor.history=[]; persist(); render(); }
 function stop() { if (timer) clearTimeout(timer); timer = null; auto = false;if(replaySession)replaySession.playing=false; playback.pause();soundDirector.pause(); }
 function navigate(page) { if (!Object.hasOwn(pages, page)) return;if(replaySession)returnFromReplay();stop(); ui.page = page; render(); }
 function setNewWorld(next) {
+  next=landSupplyWorld(next);
   territoryPresetUndo=null;deploymentV30Undo=null;stop(); playback.reset(); mapEditor.reset();deploymentEditor.reset(); mapCamera.resetAll(); world = vividWorld(allocateWorldPortraits(validateWorld(enablePersonalAbilities(enableOfficerTraits(next))))); replaySession=null;replayToken++;ui.historyOffset=0;run = null; cancelArchivedSave();clearRun(localStorage); ui.selected = world.territories[0]?.id; ui.brush = world.countries[0]?.id || ''; ui.paint = false; ui.search = ''; ui.countryFilter = ''; ui.roleFilter = ''; ui.page = 'overview';ui.inspectedPerson=null; persist(); render();
 }
 function openMapFullscreen(){
@@ -137,7 +139,7 @@ function render() {
   renderApp($('#app'), `
     <aside class="sidebar">
       <a class="brand" href="#" data-page="overview" aria-label="사국쟁패 Studio 세계 개요"><span class="brand-symbol">${icon('compass', 29)}</span><span><strong>사국쟁패</strong><small>HISTORY STUDIO</small></span></a>
-      <div class="workspace-label">WORKSPACE <span>v0.45.0</span></div>
+      <div class="workspace-label">WORKSPACE <span>v0.45.1</span></div>
       <button class="world-switch" data-action="world-meta"><span class="world-icon">${icon('globe', 19)}</span><span><b>${esc(world.name)}</b><small>나의 세계 · 편집 가능</small></span>${icon('edit', 13)}</button>
       <div class="nav-label">세계 만들기</div>
       <nav aria-label="주요 메뉴">${Object.entries(pages).slice(0, 5).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}<div class="nav-label nav-second">역사 관찰하기</div>${Object.entries(pages).slice(5).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}</nav>
@@ -149,7 +151,7 @@ function render() {
         ${pageHeading()}
         ${['overview','deployment'].includes(ui.page)?territoryPresetNotice():''}
         ${ui.page === 'overview' ? overview() : ui.page === 'countries' ? countriesPage() : ui.page === 'people' ? peoplePage() : ui.page === 'map' ? mapPage() : ui.page === 'deployment'?deploymentEditor.view():ui.page === 'simulation' ? simulationPage() : ''}
-        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.45.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><button type="button" class="text-button" data-action="font-licenses">글꼴 라이선스</button><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
+        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.45.1</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><button type="button" class="text-button" data-action="font-licenses">글꼴 라이선스</button><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
       </main>
     </div>`);
   mapCamera.restore();if(ui.page==='simulation')mapCamera.follow(playback);mapAnimation.start($('#app'),playback);
@@ -303,7 +305,7 @@ function beginTurn(play=true) {
   ensureRun();
   if(!playback.complete) { if(play) playback.resume(); return; }
   if(run.result) return;
-  const before=run.world;run=nextTurn(run,{armyAssembly:true,armyFormation:true,unitSpacing:true,frontOperations:true,directArmyRelease:true,royalCapitalSync:true,personalAbility:true});const record=run.history.at(-1);
+  const before=run.world;run=nextTurn(run,{armyAssembly:true,armyFormation:true,unitSpacing:true,frontOperations:true,directArmyRelease:true,royalCapitalSync:true,personalAbility:true,landSupplyOnly:true});const record=run.history.at(-1);
   ui.focusedCountry=record.actorId;playback.load(record,before,run.world,play,run.history);
 }
 function step() { stop();beginTurn(); }
