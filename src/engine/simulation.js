@@ -67,7 +67,7 @@ export function createRun(input,seed=123456){
 export function currentActor(run){return run.result?null:run.world.countries.find(c=>c.id===run.schedule[run.scheduleIndex])||null;}
 export function nextTurn(input,controls){
   if(input.result)return input;
-  if(['armyAssembly','armyFormation','unitSpacing','frontOperations','directArmyRelease'].some(key=>controls?.[key]!==undefined&&typeof controls[key]!=='boolean'))throw Error('집단군 집결 설정이 올바르지 않습니다.');
+  if(['armyAssembly','armyFormation','unitSpacing','frontOperations','directArmyRelease','royalCapitalSync'].some(key=>controls?.[key]!==undefined&&typeof controls[key]!=='boolean'))throw Error('집단군 집결 설정이 올바르지 않습니다.');
   const context=engineFor(input.initialWorld),ctl=controls?{...controls}:undefined;
   if(ctl?.targetId!==undefined&&typeof ctl.targetId==='string')ctl.targetId=context.ids.indexOf(ctl.targetId);
   if(ctl?.targetCells)ctl.targetCells=Object.fromEntries(Object.entries(ctl.targetCells).map(([slot,id])=>[slot,typeof id==='string'?context.territoryIds.indexOf(id):id]));

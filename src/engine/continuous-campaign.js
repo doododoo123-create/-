@@ -37,7 +37,11 @@ export function resolveContinuousCampaign(ctx){
    emit('elimination',c.name+' 멸망','영지를 모두 잃었어.',{target:c.id,battleIndex:b.index},true);
   }
   for(const nation of [b.actor,b.target])for(const g of fieldOfficers(s.countries[nation]))if(g.active&&g.alive&&Number.isInteger(g.position)&&s.cells[g.position].owner!==nation)retreat(nation,g,b);
-  h.ensureStations(s);h.ensureFieldPositions(s);if(rules.royalDefense)h.ensureRoyals(s);
+  h.ensureStations(s);h.ensureFieldPositions(s);
+  // A captured capital can be reselected again as the same offensive advances.
+  // Record the repair on new orders; older recorded orders keep their original moves.
+  if(ctl.royalCapitalSync&&rules.royalCapitalGuard)for(const c of s.countries)returnRoyalToCapital(s,Atlas,c.id,h.capitalCell,emit,b.index);
+  if(rules.royalDefense)h.ensureRoyals(s);
   if(rules.battlefieldRecovery)returnEmptyCommanders(s,Atlas,h.capitalCell,emit,undefined,b.index);
   if(ctl.unitSpacing&&!ctl.directArmyRelease){const moves=spreadCommanders(s,Atlas,emit,{travel:operationTravel,battleIndex:b.index,protectedOfficers:assembly.heldMembers?.()||[]});for(const m of moves){const key=campaignOfficerKey(m.nation,s.countries[m.nation].generals[m.slot]);assembly.travel.set(key,(assembly.travel.get(key)||0)+m.path.length-1);}}
   for(const c of s.countries)h.syncArmy(c);
