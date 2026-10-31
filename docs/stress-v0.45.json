@@ -1,0 +1,60 @@
+{
+  "budgetPerSeed": 1000,
+  "results": [
+    {
+      "seed": 123456,
+      "turn": 293,
+      "result": {
+        "reason": "conquest",
+        "winners": [
+          1
+        ],
+        "round": 71,
+        "turns": 293
+      },
+      "combats": 1053,
+      "deaths": 17,
+      "successors": 9,
+      "checkpoints": [
+        255,
+        256
+      ]
+    },
+    {
+      "seed": 20261017,
+      "turn": 232,
+      "result": {
+        "reason": "conquest",
+        "winners": [
+          1
+        ],
+        "round": 54,
+        "turns": 232
+      },
+      "combats": 748,
+      "deaths": 16,
+      "successors": 7,
+      "checkpoints": []
+    },
+    {
+      "seed": 20261031,
+      "turn": 439,
+      "result": {
+        "reason": "conquest",
+        "winners": [
+          0
+        ],
+        "round": 120,
+        "turns": 439
+      },
+      "combats": 1444,
+      "deaths": 25,
+      "successors": 12,
+      "checkpoints": [
+        255,
+        256
+      ]
+    }
+  ],
+  "failures": 0
+}

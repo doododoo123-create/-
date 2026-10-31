@@ -6,7 +6,7 @@ export function plainSnapshot(value){return JSON.parse(JSON.stringify(value));}
 const canonical=value=>JSON.stringify(value,(_key,v)=>v&&typeof v==='object'&&!Array.isArray(v)?Object.fromEntries(Object.keys(v).sort().map(k=>[k,v[k]])):v);
 async function historyDigest(data){if(!globalThis.crypto?.subtle)return null;const {integrity,...body}=data,bytes=new TextEncoder().encode(JSON.stringify(body));return [...new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))].map(n=>n.toString(16).padStart(2,'0')).join('');}
 export async function exportHistoryData(run){
- const data=plainSnapshot({kind:'saguk-studio-history',version:2,engineVersion:ENGINE_VERSION,seed:run.seed,world:run.initialWorld,...(run.limitRemovedAt!==undefined?{limitRemovedAt:run.limitRemovedAt}:{}),history:run.history,result:run.result,finalWorld:run.world,engineState:{...run.engineState,history:[]}}),digest=await historyDigest(data);
+ const data=plainSnapshot({kind:'saguk-studio-history',version:2,engineVersion:ENGINE_VERSION,seed:run.seed,world:run.initialWorld,...(run.limitRemovedAt!==undefined?{limitRemovedAt:run.limitRemovedAt}:{}),history:run.history,result:run.result,finalWorld:run.world,portraitWorld:{people:run.world.people.map(p=>({id:p.id,portraitKey:p.portraitKey,portraitMissing:p.portraitMissing}))},engineState:{...run.engineState,history:[]}}),digest=await historyDigest(data);
  if(digest)data.integrity={algorithm:'SHA-256',value:digest};return data;
 }
 function finalFactsMatch(imported,run){

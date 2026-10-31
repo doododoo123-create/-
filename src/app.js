@@ -1,5 +1,6 @@
+import {allocateWorldPortraits} from './model/portrait-allocation.js';
 import {enableRetainedAtlas} from './ui/atlas-fragments.js';
-import {enableOfficerTraits,OFFICER_STYLES,officerProfile} from './model/officer-traits.js';
+import {enablePersonalAbilities,personalAbility,enableOfficerTraits,OFFICER_STYLES,officerProfile} from './model/officer-traits.js';
 import {recentMapEvents,refreshRecentMapEvents} from './ui/recent-map-events.js';
 import {enableCampaignV31} from './model/campaign-v31.js';
 import {createContinentV31World} from './scenarios/continent-v31.js';
@@ -56,7 +57,7 @@ let initialError = '';
 let territoryPresetUndo=null;
 let deploymentV30Undo=null;
 let world;
-try { world = vividWorld(enableOfficerTraits(prepareV13World(loadWorld(localStorage) || createContinentV31World()))); } catch (error) { world = createDemoWorld(); initialError = error.message + ' 시작 예제를 표시합니다. 기존 저장 데이터는 덮어쓰지 않았습니다.'; }
+try { world = vividWorld(allocateWorldPortraits(enablePersonalAbilities(enableOfficerTraits(prepareV13World(loadWorld(localStorage) || createContinentV31World()))))); } catch (error) { world = createDemoWorld(); initialError = error.message + ' 시작 예제를 표시합니다. 기존 저장 데이터는 덮어쓰지 않았습니다.'; }
 const ui = { page: 'overview', selected: world.territories[0]?.id, paint: false, brush: world.countries[0]?.id || '', countryFilter: '', roleFilter: '', search: '', showNames: true, mapFullscreen:false, seed: '20261017', speed: 1, mapStyle: 'atlas', editorView:'atlas', focusedCountry: null, focusedPerson:null, inspectedPerson:null, speedHint:0, historyOffset:0, replayLoading:false,stackFocus:{},routeMode:'summary',selectedMapEvent:'' };
 const playbackSettings=Object.freeze({compactCampaigns:true,kingChoiceNormalSpeed:true});
 const soundMixer=new SoundMixer({settings:loadSoundSettings(localStorage)});
@@ -81,13 +82,13 @@ const playback = new TurnPlayback({
     if (ui.page === 'simulation') render();
   },
   speed: () => ui.speed,
-  options:()=>({...playbackSettings,armyPresentation:true}),
+  options:()=>({...playbackSettings,armyPresentation:true,armyResultReport:true}),
   reducedMotion: () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
 });
 const soundPanel=new SoundPanel({mixer:soundMixer,getWorld:()=>ui.page==='simulation'?(playback.displayWorld||run?.world||world):world,onChange:()=>{soundDirector.suppressStage(playback);refreshSoundButtons(document,soundMixer.settings);}});
 const fileImportPanel=new FileImportPanel({notify,commit:async(prepared,signal)=>{
  await commitFileImport(localStorage,prepared,{signal});
- stop();playback.reset();soundDirector.reset();mapEditor.reset();deploymentEditor.reset();mapCamera.resetAll();territoryPresetUndo=null;deploymentV30Undo=null;replaySession=null;replayToken++;world=vividWorld(enableOfficerTraits(prepared.world));run=prepared.run;ui.seed=run?.seed||ui.seed;ui.historyOffset=0;ui.selected=world.territories[0]?.id;ui.brush=world.countries[0]?.id||'';ui.paint=false;ui.search='';ui.countryFilter='';ui.roleFilter='';ui.inspectedPerson=null;ui.page=run?'simulation':'overview';saveStatus='브라우저에 자동 저장';render();void pruneStoredWorlds(localStorage).catch(()=>{});void pruneArchivedRuns(localStorage).catch(()=>{});
+ stop();playback.reset();soundDirector.reset();mapEditor.reset();deploymentEditor.reset();mapCamera.resetAll();territoryPresetUndo=null;deploymentV30Undo=null;replaySession=null;replayToken++;world=vividWorld(allocateWorldPortraits(enablePersonalAbilities(enableOfficerTraits(prepared.world))));run=prepared.run;ui.seed=run?.seed||ui.seed;ui.historyOffset=0;ui.selected=world.territories[0]?.id;ui.brush=world.countries[0]?.id||'';ui.paint=false;ui.search='';ui.countryFilter='';ui.roleFilter='';ui.inspectedPerson=null;ui.page=run?'simulation':'overview';saveStatus='브라우저에 자동 저장';render();void pruneStoredWorlds(localStorage).catch(()=>{});void pruneArchivedRuns(localStorage).catch(()=>{});
 }});
 mapAnimation.onMapProgress=()=>refreshRecentMapEvents(run,playback,playback.displayWorld||run?.world||world,ui.selectedMapEvent);
 const pages = { overview: ['globe', '세계 개요'], countries: ['flag', '국가 관리'], people: ['people', '인물 관리'], map: ['map', '지도 · 영토'], deployment:['people','시작 배치'], simulation: ['play', '시뮬레이션'] };
@@ -105,11 +106,11 @@ async function persist(showMessage = false) {
  catch(error){if(world!==saving)return;saveStatus='저장 실패 · 파일로 내보내 주세요';notify(error.message,true);}
  const label=$('.save-status');if(label)label.textContent=saveStatus;
 }
-function updateWorld(next,{preserveDeployment=false}={}) { if(!preserveDeployment)next=synchronizeDeployment(next,world);if(ui.page!=='deployment')deploymentEditor.reset();world = vividWorld(validateWorld(enableOfficerTraits(next)));if(!world.territories.some(t=>t.id===ui.selected))ui.selected=world.territories[0]?.id; if(!mapEditor.committing)mapEditor.history=[]; persist(); render(); }
+function updateWorld(next,{preserveDeployment=false}={}) { if(!preserveDeployment)next=synchronizeDeployment(next,world);if(ui.page!=='deployment')deploymentEditor.reset();world = vividWorld(allocateWorldPortraits(validateWorld(enablePersonalAbilities(enableOfficerTraits(next)))));if(!world.territories.some(t=>t.id===ui.selected))ui.selected=world.territories[0]?.id; if(!mapEditor.committing)mapEditor.history=[]; persist(); render(); }
 function stop() { if (timer) clearTimeout(timer); timer = null; auto = false;if(replaySession)replaySession.playing=false; playback.pause();soundDirector.pause(); }
 function navigate(page) { if (!Object.hasOwn(pages, page)) return;if(replaySession)returnFromReplay();stop(); ui.page = page; render(); }
 function setNewWorld(next) {
-  territoryPresetUndo=null;deploymentV30Undo=null;stop(); playback.reset(); mapEditor.reset();deploymentEditor.reset(); mapCamera.resetAll(); world = vividWorld(validateWorld(enableOfficerTraits(next))); replaySession=null;replayToken++;ui.historyOffset=0;run = null; cancelArchivedSave();clearRun(localStorage); ui.selected = world.territories[0]?.id; ui.brush = world.countries[0]?.id || ''; ui.paint = false; ui.search = ''; ui.countryFilter = ''; ui.roleFilter = ''; ui.page = 'overview';ui.inspectedPerson=null; persist(); render();
+  territoryPresetUndo=null;deploymentV30Undo=null;stop(); playback.reset(); mapEditor.reset();deploymentEditor.reset(); mapCamera.resetAll(); world = vividWorld(allocateWorldPortraits(validateWorld(enablePersonalAbilities(enableOfficerTraits(next))))); replaySession=null;replayToken++;ui.historyOffset=0;run = null; cancelArchivedSave();clearRun(localStorage); ui.selected = world.territories[0]?.id; ui.brush = world.countries[0]?.id || ''; ui.paint = false; ui.search = ''; ui.countryFilter = ''; ui.roleFilter = ''; ui.page = 'overview';ui.inspectedPerson=null; persist(); render();
 }
 function openMapFullscreen(){
   ui.page='simulation';ui.mapFullscreen=true;render();
@@ -136,7 +137,7 @@ function render() {
   renderApp($('#app'), `
     <aside class="sidebar">
       <a class="brand" href="#" data-page="overview" aria-label="사국쟁패 Studio 세계 개요"><span class="brand-symbol">${icon('compass', 29)}</span><span><strong>사국쟁패</strong><small>HISTORY STUDIO</small></span></a>
-      <div class="workspace-label">WORKSPACE <span>v0.44.2</span></div>
+      <div class="workspace-label">WORKSPACE <span>v0.45.0</span></div>
       <button class="world-switch" data-action="world-meta"><span class="world-icon">${icon('globe', 19)}</span><span><b>${esc(world.name)}</b><small>나의 세계 · 편집 가능</small></span>${icon('edit', 13)}</button>
       <div class="nav-label">세계 만들기</div>
       <nav aria-label="주요 메뉴">${Object.entries(pages).slice(0, 5).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}<div class="nav-label nav-second">역사 관찰하기</div>${Object.entries(pages).slice(5).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}</nav>
@@ -148,7 +149,7 @@ function render() {
         ${pageHeading()}
         ${['overview','deployment'].includes(ui.page)?territoryPresetNotice():''}
         ${ui.page === 'overview' ? overview() : ui.page === 'countries' ? countriesPage() : ui.page === 'people' ? peoplePage() : ui.page === 'map' ? mapPage() : ui.page === 'deployment'?deploymentEditor.view():ui.page === 'simulation' ? simulationPage() : ''}
-        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.44.2</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><button type="button" class="text-button" data-action="font-licenses">글꼴 라이선스</button><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
+        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.45.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><button type="button" class="text-button" data-action="font-licenses">글꼴 라이선스</button><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
       </main>
     </div>`);
   mapCamera.restore();if(ui.page==='simulation')mapCamera.follow(playback);mapAnimation.start($('#app'),playback);
@@ -271,14 +272,14 @@ function personDialog(id) {
   const original = world.people.find(p => p.id === id), p = original || { name: '', countryId: world.countries[0]?.id || null, role: 'general', ability: 0, personality: 'balanced' };
   openDialog(original ? '인물 수정' : '새 인물 추가', '인물의 소속과 역할, 판정에 더할 능력치를 정하세요.', `<label>인물 이름<input name="name" maxlength="40" required placeholder="예: 진우" value="${esc(p.name)}"></label><div class="fields-two"><label>소속 국가<select name="countryId">${countryOptions(p.countryId)}</select></label><label>직책<select name="role">${Object.entries(ROLES).map(([k, v]) => `<option value="${k}" ${p.role === k ? 'selected' : ''}>${v}</option>`).join('')}</select></label><label>능력 보정<select name="ability">${((p.role==='general'||p.role==='king'&&world.rules.royalDefense)&&world.rules.battleMode==='additive30'?[-4,-3,-2,-1,0,1,2,3,4]:[-2,0,2]).map(v=>`<option value="${v}" ${p.ability===v?'selected':''}>${v>0?'+':''}${v}</option>`).join('')}</select></label><label>성향<select name="personality">${traitOptions(p.personality)}</select></label></div><div class="field-help">국왕·승상은 국가당 각 1명, 장군은 여러 명을 둘 수 있습니다. 국왕 성향은 행동 선택에, 승상 능력은 내정에, 각 장군이 자신의 주둔군으로 전투합니다. 장군 자리 번호가 행동 순서를 정합니다. 영토 수에 따라 필요한 장군만 활성화됩니다.</div>`);
   const profile=officerProfile(p,p.id||'new-general');
-  $('#editor-dialog .dialog-fields').insertAdjacentHTML('beforeend',`<fieldset data-officer-fields ${p.role!=='general'||!world.rules.officerTraits?'hidden':''}><legend>장군 성향 · 전투 능력</legend><label>전투 성향<select name="combatStyle">${Object.entries(OFFICER_STYLES).map(([k,v])=>`<option value="${k}" ${profile.combatStyle===k?'selected':''}>${v.name}</option>`).join('')}</select></label><div class="fields-two"><label>공격 보정<input name="attackAbility" type="number" min="-4" max="4" value="${profile.attackAbility}"></label><label>방어 보정<input name="defenseAbility" type="number" min="-4" max="4" value="${profile.defenseAbility}"></label><label>기동력<input name="mobility" type="number" min="1" max="5" value="${profile.mobility}"></label></div><p class="field-help" data-officer-description>${OFFICER_STYLES[profile.combatStyle].description}</p></fieldset>`);
+  $('#editor-dialog .dialog-fields').insertAdjacentHTML('beforeend',`<fieldset data-officer-fields ${p.role!=='general'||!world.rules.officerTraits?'hidden':''}><legend>장군 성향 · 전투 능력</legend><label>개인 무장 능력<input name="personalAbility" type="number" min="-4" max="4" value="${personalAbility(p)}"><small>성향 보정과 별도로 공격·방어 점수에 더합니다.</small></label><label>전투 성향<select name="combatStyle">${Object.entries(OFFICER_STYLES).map(([k,v])=>`<option value="${k}" ${profile.combatStyle===k?'selected':''}>${v.name}</option>`).join('')}</select></label><div class="fields-two"><label>공격 보정<input name="attackAbility" type="number" min="-4" max="4" value="${profile.attackAbility}"></label><label>방어 보정<input name="defenseAbility" type="number" min="-4" max="4" value="${profile.defenseAbility}"></label><label>기동력<input name="mobility" type="number" min="1" max="5" value="${profile.mobility}"></label></div><p class="field-help" data-officer-description>${OFFICER_STYLES[profile.combatStyle].description}</p></fieldset>`);
   for(const field of ['ability','personality'])$('#editor-dialog [name="'+field+'"]').closest('label').hidden=p.role==='general'&&world.rules.officerTraits;
   const nextSlot=original?.slot??Math.max(-1,...world.people.filter(g=>g.countryId===p.countryId&&g.role==='general').map(g=>g.slot))+1;
   $('#editor-dialog .dialog-fields').insertAdjacentHTML('beforeend',`<div class="fields-two"><label>승상 행동 성향<select name="ministerStyle">${Object.entries(MINISTER_STYLES).map(([k,v])=>`<option value="${k}" ${p.ministerStyle===k?'selected':''}>${v}</option>`).join('')}</select><small>승상에게 적용</small></label><label>장군 자리 번호<input type="number" name="slot" min="1" max="${Math.max(20,Math.ceil(world.territories.length/4))}" value="${nextSlot+1}"><small>장군에게 적용 · 같은 나라에서 중복 불가</small></label><label>개인 지휘한도 보정<select name="commandBonus">${[-1,0,1].map(v=>`<option value="${v}" ${(p.commandBonus||0)===v?'selected':''}>${v>0?'+':''}${v}</option>`).join('')}</select></label><label>특성 설명<input name="feature" maxlength="150" value="${esc(p.feature||'')}"></label></div>`);
   $('#editor-dialog .dialog-fields').insertAdjacentHTML('beforeend', `<fieldset class="portrait-picker"><legend>인물 초상화</legend><label class="auto-portrait"><input type="radio" name="portraitKey" value="" ${!p.portraitKey||!portraitChoices().includes(p.portraitKey)?'checked':''}> 인물별 자동 배정 · 같은 인물은 같은 얼굴을 유지</label><div class="portrait-options">${portraitChoices().map(key=>`<label title="${esc(portraitLabel(key))}"><input type="radio" name="portraitKey" value="${key}" ${p.portraitKey===key?'checked':''}><img src="${portraitSource({portraitKey:key},null)}" alt="${esc(portraitLabel(key))} 초상화" width="60" height="78"></label>`).join('')}</div></fieldset>`);
   dialogHandler = data => {
     const updated = { ...p, feature:data.get('feature'), slot:Number(data.get('slot'))-1, commandBonus:Number(data.get('commandBonus')), ministerStyle:data.get('ministerStyle'), id: original?.id || newId('person'), name: data.get('name'), countryId: data.get('countryId') || null, role: data.get('role'), ability: Number(data.get('ability')), personality: data.get('personality') };
-    if(updated.role==='general'&&world.rules.officerTraits)Object.assign(updated,{combatStyle:data.get('combatStyle'),attackAbility:Number(data.get('attackAbility')),defenseAbility:Number(data.get('defenseAbility')),mobility:Number(data.get('mobility'))});else for(const key of ['combatStyle','attackAbility','defenseAbility','mobility'])delete updated[key];
+    if(updated.role==='general'&&world.rules.officerTraits)Object.assign(updated,{personalAbility:Number(data.get('personalAbility')),combatStyle:data.get('combatStyle'),attackAbility:Number(data.get('attackAbility')),defenseAbility:Number(data.get('defenseAbility')),mobility:Number(data.get('mobility'))});else for(const key of ['personalAbility','combatStyle','attackAbility','defenseAbility','mobility'])delete updated[key];
     if (data.get('portraitKey')) updated.portraitKey = data.get('portraitKey');else delete updated.portraitKey;
     const next = clone(world);
     if (original) next.people[next.people.findIndex(p => p.id === id)] = updated; else next.people.push(updated);
@@ -302,7 +303,7 @@ function beginTurn(play=true) {
   ensureRun();
   if(!playback.complete) { if(play) playback.resume(); return; }
   if(run.result) return;
-  const before=run.world;run=nextTurn(run,{armyAssembly:true,armyFormation:true,unitSpacing:true,frontOperations:true,directArmyRelease:true,royalCapitalSync:true});const record=run.history.at(-1);
+  const before=run.world;run=nextTurn(run,{armyAssembly:true,armyFormation:true,unitSpacing:true,frontOperations:true,directArmyRelease:true,royalCapitalSync:true,personalAbility:true});const record=run.history.at(-1);
   ui.focusedCountry=record.actorId;playback.load(record,before,run.world,play,run.history);
 }
 function step() { stop();beginTurn(); }
@@ -488,6 +489,6 @@ window.addEventListener('beforeunload', event => { if (playback.state&&!playback
 let observerResizeFrame=null;
 window.addEventListener('resize',()=>{if(observerResizeFrame!==null)cancelAnimationFrame(observerResizeFrame);observerResizeFrame=requestAnimationFrame(()=>{observerResizeFrame=null;mapCamera.cancelMotion();mapCamera.resetFollow();mapCamera.restore();if(ui.page==='simulation')mapCamera.follow(playback);mapAnimation.start($('#app'),playback);});});
 $('#editor-dialog').addEventListener('click', event => { if (event.target === $('#editor-dialog')) { $('#editor-dialog').close(); dialogHandler = null; } });
-async function bootStudio(){try{await waitForStudioFonts();const archivedWorld=await loadStoredWorld(localStorage);if(archivedWorld){world=vividWorld(enableOfficerTraits(prepareV13World(archivedWorld)));ui.selected=world.territories[0]?.id;ui.brush=world.countries[0]?.id||'';}const saved=await loadCompletedRun(localStorage);if(saved&&saved.initialWorld.id===world.id){run=saved;ui.seed=saved.seed;await saveCompletedRun(localStorage,saved);}void pruneArchivedRuns(localStorage).catch(()=>{});}catch(error){initialError ||= error.message;}if(!initialError)persist();render();if(initialError)notify(initialError,true);}
+async function bootStudio(){try{await waitForStudioFonts();const archivedWorld=await loadStoredWorld(localStorage);if(archivedWorld){world=vividWorld(enablePersonalAbilities(enableOfficerTraits(prepareV13World(archivedWorld))));ui.selected=world.territories[0]?.id;ui.brush=world.countries[0]?.id||'';}const saved=await loadCompletedRun(localStorage);if(saved&&saved.initialWorld.id===world.id){run=saved;ui.seed=saved.seed;await saveCompletedRun(localStorage,saved);}void pruneArchivedRuns(localStorage).catch(()=>{});}catch(error){initialError ||= error.message;}if(!initialError)persist();render();if(initialError)notify(initialError,true);}
 bootStudio();
 

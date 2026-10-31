@@ -27,6 +27,7 @@ function judgmentTraits(person,role,country){
 export function renderJudgmentOverlay({world,playback}) {
   if(playback.scene?.kind==='unification'&&!playback.complete)return renderUnificationAnnouncement(playback.scene.worldAfter,playback.scene.result);
   if(playback.scene?.kind==='elimination'&&!playback.complete)return renderNationFall(playback.scene);
+  if(playback.scene?.event?.type==='capital_fall'&&playback.scene.kind!=='roll')return `<aside class="global-history-notice" data-notice="capital_fall" aria-live="polite"><strong>${esc(displayEventText(playback.scene.event.title))}</strong><small>${esc(displayEventText(playback.scene.event.detail))}</small></aside>`;
   if(playback.scene?.campaign&&!(playback.scene.campaignPhase==='map'&&playback.scene.kind==='roll'))return renderCampaignOverlay({playback});
   if(!judgmentVisible(playback))return '';
   const state=playback.state,scene=playback.scene,event=scene.event||{},record=state.record;

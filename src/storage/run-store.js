@@ -1,6 +1,6 @@
 import { ENGINE_VERSION,restoreRun } from '../engine/simulation.js';
 export const RUN_STORAGE_KEY='saguk-studio.completed-run.v11';
-export function runSaveData(run){return {kind:'saguk-studio-run',version:1,engineVersion:ENGINE_VERSION,seed:run.seed,initialWorld:run.initialWorld,engineState:{...run.engineState,history:[]},history:run.history,...(run.limitRemovedAt!==undefined?{limitRemovedAt:run.limitRemovedAt}:{})};}
+export function runSaveData(run){return {kind:'saguk-studio-run',version:1,engineVersion:ENGINE_VERSION,seed:run.seed,initialWorld:run.initialWorld,portraitWorld:{people:run.world.people.map(p=>({id:p.id,portraitKey:p.portraitKey,portraitMissing:p.portraitMissing}))},engineState:{...run.engineState,history:[]},history:run.history,...(run.limitRemovedAt!==undefined?{limitRemovedAt:run.limitRemovedAt}:{})};}
 export function saveRun(storage,run){
   try{storage.setItem(RUN_STORAGE_KEY,JSON.stringify(runSaveData(run)));}catch(cause){throw new Error('완료된 턴 자동 저장에 실패했습니다. 전체 역사 기록을 파일로 내보내 주세요.',{cause});}
 }

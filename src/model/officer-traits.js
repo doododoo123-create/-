@@ -8,7 +8,7 @@ export const OFFICER_STYLES=Object.freeze({
 export function assignedOfficerStyle(key){let h=0;for(const c of String(key))h=(Math.imul(h,31)+c.charCodeAt(0))>>>0;return Object.keys(OFFICER_STYLES)[h%5];}
 export function officerProfile(person,key=person.id){
  const combatStyle=Object.hasOwn(OFFICER_STYLES,person.combatStyle||'')?person.combatStyle:assignedOfficerStyle(key),base=OFFICER_STYLES[combatStyle],adjust=Math.sign(person.ability||0);
- return {combatStyle,attackAbility:person.attackAbility??Math.max(-4,Math.min(4,base.attack+adjust)),defenseAbility:person.defenseAbility??Math.max(-4,Math.min(4,base.defense+adjust)),mobility:person.mobility??base.mobility};
+ return {...(person.personalAbility!==undefined?{personalAbility:person.personalAbility}:{}),combatStyle,attackAbility:person.attackAbility??Math.max(-4,Math.min(4,base.attack+adjust)),defenseAbility:person.defenseAbility??Math.max(-4,Math.min(4,base.defense+adjust)),mobility:person.mobility??base.mobility};
 }
 export function enableOfficerTraits(input){
  if(input.rules.battleMode!=='additive30')return input;
@@ -20,4 +20,21 @@ export function officerFatigue(base,g,rules){return rules.officerTraits&&g?.role
 export function officerTargetPreference(style,{defenders,distance,nearest,nearCapital}){
  const army=defenders.reduce((n,g)=>n+g.troops,0);
  return style==='assault'?(defenders.length?4:0):style==='guardian'?(nearCapital?5:0):style==='mobile'?Math.max(0,4-(distance-nearest)*2)+(defenders.length?0:2):style==='cautious'?Math.max(-5,3-army*.4):0;
+}
+
+// Existing named officers retain their authored aptitude; neutral/new officers
+// get a deterministic personal rating without using simulation randomness.
+export function personalAbility(g){
+ if(Number.isInteger(g?.personalAbility))return Math.max(-4,Math.min(4,g.personalAbility));
+ if(g?.ability)return Math.max(-4,Math.min(4,g.ability));
+ let hash=0;for(const c of String(g?.name||g?.id||'officer')+':'+(g?.generation||0))hash=(Math.imul(hash,31)+c.charCodeAt(0))>>>0;
+ return hash%5-2;
+}
+export function addPersonalBonus(side,g,rules){
+ if(!rules.personalAbility||g?.role==='king')return;
+ side.personalAbility=personalAbility(g);side.bonus+=side.personalAbility;
+}
+export function enablePersonalAbilities(input){
+ if(input.rules.battleMode!=='additive30')return input;
+ return {...input,people:input.people.map(p=>p.role==='general'?{...p,personalAbility:personalAbility(p)}:p)};
 }

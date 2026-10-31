@@ -1,4 +1,4 @@
-# 구조 · Studio v0.44.0
+# 구조 · Studio v0.45.0
 
 ## 데이터와 엔진
 
@@ -599,3 +599,12 @@ movementRate와 campaignSceneDuration은 추가 가속1.5다. roll/reel 시간�
 ## v0.44.2 통일 공지
 
 `ui/unification-notice.js`는 기록된 단독 통일 승자와 현재 보이는 세계의 모든 영토 소유를 함께 확인한다. `finish` 사건을 마지막 점령 뒤의 `unification` 장면으로 표시하고 기존 통일 음향을 사용한다. 지도 완료/요약·다시 연 저장에서는 같은 공지를 유지한다. 과거 재생은 해당 playback 기록의 result만 사용하며 진행 중인 실제 경기의 미래 승자를 가져오지 않는다. 엔진/난수·파일 형식은 변경하지 않는다.
+
+
+## v0.45 지도 선행·개인 능력·초상 배정
+
+- `campaign-playback.compactCampaignScenes`의 내부 reportAfterMap 분기는 지도 장면을 먼저 보존하고 마지막에 worldBefore===worldAfter인report 장면을 추가한다. 애플리케이션에서 고정 사용하며 사용자 설정 스위치는 없다. 전투 행은 전부 completed로 렌더하며 기존 표 틀과 스크롤만 사용한다. 과거 순차 다이스 방식은 개별 상세 보기와 낮은 수준 API 호환용으로 유지한다.
+- `presentation-tempo.criticalScene`는 실제 전사/임관 적용·수도/멸망 알림만 판별한다. TurnPlayback.effectiveSpeed와 animationRate를 모두1로 만들어 타이머·CSS/지도·SoundDirector가 동일한 시계를 쓴다. 선택 배속은 수정하지 않는다. armyMovementDurationScale=1.4를 실제 이동 duration에 곱하고 animationRate에는 역수로 적용한다.
+- 엔진35는34 이하를 계속 읽는다. 개인 능력은 `model/officer-traits.personalAbility/addPersonalBonus`에서 계산하고 세계 검증은 optional personalAbility 정수−4~+4를 보존한다. `nextTurn`의 controls.personalAbility를 검증하며 연속 공세/순차 방어/단순 D30 세 경로에 동일한 별도 항을 더한다. 이전 controls 누락은false이며 기록의 초기 세계/RNG를 마이그레이션하지 않는다.
+- `model/portrait-keys.js`는 이미지 바이트와 독립적인90개 ID/기본 키 규칙이다. `model/portrait-allocation.js`는 전 국가의 살아 있는 인물 배정을 한 번에 계산한다. 직전 표시 세계에서 살아남은 사람의 키→선호 키→역할 우선 빈 풀 순으로 배정하고,없으면 portraitMissing으로 이름 약자를 렌더한다. 멸망/전사 인물은 키를 독점하지 않는다.
+- projection은 시각 배정만 붙이며 엔진 상태나 난수를 바꾸지 않는다. 사건 frame은 시간 순서로 직전 frame의 키를 사용하고 최종 world에도 마지막 배정을 반영한다. 진행 저장/큰 저장소/역사2의 optional portraitWorld에 ID별 키를 보존하여 재개 후 얼굴이 바뀌지 않게 한다. 과거 파일에 이 항목이 없어도 전역 중복 없는 배정을 재구성한다. 세계2/진행1/역사2의 버전은 유지하되 새 전투는 엔진35가 필요하다.

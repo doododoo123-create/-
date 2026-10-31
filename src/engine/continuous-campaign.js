@@ -1,4 +1,4 @@
-import {officerAbility,officerFatigue} from '../model/officer-traits.js';
+import {addPersonalBonus,officerAbility,officerFatigue} from '../model/officer-traits.js';
 import {beginReadiness,recordDefeat,clearReadiness,battleReady,fieldOfficers} from './war-readiness.js';
 import {royalDefender,returnRoyalToCapital} from './royal-army.js';
 import { expeditionRoute,expeditionChance,fieldPaths } from './field-command.js';
@@ -95,7 +95,7 @@ export function resolveContinuousCampaign(ctx){
      Object.assign(b.attack,{raw:av,wins:g.wins,...(rules.underdogExperience?{underdogWins:g.underdogWins||0}:{}),...combatBonuses(g.troops,d.troops,officerAbility(g,'attack',rules),g.wins,'plain',rules,g.underdogWins||0),movementEdges:root.travel.get(campaignOfficerKey(nation,g))||0});
      Object.assign(b.defense,{raw:dv,wins:d.wins,...(rules.underdogExperience?{underdogWins:d.underdogWins||0}:{}),...combatBonuses(d.troops,g.troops,officerAbility(d,'defense',rules),d.wins,b.terrain,rules,d.underdogWins||0),movementEdges:root.travel.get(campaignOfficerKey(enemy,d))||0});
      if(rules.warReadiness){b.attack.confusionBonus=g.confusion?-g.confusion:0;b.defense.confusionBonus=d.confusion?-d.confusion:0;}
-     for(const side of [b.attack,b.defense]){if(rules.officerTraits){side.officerRole=side===b.attack?'attack':'defense';side.mobility=(side===b.attack?g:d).mobility??3;}side.bonus+=side.confusionBonus||0;side.fatigueBonus=officerFatigue(movementFatigue(side.movementEdges,rules),side===b.attack?g:d,rules);side.bonus+=side.fatigueBonus;side.score=side.raw+side.bonus;}
+     for(const side of [b.attack,b.defense]){addPersonalBonus(side,side===b.attack?g:d,rules);if(rules.officerTraits){side.officerRole=side===b.attack?'attack':'defense';side.mobility=(side===b.attack?g:d).mobility??3;}side.bonus+=side.confusionBonus||0;side.fatigueBonus=officerFatigue(movementFatigue(side.movementEdges,rules),side===b.attack?g:d,rules);side.bonus+=side.fatigueBonus;side.score=side.raw+side.bonus;}
      b.winner=b.attack.score===b.defense.score?null:b.attack.score>b.defense.score?nation:enemy;
      emit('attack_roll',g.name+' 공격 주사위','실제 이동의 누적 피로 포함',{battleIndex:index,nation,slot:g.slot,role:'general',roll:av,faces:b.sides,side:b.attack});
      emit('defense_roll',d.name+' 방어 주사위','현지·복귀·구원 수비',{battleIndex:index,nation:enemy,slot:d.slot,role:d.role||'general',roll:dv,faces:b.sides,side:b.defense});

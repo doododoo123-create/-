@@ -1,4 +1,5 @@
-import {officerProfile} from '../model/officer-traits.js';
+import {allocateWorldPortraits} from '../model/portrait-allocation.js';
+import {personalAbility,officerProfile} from '../model/officer-traits.js';
 import {BALANCE_V27_SWITCHES} from '../model/balance-v27.js';
 import { MAP_SCALE_DEFAULTS } from '../model/map-scale.js';
 import { planCommandMovements, validCamps, fieldCamps } from './command-movement.js';
@@ -6,7 +7,7 @@ import { clone,validateWorld,landCount,countryPeople,neighbors } from '../model/
 import { V11_ATLAS,V11_NATIONS } from '../data/v11-preset.js';
 import { seaSupplyPorts } from '../model/sea-supply.js';
 import { createV11Engine } from './v11-core.js';
-export const ENGINE_VERSION='studio-v11-34';
+export const ENGINE_VERSION='studio-v11-35';
 const engineCache=new WeakMap();
 export const livingCountries=world=>world.countries.filter(c=>landCount(world,c.id)>0);
 export function numericSeed(seed){const text=String(seed??123456).trim();if(!/^\d+$/.test(text)||Number(text)>4294967295)throw new Error('원본과 같은 난수를 사용하려면 시드를 0~4294967295 정수로 입력해 주세요.');return Number(text)>>>0;}
@@ -31,17 +32,17 @@ export function engineFor(definition){
   const result={engine,ids,territoryIds:definition.territories.map(t=>t.id)};engineCache.set(definition,result);return result;
 }
 function projectRoyal(person,c,id,territoryIds,engine){const g=c.royal;return {...person,...g,id:g.generation?`monarch-${id}-${g.generation}`:person.id,countryId:id,stationId:territoryIds[g.station]||null,positionId:territoryIds[g.position]||null,capacity:engine.capacity(c,g)};}
-export function projectWorld(definition,state,providedEngine=null){
+export function projectWorld(definition,state,providedEngine=null,previousWorld=null){
   const {engine,ids,territoryIds}=providedEngine||engineFor(definition);
   const countries=definition.countries.map((base,i)=>{const c=state.countries[i];return {...base,troops:c.army,reserve:c.reserve,recruitment:c.extraRecruitment,supplyBonus:c.supplyBonus,ownTurns:c.ownTurns,capitalId:territoryIds[engine.capitalCell(state,i)]||null,...(definition.rules.advancedCampaign&&definition.rules.fieldCommand&&definition.rules.battleMode==='additive30'?{armyLimit:engine.lands(state,i)*definition.rules.territoryArmyLimit,reinforcementRoom:Math.max(0,engine.lands(state,i)*definition.rules.territoryArmyLimit-c.army)}:{}),...(c.reorganization!==undefined?{reorganization:c.reorganization}:{}),...(c.strategy?{strategy:{...clone(c.strategy),primaryId:ids[c.strategy.primary]||null,temporaryId:ids[c.strategy.temporary]||null}}:{}),...(definition.rules.territoryRecruitment||definition.rules.capitalDisruption||definition.rules.royalDefense?{production:engine.productionPlan(state,i),royalTroops:c.royal?.troops,royalAlive:c.royal?.alive,capitalShock:c.capitalShock||0,unassignedTroops:c.reserve+(c.reorganization||0)}:{}),commanders:c.generals.filter(g=>g.active&&g.alive).length,...(c.initialUnassigned?{initialUnassigned:c.initialUnassigned}:{})};});
   const people=[];
   for(let i=0;i<countries.length;i++){
     const configured=countryPeople(definition,ids[i]);people.push(...configured.filter(p=>p.role!=='general').map(p=>p.role==='king'&&state.countries[i].royal?projectRoyal(p,state.countries[i],ids[i],territoryIds,engine):p));
     if(state.countries[i].royal&&!configured.some(p=>p.role==='king'))people.push(projectRoyal({id:`monarch-${ids[i]}-0`,role:'king',personality:definition.countries[i].personality},state.countries[i],ids[i],territoryIds,engine));
-    for(const g of state.countries[i].generals){const original=configured.find(p=>p.role==='general'&&p.slot===g.slot);if(!original&&!g.active&&!g.generation)continue;const station=engine.stationCell(state,i,g.slot),displaced=g.active&&g.alive&&Number.isInteger(g.position)&&state.cells[g.position]?.owner!==i,stranded=!!g.stranded||(definition.rules.retreatMode==='blocked'&&g.stranded!==undefined&&displaced);people.push({...(original||{}),id:g.generation||!original?`officer-${ids[i]}-${g.slot}-${g.generation}`:original.id,countryId:ids[i],name:g.name,role:'general',...(definition.rules.officerTraits?{combatStyle:g.combatStyle,attackAbility:g.attackAbility,defenseAbility:g.defenseAbility,mobility:g.mobility}:{}),personality:original?.personality||'balanced',feature:g.feature,ability:g.ability,commandBonus:g.commandBonus,slot:g.slot,...(g.confusion!==undefined?{confusion:g.confusion,...(g.restedThisSeason!==undefined?{restedThisSeason:g.restedThisSeason}:{}),readiness:g.readiness?clone(g.readiness):null}:{}),troops:g.troops,capacity:engine.capacity(state.countries[i],g),active:g.active,alive:g.alive,waited:g.waited,generation:g.generation,...(g.wins!==undefined?{wins:g.wins}:{}),...(g.underdogWins!==undefined?{underdogWins:g.underdogWins}:{}),...(g.stranded!==undefined?{stranded,displaced}:{}),stationId:territoryIds[station]||null,...(definition.rules.battleMode==='additive30'&&definition.rules.fieldCommand?{positionId:territoryIds[g.position]||null}:{}),connected:g.active&&!stranded&&station!==null?engine.capitalConnected(state,i,g.slot):false,territoryIds:state.cells.filter(t=>t.owner===i&&t.commander===g.slot).map(t=>territoryIds[t.id])});}
+    for(const g of state.countries[i].generals){const original=configured.find(p=>p.role==='general'&&p.slot===g.slot);if(!original&&!g.active&&!g.generation)continue;const station=engine.stationCell(state,i,g.slot),displaced=g.active&&g.alive&&Number.isInteger(g.position)&&state.cells[g.position]?.owner!==i,stranded=!!g.stranded||(definition.rules.retreatMode==='blocked'&&g.stranded!==undefined&&displaced);people.push({...(original||{}),id:g.generation||!original?`officer-${ids[i]}-${g.slot}-${g.generation}`:original.id,countryId:ids[i],name:g.name,role:'general',...(definition.rules.officerTraits?{combatStyle:g.combatStyle,attackAbility:g.attackAbility,defenseAbility:g.defenseAbility,mobility:g.mobility}:{}),personality:original?.personality||'balanced',feature:g.feature,ability:g.ability,...(definition.rules.battleMode==='additive30'?{personalAbility:personalAbility(g)}:{}),commandBonus:g.commandBonus,slot:g.slot,...(g.confusion!==undefined?{confusion:g.confusion,...(g.restedThisSeason!==undefined?{restedThisSeason:g.restedThisSeason}:{}),readiness:g.readiness?clone(g.readiness):null}:{}),troops:g.troops,capacity:engine.capacity(state.countries[i],g),active:g.active,alive:g.alive,waited:g.waited,generation:g.generation,...(g.wins!==undefined?{wins:g.wins}:{}),...(g.underdogWins!==undefined?{underdogWins:g.underdogWins}:{}),...(g.stranded!==undefined?{stranded,displaced}:{}),stationId:territoryIds[station]||null,...(definition.rules.battleMode==='additive30'&&definition.rules.fieldCommand?{positionId:territoryIds[g.position]||null}:{}),connected:g.active&&!stranded&&station!==null?engine.capitalConnected(state,i,g.slot):false,territoryIds:state.cells.filter(t=>t.owner===i&&t.commander===g.slot).map(t=>territoryIds[t.id])});}
   }
   const territories=definition.territories.map((t,i)=>{const cell=state.cells[i],commander=people.find(p=>p.countryId===ids[cell.owner]&&p.role==='general'&&p.slot===cell.commander);return {...t,ownerId:ids[cell.owner],commanderSlot:cell.commander,commanderId:commander?.id||null};});
-  return {...definition,rules:{...definition.rules,roundLimit:state.roundLimit},countries,people,territories};
+  return allocateWorldPortraits({...definition,rules:{...definition.rules,roundLimit:state.roundLimit},countries,people,territories},previousWorld||definition);
 }
 function resultFor(state,ids){return state.result?{reason:state.result.reason==='conquest'?'unification':'limit',winnerIds:state.result.winners.map(i=>ids[i]),round:state.result.round,turn:state.result.turns}:null;}
 function normalizeRecord(raw,before,after,definition,state,context){
@@ -52,7 +53,8 @@ function normalizeRecord(raw,before,after,definition,state,context){
   const production=raw.events.filter(e=>e.type==='round_end').flatMap(e=>e.gains.map(g=>({...g,countryId:ids[g.id],name:definition.countries[g.id].name})));
   const eliminatedIds=raw.events.filter(e=>e.type==='elimination').map(e=>ids[e.target]);
   const record={turn:raw.number,round:raw.round,actorId:actor.id,actorName:actor.name,color:actor.color,type:raw.kind,title:`${actor.name} · ${raw.summary}`,detail:raw.summary,action:raw.action,success:raw.kind==='domestic'?raw.success:changes.some(c=>c.to===actor.id),rolls,events,battles,changes,production,eliminatedIds,result:resultFor(state,ids),beforeStats:raw.before,afterStats:raw.after,domesticScore:raw.domesticScore||null,defenderId:ids[raw.target]||null};
-  let visible=before;const frames=raw.events.map(e=>{const next=e.view?projectWorld(definition,{...state,...e.view},context):visible;const frame={before:visible,after:next};visible=next;return frame;});
+  let visible=before;const frames=raw.events.map(e=>{const next=e.view?projectWorld(definition,{...state,...e.view},context,visible):visible;const frame={before:visible,after:next};visible=next;return frame;});
+  Object.assign(after,allocateWorldPortraits(after,visible));
   Object.defineProperty(record,'frames',{value:frames,enumerable:false});Object.defineProperty(record,'finalWorld',{value:after,enumerable:false});
   return record;
 }
@@ -67,12 +69,12 @@ export function createRun(input,seed=123456){
 export function currentActor(run){return run.result?null:run.world.countries.find(c=>c.id===run.schedule[run.scheduleIndex])||null;}
 export function nextTurn(input,controls){
   if(input.result)return input;
-  if(['armyAssembly','armyFormation','unitSpacing','frontOperations','directArmyRelease','royalCapitalSync'].some(key=>controls?.[key]!==undefined&&typeof controls[key]!=='boolean'))throw Error('집단군 집결 설정이 올바르지 않습니다.');
+  if(['armyAssembly','armyFormation','unitSpacing','frontOperations','directArmyRelease','royalCapitalSync','personalAbility'].some(key=>controls?.[key]!==undefined&&typeof controls[key]!=='boolean'))throw Error('집단군 집결 설정이 올바르지 않습니다.');
   const context=engineFor(input.initialWorld),ctl=controls?{...controls}:undefined;
   if(ctl?.targetId!==undefined&&typeof ctl.targetId==='string')ctl.targetId=context.ids.indexOf(ctl.targetId);
   if(ctl?.targetCells)ctl.targetCells=Object.fromEntries(Object.entries(ctl.targetCells).map(([slot,id])=>[slot,typeof id==='string'?context.territoryIds.indexOf(id):id]));
   const prepared=context.engine.prepareTurn(input.engineState,ctl),state={...prepared.state,history:[]};
-  const world=projectWorld(input.initialWorld,state,context),record=normalizeRecord(prepared.record,input.world,world,input.initialWorld,state,context);
+  const world=projectWorld(input.initialWorld,state,context,input.world),record=normalizeRecord(prepared.record,input.world,world,input.initialWorld,state,context);
   record.seasonStart=input.engineState.scheduleIndex===0;
   world.visualCamps=planCommandMovements(record,input.world,world,input.world.visualCamps);if(controls)record.controls=clone(controls);
   return {...input,rng:state.rng,world,engineState:state,round:state.round,turn:state.turns,schedule:state.schedule.map(i=>context.ids[i]),scheduleIndex:state.scheduleIndex,history:[...input.history.map(r=>r.frames?{...r}:r),record],result:resultFor(state,context.ids),referenceRecord:prepared.record};
@@ -90,7 +92,7 @@ export function removeRunLimit(run){
 export function casualty(own,enemy,rate){const base=rate*100;if(!own||!enemy||!base)return 0;const n=own*base*enemy*2,d=(own+enemy)*100;return Math.min(own,Math.max(1,Math.floor((n*2+d)/(d*2))));}
 export function borderTargets(world,id){return world.territories.filter(t=>t.ownerId!==id&&neighbors(world,t).some(n=>n.ownerId===id));}
 export function definitionForVersion(initialWorld,engineVersion){
-  if(![ENGINE_VERSION,'studio-v11-33','studio-v11-32','studio-v11-31','studio-v11-30','studio-v11-29','studio-v11-28','studio-v11-27','studio-v11-26','studio-v11-25','studio-v11-24','studio-v11-23','studio-v11-22','studio-v11-21','studio-v11-20','studio-v11-19','studio-v11-18','studio-v11-17','studio-v11-16','studio-v11-15','studio-v11-14','studio-v11-13','studio-v11-12','studio-v11-11'].includes(engineVersion))throw new Error('현재 v11 엔진과 다른 실행 저장입니다.');
+  if(![ENGINE_VERSION,'studio-v11-34','studio-v11-33','studio-v11-32','studio-v11-31','studio-v11-30','studio-v11-29','studio-v11-28','studio-v11-27','studio-v11-26','studio-v11-25','studio-v11-24','studio-v11-23','studio-v11-22','studio-v11-21','studio-v11-20','studio-v11-19','studio-v11-18','studio-v11-17','studio-v11-16','studio-v11-15','studio-v11-14','studio-v11-13','studio-v11-12','studio-v11-11'].includes(engineVersion))throw new Error('현재 v11 엔진과 다른 실행 저장입니다.');
   const source=clone(initialWorld),revision=Number(engineVersion.split('-').at(-1));if(revision<34&&source?.rules)source.rules.officerTraits=false;
   if(revision<29&&source?.rules)for(const key of ['seasonRestConfusion','royalCapitalGuard'])source.rules[key]??=false;
   if(revision<28&&source?.rules)source.rules.resetConfusionOnRest??=false;
@@ -121,6 +123,6 @@ export function restoreRun(data){
   for(let i=0;i<data.history.length;i++){const r=data.history[i];if(r.turn!==i+1||!context.ids.includes(r.actorId)||!Array.isArray(r.rolls)||!Array.isArray(r.battles)||!Array.isArray(r.events)||!r.rolls.every(d=>Number.isInteger(d.value)&&Number.isInteger(d.sides)&&d.value>=1&&d.value<=d.sides))throw new Error('저장된 판정 기록이 올바르지 않습니다.');}
   if(data.limitRemovedAt!==undefined&&(!Number.isSafeInteger(data.limitRemovedAt)||data.limitRemovedAt<0||data.limitRemovedAt>state.turns||state.roundLimit!==null))throw Error('진행 제한 해제 기록이 올바르지 않습니다.');
   state.history=[];
-  const restoredWorld=projectWorld(definition,state,context);restoredWorld.visualCamps=definition.rules.battleMode==='additive30'&&definition.rules.fieldCommand?fieldCamps(restoredWorld):validCamps(restoredWorld,data.history.at(-1)?.campsAfter);
+  const restoredWorld=projectWorld(definition,state,context,data.portraitWorld||null);restoredWorld.visualCamps=definition.rules.battleMode==='additive30'&&definition.rules.fieldCommand?fieldCamps(restoredWorld):validCamps(restoredWorld,data.history.at(-1)?.campsAfter);
   return {engineVersion:ENGINE_VERSION,seed:String(state.seed),rng:state.rng,initialWorld:definition,world:restoredWorld,engineState:state,round:state.round,turn:state.turns,schedule:state.schedule.map(i=>context.ids[i]),scheduleIndex:state.scheduleIndex,history:clone(data.history),...(data.limitRemovedAt!==undefined?{limitRemovedAt:data.limitRemovedAt}:{}),result:resultFor(state,context.ids),referenceRecord:null};
 }

@@ -1,4 +1,4 @@
-import {officerAbility,officerFatigue} from '../model/officer-traits.js';
+import {addPersonalBonus,officerAbility,officerFatigue} from '../model/officer-traits.js';
 import { capitalFall } from './capital-fall.js';
 import { campaignDeath } from './campaign-deaths.js';
 import { initializeStrategy } from './strategic-targets.js';
@@ -79,7 +79,7 @@ export function resolveCampaign(ctx){
     const suffix=wave?':'+wave:'',av=die('attack:'+slot+suffix,b.sides),dv=die('defense:'+slot+suffix,b.sides);
     Object.assign(b.attack,{raw:av,wins:a.wins,...(rules.underdogExperience?{underdogWins:a.underdogWins||0}:{}),...combatBonuses(a.troops,d.troops,officerAbility(a,'attack',rules),a.wins,'plain',rules,a.underdogWins||0),movementEdges:route.path.length-1,fatigueBonus:officerFatigue(movementFatigue(route.path.length-1,rules),a,rules)});
     Object.assign(b.defense,{raw:dv,wins:d.wins,...(rules.underdogExperience?{underdogWins:d.underdogWins||0}:{}),...combatBonuses(d.troops,a.troops,officerAbility(d,'defense',rules),d.wins,b.terrain,rules,d.underdogWins||0),movementEdges:entry.path.length-1,fatigueBonus:officerFatigue(movementFatigue(entry.path.length-1,rules),d,rules)});
-    for(const side of [b.attack,b.defense]){side.bonus+=side.fatigueBonus;side.score=side.raw+side.bonus;}
+    for(const side of [b.attack,b.defense]){addPersonalBonus(side,side===b.attack?a:d,rules);side.bonus+=side.fatigueBonus;side.score=side.raw+side.bonus;}
     b.winner=b.attack.score===b.defense.score?null:b.attack.score>b.defense.score?actor:opponent;
     emit('attack_roll',a.name+' 공격 주사위','이동 피로 포함 최종 점수',{battleIndex:index,nation:actor,slot,role:'general',roll:av,faces:b.sides,side:b.attack});
     emit('defense_roll',d.name+' 방어 주사위','이동 피로 포함 최종 점수',{battleIndex:index,nation:opponent,slot:d.slot,role:'general',roll:dv,faces:b.sides,side:b.defense});

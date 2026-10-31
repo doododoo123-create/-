@@ -21,7 +21,7 @@ export function saveCompletedRun(storage,run){
  // Only compact enumerable records are retained. Intermediate scene frames are reconstructed on demand.
  const count=run.history.length,from=session.namespaced?Math.floor(session.saved/ARCHIVE_CHUNK):0,end=Math.ceil(count/ARCHIVE_CHUNK),chunks=[];
  for(let i=from;i<end;i++)chunks.push([i,run.history.slice(i*ARCHIVE_CHUNK,(i+1)*ARCHIVE_CHUNK).map(record=>({...record}))]);
- const metadata={kind:'saguk-studio-run',version:1,engineVersion:ENGINE_VERSION,seed:run.seed,initialWorld:run.initialWorld,engineState:{...run.engineState,history:[]},...(run.limitRemovedAt!==undefined?{limitRemovedAt:run.limitRemovedAt}:{}),count,id:session.id,namespaced:true};
+ const metadata={kind:'saguk-studio-run',version:1,engineVersion:ENGINE_VERSION,seed:run.seed,initialWorld:run.initialWorld,portraitWorld:{people:run.world.people.map(p=>({id:p.id,portraitKey:p.portraitKey,portraitMissing:p.portraitMissing}))},engineState:{...run.engineState,history:[]},...(run.limitRemovedAt!==undefined?{limitRemovedAt:run.limitRemovedAt}:{}),count,id:session.id,namespaced:true};
  const job=async()=>{
   if(epoch!==archiveEpoch)return;const db=await openRunArchive();if(epoch!==archiveEpoch)return;
   await archiveTransaction(db,'readwrite',tx=>{for(const [key,value] of chunks)tx.objectStore('chunks').put(value,[session.id,key]);tx.objectStore('metadata').put(metadata,session.id);});

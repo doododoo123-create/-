@@ -1,7 +1,7 @@
 import {unificationCountry} from './unification-notice.js';
 import {cohortMapScenes,parallelReturnScenes} from './battle-cohorts.js';
 import {directUnopposedScenes,formationScenes} from './studio-scenes-v36.js';
-import {animationRate} from './presentation-tempo.js';
+import {criticalScene,animationRate} from './presentation-tempo.js';
 import {compactCampaignScenes,campaignSceneDuration} from './campaign-playback.js';
 import { movementScenes } from './movement-scenes.js';
 import { scoreBonusItems } from './score-accumulation.js';
@@ -48,7 +48,7 @@ export class TurnPlayback {
     Object.assign(this,{onChange,onFinish,speed,options,reducedMotion,schedule,cancel,now});
     this.groupEnd=null;this.groupDone=false;this.state=null;this.handle=null;this.remaining=0;this.deadline=0;this.scheduledSpeed=1;
   }
-  get effectiveSpeed(){return this.options().kingChoiceNormalSpeed&&this.scene?.kind==='reel'&&this.scene.event?.type==='king'?1:this.speed();}
+  get effectiveSpeed(){if(criticalScene(this.scene))return 1;return this.options().kingChoiceNormalSpeed&&this.scene?.kind==='reel'&&this.scene.event?.type==='king'?1:this.speed();}
   get animationSpeed(){return this.effectiveSpeed*animationRate(this.scene);}
   get scene(){return this.state?.scenes[this.state.index]||null;}
   get playing(){return !!this.state?.playing;}
@@ -60,7 +60,7 @@ export class TurnPlayback {
   duration(){return this.scene?.kind==='campaign'?campaignSceneDuration(this.scene):observerDuration(this.scene,this.state.record,this.state.phase==='departing'?'departing':this.state.effectStage||this.state.phase,this.reducedMotion());}
   clearTimer(){if(this.handle!==null)this.cancel(this.handle);this.handle=null;}
   load(record,before,after,play=true,history=[]){
-    this.clearTimer();this.groupEnd=null;this.groupDone=false;this.detailReturn=null;this.campaignExpanded=false;const modern=!!this.options().armyPresentation,raw=makeTurnScenes(record,before,history),original=(modern?parallelReturnScenes(formationScenes(directUnopposedScenes(raw,record))):raw).map(s=>modern?{...s,rapidMovement:true}:s),compact=this.options().compactCampaigns?compactCampaignScenes(original,record,{modern}):original,scenes=modern?cohortMapScenes(compact,record):compact;scenes.at(-1).worldAfter=after;
+    this.clearTimer();this.groupEnd=null;this.groupDone=false;this.detailReturn=null;this.campaignExpanded=false;const modern=!!this.options().armyPresentation,raw=makeTurnScenes(record,before,history),original=(modern?parallelReturnScenes(formationScenes(directUnopposedScenes(raw,record))):raw).map(s=>modern?{...s,rapidMovement:true}:s),compact=this.options().compactCampaigns?compactCampaignScenes(original,record,{modern,reportAfterMap:modern&&!!this.options().armyResultReport}):original,scenes=modern?cohortMapScenes(compact,record):compact;scenes.at(-1).worldAfter=after;
     this.state={record,before,after,scenes,latestRoutes:modern,turnRoutes:modern,index:0,previousRoundRecords:history.filter(r=>r.round===record.round-1),roundRecords:history.filter(r=>r.round===record.round&&r.turn<record.turn),phase:['roll','reel'].includes(scenes[0].kind)?'rolling':'holding',playing:play,finished:false};
     this.remaining=this.duration();this.onChange();if(play)this.arm();
   }
