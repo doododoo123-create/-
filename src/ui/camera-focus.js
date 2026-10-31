@@ -51,6 +51,13 @@ export function battleFraming(scene,record,viewport={width:1200,height:800}){
 }
 export function sceneFocus(scene,record){
  if(!scene?.event||scene.kind==='summary')return null;const world=scene.worldAfter||scene.worldBefore;if(!world)return null;
+ // Hold the rally point throughout every participant's approach, the forming
+ // animation and its brief completed view. Do not chase individual arrivals.
+ const group=scene.formationGroup||scene.event.armyGroup;
+ if(scene.event.type==='army_assembly'&&group?.members?.length>=2){
+  const territory=world.territories[group.location];
+  if(territory)return mapAnchor(world,territory.id,'station');
+ }
  if(scene.kind==='movement'&&scene.moves?.length)return mapAnchor(world,scene.moves[0].toId,'station');
  const battle=record.battles?.[scene.battleIndex];if(battle)return mapAnchor(world,battle.territoryId,'battle');
  if(scene.event.type==='round_end')return [600,400];

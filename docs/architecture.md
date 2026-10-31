@@ -623,3 +623,8 @@ movementRate와 campaignSceneDuration은 추가 가속1.5다. roll/reel 시간�
 - 첫 `controls.recruitExiles:true`의 exileIdentities에 실제 기존 ID/사진과 초기 인물 여부를 기록한다. 이전 사진 대여 충돌은 원래 인물 우선으로 정리한다. 신원이 알려진 살아 있는 후보의 portraitClaims를 예약하고 투영에서 배정한 실제 키는 엔진 신원에 동기화한다. 새 모드 정렬은 코드 단위 비교로 Node/브라우저 locale 차이를 피한다. 신원/사진은 게임 난수를 소비하지 않는다.
 - TurnPlayback은 report만 effectiveSpeed=1,1000ms로 예약하고 다음 apply 앞의 departing 대기를 생략한다. 재등용 roster의 국가 이동도 criticalScene 임관으로 판단한다. 기존 UI 박스를 사용하며 지역 탈영의 일반 병력 증감 문구와 원인 문구를 중복 표시하지 않는다. 대기 풀 손실은 왕의 실제 병력과 구분한다.
 - 엔진37이36 이하를 읽으며 과거 controls 누락은 기존 분기다. 세계2/진행1/역사2 형식을 유지하고 엔진 상태의 optional 지속 플래그/신원 metadata를 저장한다. UI에 규칙 스위치/모바일판을 추가하지 않는다.
+
+
+## v0.46.1 집결 카메라와 확인 시간
+
+`camera-focus.js`가 공격/수비의 army_assembly 동안 개별 이동 목적지 대신 기록된 집결 영토를 선택한다. `studio-scenes-v36.js`는 마지막 집결 장면 뒤 기존 army-forming과 완성 확인 army-formed-hold를 연결한다. 확인은 observerDuration 300ms, TurnPlayback 유효 배속1로 재생하고 정지 시 남은 시간을 유지한다. 다음 진군은 기존 시점 추적과 선택 배속을 사용한다. 화면 장면만 추가하며 엔진37·실제 이동·피로·저장된 사건은 바꾸지 않는다.

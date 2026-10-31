@@ -75,4 +75,4 @@ function baseDuration(scene,record,phase,reduced=false){
  return 150;
 }
 
-export function observerDuration(scene,record,phase,reduced=false){const duration=baseDuration(scene,record,phase,reduced);if(criticalScene(scene))return phase==='departing'?0:Math.max(duration,reduced?700:1600);return scene.kind==='reel'?duration:duration*armyMovementDurationScale(scene)/PRESENTATION_RATE/movementRate(scene);}
+export function observerDuration(scene,record,phase,reduced=false){if(scene.kind==='army-formed-hold')return 300;const duration=baseDuration(scene,record,phase,reduced);if(criticalScene(scene))return phase==='departing'?0:Math.max(duration,reduced?700:1600);return scene.kind==='reel'?duration:duration*armyMovementDurationScale(scene)/PRESENTATION_RATE/movementRate(scene);}

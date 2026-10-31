@@ -31,7 +31,9 @@ export function formationScenes(scenes){
   }
   result.push(scene);
   if(e?.type==='army_assembly'&&group?.members.length>=2&&scenes[i+1]?.event?.index!==e.index){
-   result.push({...scene,id:'army-formed-'+group.id,kind:'army-forming',title:'집단군 결성',formationGroup:group,worldBefore:scene.worldAfter,worldAfter:scene.worldAfter,campsBefore:scene.camps,moves:[]});
+   const formed={...scene,formationGroup:group,worldBefore:scene.worldAfter,worldAfter:scene.worldAfter,campsBefore:scene.camps,moves:[]};
+   result.push({...formed,id:'army-formed-'+group.id,kind:'army-forming',title:'집단군 결성'});
+   result.push({...formed,id:'army-formed-hold-'+group.id,kind:'army-formed-hold',title:'집단군 결성 완료'});
   }
  }
  return result;

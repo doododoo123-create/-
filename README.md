@@ -1,8 +1,16 @@
-# 사국쟁패 Studio v0.46.0 · 망국 장수 재등용과 권역별 병력 유지
+# 사국쟁패 Studio v0.46.1 · 집단군 집결 시점
 
-**[바로 실행할 HTML 다운로드](https://github.com/doododoo123-create/-/raw/refs/tags/v0.46.0/사국쟁패%20Studio.html)**
+**[바로 실행할 HTML 다운로드](https://github.com/doododoo123-create/-/raw/refs/tags/v0.46.1/사국쟁패%20Studio.html)**
 
 HTML을 저장해 최신 Chrome·Edge에서 여세요. 설치·인터넷 연결 없이 실행하는 일반판 하나입니다.
+
+## v0.46.1 변경
+
+- 시점 고정을 켜면 집결지에 시점을 유지한 채 지휘관들이 모이는 모습을 보여줍니다. 각 지휘관을 따로 따라가지 않습니다.
+- 결성 애니메이션 뒤 완성된 집단군을 배속과 관계없이 0.3초 보여주고, 이후 진군을 따라갑니다. 확대 배율과 시점 고정 해제 상태를 유지합니다.
+- 실제 이동거리·피로·전투·보급 규칙과 기존 저장은 그대로입니다.
+
+[구현과 검증](docs/validation-v0.46.1.md)
 
 ## v0.46.0 변경
 
@@ -100,7 +108,7 @@ HTML을 저장해 최신 Chrome·Edge에서 여세요. 설치·인터넷 연결 
 
 ## 설치 없이 실행
 
-**[일반판 HTML 다운로드](https://github.com/doododoo123-create/-/raw/refs/tags/v0.46.0/사국쟁패%20Studio.html)**
+**[일반판 HTML 다운로드](https://github.com/doododoo123-create/-/raw/refs/tags/v0.46.1/사국쟁패%20Studio.html)**
 
 모바일 경량판은 v0.38을 마지막으로 제작을 종료했습니다. 이전 배포본은 당시 Git 태그에 보존되어 있습니다. 새 배포에는 일반판 하나만 포함합니다.
 
