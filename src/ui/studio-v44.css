@@ -10,3 +10,8 @@
 .game-skin .is-army-group .army-leader-scale .token-army-caption{position:absolute;left:-1.2px;right:-1.2px;top:-8px;height:8px;box-sizing:border-box;display:block;border:1px solid var(--nation);border-bottom:0;border-radius:3px 3px 0 0;background:linear-gradient(#08130ec9,#08130ec9),var(--texture-person);color:white;font:600 5.5px/7px var(--studio-sans);letter-spacing:.3px;pointer-events:auto}
 .game-skin .army-mini-card .token-portraits{flex-basis:35px}
 .map-stage[data-army-aware=true] .campaign-popup.campaign-table{top:var(--army-pane-top);left:var(--army-pane-left,50%);max-height:min(363px,var(--army-pane-height))}
+
+.unification-announcement{gap:8px;padding:26px clamp(20px,5vw,48px);border-color:#dfc27f;box-shadow:0 14px 60px #000b,inset 0 0 28px #a77b2429;z-index:95}
+.unification-announcement .season-symbol{color:var(--victor-color,#f4d58a)}
+.unification-announcement strong{font-family:var(--studio-serif);font-size:clamp(30px,7vw,48px);letter-spacing:.16em;color:#f4d58a}
+.unification-announcement small{max-width:36ch;font:500 clamp(12px,2.8vw,16px)/1.6 var(--studio-sans);overflow-wrap:anywhere;color:#f2ead7}

@@ -1,3 +1,4 @@
+import {unificationCountry} from './unification-notice.js';
 import {cohortMapScenes,parallelReturnScenes} from './battle-cohorts.js';
 import {directUnopposedScenes,formationScenes} from './studio-scenes-v36.js';
 import {animationRate} from './presentation-tempo.js';
@@ -20,6 +21,7 @@ export function makeTurnScenes(record,before,history=[]) {
     if(event.type==='army_disband'&&event.armyGroup?.formation)continue;
     if(event.type==='expedition_roll')continue;
     if(event.type==='elimination'){scenes.push({id:'nation-fall-'+event.index,kind:'elimination',event,battleIndex:event.battleIndex,title:event.title,worldBefore:frame.before,worldAfter:frame.after,camps});continue;}
+    if(event.type==='finish'&&unificationCountry(frame.after,record.result)){scenes.push({id:'unification-'+event.index,kind:'unification',event,result:record.result,title:'천하통일',worldBefore:frame.before,worldAfter:frame.after,camps});continue;}
     const start=scenes.length;
     if(['war_recovery','season_recovery','desertion','production_settlement'].includes(event.type)){scenes.push({id:`apply-${event.index}`,kind:'apply',event,title:event.title,detail:event.detail,worldBefore:frame.before,worldAfter:frame.after,camps});continue;}
     const roll=record.rolls[event.rollIndex];

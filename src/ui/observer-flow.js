@@ -42,6 +42,7 @@ export function applicationNotice(scene,record,step){
 function baseDuration(scene,record,phase,reduced=false){
  if(phase==='departing')return 0;
  if(scene.kind==='army-forming')return reduced?100:900;
+ if(scene.kind==='unification')return reduced?700:2800;
  if(scene.kind==='elimination')return reduced?400:1500;
  if(scene.kind==='season')return reduced?500:1500;
  if(scene.kind==='round-settle')return reduced?200:1000+Math.min(6000,(scene.settlementCount||1)*350);

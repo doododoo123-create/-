@@ -1,0 +1,535 @@
+{
+  "cutoffTurns": 2000,
+  "controls": {
+    "armyAssembly": true,
+    "armyFormation": true,
+    "unitSpacing": true,
+    "frontOperations": true,
+    "directArmyRelease": true,
+    "royalCapitalSync": true
+  },
+  "summary": {
+    "runs": 20,
+    "turns": 7684,
+    "completed": 20,
+    "failures": 0,
+    "boundary255": 13,
+    "totals": {
+      "war": 3932,
+      "domestic": 3752,
+      "battles": 32521,
+      "automatic": 3820,
+      "capitalFalls": 366,
+      "royalReturns": 649,
+      "eliminations": 120,
+      "deaths": 466,
+      "successors": 289,
+      "counters": 2477
+    }
+  },
+  "rows": [
+    {
+      "seed": 0,
+      "turns": 204,
+      "round": 54,
+      "completed": true,
+      "winner": [
+        "적연국"
+      ],
+      "boundaries": [],
+      "counts": {
+        "war": 100,
+        "domestic": 104,
+        "battles": 777,
+        "automatic": 70,
+        "capitalFalls": 19,
+        "royalReturns": 31,
+        "eliminations": 6,
+        "deaths": 7,
+        "successors": 5,
+        "counters": 52
+      },
+      "failure": null
+    },
+    {
+      "seed": 1,
+      "turns": 1518,
+      "round": 616,
+      "completed": true,
+      "winner": [
+        "청람국"
+      ],
+      "boundaries": [
+        255,
+        256,
+        512,
+        1000
+      ],
+      "counts": {
+        "war": 766,
+        "domestic": 752,
+        "battles": 7706,
+        "automatic": 797,
+        "capitalFalls": 18,
+        "royalReturns": 34,
+        "eliminations": 6,
+        "deaths": 117,
+        "successors": 103,
+        "counters": 614
+      },
+      "failure": null
+    },
+    {
+      "seed": 2,
+      "turns": 233,
+      "round": 55,
+      "completed": true,
+      "winner": [
+        "적연국"
+      ],
+      "boundaries": [],
+      "counts": {
+        "war": 121,
+        "domestic": 112,
+        "battles": 666,
+        "automatic": 90,
+        "capitalFalls": 23,
+        "royalReturns": 44,
+        "eliminations": 6,
+        "deaths": 10,
+        "successors": 4,
+        "counters": 57
+      },
+      "failure": null
+    },
+    {
+      "seed": 3,
+      "turns": 453,
+      "round": 153,
+      "completed": true,
+      "winner": [
+        "현해국"
+      ],
+      "boundaries": [
+        255,
+        256
+      ],
+      "counts": {
+        "war": 222,
+        "domestic": 231,
+        "battles": 1770,
+        "automatic": 238,
+        "capitalFalls": 21,
+        "royalReturns": 35,
+        "eliminations": 6,
+        "deaths": 25,
+        "successors": 11,
+        "counters": 152
+      },
+      "failure": null
+    },
+    {
+      "seed": 7,
+      "turns": 366,
+      "round": 98,
+      "completed": true,
+      "winner": [
+        "적연국"
+      ],
+      "boundaries": [
+        255,
+        256
+      ],
+      "counts": {
+        "war": 175,
+        "domestic": 191,
+        "battles": 1191,
+        "automatic": 159,
+        "capitalFalls": 11,
+        "royalReturns": 28,
+        "eliminations": 6,
+        "deaths": 12,
+        "successors": 7,
+        "counters": 80
+      },
+      "failure": null
+    },
+    {
+      "seed": 19,
+      "turns": 391,
+      "round": 118,
+      "completed": true,
+      "winner": [
+        "적연국"
+      ],
+      "boundaries": [
+        255,
+        256
+      ],
+      "counts": {
+        "war": 200,
+        "domestic": 191,
+        "battles": 1624,
+        "automatic": 190,
+        "capitalFalls": 18,
+        "royalReturns": 31,
+        "eliminations": 6,
+        "deaths": 23,
+        "successors": 18,
+        "counters": 139
+      },
+      "failure": null
+    },
+    {
+      "seed": 29,
+      "turns": 217,
+      "round": 58,
+      "completed": true,
+      "winner": [
+        "적연국"
+      ],
+      "boundaries": [],
+      "counts": {
+        "war": 110,
+        "domestic": 107,
+        "battles": 792,
+        "automatic": 112,
+        "capitalFalls": 18,
+        "royalReturns": 18,
+        "eliminations": 6,
+        "deaths": 10,
+        "successors": 4,
+        "counters": 60
+      },
+      "failure": null
+    },
+    {
+      "seed": 42,
+      "turns": 212,
+      "round": 75,
+      "completed": true,
+      "winner": [
+        "적연국"
+      ],
+      "boundaries": [],
+      "counts": {
+        "war": 123,
+        "domestic": 89,
+        "battles": 1269,
+        "automatic": 145,
+        "capitalFalls": 16,
+        "royalReturns": 24,
+        "eliminations": 6,
+        "deaths": 16,
+        "successors": 8,
+        "counters": 87
+      },
+      "failure": null
+    },
+    {
+      "seed": 77,
+      "turns": 302,
+      "round": 96,
+      "completed": true,
+      "winner": [
+        "적연국"
+      ],
+      "boundaries": [
+        255,
+        256
+      ],
+      "counts": {
+        "war": 156,
+        "domestic": 146,
+        "battles": 1342,
+        "automatic": 205,
+        "capitalFalls": 17,
+        "royalReturns": 32,
+        "eliminations": 6,
+        "deaths": 24,
+        "successors": 10,
+        "counters": 86
+      },
+      "failure": null
+    },
+    {
+      "seed": 123,
+      "turns": 235,
+      "round": 79,
+      "completed": true,
+      "winner": [
+        "적연국"
+      ],
+      "boundaries": [],
+      "counts": {
+        "war": 136,
+        "domestic": 99,
+        "battles": 1182,
+        "automatic": 137,
+        "capitalFalls": 12,
+        "royalReturns": 17,
+        "eliminations": 6,
+        "deaths": 28,
+        "successors": 11,
+        "counters": 90
+      },
+      "failure": null
+    },
+    {
+      "seed": 255,
+      "turns": 291,
+      "round": 70,
+      "completed": true,
+      "winner": [
+        "적연국"
+      ],
+      "boundaries": [
+        255,
+        256
+      ],
+      "counts": {
+        "war": 161,
+        "domestic": 130,
+        "battles": 1234,
+        "automatic": 134,
+        "capitalFalls": 17,
+        "royalReturns": 31,
+        "eliminations": 6,
+        "deaths": 19,
+        "successors": 8,
+        "counters": 88
+      },
+      "failure": null
+    },
+    {
+      "seed": 256,
+      "turns": 523,
+      "round": 146,
+      "completed": true,
+      "winner": [
+        "적연국"
+      ],
+      "boundaries": [
+        255,
+        256,
+        512
+      ],
+      "counts": {
+        "war": 257,
+        "domestic": 266,
+        "battles": 2112,
+        "automatic": 283,
+        "capitalFalls": 21,
+        "royalReturns": 35,
+        "eliminations": 6,
+        "deaths": 25,
+        "successors": 17,
+        "counters": 165
+      },
+      "failure": null
+    },
+    {
+      "seed": 777,
+      "turns": 235,
+      "round": 69,
+      "completed": true,
+      "winner": [
+        "적연국"
+      ],
+      "boundaries": [],
+      "counts": {
+        "war": 127,
+        "domestic": 108,
+        "battles": 1085,
+        "automatic": 109,
+        "capitalFalls": 18,
+        "royalReturns": 34,
+        "eliminations": 6,
+        "deaths": 12,
+        "successors": 6,
+        "counters": 72
+      },
+      "failure": null
+    },
+    {
+      "seed": 2026,
+      "turns": 316,
+      "round": 70,
+      "completed": true,
+      "winner": [
+        "적연국"
+      ],
+      "boundaries": [
+        255,
+        256
+      ],
+      "counts": {
+        "war": 165,
+        "domestic": 151,
+        "battles": 1000,
+        "automatic": 140,
+        "capitalFalls": 24,
+        "royalReturns": 38,
+        "eliminations": 6,
+        "deaths": 19,
+        "successors": 7,
+        "counters": 72
+      },
+      "failure": null
+    },
+    {
+      "seed": 12345,
+      "turns": 289,
+      "round": 71,
+      "completed": true,
+      "winner": [
+        "적연국"
+      ],
+      "boundaries": [
+        255,
+        256
+      ],
+      "counts": {
+        "war": 144,
+        "domestic": 145,
+        "battles": 955,
+        "automatic": 106,
+        "capitalFalls": 17,
+        "royalReturns": 44,
+        "eliminations": 6,
+        "deaths": 14,
+        "successors": 8,
+        "counters": 80
+      },
+      "failure": null
+    },
+    {
+      "seed": 65535,
+      "turns": 689,
+      "round": 250,
+      "completed": true,
+      "winner": [
+        "현해국"
+      ],
+      "boundaries": [
+        255,
+        256,
+        512
+      ],
+      "counts": {
+        "war": 333,
+        "domestic": 356,
+        "battles": 3056,
+        "automatic": 305,
+        "capitalFalls": 22,
+        "royalReturns": 32,
+        "eliminations": 6,
+        "deaths": 40,
+        "successors": 25,
+        "counters": 222
+      },
+      "failure": null
+    },
+    {
+      "seed": 123456,
+      "turns": 299,
+      "round": 76,
+      "completed": true,
+      "winner": [
+        "적연국"
+      ],
+      "boundaries": [
+        255,
+        256
+      ],
+      "counts": {
+        "war": 169,
+        "domestic": 130,
+        "battles": 1168,
+        "automatic": 147,
+        "capitalFalls": 22,
+        "royalReturns": 37,
+        "eliminations": 6,
+        "deaths": 14,
+        "successors": 8,
+        "counters": 89
+      },
+      "failure": null
+    },
+    {
+      "seed": 20261017,
+      "turns": 219,
+      "round": 61,
+      "completed": true,
+      "winner": [
+        "적연국"
+      ],
+      "boundaries": [],
+      "counts": {
+        "war": 108,
+        "domestic": 111,
+        "battles": 1001,
+        "automatic": 143,
+        "capitalFalls": 17,
+        "royalReturns": 31,
+        "eliminations": 6,
+        "deaths": 12,
+        "successors": 6,
+        "counters": 71
+      },
+      "failure": null
+    },
+    {
+      "seed": 20261031,
+      "turns": 426,
+      "round": 118,
+      "completed": true,
+      "winner": [
+        "적연국"
+      ],
+      "boundaries": [
+        255,
+        256
+      ],
+      "counts": {
+        "war": 228,
+        "domestic": 198,
+        "battles": 1695,
+        "automatic": 208,
+        "capitalFalls": 15,
+        "royalReturns": 35,
+        "eliminations": 6,
+        "deaths": 28,
+        "successors": 17,
+        "counters": 135
+      },
+      "failure": null
+    },
+    {
+      "seed": 4294967295,
+      "turns": 266,
+      "round": 74,
+      "completed": true,
+      "winner": [
+        "적연국"
+      ],
+      "boundaries": [
+        255,
+        256
+      ],
+      "counts": {
+        "war": 131,
+        "domestic": 135,
+        "battles": 896,
+        "automatic": 102,
+        "capitalFalls": 20,
+        "royalReturns": 38,
+        "eliminations": 6,
+        "deaths": 11,
+        "successors": 6,
+        "counters": 66
+      },
+      "failure": null
+    }
+  ]
+}

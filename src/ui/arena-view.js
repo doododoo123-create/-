@@ -1,3 +1,4 @@
+import {renderUnificationAnnouncement} from './unification-notice.js';
 import {renderNationFall} from './nation-fall.js';
 import {portraitConfusion} from './readiness-display.js';
 import {royalCommandPerson} from './royal-presentation.js';
@@ -17,6 +18,7 @@ function character(person,country,role,compact=false,army=null) {
   return `<figure class="scene-portrait ${compact?'compact':''}" style="--nation:${country?.color||'#8b99aa'}"><div class="framed-portrait">${portraitImage(person,country,role)}${portraitConfusion(person)}</div><figcaption><small>${esc(country?.name||'')}</small><strong>${esc(displayName(person,`${ROLES[role]||'지휘관'} 미배치`))}${(role==='general'||role==='king'&&person?.slot===-1)?veteranStars(person):''}</strong><span>${(role==='general'||role==='king'&&person?.slot===-1)?`병력 ${army??person?.troops??0}만`:ROLES[role]||'지휘관'}</span></figcaption></figure>`;
 }
 export function renderArena({world,run,playback,showControls=true}) {
+  if(playback?.scene?.kind==='unification')return '<section class="panel arena-panel season-panel">'+renderUnificationAnnouncement(playback.scene.worldAfter,playback.scene.result)+'</section>';
   if(playback?.scene?.kind==='elimination')return '<section class="panel arena-panel season-panel">'+renderNationFall(playback.scene)+'</section>';
   if(playback?.scene?.campaign&&!(playback.scene.campaignPhase==='map'&&playback.scene.kind==='roll'))return '<section class="panel arena-panel campaign-arena">'+renderCampaignOverlay({playback,inline:true})+'</section>';
   const state=playback?.state,record=state?.record,scene=playback?.scene,event=scene?.event;

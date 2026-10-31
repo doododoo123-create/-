@@ -1,0 +1,14 @@
+import {mkdir,writeFile} from 'node:fs/promises';
+import {unificationFixture,currentControls} from './unification-v0442-fixture.mjs';
+import {createContinentV31World} from '../src/scenarios/continent-v31.js';
+import {enableOfficerTraits} from '../src/model/officer-traits.js';
+import {createRun,nextTurn} from '../src/engine/simulation.js';
+import {exportHistoryData} from '../src/storage/history-file.js';
+await mkdir(new URL('../.artifacts/',import.meta.url),{recursive:true});
+const {start,run}=unificationFixture();
+for(const [name,value] of [['start',start],['complete',run]])await writeFile(new URL(`../.artifacts/v0442-${name}.history.json`,import.meta.url),JSON.stringify(await exportHistoryData(value)));
+let full=createRun(enableOfficerTraits(createContinentV31World()),0);
+while(!full.result&&full.turn<2000)full=nextTurn(full,currentControls);
+if(full.result?.reason!=='unification')throw Error('The full map fixture did not unify within its test budget');
+await writeFile(new URL('../.artifacts/v0442-full-complete.history.json',import.meta.url),JSON.stringify(await exportHistoryData(full)));
+console.log(JSON.stringify({seed:full.seed,turn:full.turn,winner:full.result.winnerIds,territories:full.world.territories.length}));

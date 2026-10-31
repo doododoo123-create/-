@@ -594,3 +594,8 @@ movementRate와 campaignSceneDuration은 추가 가속1.5다. roll/reel 시간�
 ## v0.44.1 수도 이전 후 국왕 복귀
 
 새 차례는 `controls.royalCapitalSync:true`를 기록한다. 연속 공세의 각 전투 정리에서 기존 `returnRoyalToCapital`로 생존 국왕을 현재 수도에 복귀시키고 실제 이동을 `royal_return` 사건으로 남긴다. 수도 선택 방식이나 난수를 추가하지 않는다. 과거 기록에 이 control이 없으면 기존 경로로 재구성하여 완료된 역사와 당시 난수를 보존한다. 엔진34·세계2·진행1·역사2 형식은 유지한다.
+
+
+## v0.44.2 통일 공지
+
+`ui/unification-notice.js`는 기록된 단독 통일 승자와 현재 보이는 세계의 모든 영토 소유를 함께 확인한다. `finish` 사건을 마지막 점령 뒤의 `unification` 장면으로 표시하고 기존 통일 음향을 사용한다. 지도 완료/요약·다시 연 저장에서는 같은 공지를 유지한다. 과거 재생은 해당 playback 기록의 result만 사용하며 진행 중인 실제 경기의 미래 승자를 가져오지 않는다. 엔진/난수·파일 형식은 변경하지 않는다.

@@ -4,6 +4,7 @@ import json, subprocess
 from playwright.sync_api import sync_playwright, expect
 
 ROOT = Path(__file__).resolve().parents[1]
+APP_VERSION = json.loads((ROOT / 'package.json').read_text())['version']
 if any(not (ROOT / '.artifacts' / name).exists() for name in ['v0441-before-116.history.json', 'v0441-before-178.history.json', 'v0441-before-256.history.json']):
     subprocess.run(['node', 'tests/make-v0441-fixtures.mjs'], cwd=ROOT, check=True)
 errors = []
@@ -19,7 +20,7 @@ with sync_playwright() as p:
         page.on('pageerror', lambda error: errors.append(str(error)))
         page.on('requestfailed', lambda request: failed.append(request.url) if not request.url.startswith('blob:') else None)
         page.goto('http://127.0.0.1:3000/game.html', wait_until='networkidle', timeout=90000)
-        expect(page.locator('.page-footer')).to_contain_text('v0.44.1', timeout=90000)
+        expect(page.locator('.page-footer')).to_contain_text('v'+APP_VERSION, timeout=90000)
         page.locator('#world-file').set_input_files(str(ROOT / '.artifacts' / name))
         expect(page.locator('[data-import-confirm]')).to_be_enabled(timeout=60000)
         page.locator('[data-import-confirm]').click()
@@ -59,7 +60,7 @@ with sync_playwright() as p:
         page.screenshot(path=str(ROOT / '.artifacts' / f'v0441-resumed-{before}.png'), full_page=False)
         page.clock.resume()
         page.reload(wait_until='networkidle', timeout=90000)
-        expect(page.locator('.page-footer')).to_contain_text('v0.44.1', timeout=90000)
+        expect(page.locator('.page-footer')).to_contain_text('v'+APP_VERSION, timeout=90000)
         page.locator('nav [data-page=simulation]').click()
         expect(page.locator('.history-panel .count-badge')).to_have_text(f"{facts['turn']}턴", timeout=30000)
         results.append({'resumedFrom': before, 'savedAndReloaded': facts['turn'], 'kings': facts['kings']})

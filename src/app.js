@@ -136,7 +136,7 @@ function render() {
   renderApp($('#app'), `
     <aside class="sidebar">
       <a class="brand" href="#" data-page="overview" aria-label="사국쟁패 Studio 세계 개요"><span class="brand-symbol">${icon('compass', 29)}</span><span><strong>사국쟁패</strong><small>HISTORY STUDIO</small></span></a>
-      <div class="workspace-label">WORKSPACE <span>v0.44.1</span></div>
+      <div class="workspace-label">WORKSPACE <span>v0.44.2</span></div>
       <button class="world-switch" data-action="world-meta"><span class="world-icon">${icon('globe', 19)}</span><span><b>${esc(world.name)}</b><small>나의 세계 · 편집 가능</small></span>${icon('edit', 13)}</button>
       <div class="nav-label">세계 만들기</div>
       <nav aria-label="주요 메뉴">${Object.entries(pages).slice(0, 5).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}<div class="nav-label nav-second">역사 관찰하기</div>${Object.entries(pages).slice(5).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}</nav>
@@ -148,7 +148,7 @@ function render() {
         ${pageHeading()}
         ${['overview','deployment'].includes(ui.page)?territoryPresetNotice():''}
         ${ui.page === 'overview' ? overview() : ui.page === 'countries' ? countriesPage() : ui.page === 'people' ? peoplePage() : ui.page === 'map' ? mapPage() : ui.page === 'deployment'?deploymentEditor.view():ui.page === 'simulation' ? simulationPage() : ''}
-        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.44.1</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><button type="button" class="text-button" data-action="font-licenses">글꼴 라이선스</button><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
+        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.44.2</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><button type="button" class="text-button" data-action="font-licenses">글꼴 라이선스</button><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
       </main>
     </div>`);
   mapCamera.restore();if(ui.page==='simulation')mapCamera.follow(playback);mapAnimation.start($('#app'),playback);

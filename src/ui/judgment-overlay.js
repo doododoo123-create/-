@@ -1,3 +1,4 @@
+import {renderUnificationAnnouncement} from './unification-notice.js';
 import {renderNationFall} from './nation-fall.js';
 import {portraitConfusion} from './readiness-display.js';
 import { renderAccumulatingDie, scoreBonusItems } from './score-accumulation.js';
@@ -24,6 +25,7 @@ function judgmentTraits(person,role,country){
   return `<p class="judgment-feature">${esc(person?.feature||trait||'')}<span>${role==='minister'?`${esc(trait)} · 능력 ${judgmentSign(person?.ability)}`:role==='king'?esc(trait||''):`능력 ${judgmentSign(person?.ability)}`}</span></p>`;
 }
 export function renderJudgmentOverlay({world,playback}) {
+  if(playback.scene?.kind==='unification'&&!playback.complete)return renderUnificationAnnouncement(playback.scene.worldAfter,playback.scene.result);
   if(playback.scene?.kind==='elimination'&&!playback.complete)return renderNationFall(playback.scene);
   if(playback.scene?.campaign&&!(playback.scene.campaignPhase==='map'&&playback.scene.kind==='roll'))return renderCampaignOverlay({playback});
   if(!judgmentVisible(playback))return '';
