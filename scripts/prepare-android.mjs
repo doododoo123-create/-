@@ -1,0 +1,13 @@
+import {readFile,writeFile,mkdir} from 'node:fs/promises';
+import {unpackStandalone} from './standalone-pack.mjs';
+let html=unpackStandalone(await readFile(new URL('../사국쟁패 Studio.html',import.meta.url),'utf8'));
+const signature="function downloadFile(name, content, type = 'application/json') {";
+if(!html.includes(signature))throw Error('Export adapter signature changed');
+html=html.replace(signature,signature+"\n  if(globalThis.SagukAndroid){globalThis.SagukAndroid.saveText(name,String(content),type);return;}\n");
+const marker="const blob = new Blob([content]";
+if(!html.includes(marker))throw Error('Missing export implementation');
+html=html.replace("function downloadFile(name, content", "window.addEventListener('saguk-export-result',e=>notify(e.detail));\nwindow.addEventListener('saguk-app-pause',()=>{stop();soundMixer.stopAll();render();});\nfunction downloadFile(name, content");
+html=html.replace('<meta name="viewport" content="width=device-width, initial-scale=1">','<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">');
+await mkdir(new URL('../.artifacts/android/assets/www/',import.meta.url),{recursive:true});
+await writeFile(new URL('../.artifacts/android/assets/www/index.html',import.meta.url),html);
+console.log('Prepared offline Android game assets without the standalone decoding step.');
