@@ -6,9 +6,15 @@ export function soundHash(text){let h=2166136261;for(const ch of String(text)){h
 export function presentationSoundCues(state,{speed=1,settings=SOUND_DEFAULTS,duration=900,rollingDuration=900}={}){
  if(!state||state.finished)return [];
  const scene=state.scenes?.[state.index];if(!scene)return [];
- const e=scene.event||{},record=state.record||{},b=record.battles?.[scene.battleIndex],phase=state.phase==='departing'?'locked':state.phase,actual=duration/Math.max(.1,speed),simple=settings.simplify,fast=simple&&speed>=4,veryFast=simple&&speed>=8;
+ const e=scene.event||{},record=state.record||{},b=record.battles?.[scene.battleIndex],phase=state.phase==='departing'?'locked':state.phase,actual=duration/Math.max(.1,speed),simple=settings.simplify,selectedSpeed=state.filming?state.selectedSpeed:speed,fast=simple&&selectedSpeed>=4,veryFast=simple&&selectedSpeed>=8;
  const result=[],eventKey=String(e.index??scene.id),prefix=`${record.turn}:${eventKey}`,cue=(id,key=scene.id,group='battle',extra={})=>result.push({id,key:prefix+':'+key,group,priority:{ui:10,dice:30,movement:20,battle:40,important:60}[group],at:0,...extra});
  const notable=(id,key,priority)=>cue(id,key,'important',{priority,maxDuration:speed>=4?.65:undefined});
+ if(scene.filmAtomic&&scene.filmPhase==='judgment'){
+  if(scene.filmJudgment==='rolling')cue('dice_tick',scene.id+':rolling','dice',{gain:1.5,scope:'stage',maxDuration:Math.min(.2,actual/1000)});
+  else cue('score_lock',scene.id+':locked','dice',{gain:1.2,scope:'stage',maxDuration:Math.min(.3,actual/1000)});
+  return result;
+ }
+ if(scene.kind==='film-summary'){cue(scene.filmSummary?.battles.some(b=>b.takenTerritoryIds?.length)?'territory_capture':'sword_clash',scene.id,'battle',{maxDuration:.5});return result;}
  if(scene.kind==='season'){notable(['season_spring','season_summer','season_autumn','season_winter'][e.seasonIndex??(record.round-1)%4],'season:'+record.round,60);return result;}
  if(e.type==='capital_fall'){notable('capital_fall','capital',70);return result;}
  if(e.type==='elimination'){notable('country_eliminated','elimination',90);return result;}

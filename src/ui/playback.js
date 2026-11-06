@@ -1,4 +1,5 @@
 import {unificationCountry} from './unification-notice.js';
+import {makeFilmingScenes,filmingDuration} from './filming-playback.js';
 import {cohortMapScenes,parallelReturnScenes} from './battle-cohorts.js';
 import {directUnopposedScenes,formationScenes} from './studio-scenes-v36.js';
 import {criticalScene,animationRate} from './presentation-tempo.js';
@@ -48,36 +49,57 @@ export class TurnPlayback {
     Object.assign(this,{onChange,onFinish,speed,options,reducedMotion,schedule,cancel,now});
     this.groupEnd=null;this.groupDone=false;this.state=null;this.handle=null;this.remaining=0;this.deadline=0;this.scheduledSpeed=1;
   }
-  get effectiveSpeed(){if(this.scene?.kind==='army-formed-hold'||this.scene?.campaignPhase==='report'||criticalScene(this.scene))return 1;return this.options().kingChoiceNormalSpeed&&this.scene?.kind==='reel'&&this.scene.event?.type==='king'?1:this.speed();}
-  get animationSpeed(){return this.effectiveSpeed*animationRate(this.scene);}
+  get effectiveSpeed(){if(this.state?.filming||this.scene?.kind==='army-formed-hold'||this.scene?.campaignPhase==='report'||criticalScene(this.scene))return 1;return this.options().kingChoiceNormalSpeed&&this.scene?.kind==='reel'&&this.scene.event?.type==='king'?1:this.speed();}
+  get animationSpeed(){if(this.state?.filming){const scene=this.scene,phase=this.state.phase==='departing'?'departing':this.state.effectStage||this.state.phase,base=scene?.filmPhase==='judgment'?900:observerDuration(scene,this.state.record,phase,this.reducedMotion())*animationRate(scene);return Math.max(.1,base/Math.max(1,this.duration()));}return this.effectiveSpeed*animationRate(this.scene);}
   get scene(){return this.state?.scenes[this.state.index]||null;}
   get playing(){return !!this.state?.playing;}
   get complete(){return !this.state||this.state.finished;}
   get showingResult(){return this.scene?.kind==='summary';}
   get displayWorld(){return this.state?.finished?this.state.after:this.scene?.kind==='apply'&&this.state.phase!=='settled'?applicationWorld(this.scene,this.state.effectStage):this.scene?.worldAfter;}
-  get movementProgress(){if(this.scene?.kind!=='movement')return 0;const left=this.playing&&this.handle!==null?Math.max(0,(this.deadline-this.now())*this.scheduledSpeed):this.remaining;return Math.max(0,Math.min(1,1-left/this.duration()));}
-  get sceneProgress(){if(!this.scene)return 0;const left=this.playing&&this.handle!==null?Math.max(0,(this.deadline-this.now())*this.scheduledSpeed):this.remaining;return Math.max(0,Math.min(1,1-left/this.duration()));}
-  duration(){return this.scene?.kind==='campaign'?campaignSceneDuration(this.scene):observerDuration(this.scene,this.state.record,this.state.phase==='departing'?'departing':this.state.effectStage||this.state.phase,this.reducedMotion());}
+  get movementProgress(){if(this.scene?.kind!=='movement')return 0;const left=this.playing&&this.handle!==null?Math.max(0,(this.deadline-this.now())*this.scheduledSpeed):this.remaining,duration=this.duration();return duration?Math.max(0,Math.min(1,1-left/duration)):1;}
+  get sceneProgress(){if(!this.scene)return 0;const left=this.playing&&this.handle!==null?Math.max(0,(this.deadline-this.now())*this.scheduledSpeed):this.remaining,duration=this.duration();return duration?Math.max(0,Math.min(1,1-left/duration)):1;}
+  duration(){const scene=this.scene;if(!scene)return 0;const phase=this.state.phase==='departing'?'departing':this.state.effectStage||this.state.phase;if(this.state.filming){const speed=this.options().kingChoiceNormalSpeed&&scene.kind==='reel'&&scene.event?.type==='king'?1:this.speed();return filmingDuration(scene,this.state.record,phase,speed,this.reducedMotion());}return scene.kind==='campaign'?campaignSceneDuration(scene):observerDuration(scene,this.state.record,phase,this.reducedMotion());}
   clearTimer(){if(this.handle!==null)this.cancel(this.handle);this.handle=null;}
   load(record,before,after,play=true,history=[]){
-    this.clearTimer();this.groupEnd=null;this.groupDone=false;this.detailReturn=null;this.campaignExpanded=false;const modern=!!this.options().armyPresentation,raw=makeTurnScenes(record,before,history),original=(modern?parallelReturnScenes(formationScenes(directUnopposedScenes(raw,record))):raw).map(s=>modern?{...s,rapidMovement:true}:s),compact=this.options().compactCampaigns?compactCampaignScenes(original,record,{modern,reportAfterMap:modern&&!!this.options().armyResultReport}):original,scenes=modern?cohortMapScenes(compact,record):compact;scenes.at(-1).worldAfter=after;
-    this.state={record,before,after,scenes,latestRoutes:modern,turnRoutes:modern,index:0,previousRoundRecords:history.filter(r=>r.round===record.round-1),roundRecords:history.filter(r=>r.round===record.round&&r.turn<record.turn),phase:['roll','reel'].includes(scenes[0].kind)?'rolling':'holding',playing:play,finished:false};
+    this.clearTimer();this.groupEnd=null;this.groupDone=false;this.detailReturn=null;this.campaignExpanded=false;const filming=!!this.options().filming,modern=!!this.options().armyPresentation,raw=makeTurnScenes(record,before,history),original=(modern?parallelReturnScenes(formationScenes(directUnopposedScenes(raw,record))):raw).map(s=>modern?{...s,rapidMovement:true}:s),compact=filming?makeFilmingScenes(original,record,history):this.options().compactCampaigns?compactCampaignScenes(original,record,{modern,reportAfterMap:modern&&!!this.options().armyResultReport}):original,scenes=modern&&!filming?cohortMapScenes(compact,record):compact;scenes.at(-1).worldAfter=after;
+    this.state={record,before,after,scenes,filming,selectedSpeed:this.speed(),latestRoutes:modern,turnRoutes:modern,index:0,previousRoundRecords:history.filter(r=>r.round===record.round-1),roundRecords:history.filter(r=>r.round===record.round&&r.turn<record.turn),phase:['roll','reel'].includes(scenes[0].kind)?'rolling':'holding',playing:play,finished:false};
     this.remaining=this.duration();this.onChange();if(play)this.arm();
   }
   arm(){if(!this.state?.playing||this.state.finished)return;this.clearTimer();this.scheduledSpeed=Math.max(.1,Number(this.effectiveSpeed)||1);this.deadline=this.now()+this.remaining/this.scheduledSpeed;this.handle=this.schedule(()=>{this.handle=null;this.advance();},this.remaining/this.scheduledSpeed);}
   pause(){if(!this.state||!this.playing)return;if(this.handle!==null)this.remaining=Math.max(0,(this.deadline-this.now())*this.scheduledSpeed);this.clearTimer();this.state.playing=false;}
-  resume(){if(!this.state||this.state.finished)return;this.groupEnd=null;this.groupDone=false;this.state.playing=true;this.onChange();this.arm();}
+  resume(){if(!this.state||this.state.finished)return;this.groupEnd=null;this.groupDone=false;if(this.state.rangeDone){this.state.rangeEnd=null;this.state.rangeDone=false;this.state.playing=true;this.advance();return;}this.state.playing=true;this.onChange();this.arm();}
   advance(){
     if(!this.state||this.state.finished)return;this.clearTimer();
+    if(this.scene.filmAtomic){this.nextFilmScene();return;}
     if(this.scene.kind==='apply'&&this.state.effectStage){const steps=applicationSteps(this.scene,this.state.record),index=steps.indexOf(this.state.effectStage);if(index<steps.length-1){this.state.effectStage=steps[index+1];this.remaining=this.duration();this.onChange();if(this.state.playing)this.arm();return;}}
     if(this.state.phase==='rolling')this.state.phase=this.scene.bonusItems?.some(i=>i.value)||this.scene.bonus?'raw':'locked';
     else if(this.state.phase==='raw'){this.state.phase='merging';this.state.mergeIndex=0;}
     else if(this.state.phase==='merging'){const count=this.scene.bonusItems?.filter(i=>i.value).length||1;if((this.state.mergeIndex||0)<count-1)this.state.mergeIndex++;else this.state.phase='locked';}
     else if(this.scene.kind!=='army-formed-hold'&&this.scene.campaignPhase!=='report'&&this.state.phase!=='departing'&&this.state.scenes[this.state.index+1]?.kind==='apply')this.state.phase='departing';
-    else if(this.groupEnd===this.state.index&&this.state.index<this.state.scenes.length-1){this.remaining=0;this.state.playing=false;this.groupDone=true;if(this.scene.kind==='apply')this.state.phase='settled';this.onChange();return;}
+    else if((this.groupEnd===this.state.index&&this.state.index<this.state.scenes.length-1)||this.state.rangeEnd===this.state.index){this.remaining=0;this.state.playing=false;this.groupDone=true;this.state.rangeDone=true;if(this.scene.kind==='apply')this.state.phase='settled';this.onChange();return;}
     else if(this.state.index<this.state.scenes.length-1){this.state.index++;this.campaignExpanded=false;this.state.mergeIndex=0;this.state.phase=['roll','reel'].includes(this.scene.kind)?'rolling':'holding';this.state.effectStage=this.scene.kind==='apply'?applicationSteps(this.scene,this.state.record)[0]:null;}
     else{if(this.detailReturn){this.returnCampaignDetails();return;}this.state.finished=true;this.state.playing=false;this.onChange();this.onFinish();return;}
     this.remaining=this.duration();this.onChange();if(this.state.playing)this.arm();
+  }
+  nextFilmScene(){
+    if(this.state.rangeEnd===this.state.index||this.groupEnd===this.state.index){this.remaining=0;this.state.playing=false;this.state.rangeDone=true;this.groupDone=true;this.onChange();return;}
+    if(this.state.index>=this.state.scenes.length-1){this.state.finished=true;this.state.playing=false;this.onChange();this.onFinish();return;}
+    this.state.index++;this.state.phase=['roll','reel'].includes(this.scene.kind)?'rolling':'holding';this.state.effectStage=this.scene.kind==='apply'?applicationSteps(this.scene,this.state.record)[0]:null;this.state.mergeIndex=0;
+    this.remaining=this.duration();this.onChange();if(this.state.playing)this.arm();
+  }
+  retime(progress){if(!this.state?.filming)return;this.state.selectedSpeed=this.speed();this.remaining=this.duration()*(1-Math.max(0,Math.min(1,progress)));}
+  seekFilm(index,{play=false,end=null}={}){
+    if(!this.state?.filming)return false;this.pause();this.clearTimer();this.groupEnd=null;this.groupDone=false;
+    const scenes=this.state.scenes,at=Math.max(0,Math.min(scenes.length-1,Number(index)||0));
+    // A fresh take owns a fresh audio ledger. Reuse immutable recorded frames.
+    this.state={...this.state,index:at,finished:false,playing:play,rangeEnd:end,rangeDone:false,mergeIndex:0,phase:['roll','reel'].includes(scenes[at].kind)?'rolling':'holding',effectStage:scenes[at].kind==='apply'?'all':null,take:(this.state.take||0)+1};
+    this.remaining=this.duration();this.onChange();if(play)this.arm();return true;
+  }
+  filmRange(kind='campaign'){
+    if(!this.state?.filming)return null;const scene=this.scene,b=scene?.filmBattle||this.state.record.battles?.[scene?.battleIndex],g=scene?.filmCampaign;
+    const ids=new Set(g?.battles.map(b=>b.index)||[]),sourceId=g?.sourceCampaignId||g?.id;
+    const indexes=this.state.scenes.flatMap((s,i)=>kind==='battle'?b&&s.battleIndex===b.index?[i]:[]:g&&(s.filmSummary?.id===g.id||!g.sourceCampaignId&&s.filmSummary?.sourceCampaignId===sourceId||s.filmCampaign?.id===sourceId&&ids.has(s.battleIndex))?[i]:[]);
+    return indexes.length?{start:indexes[0],end:indexes.at(-1)}:b&&kind!=='battle'?this.filmRange('battle'):null;
   }
   playGroup(){
     if(!this.state||this.state.finished)return;

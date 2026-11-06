@@ -1,5 +1,6 @@
 import { UNIT_CARD_WIDTH } from './unit-layout.js';
 import {duelStacks} from './duel-stacks.js';
+import {fitFilmClusters} from './filming-camera.js';
 export function mapUnitScale(screenScale,zoom=screenScale){
  const width=1.2*Math.max(24,Math.min(80,UNIT_CARD_WIDTH*Math.pow(zoom,.6)));
  return width/(UNIT_CARD_WIDTH*screenScale);
@@ -11,14 +12,15 @@ export function duelDirection(origin,target){
 export function fitMapUnits(element){
  const svg=element.querySelector('.atlas-map'),matrix=svg?.getScreenCTM?.();if(!matrix)return;
  const scale=Math.hypot(matrix.a,matrix.b);if(!Number.isFinite(scale)||scale<=0)return;
- const bounds=element.getBoundingClientRect(),zoom=Number(element.dataset.zoom)||1,ordinaryWidth=UNIT_CARD_WIDTH*scale*mapUnitScale(scale,zoom),width=Math.min(96,Math.max(48,ordinaryWidth*1.2));
- svg.style.setProperty('--unit-display-scale',String(mapUnitScale(scale,zoom)));
+ const filming=element.closest('.filming-mode'),filmScale=Number(filming?.style.getPropertyValue('--film-card-scale'))||1;
+ const bounds=element.getBoundingClientRect(),zoom=Number(element.dataset.zoom)||1,ordinaryWidth=filming?52*filmScale:UNIT_CARD_WIDTH*scale*mapUnitScale(scale,zoom),width=filming?84*filmScale:Math.min(96,Math.max(48,ordinaryWidth*1.2));
+ svg.style.setProperty('--unit-display-scale',String(filming?ordinaryWidth/(UNIT_CARD_WIDTH*scale):mapUnitScale(scale,zoom)));
  svg.style.setProperty('--duel-display-scale',String(width/(UNIT_CARD_WIDTH*scale)));
  svg.style.setProperty('--minister-offset-x',`${ordinaryWidth*1.25/scale}px`);
  svg.style.setProperty('--battle-icon-scale',String(14/(20*scale)));
  svg.style.setProperty('--battle-site-scale',String(1/scale));
  svg.style.setProperty('--battle-label-offset',`${20/scale}px`);
- const ring=svg.querySelector('.battle-emblem .target-ring'),campaign=svg.querySelector('.map-campaign');if(!ring||!campaign)return;
+ const ring=svg.querySelector('.battle-emblem .target-ring'),campaign=svg.querySelector('.map-campaign');if(!ring||!campaign){if(filming)fitFilmClusters(element);return;}
  const r=ring.getBoundingClientRect(),center=[r.x+r.width/2,r.y+r.height/2],inverse=matrix.inverse(),raw=(campaign.dataset.attackOrigin||'0,0').split(',').map(Number),target=(campaign.dataset.targetReference||'0,0').split(',').map(Number);
  const direction=duelDirection(raw,target),hasLoss=!!svg.querySelector('.unit-loss-label');
  const cards=[...svg.querySelectorAll('.map-unit-position[data-combat-side]')],layout=duelStacks({left:bounds.left,right:bounds.right,center:center[0],width,iconRadius:Math.max(14,r.width/2),direction:direction.x,attack:cards.filter(c=>c.dataset.combatSide==='attack').length,defense:cards.filter(c=>c.dataset.combatSide==='defense').length});
@@ -39,5 +41,6 @@ export function fitMapUnits(element){
   card.dataset.combatScreenX=String(x);card.dataset.combatScreenY=String(y);
  }
  const badge=svg.querySelector('.cohort-advantage');if(badge){const winners=cards.filter(c=>c.dataset.country===badge.dataset.cohortWinner);if(winners.length){const place=layout[winners[0].dataset.combatSide],x=place.x+place.sign*(winners.length-1)*place.step/2,point=new DOMPoint(x,cy).matrixTransform(inverse);badge.setAttribute('transform',`translate(${point.x},${point.y}) scale(${1/scale})`);}}
+ if(filming)fitFilmClusters(element);
 
 }

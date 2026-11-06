@@ -1,0 +1,510 @@
+{
+  "version": 1,
+  "characters": {
+    "general_001": {
+      "portrait": "general_001.jpg",
+      "cutout": "cutouts/general_001_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_002": {
+      "portrait": "general_002.jpg",
+      "cutout": "cutouts/general_002_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_003": {
+      "portrait": "general_003.jpg",
+      "cutout": "cutouts/general_003_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_004": {
+      "portrait": "general_004.jpg",
+      "cutout": "cutouts/general_004_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_005": {
+      "portrait": "general_005.jpg",
+      "cutout": "cutouts/general_005_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_006": {
+      "portrait": "general_006.jpg",
+      "cutout": "cutouts/general_006_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_007": {
+      "portrait": "general_007.jpg",
+      "cutout": "cutouts/general_007_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_008": {
+      "portrait": "general_008.jpg",
+      "cutout": "cutouts/general_008_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_009": {
+      "portrait": "general_009.jpg",
+      "cutout": "cutouts/general_009_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_010": {
+      "portrait": "general_010.jpg",
+      "cutout": "cutouts/general_010_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_011": {
+      "portrait": "general_011.jpg",
+      "cutout": "cutouts/general_011_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_012": {
+      "portrait": "general_012.jpg",
+      "cutout": "cutouts/general_012_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_013": {
+      "portrait": "general_013.jpg",
+      "cutout": "cutouts/general_013_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_014": {
+      "portrait": "general_014.jpg",
+      "cutout": "cutouts/general_014_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_015": {
+      "portrait": "general_015.jpg",
+      "cutout": "cutouts/general_015_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_016": {
+      "portrait": "general_016.jpg",
+      "cutout": "cutouts/general_016_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_017": {
+      "portrait": "general_017.jpg",
+      "cutout": "cutouts/general_017_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_018": {
+      "portrait": "general_018.jpg",
+      "cutout": "cutouts/general_018_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_019": {
+      "portrait": "general_019.jpg",
+      "cutout": "cutouts/general_019_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_020": {
+      "portrait": "general_020.jpg",
+      "cutout": "cutouts/general_020_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_021": {
+      "portrait": "general_021.jpg",
+      "cutout": "cutouts/general_021_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_022": {
+      "portrait": "general_022.jpg",
+      "cutout": "cutouts/general_022_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_023": {
+      "portrait": "general_023.jpg",
+      "cutout": "cutouts/general_023_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_024": {
+      "portrait": "general_024.jpg",
+      "cutout": "cutouts/general_024_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_025": {
+      "portrait": "general_025.jpg",
+      "cutout": "cutouts/general_025_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_026": {
+      "portrait": "general_026.jpg",
+      "cutout": "cutouts/general_026_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_027": {
+      "portrait": "general_027.jpg",
+      "cutout": "cutouts/general_027_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_028": {
+      "portrait": "general_028.jpg",
+      "cutout": "cutouts/general_028_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_029": {
+      "portrait": "general_029.jpg",
+      "cutout": "cutouts/general_029_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_030": {
+      "portrait": "general_030.jpg",
+      "cutout": "cutouts/general_030_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_031": {
+      "portrait": "general_031.jpg",
+      "cutout": "cutouts/general_031_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_032": {
+      "portrait": "general_032.jpg",
+      "cutout": "cutouts/general_032_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_033": {
+      "portrait": "general_033.jpg",
+      "cutout": "cutouts/general_033_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_034": {
+      "portrait": "general_034.jpg",
+      "cutout": "cutouts/general_034_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_035": {
+      "portrait": "general_035.jpg",
+      "cutout": "cutouts/general_035_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_036": {
+      "portrait": "general_036.jpg",
+      "cutout": "cutouts/general_036_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_037": {
+      "portrait": "general_037.jpg",
+      "cutout": "cutouts/general_037_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_038": {
+      "portrait": "general_038.jpg",
+      "cutout": "cutouts/general_038_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_039": {
+      "portrait": "general_039.jpg",
+      "cutout": "cutouts/general_039_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_040": {
+      "portrait": "general_040.jpg",
+      "cutout": "cutouts/general_040_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_041": {
+      "portrait": "general_041.jpg",
+      "cutout": "cutouts/general_041_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_042": {
+      "portrait": "general_042.jpg",
+      "cutout": "cutouts/general_042_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_043": {
+      "portrait": "general_043.jpg",
+      "cutout": "cutouts/general_043_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_044": {
+      "portrait": "general_044.jpg",
+      "cutout": "cutouts/general_044_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_045": {
+      "portrait": "general_045.jpg",
+      "cutout": "cutouts/general_045_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_046": {
+      "portrait": "general_046.jpg",
+      "cutout": "cutouts/general_046_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_047": {
+      "portrait": "general_047.jpg",
+      "cutout": "cutouts/general_047_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_048": {
+      "portrait": "general_048.jpg",
+      "cutout": "cutouts/general_048_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_049": {
+      "portrait": "general_049.jpg",
+      "cutout": "cutouts/general_049_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_050": {
+      "portrait": "general_050.jpg",
+      "cutout": "cutouts/general_050_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_051": {
+      "portrait": "general_051.jpg",
+      "cutout": "cutouts/general_051_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_052": {
+      "portrait": "general_052.jpg",
+      "cutout": "cutouts/general_052_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_053": {
+      "portrait": "general_053.jpg",
+      "cutout": "cutouts/general_053_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_054": {
+      "portrait": "general_054.jpg",
+      "cutout": "cutouts/general_054_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_055": {
+      "portrait": "general_055.jpg",
+      "cutout": "cutouts/general_055_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_056": {
+      "portrait": "general_056.jpg",
+      "cutout": "cutouts/general_056_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_057": {
+      "portrait": "general_057.jpg",
+      "cutout": "cutouts/general_057_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_058": {
+      "portrait": "general_058.jpg",
+      "cutout": "cutouts/general_058_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_059": {
+      "portrait": "general_059.jpg",
+      "cutout": "cutouts/general_059_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_060": {
+      "portrait": "general_060.jpg",
+      "cutout": "cutouts/general_060_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_061": {
+      "portrait": "general_061.jpg",
+      "cutout": "cutouts/general_061_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_062": {
+      "portrait": "general_062.jpg",
+      "cutout": "cutouts/general_062_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_063": {
+      "portrait": "general_063.jpg",
+      "cutout": "cutouts/general_063_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_064": {
+      "portrait": "general_064.jpg",
+      "cutout": "cutouts/general_064_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_065": {
+      "portrait": "general_065.jpg",
+      "cutout": "cutouts/general_065_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_066": {
+      "portrait": "general_066.jpg",
+      "cutout": "cutouts/general_066_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_067": {
+      "portrait": "general_067.jpg",
+      "cutout": "cutouts/general_067_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_068": {
+      "portrait": "general_068.jpg",
+      "cutout": "cutouts/general_068_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_069": {
+      "portrait": "general_069.jpg",
+      "cutout": "cutouts/general_069_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    },
+    "general_070": {
+      "portrait": "general_070.jpg",
+      "cutout": "cutouts/general_070_cutout.webp",
+      "width": 800,
+      "height": 1200,
+      "alpha": true
+    }
+  },
+  "frames": {
+    "battle_frame": {
+      "src": "frames/battle_frame.svg",
+      "width": 1600,
+      "height": 360,
+      "transparent": true
+    },
+    "laurel_wreath": {
+      "src": "frames/laurel_wreath.svg",
+      "width": 800,
+      "height": 800,
+      "transparent": true
+    }
+  },
+  "text_baked_in": false
+}

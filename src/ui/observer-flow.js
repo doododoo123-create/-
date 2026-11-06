@@ -14,6 +14,7 @@ export function battleConsequence(battle){
  return '대결 승리 · 점령 없음';
 }
 export function applicationSteps(scene,record){
+ if(scene?.filmOneStep)return ['all'];
  const b=observerBattle(scene,record);
  if(scene?.kind!=='apply'||scene.event?.type!=='resolve'||!b)return ['all'];
  const steps=['outcome'];

@@ -17,6 +17,7 @@ export class MapAnimation {
  tick(){
   this.frame=null;const root=this.root,p=this.playback,nodes=this.nodes;if(!root?.isConnected||!p||!nodes)return;
   const progress=p.sceneProgress,movement=p.movementProgress;
+  this.onFrame?.();
   const progressKey=p.scene?.kind==='capture'?p.state.record.turn+':'+p.scene.id+':'+Math.floor(progress*(p.state.record.battles[p.scene.battleIndex]?.takenTerritoryIds?.length||1)):null;if(progressKey&&progressKey!==this.progressKey){this.progressKey=progressKey;this.onMapProgress?.();}
   for(const line of nodes.countdowns)line.style.transform='scaleX('+(1-progress)+')';
   const settling=p.scene?.kind==='round-settle',travel=settling?Math.max(0,(progress-.18)/.82):progress,highlight=settling&&progress<.18?Math.sin(progress/.18*Math.PI)*.85:0;
@@ -51,6 +52,6 @@ export class MapAnimation {
     if(node)node.style.transform=`translate(${(target[0]-final.x)*(1-progress)}px,${(target[1]-35*duelScale-final.y)*(1-progress)}px)`;
    }
   }
-  if(p.playing&&(this.waves.length||nodes.arrows.some(a=>a.element.dataset.liveMarch==='true')||nodes.formations.length||nodes.countdowns.length||nodes.armies.length||nodes.rallies.length))this.frame=requestAnimationFrame(()=>this.tick());
+  if(p.playing&&(p.state?.filming||this.waves.length||nodes.arrows.some(a=>a.element.dataset.liveMarch==='true')||nodes.formations.length||nodes.countdowns.length||nodes.armies.length||nodes.rallies.length))this.frame=requestAnimationFrame(()=>this.tick());
  }
 }

@@ -1,4 +1,5 @@
 import {followArmyCampaign} from './army-camera.js';
+import {filmSafeTarget,filmCameraAt} from './filming-camera.js';
 import {updateHanMaps} from './han-map.js';
 import {alignMountainLabels} from './mountain-labels.js';
 import {mapAnchor} from '../model/cartography-geometry.js';
@@ -11,16 +12,17 @@ export function mapZoomControls(context='overview'){
 }
 export const MAX_MAP_ZOOM=5;
 export class MapCamera {
- constructor(){this.views=new Map();this.pendingUpdates=new Map();this.armyZoomPending=false;this.drag=null;this.panEditor=false;this.suppressClick=false;this.autoFollow=false;this.followKey=null;this.followRecord=null;this.motion=null;this.detailMode='auto';this.inspectedTerritory=null;}
+ constructor(){this.views=new Map();this.pendingUpdates=new Map();this.armyZoomPending=false;this.drag=null;this.panEditor=false;this.suppressClick=false;this.autoFollow=false;this.followKey=null;this.followRecord=null;this.motion=null;this.detailMode='auto';this.inspectedTerritory=null;this.filmKey=null;this.filmPlan=null;this.filmFrames=new Map();}
  cancelMotion(){if(this.motion!==null){globalThis.cancelAnimationFrame?.(this.motion);this.motion=null;}}
- manual(){this.cancelMotion();}
+ manual(){this.cancelMotion();this.filmPlan=null;}
  queueUpdate(context){if(this.pendingUpdates.has(context))return;if(!globalThis.requestAnimationFrame){this.update(context);return;}const frame=requestAnimationFrame(()=>{this.pendingUpdates.delete(context);this.update(context);});this.pendingUpdates.set(context,frame);}
  flushUpdate(context){const frame=this.pendingUpdates.get(context);if(frame===undefined)return;globalThis.cancelAnimationFrame?.(frame);this.pendingUpdates.delete(context);this.update(context);}
  keyboard(event,context){this.manual();const v=this.view(context),step=(event.shiftKey?3:1)*70/v.zoom;v.x+=event.key==='ArrowLeft'?-step:event.key==='ArrowRight'?step:0;v.y+=event.key==='ArrowUp'?-step:event.key==='ArrowDown'?step:0;this.clamp(v);this.update(context);}
  viewport(context){const el=globalThis.document?.querySelector?.(`.atlas-scroll[data-map-camera="${context}"]`);return {width:el?.clientWidth||1200,height:el?.clientHeight||800};}
- resetFollow(){this.followRecord=null;this.followKey=null;this.cancelMotion();}
- setFollowing(value,playback){this.autoFollow=!!value;this.followKey=null;this.cancelMotion();if(this.autoFollow)this.follow(playback);}
+ resetFollow(){this.followRecord=null;this.followKey=null;this.filmKey=null;this.filmPlan=null;this.cancelMotion();}
+ setFollowing(value,playback){this.autoFollow=!!value;this.followKey=null;this.filmKey=null;this.cancelMotion();if(this.autoFollow)this.follow(playback);}
  follow(playback){
+  if(playback?.state?.filming){this.followFilm(playback);return;}
   if(this.inspectedTerritory&&!playback?.playing)return;if(this.inspectedTerritory){this.inspectedTerritory=null;this.followKey=null;}
   const record=playback?.state?.record,scene=playback?.scene;if(!record||!scene)return;
   const world=scene.worldBefore||scene.worldAfter||playback.displayWorld;if(!world)return;
@@ -33,12 +35,33 @@ export class MapCamera {
   this.followKey=key;const anchor=battle?mapAnchor(world,battle.territoryId,'battle'):point,target=anchor?{x:anchor[0],y:anchor[1]}:null;if(!target)return;
   this.cancelMotion();Object.assign(view,target);this.clamp(view);this.update('simulation');
  }
+ followFilm(playback){
+  const scene=playback.scene;if(!scene)return;
+  if(scene.kind!=='film-camera'){if(this.filmPlan?.needed){Object.assign(this.view('simulation'),this.filmPlan.to);this.update('simulation',true);}this.filmPlan=null;return;}
+  const key=playback.state.record.turn+':'+scene.id+':'+(playback.state.take||0);
+  if(!this.autoFollow){scene.filmCamera={needed:false};playback.remaining=0;this.filmPlan=null;return;}
+  if(this.filmKey===key)return;this.filmKey=key;
+  const world=scene.worldBefore,point=mapAnchor(world,scene.filmBattle.territoryId,'battle');if(!point){scene.filmCamera={needed:false};playback.remaining=0;return;}
+  const view=this.view('simulation'),viewport=this.viewport('simulation'),root=globalThis.document?.querySelector('.map-stage'),hud=root?.querySelector('.film-hud'),toolbar=root?.querySelector('.film-toolbar'),scale=Number(root?.style.getPropertyValue('--film-card-scale'))||1;
+  const bottom=(hud?.getBoundingClientRect().height||240*(Number(root?.querySelector('.film-layer')?.style.getPropertyValue('--film-info-scale'))||1))+(toolbar&&!root?.classList.contains('film-clean')?toolbar.getBoundingClientRect().height+40:50)+80;
+  const plan=filmSafeTarget(view,this.box('simulation'),viewport,point,{bottom,cardWidth:84*scale});
+  const saved=this.filmFrames.get(playback.state.record.turn+':'+scene.battleIndex);if(saved){plan.to={...saved};plan.needed=Math.abs(saved.x-view.x)+Math.abs(saved.y-view.y)+Math.abs(saved.zoom-view.zoom)>.01;}
+  this.clamp(plan.to);scene.filmCamera=plan;this.filmPlan=plan;playback.remaining=playback.duration();
+  if(playback.reducedMotion?.()&&plan.needed){Object.assign(view,plan.to);this.update('simulation');}
+ }
+ animateFilm(playback){
+  const plan=this.filmPlan;if(!plan?.needed||playback.scene?.kind!=='film-camera')return;
+  const view=this.view('simulation'),progress=Number.isFinite(playback.sceneProgress)?playback.sceneProgress:1,target=filmCameraAt(plan,progress);
+  const zoom=plan.from.zoom+(plan.to.zoom-plan.from.zoom)*progress;
+  if(Math.abs(view.x-target.x)+Math.abs(view.y-target.y)+Math.abs(view.zoom-zoom)<.001)return;
+  Object.assign(view,target,{zoom});this.update('simulation',true);
+ }
  view(context){if(!this.views.has(context))this.views.set(context,{zoom:1,x:600,y:400});return this.views.get(context);}
  inspect(world,id){if(!world.territories.some(t=>t.id===id))return;this.manual();const p=mapAnchor(world,id,'battle');Object.assign(this.view('simulation'),{x:p[0],y:p[1]});this.inspectedTerritory=id;this.clamp(this.view('simulation'));this.update('simulation');}
- resetAll(){for(const frame of this.pendingUpdates.values())globalThis.cancelAnimationFrame?.(frame);this.pendingUpdates.clear();this.armyZoomPending=false;this.inspectedTerritory=null;this.resetFollow();this.views.clear();this.panEditor=false;this.drag=null;}
+ resetAll(){for(const frame of this.pendingUpdates.values())globalThis.cancelAnimationFrame?.(frame);this.pendingUpdates.clear();this.armyZoomPending=false;this.inspectedTerritory=null;this.resetFollow();this.views.clear();this.filmFrames.clear();this.panEditor=false;this.drag=null;}
  box(context){const v=this.view(context),viewport=this.viewport(context),[w,h]=cameraExtent(viewport.width,viewport.height);return [v.x-w/2/v.zoom,v.y-h/2/v.zoom,w/v.zoom,h/v.zoom];}
  restore(){document.querySelectorAll('.atlas-scroll[data-map-camera]').forEach(el=>this.update(el.dataset.mapCamera));}
- update(context){const pending=this.pendingUpdates.get(context);if(pending!==undefined){globalThis.cancelAnimationFrame?.(pending);this.pendingUpdates.delete(context);}const v=this.view(context);this.clamp(v);const box=this.box(context).join(' '),bounds=this.viewport(context);document.querySelectorAll(`.atlas-scroll[data-map-camera="${context}"]`).forEach(el=>{for(const svg of el.querySelectorAll(':scope > .atlas-map,:scope > .atlas-art-surface'))if(svg.getAttribute('viewBox')!==box)svg.setAttribute('viewBox',box);el.dataset.zoom=String(v.zoom);const scale=Math.min(bounds.width/1200,bounds.height/800)*v.zoom;el.dataset.detail=context==='editor'?'editor':observerDetail(this.detailMode,scale,v.zoom);el.classList.toggle('camera-pan-mode',context==='editor'&&this.panEditor);fitMapUnits(el);alignMountainLabels(el);updateHanMaps(el);el.querySelectorAll('.atlas-cell').forEach(cell=>cell.classList.toggle('event-selected-territory',context==='simulation'&&cell.dataset.territory===this.inspectedTerritory));});document.querySelectorAll(`[data-camera-scale="${context}"]`).forEach(el=>el.textContent=`${Math.round(v.zoom*100)}%`);document.querySelectorAll('[data-map-detail]').forEach(el=>el.value=this.detailMode);const select=document.querySelector('#map-editor-zoom');if(context==='editor'&&select){let option=[...select.options].find(o=>Number(o.value)===v.zoom);if(!option){option=new Option(`${Math.round(v.zoom*100)}%`,String(v.zoom));select.add(option);}select.value=String(v.zoom);}document.querySelectorAll('[data-action="map-pan-toggle"]').forEach(el=>el.setAttribute('aria-pressed',String(this.panEditor)));if(context==='simulation'){placeCompactDuel();placeRoyalChoice();}this.onUpdate?.();if(context==='simulation'&&this.armyZoomPending){this.armyZoomPending=false;followArmyCampaign(this);}}
+ update(context,silent=false){const pending=this.pendingUpdates.get(context);if(pending!==undefined){globalThis.cancelAnimationFrame?.(pending);this.pendingUpdates.delete(context);}const v=this.view(context);this.clamp(v);const box=this.box(context).join(' '),bounds=this.viewport(context);document.querySelectorAll(`.atlas-scroll[data-map-camera="${context}"]`).forEach(el=>{for(const svg of el.querySelectorAll(':scope > .atlas-map,:scope > .atlas-art-surface'))if(svg.getAttribute('viewBox')!==box)svg.setAttribute('viewBox',box);el.dataset.zoom=String(v.zoom);const scale=Math.min(bounds.width/1200,bounds.height/800)*v.zoom;el.dataset.detail=context==='editor'?'editor':observerDetail(this.detailMode,scale,v.zoom);el.classList.toggle('camera-pan-mode',context==='editor'&&this.panEditor);fitMapUnits(el);alignMountainLabels(el);updateHanMaps(el);el.querySelectorAll('.atlas-cell').forEach(cell=>cell.classList.toggle('event-selected-territory',context==='simulation'&&cell.dataset.territory===this.inspectedTerritory));});document.querySelectorAll(`[data-camera-scale="${context}"]`).forEach(el=>el.textContent=`${Math.round(v.zoom*100)}%`);document.querySelectorAll('[data-map-detail]').forEach(el=>el.value=this.detailMode);const select=document.querySelector('#map-editor-zoom');if(context==='editor'&&select){let option=[...select.options].find(o=>Number(o.value)===v.zoom);if(!option){option=new Option(`${Math.round(v.zoom*100)}%`,String(v.zoom));select.add(option);}select.value=String(v.zoom);}document.querySelectorAll('[data-action="map-pan-toggle"]').forEach(el=>el.setAttribute('aria-pressed',String(this.panEditor)));if(context==='simulation'){placeCompactDuel();placeRoyalChoice();}if(!silent)this.onUpdate?.();if(context==='simulation'&&this.armyZoomPending){this.armyZoomPending=false;followArmyCampaign(this);}}
  zoom(context,value,anchor=null,deferred=false){this.manual();const v=this.view(context),next=Math.round(Math.max(.5,Math.min(MAX_MAP_ZOOM,value))*1000)/1000;if(anchor){v.x=anchor[0]-(anchor[0]-v.x)*v.zoom/next;v.y=anchor[1]-(anchor[1]-v.y)*v.zoom/next;}v.zoom=next;this.clamp(v);this.armyZoomPending=context==='simulation'&&this.autoFollow;if(deferred)this.queueUpdate(context);else this.update(context);}
  clamp(v){v.zoom=Math.max(.5,Math.min(MAX_MAP_ZOOM,Number(v.zoom)||1));const context=[...this.views].find(([,view])=>view===v)?.[0]||'simulation',viewport=this.viewport(context),[,height]=cameraExtent(viewport.width,viewport.height),half=height/(2*v.zoom);v.x=Math.max(0,Math.min(1200,v.x));v.y=Math.max(Math.min(0,-800+half),Math.min(Math.max(800,1600-half),v.y));}
  action(action,context){if(!['map-zoom-in','map-zoom-out','map-zoom-reset','map-pan-toggle'].includes(action))return false;context||='overview';this.manual();if(action==='map-pan-toggle'){this.panEditor=!this.panEditor;this.update('editor');return true;}if(action==='map-zoom-reset'){this.views.set(context,{zoom:1,x:600,y:400});this.update(context);}else this.zoom(context,this.view(context).zoom*(action==='map-zoom-in'?1.25:.8));return true;}

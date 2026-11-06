@@ -5,7 +5,7 @@ import {preserveHanMaps,mountHanMaps} from './han-map.js';
 // markup, so transforms written by the camera and animation clock survive.
 const mobileMarkup=new WeakMap();
 const generatedAttributes=new WeakMap();
-function mapLayerEntries(svg){const seen=new Map();return [...svg.children].map(n=>{const name=n.dataset.atlasFragment||n.getAttribute('class')||n.tagName,order=seen.get(name)||0;seen.set(name,order+1);return [name+':'+order,n];});}
+function mapLayerEntries(svg){const seen=new Map();return [...svg.children].map(n=>{const name=n.dataset.filmKey||n.dataset.atlasFragment||n.getAttribute('class')||n.tagName,order=seen.get(name)||0;seen.set(name,order+1);return [name+':'+order,n];});}
 function syncAttributes(old,next){
  const before=generatedAttributes.get(old)||new Map([...old.attributes].map(a=>[a.name,a.value])),after=new Map([...next.attributes].map(a=>[a.name,a.value]));
  for(const name of before.keys())if(!after.has(name))old.removeAttribute(name);
@@ -56,6 +56,20 @@ function updateCampaignPanel(old,next){
   mobileMarkup.set(live,markup);if(live!==cursor)old.insertBefore(live,cursor);cursor=live.nextElementSibling;
  }for(const n of previous.values())n.remove();
 }
+function updateFilmTree(old,next){
+ if(old.nodeType!==next.nodeType||old.nodeType===1&&(old.tagName!==next.tagName||old.dataset.filmPerson!==next.dataset.filmPerson)){old.replaceWith(next);return next;}
+ if(old.nodeType===3){if(old.textContent!==next.textContent)old.textContent=next.textContent;return old;}
+ if(old.nodeType!==1)return old;
+ syncAttributes(old,next);
+ const keyed=next.classList.contains('film-layer');
+ if(keyed){
+  const previous=new Map(mapLayerEntries(old));let cursor=old.firstElementChild;
+  for(const [key,n] of mapLayerEntries(next)){const prior=previous.get(key);previous.delete(key);const live=prior?updateFilmTree(prior,n):n;if(live!==cursor)old.insertBefore(live,cursor);cursor=live.nextElementSibling;}
+  for(const node of previous.values())node.remove();return old;
+ }
+ const nodes=[...next.childNodes];for(let i=0;i<nodes.length;i++){const prior=old.childNodes[i];if(prior)updateFilmTree(prior,nodes[i]);else old.append(nodes[i]);}
+ while(old.childNodes.length>nodes.length)old.lastChild.remove();return old;
+}
 function updateFullscreenStage(old,next){
  syncAttributes(old,next);const previous=new Map(mapLayerEntries(old));let cursor=old.firstElementChild;
  for(const [key,n] of mapLayerEntries(next)){
@@ -64,7 +78,7 @@ function updateFullscreenStage(old,next){
    if(n.classList.contains('map-stage-atlas')){
     const map=existing.querySelector('.atlas-scroll'),nextMap=n.querySelector('.atlas-scroll');
     if(map&&nextMap){const patched=updateMobileMap(map,nextMap);if(patched!==map)map.replaceWith(patched);syncAttributes(existing,n);live=existing;}
-   }else if(n.classList.contains('campaign-popup')){updateCampaignPanel(existing,n);live=existing;}else if(mobileMarkup.get(existing)===markup)live=existing;
+   }else if(n.classList.contains('film-layer')){updateFilmTree(existing,n);live=existing;}else if(n.classList.contains('campaign-popup')){updateCampaignPanel(existing,n);live=existing;}else if(mobileMarkup.get(existing)===markup)live=existing;
    if(live!==existing){existing.replaceWith(live);if(cursor===existing)cursor=live;}
   }
   mobileMarkup.set(live,markup);if(live!==cursor)old.insertBefore(live,cursor);cursor=live.nextElementSibling;

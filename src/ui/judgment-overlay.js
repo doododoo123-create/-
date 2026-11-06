@@ -25,6 +25,8 @@ function judgmentTraits(person,role,country){
   return `<p class="judgment-feature">${esc(person?.feature||trait||'')}<span>${role==='minister'?`${esc(trait)} · 능력 ${judgmentSign(person?.ability)}`:role==='king'?esc(trait||''):`능력 ${judgmentSign(person?.ability)}`}</span></p>`;
 }
 export function renderJudgmentOverlay({world,playback}) {
+  if(playback.state?.filming&&playback.scene?.filmPhase)return '';
+  if(playback.state?.filming&&playback.scene?.kind==='apply'&&playback.scene.event?.type==='death')return `<aside class="global-history-notice" data-notice="death"><strong>${esc(displayEventText(playback.scene.event.title))}</strong><small>${esc(displayEventText(playback.scene.event.detail))}</small></aside>`;
   if(playback.scene?.kind==='unification'&&!playback.complete)return renderUnificationAnnouncement(playback.scene.worldAfter,playback.scene.result);
   if(playback.scene?.kind==='elimination'&&!playback.complete)return renderNationFall(playback.scene);
   if(playback.scene?.event?.type==='capital_fall'&&playback.scene.kind!=='roll')return `<aside class="global-history-notice" data-notice="capital_fall" aria-live="polite"><strong>${esc(displayEventText(playback.scene.event.title))}</strong><small>${esc(displayEventText(playback.scene.event.detail))}</small></aside>`;

@@ -1,4 +1,5 @@
 import {packStandalone} from './standalone-pack.mjs';
+import {syncFilmingArt} from './filming-art.mjs';
 import {syncLicensedFonts} from './licensed-fonts.mjs';
 import { syncSoundArt } from './sound-art.mjs';
 import { syncTextBoxArt } from './text-box-art.mjs';
@@ -18,6 +19,7 @@ await syncTextBoxArt(root);
 await syncSoundArt(root);
 await syncKitIcons(root);
 await syncGeneralPortraits(root);
+await syncFilmingArt(root);
 const hanMapData=await readFile(resolve(root,'assets/maps/han/raster.json'),'utf8');
 const hanManifest=JSON.parse(await readFile(resolve(root,'assets/maps/han/manifest.json'),'utf8'));
 if(createHash('sha256').update(await readFile(resolve(root,'assets/maps/han/original.zip'))).digest('hex')!==hanManifest.sourceSha256)throw Error('지도 원본이 바뀌었습니다. python scripts/import-han-map.py로 내장 자료를 갱신해 주세요.');
@@ -46,6 +48,7 @@ let fontCss=await readFile(resolve(root,'src/ui/fonts-licensed.css'),'utf8');
 for(const match of [...fontCss.matchAll(/url\('([^']+\.woff2)'\)/g)])fontCss=fontCss.replace(match[0],`url('data:font/woff2;base64,${(await readFile(resolve(root,'src/ui',match[1]))).toString('base64')}')`);
 const v39Css=await readFile(resolve(root,'src/ui/studio-v39.css'),'utf8');
 const v44Css=await readFile(resolve(root,'src/ui/studio-v44.css'),'utf8');
+const filmingCss=await readFile(resolve(root,'src/ui/filming.css'),'utf8');
 const v42Css=await readFile(resolve(root,'src/ui/studio-v42.css'),'utf8');
 const v41Css=await readFile(resolve(root,'src/ui/studio-v41.css'),'utf8');
 const v40Css=await readFile(resolve(root,'src/ui/studio-v40.css'),'utf8');
@@ -91,6 +94,7 @@ const favicon = Buffer.from(await readFile(resolve(root, 'favicon.svg'))).toStri
 let html = await readFile(resolve(root, 'index.html'), 'utf8');
 html = html.replace('<link rel="stylesheet" href="./src/ui/fonts-licensed.css">',`<style>${fontCss}</style>`).replace('<link rel="stylesheet" href="./src/ui/style.css">', `<style>${css}</style>`)
   .replace('<link rel="stylesheet" href="./src/ui/visuals.css">', `<style>${visuals}</style>`)
+  .replace('<link rel="stylesheet" href="./src/ui/filming.css">', `<style>${filmingCss}</style>`)
   .replace('<link rel="stylesheet" href="./src/ui/map-stage.css">', `<style>${mapStage}</style>`)
   .replace('<link rel="stylesheet" href="./src/ui/map-editor.css">', `<style>${mapEditorCss}</style>`)
   .replace('<link rel="stylesheet" href="./src/ui/lacquer-bronze.css">', `<style>${lacquerCss}</style>`)
