@@ -1,6 +1,6 @@
 # 사국쟁패 Studio v0.49.0 · 선택 조작·고립지 철수
 
-**[단일 HTML 실행본](./사국쟁패%20Studio.html)**
+**[v0.49.0 단일 HTML 다운로드](https://github.com/doododoo123-create/-/releases/download/v0.49.0/Saguk-Studio-v0.49.0.html)**
 
 HTML을 저장해 최신 Chrome·Edge에서 여세요. 설치·인터넷 연결 없이 실행하는 일반판 하나입니다.
 
@@ -10,6 +10,8 @@ HTML을 저장해 최신 Chrome·Edge에서 여세요. 설치·인터넷 연결 
 - 연승·3배 병력 격파를 작은 초상 배지로 다시 표시합니다. 결과 공개 전에는 보이지 않으며,16배속에서도 승리 확인 시간은 유지합니다.
 - 수도권과 떨어진 고립 지역의 마지막 영토를 잃으면 생존 장수는 전투 후 잔여 병력의1/3만 수도로 가져갑니다. 만 단위는 버림이며 나머지는 철수 손실로 기록합니다. 장수의 생애/능력/전적은 유지합니다.
 - 엔진38은 이전 기록을 그대로 재생하며 새로 진행하는 차례부터 철수 규칙을 적용합니다. 선택한 턴만 촬영하는 방식은 유지합니다.
+
+[v0.49.0 구현·검증 범위](docs/validation-v0.49.md)
 
 ## v0.48.0 변경
 
@@ -134,7 +136,7 @@ HTML을 저장해 최신 Chrome·Edge에서 여세요. 설치·인터넷 연결 
 
 ## 설치 없이 실행
 
-**[일반판 HTML 다운로드](https://github.com/doododoo123-create/-/raw/refs/tags/v0.46.1/사국쟁패%20Studio.html)**
+**[일반판 HTML 다운로드](https://github.com/doododoo123-create/-/releases/download/v0.49.0/Saguk-Studio-v0.49.0.html)**
 
 모바일 경량판은 v0.38을 마지막으로 제작을 종료했습니다. 이전 배포본은 당시 Git 태그에 보존되어 있습니다. 새 배포에는 일반판 하나만 포함합니다.
 
