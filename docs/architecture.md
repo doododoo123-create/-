@@ -639,3 +639,6 @@ movementRate와 campaignSceneDuration은 추가 가속1.5다. roll/reel 시간�
 `filming-camera.js`는 화면 안전 영역과 최소 이동을 계산한다. film-camera 장면 중에만 보간하고 판정 전 도착한다. 카드의52/84px 목표는 화면 배율 보정으로 적용하며 화면 겹침의 묶음 표시는 DOM 전용이다. 고정 하단 정보창의 인물/사진 노드는 부분 갱신으로 보존한다.
 
 재촬영은 앱의 별도 replaySession에서 원래 현재 경기와 카메라를 보관하고, seekFilm이 새 재생 상태/오디오 회차를 만든다. rangeEnd에 도착하면 onFinish를 호출하지 않고 정지하므로 현재 저장이나 다음 차례를 만들지 않는다. 구도100개는 세션 내 메모리이며 표시 옵션은 별도 filming.v1 브라우저 키다. 엔진37·세계2·진행1·역사2와 Android wrapper를 바꾸지 않는다. 컷아웃70장과 SVG 장식은 scripts/filming-art.mjs를 거쳐 단일 HTML에 내장한다.
+
+
+v0.48 선택 턴 촬영은 selected-turns.js의 완료 턴 대기열과 기존 replayTurn 복원을 사용한다. 촬영 전용 단계 대신 기존 관전 연출을 재사용하며 현재 경기의 presentation과 카메라를 별도로 보존한다.

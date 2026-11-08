@@ -1,5 +1,4 @@
 import {packStandalone} from './standalone-pack.mjs';
-import {syncFilmingArt} from './filming-art.mjs';
 import {syncLicensedFonts} from './licensed-fonts.mjs';
 import { syncSoundArt } from './sound-art.mjs';
 import { syncTextBoxArt } from './text-box-art.mjs';
@@ -19,7 +18,6 @@ await syncTextBoxArt(root);
 await syncSoundArt(root);
 await syncKitIcons(root);
 await syncGeneralPortraits(root);
-await syncFilmingArt(root);
 const hanMapData=await readFile(resolve(root,'assets/maps/han/raster.json'),'utf8');
 const hanManifest=JSON.parse(await readFile(resolve(root,'assets/maps/han/manifest.json'),'utf8'));
 if(createHash('sha256').update(await readFile(resolve(root,'assets/maps/han/original.zip'))).digest('hex')!==hanManifest.sourceSha256)throw Error('지도 원본이 바뀌었습니다. python scripts/import-han-map.py로 내장 자료를 갱신해 주세요.');
