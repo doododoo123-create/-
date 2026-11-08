@@ -1,3 +1,5 @@
+import {TroopAnimation} from './troop-animation.js';
+import {placeVictoryBadge} from './victory-badge.js';
 import {ARMY_CARD_SCALE,armyLeaderTransform} from './army-presentation.js';
 import {roundedRoutePath} from './route-bundles.js';
 import { buildFrontWave,frontWaveAt,frontSequenceProgress } from './front-wave.js';
@@ -5,9 +7,9 @@ import { atlasGeometry } from './atlas-cache.js';
 import { polylineAt, operationPath,armyArrowWidth } from './operation-geometry.js';
 // One presentation clock drives card pins, arrowheads and territory wipes.
 export class MapAnimation {
- constructor(){this.frame=null;this.root=null;this.playback=null;this.waves=[];this.progressKey=null;}
+ constructor(){this.troops=new TroopAnimation();this.frame=null;this.root=null;this.playback=null;this.waves=[];this.progressKey=null;}
  start(root,playback){
-  this.stop();this.root=root;this.playback=playback;const world=playback.displayWorld,geometry=world?atlasGeometry(world):null;
+  this.stop();this.troops.start(root,playback);this.root=root;this.playback=playback;const world=playback.displayWorld,geometry=world?atlasGeometry(world):null;
   this.waves=[...root.querySelectorAll('[data-front-wave]')].map(e=>({element:e,index:Number(e.dataset.frontWave),order:Number(e.dataset.waveOrder),count:Number(e.dataset.waveCount),span:Number(e.dataset.wipeSpan),lines:[...root.querySelectorAll(`[data-wave-line="${e.dataset.frontWave}"]`)],glows:[...root.querySelectorAll(`[data-wave-glow="${e.dataset.frontWave}"]`)],model:buildFrontWave(world,geometry,Number(e.dataset.frontWave),e.dataset.waveFrom)}));
   const cards=new Map([...root.querySelectorAll('.map-unit-position')].map(c=>[c.dataset.person,c]));
   this.nodes={svg:root.querySelector('.atlas-map'),countdowns:[...root.querySelectorAll('[data-campaign-countdown]')],armies:[...root.querySelectorAll('[data-army-forming="true"]')].map(card=>({leader:card.querySelector('.army-leader-scale'),minis:[...card.querySelectorAll('.army-mini-unit')],ring:card.querySelector('.army-formation-ring')})),rallies:[...root.querySelectorAll('[data-rally-spot] circle')],formations:[...root.querySelectorAll('[data-forming="true"]')].map(card=>({card,node:card.querySelector('.clock-formation'),target:card.dataset.formationTarget.split(',').map(Number)})),arrows:[...root.querySelectorAll('.operation-arrow[data-route-points]')].map(element=>{const pair=element.querySelector('.campaign-route-pair'),card=cards.get(element.dataset.routePerson);return {element,points:JSON.parse(element.dataset.routePoints),width:Number(pair?.dataset.arrowWidth)||armyArrowWidth(Number(pair?.dataset.arrowArmy)||0),paths:[...element.querySelectorAll('.campaign-route,.campaign-route-shadow')],card,node:card?.querySelector('.clock-marching')};})};
@@ -17,7 +19,7 @@ export class MapAnimation {
  tick(){
   this.frame=null;const root=this.root,p=this.playback,nodes=this.nodes;if(!root?.isConnected||!p||!nodes)return;
   const progress=p.sceneProgress,movement=p.movementProgress;
-  this.onFrame?.();
+  this.onFrame?.();this.troops.tick();placeVictoryBadge(root,p.sceneProgress);
   const progressKey=p.scene?.kind==='capture'?p.state.record.turn+':'+p.scene.id+':'+Math.floor(progress*(p.state.record.battles[p.scene.battleIndex]?.takenTerritoryIds?.length||1)):null;if(progressKey&&progressKey!==this.progressKey){this.progressKey=progressKey;this.onMapProgress?.();}
   for(const line of nodes.countdowns)line.style.transform='scaleX('+(1-progress)+')';
   const settling=p.scene?.kind==='round-settle',travel=settling?Math.max(0,(progress-.18)/.82):progress,highlight=settling&&progress<.18?Math.sin(progress/.18*Math.PI)*.85:0;
@@ -52,6 +54,6 @@ export class MapAnimation {
     if(node)node.style.transform=`translate(${(target[0]-final.x)*(1-progress)}px,${(target[1]-35*duelScale-final.y)*(1-progress)}px)`;
    }
   }
-  if(p.playing&&(p.state?.filming||this.waves.length||nodes.arrows.some(a=>a.element.dataset.liveMarch==='true')||nodes.formations.length||nodes.countdowns.length||nodes.armies.length||nodes.rallies.length))this.frame=requestAnimationFrame(()=>this.tick());
+  if(p.playing&&(this.troops.entries?.length||p.state?.filming||this.waves.length||nodes.arrows.some(a=>a.element.dataset.liveMarch==='true')||nodes.formations.length||nodes.countdowns.length||nodes.armies.length||nodes.rallies.length))this.frame=requestAnimationFrame(()=>this.tick());
  }
 }

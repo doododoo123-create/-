@@ -21,7 +21,7 @@ export function adjacentDuelPlacement(bounds,pair,pane,obstacle=null){
 export function placeCompactDuel(){
  const root=globalThis.document?.querySelector?.('.map-stage'),pane=root?.querySelector('.is-compact-duel'),ring=root?.querySelector('.battle-emblem .target-ring');
  if(!pane||!ring)return;
- const bounds=root.getBoundingClientRect(),cards=[...root.querySelectorAll('.map-unit-position[data-combat-side]')],boxes=cards.flatMap(c=>[...c.querySelectorAll('foreignObject,.card-label-badge,.unit-combat-role')].map(e=>e.getBoundingClientRect()));if(!boxes.length)boxes.push(ring.getBoundingClientRect());
+ const bounds=root.getBoundingClientRect(),cards=[...root.querySelectorAll('.map-unit-position[data-combat-side]')],boxes=cards.flatMap(c=>[...c.querySelectorAll('foreignObject:not(.troop-token),.card-label-badge,.unit-combat-role')].map(e=>e.getBoundingClientRect()));if(!boxes.length)boxes.push(ring.getBoundingClientRect());
  const pair={left:Math.min(...boxes.map(b=>b.left)),right:Math.max(...boxes.map(b=>b.right)),top:Math.min(...boxes.map(b=>b.top)),bottom:Math.max(...boxes.map(b=>b.bottom))};
  const chosen=adjacentDuelPlacement(bounds,pair,{width:pane.offsetWidth,height:pane.offsetHeight},root.querySelector('.map-play-toggle')?.getBoundingClientRect());
  pane.style.left=`${chosen.x-bounds.left}px`;pane.style.top=`${chosen.y-bounds.top}px`;pane.style.transform=`scale(${chosen.scale})`;pane.style.transformOrigin='top left';pane.dataset.adjacent=chosen.side;
@@ -30,7 +30,7 @@ export function placeCompactDuel(){
 }
 export function placeRoyalChoice(){
  const root=globalThis.document?.querySelector?.('.map-stage'),pane=root?.querySelector('.is-royal-choice,.is-royal-die');if(!pane)return;
- const role=pane.dataset.anchorRole||'king',unit=[...root.querySelectorAll('.map-unit-position')].find(c=>c.dataset.unitRole===role&&c.dataset.country===pane.dataset.nation&&(role!=='general'||c.querySelector('.map-unit-token')?.dataset.slot===pane.dataset.anchorSlot)),card=unit?.querySelector('foreignObject');if(!card)return;
+ const role=pane.dataset.anchorRole||'king',unit=[...root.querySelectorAll('.map-unit-position')].find(c=>c.dataset.unitRole===role&&c.dataset.country===pane.dataset.nation&&(role!=='general'||c.querySelector('.map-unit-token')?.dataset.slot===pane.dataset.anchorSlot)),card=unit?.querySelector('foreignObject:not(.troop-token)');if(!card)return;
  const r=root.getBoundingClientRect(),b=card.getBoundingClientRect(),width=pane.offsetWidth,height=pane.offsetHeight;
  const left=Math.max(8,Math.min(r.width-width-8,b.x+b.width/2-r.x-width/2));
  let top=b.y-r.y-height-8;if(top<8)top=b.bottom-r.y+8;

@@ -1,0 +1,1739 @@
+{
+  "version": 5,
+  "tiers": {
+    "tier1": {
+      "format": "saguk-three-tiers-v5",
+      "character": "농민병",
+      "frame_size": {
+        "width": 384,
+        "height": 320
+      },
+      "body_height": 224,
+      "pivot": {
+        "x": 174,
+        "y": 292
+      },
+      "stride": 100,
+      "team_color": "#EF2028",
+      "actions": {
+        "idle": {
+          "loop": true,
+          "durations_ms": [
+            160,
+            160,
+            160,
+            160,
+            160,
+            160,
+            160,
+            160,
+            160,
+            160
+          ],
+          "body_file": "idle-body.png",
+          "shade_file": "idle-shade.png",
+          "mask_file": "idle-mask.png",
+          "frames": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 0,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            }
+          ]
+        },
+        "walk": {
+          "loop": true,
+          "durations_ms": [
+            90,
+            90,
+            90,
+            90,
+            90,
+            90,
+            90,
+            90,
+            90,
+            90
+          ],
+          "body_file": "walk-body.png",
+          "shade_file": "walk-shade.png",
+          "mask_file": "walk-mask.png",
+          "frames": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 0,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            }
+          ]
+        },
+        "attack": {
+          "loop": false,
+          "durations_ms": [
+            80,
+            85,
+            90,
+            65,
+            40,
+            65,
+            65,
+            85,
+            95,
+            100
+          ],
+          "body_file": "attack-body.png",
+          "shade_file": "attack-shade.png",
+          "mask_file": "attack-mask.png",
+          "frames": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 0,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            }
+          ]
+        },
+        "guard": {
+          "loop": false,
+          "durations_ms": [
+            65,
+            65,
+            75,
+            75,
+            120,
+            70,
+            70,
+            100,
+            90,
+            100
+          ],
+          "body_file": "guard-body.png",
+          "shade_file": "guard-shade.png",
+          "mask_file": "guard-mask.png",
+          "frames": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 0,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            }
+          ]
+        },
+        "hurt": {
+          "loop": false,
+          "durations_ms": [
+            20,
+            25,
+            25,
+            35,
+            45,
+            35,
+            35,
+            35,
+            35,
+            40
+          ],
+          "body_file": "hurt-body.png",
+          "shade_file": "hurt-shade.png",
+          "mask_file": "hurt-mask.png",
+          "frames": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 0,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            }
+          ]
+        },
+        "retreat": {
+          "loop": true,
+          "durations_ms": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "body_file": "retreat-body.png",
+          "shade_file": "retreat-shade.png",
+          "mask_file": "retreat-mask.png",
+          "frames": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 0,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            }
+          ]
+        },
+        "death": {
+          "loop": false,
+          "durations_ms": [
+            70,
+            80,
+            90,
+            100,
+            100,
+            100,
+            110,
+            120,
+            130,
+            150
+          ],
+          "body_file": "death-body.png",
+          "shade_file": "death-shade.png",
+          "mask_file": "death-mask.png",
+          "frames": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 0,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            }
+          ]
+        }
+      },
+      "recoloring": "The garment areas in each body sheet are transparent. Tint the grayscale shade sheet once per color/action, composite under the body and cache. Draw one complete frame per soldier; never crossfade poses."
+    },
+    "tier2": {
+      "format": "saguk-three-tiers-v5",
+      "character": "정규 창병",
+      "frame_size": {
+        "width": 384,
+        "height": 320
+      },
+      "body_height": 224,
+      "pivot": {
+        "x": 174,
+        "y": 292
+      },
+      "stride": 100,
+      "team_color": "#EF2028",
+      "actions": {
+        "idle": {
+          "loop": true,
+          "durations_ms": [
+            160,
+            160,
+            160,
+            160,
+            160,
+            160,
+            160,
+            160,
+            160,
+            160
+          ],
+          "body_file": "idle-body.png",
+          "shade_file": "idle-shade.png",
+          "mask_file": "idle-mask.png",
+          "frames": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 0,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            }
+          ]
+        },
+        "walk": {
+          "loop": true,
+          "durations_ms": [
+            90,
+            90,
+            90,
+            90,
+            90,
+            90,
+            90,
+            90,
+            90,
+            90
+          ],
+          "body_file": "walk-body.png",
+          "shade_file": "walk-shade.png",
+          "mask_file": "walk-mask.png",
+          "frames": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 0,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            }
+          ]
+        },
+        "attack": {
+          "loop": false,
+          "durations_ms": [
+            80,
+            85,
+            90,
+            65,
+            40,
+            65,
+            65,
+            85,
+            95,
+            100
+          ],
+          "body_file": "attack-body.png",
+          "shade_file": "attack-shade.png",
+          "mask_file": "attack-mask.png",
+          "frames": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 0,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            }
+          ]
+        },
+        "guard": {
+          "loop": false,
+          "durations_ms": [
+            65,
+            65,
+            75,
+            75,
+            120,
+            70,
+            70,
+            100,
+            90,
+            100
+          ],
+          "body_file": "guard-body.png",
+          "shade_file": "guard-shade.png",
+          "mask_file": "guard-mask.png",
+          "frames": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 0,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            }
+          ]
+        },
+        "hurt": {
+          "loop": false,
+          "durations_ms": [
+            20,
+            25,
+            25,
+            35,
+            45,
+            35,
+            35,
+            35,
+            35,
+            40
+          ],
+          "body_file": "hurt-body.png",
+          "shade_file": "hurt-shade.png",
+          "mask_file": "hurt-mask.png",
+          "frames": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 0,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            }
+          ]
+        },
+        "retreat": {
+          "loop": true,
+          "durations_ms": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "body_file": "retreat-body.png",
+          "shade_file": "retreat-shade.png",
+          "mask_file": "retreat-mask.png",
+          "frames": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 0,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            }
+          ]
+        },
+        "death": {
+          "loop": false,
+          "durations_ms": [
+            70,
+            80,
+            90,
+            100,
+            100,
+            100,
+            110,
+            120,
+            130,
+            150
+          ],
+          "body_file": "death-body.png",
+          "shade_file": "death-shade.png",
+          "mask_file": "death-mask.png",
+          "frames": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 0,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            }
+          ]
+        }
+      },
+      "recoloring": "The garment areas in each body sheet are transparent. Tint the grayscale shade sheet once per color/action, composite under the body and cache. Draw one complete frame per soldier; never crossfade poses."
+    },
+    "tier3": {
+      "format": "saguk-three-tiers-v5",
+      "character": "정예 중보병",
+      "frame_size": {
+        "width": 384,
+        "height": 320
+      },
+      "body_height": 224,
+      "pivot": {
+        "x": 174,
+        "y": 292
+      },
+      "stride": 100,
+      "team_color": "#EF2028",
+      "actions": {
+        "idle": {
+          "loop": true,
+          "durations_ms": [
+            160,
+            160,
+            160,
+            160,
+            160,
+            160,
+            160,
+            160,
+            160,
+            160
+          ],
+          "body_file": "idle-body.png",
+          "shade_file": "idle-shade.png",
+          "mask_file": "idle-mask.png",
+          "frames": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 0,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            }
+          ]
+        },
+        "walk": {
+          "loop": true,
+          "durations_ms": [
+            90,
+            90,
+            90,
+            90,
+            90,
+            90,
+            90,
+            90,
+            90,
+            90
+          ],
+          "body_file": "walk-body.png",
+          "shade_file": "walk-shade.png",
+          "mask_file": "walk-mask.png",
+          "frames": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 0,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            }
+          ]
+        },
+        "attack": {
+          "loop": false,
+          "durations_ms": [
+            80,
+            85,
+            90,
+            65,
+            40,
+            65,
+            65,
+            85,
+            95,
+            100
+          ],
+          "body_file": "attack-body.png",
+          "shade_file": "attack-shade.png",
+          "mask_file": "attack-mask.png",
+          "frames": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 0,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            }
+          ]
+        },
+        "guard": {
+          "loop": false,
+          "durations_ms": [
+            65,
+            65,
+            75,
+            75,
+            120,
+            70,
+            70,
+            100,
+            90,
+            100
+          ],
+          "body_file": "guard-body.png",
+          "shade_file": "guard-shade.png",
+          "mask_file": "guard-mask.png",
+          "frames": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 0,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            }
+          ]
+        },
+        "hurt": {
+          "loop": false,
+          "durations_ms": [
+            20,
+            25,
+            25,
+            35,
+            45,
+            35,
+            35,
+            35,
+            35,
+            40
+          ],
+          "body_file": "hurt-body.png",
+          "shade_file": "hurt-shade.png",
+          "mask_file": "hurt-mask.png",
+          "frames": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 0,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            }
+          ]
+        },
+        "retreat": {
+          "loop": true,
+          "durations_ms": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "body_file": "retreat-body.png",
+          "shade_file": "retreat-shade.png",
+          "mask_file": "retreat-mask.png",
+          "frames": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 0,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            }
+          ]
+        },
+        "death": {
+          "loop": false,
+          "durations_ms": [
+            70,
+            80,
+            90,
+            100,
+            100,
+            100,
+            110,
+            120,
+            130,
+            150
+          ],
+          "body_file": "death-body.png",
+          "shade_file": "death-shade.png",
+          "mask_file": "death-mask.png",
+          "frames": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 0,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 0,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 384,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 768,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1152,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            },
+            {
+              "x": 1536,
+              "y": 320,
+              "width": 384,
+              "height": 320
+            }
+          ]
+        }
+      },
+      "recoloring": "The garment areas in each body sheet are transparent. Tint the grayscale shade sheet once per color/action, composite under the body and cache. Draw one complete frame per soldier; never crossfade poses."
+    }
+  }
+}

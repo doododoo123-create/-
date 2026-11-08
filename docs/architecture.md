@@ -645,3 +645,8 @@ v0.48 선택 턴 촬영은 selected-turns.js의 완료 턴 대기열과 기존 r
 
 
 v0.49: HistorySelection은 이벤트 위임으로 체크/강조/개수만 갱신하여 목록 DOM과 스크롤을 보존한다. isolated-evacuation은 점령 직전 육지 연결권역을 기억하고 전투/전사 판정 뒤 철수를 기록한다. controls.isolatedEvacuation 활성화와 지속 상태는 과거 명령 호환을 유지한다. 작은 승리 배지는 불변 전투 기록의 연승/병력 비율을 읽는다.
+
+
+## v0.50 병사·전투 지역 강조
+
+ui/troop-presentation.js는 기록 기반 외형/동작과 카드 안의 비상호작용 캔버스를 만든다. troop-animation.js가 MapAnimation의 같은 시계에서 공유 국가색 시트로 프레임을 그린다. 카드의 기존 이동/포개기/대형 변환 안에 있어 병사만 따로 이동하지 않는다. 최대24개 합성 시트 캐시와 화면 밖 그리기 생략을 사용한다. assets/troops 원본과 runtime은 prepare-troops.py로 연결하며 실행은 Python 없이 내장 그림을 읽는다. victory-badge.js는 battle 앵커를 SVG 화면 좌표로 투영해 컷아웃을 배치한다. 화면 효과만 변경하며 엔진38과 선택 턴 촬영 데이터는 유지한다.
