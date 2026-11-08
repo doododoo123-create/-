@@ -12,6 +12,14 @@ test('garrison and real army retain each commanders soldier count, tier and iden
  const enemy={...markers[2],country:{...c,id:'other'},person:{...ps[2],countryId:'other'}};assert.notEqual(troopGroups([markers[0],enemy],null).get(ps[0].id),troopGroups([markers[0],enemy],null).get(ps[2].id));
 });
 test('all original body poses fit the non-overlapping grid and canvas sizing follows zoom and screen density even at a paused frame',()=>{
- for(const n of [1,2,3,6,12,24]){const g=troopGrid(n);assert.equal(g.positions.length,n);for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){const a=g.positions[i],b=g.positions[j];assert(Math.abs(a.x-b.x)>=70||Math.abs(a.y-b.y)>=60);}}
+ // Conservative bounds across every original pose, including mirrored weapons,
+ // at the compact 40.5-unit body height: width <55 and height <43.
+ for(const n of [1,2,3,6,12,24]){const g=troopGrid(n);assert.equal(g.positions.length,n);for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){const a=g.positions[i],b=g.positions[j];assert(Math.abs(a.x-b.x)>=55||Math.abs(a.y-b.y)>=43);}}
+ // Measured maximum widths of all three original types at 40.5 body height.
+ for(const [action,width] of Object.entries({idle:30.38,walk:32.18,retreat:39.42,guard:45.56,attack:54.61,hurt:33.27,death:50.27})){
+  const g=troopGrid(12,Array.from({length:12},()=>({action})));assert(g.pitch>width);assert(g.width<4*76+28);
+ }
+ assert(troopGrid(12,[{action:'idle'}]).width<troopGrid(12,[{action:'attack'}]).width);
+ assert.equal(troopGrid(12,[{action:'idle'},{action:'attack'}]).pitch,troopGrid(12,[{action:'attack'}]).pitch);
  assert.deepEqual(troopCanvasSize(120,100,1,1),{width:120,height:100});assert.deepEqual(troopCanvasSize(120,100,3,2),{width:720,height:600});
 });

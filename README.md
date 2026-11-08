@@ -1,8 +1,16 @@
-# 사국쟁패 Studio v0.51.0 · 원본 병사 화질·개별 수 보존 배치
+# 사국쟁패 Studio v0.51.1 · 작고 촘촘한 병사 대형
 
-**[v0.51.0 단일 HTML 다운로드](https://github.com/doododoo123-create/-/raw/refs/tags/v0.51.0/사국쟁패%20Studio.html)**
+**[v0.51.1 단일 HTML 다운로드](https://raw.githubusercontent.com/doododoo123-create/-/refs/tags/v0.51.1/사국쟁패%20Studio.html)**
 
 HTML을 저장해 최신 Chrome·Edge에서 여세요. 설치·인터넷 연결 없이 실행하는 일반판 하나입니다.
+
+## v0.51.1 변경
+
+- 병사 그림 크기를 v0.51.0의75%로 줄이고 좌우 간격76→36~56(동작별),앞뒤 간격72→48로 좁혔습니다. 원본 모든 포즈의 몸·무기 범위를 고려해 배치합니다.
+- 발밑 그림자·국가색 바닥 표식과 전투 배치 간격도 함께 줄이고 지휘관 카드는 병사 머리 위로 내렸습니다.
+- 지휘관별 병사 그림 수/종류와 카드 정보,224픽셀 원본/확대 화질,전투·이동·저장·배속은 유지합니다.
+
+[검증 범위](docs/validation-v0.51.1.md)
 
 ## v0.51.0 변경
 
@@ -162,7 +170,7 @@ HTML을 저장해 최신 Chrome·Edge에서 여세요. 설치·인터넷 연결 
 
 ## 설치 없이 실행
 
-**[일반판 HTML 다운로드](https://github.com/doododoo123-create/-/raw/refs/tags/v0.51.0/사국쟁패%20Studio.html)**
+**[일반판 HTML 다운로드](https://raw.githubusercontent.com/doododoo123-create/-/refs/tags/v0.51.1/사국쟁패%20Studio.html)**
 
 모바일 경량판은 v0.38을 마지막으로 제작을 종료했습니다. 이전 배포본은 당시 Git 태그에 보존되어 있습니다. 새 배포에는 일반판 하나만 포함합니다.
 
