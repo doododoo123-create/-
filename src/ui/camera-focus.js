@@ -58,6 +58,10 @@ export function sceneFocus(scene,record){
   const territory=world.territories[group.location];
   if(territory)return mapAnchor(world,territory.id,'station');
  }
+ if(scene.event.type==='appointment'&&scene.kind!=='roll'){
+  const e=scene.event,id=e.nationId||record.actorId,newly=world.people.find(p=>p.id===e.personId)||world.people.find(p=>p.countryId===id&&p.role===(e.role||'general')&&p.slot===e.slot&&p.active&&p.alive);
+  if(newly)return mapAnchor(world,newly.positionId||newly.stationId||world.countries.find(c=>c.id===id)?.capitalId,'station');
+ }
  if(scene.kind==='movement'&&scene.moves?.length)return mapAnchor(world,scene.moves[0].toId,'station');
  const battle=record.battles?.[scene.battleIndex];if(battle)return mapAnchor(world,battle.territoryId,'battle');
  if(scene.event.type==='round_end')return [600,400];

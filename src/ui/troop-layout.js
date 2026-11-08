@@ -8,3 +8,7 @@ export function troopGrid(count){const pitch=TROOP_COLUMN_PITCH,columns=Math.min
 export function commanderTransform(count=1){return `translate(0,${COMMANDER_LIFT-(troopGrid(count).rows-1)*TROOP_ROW_PITCH}) scale(${COMMANDER_SCALE})`;}
 export function troopPositions(count){return troopGrid(count).positions.map(p=>p.x);}
 export function troopCanvasSize(width,height,screenScale,dpr){return {width:Math.max(1,Math.ceil(width*screenScale*dpr)),height:Math.max(1,Math.ceil(height*screenScale*dpr))};}
+// Stable union of all 210 supplied body/shade frame pairs, in original pixels.
+// Mirror-symmetric horizontal bounds and fixed vertical bounds prevent wobble.
+export const TROOP_VISUAL_BOUNDS=Object.freeze({left:23,top:62,right:325,bottom:295,pivotX:174,pivotY:292});
+export function troopCenterOffset(count,body=TROOP_BODY_HEIGHT,pitch=TROOP_ROW_PITCH){const rows=Math.max(1,Math.ceil(count/4));return (TROOP_VISUAL_BOUNDS.pivotY-(TROOP_VISUAL_BOUNDS.top+TROOP_VISUAL_BOUNDS.bottom)/2)*body/224+(rows-1)*pitch/2;}

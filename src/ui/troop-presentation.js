@@ -1,4 +1,4 @@
-import {troopGrid} from './troop-layout.js';
+import {troopCenterOffset,troopGrid} from './troop-layout.js';
 import {mapAnchor} from '../model/cartography-geometry.js';
 import {esc} from './icons.js';
 import {armyRatioBonus} from '../model/combat-rules.js';
@@ -42,6 +42,6 @@ export function renderTroopToken(person,country,world,scene,record,group=null){
   for(let n=0;n<Math.max(state.action==='death'?1:0,troopCount(army));n++)soldiers.push({tier,action:state.action,personId:p.id,flip,active:!!state.side&&!b?.automatic&&['territory','attack_roll','defense_roll','resolve'].includes(scene?.event?.type)&&!['capture','arrival','summary'].includes(scene?.kind)});
  }
  if(!soldiers.length)return '';
- const grid=troopGrid(soldiers.length),x=-grid.width/2,y=35-grid.height+10;
- return `<foreignObject x="${x}" y="${y}" width="${grid.width}" height="${grid.height}" pointer-events="none" class="troop-token"><canvas xmlns="http://www.w3.org/1999/xhtml" width="${grid.width}" height="${grid.height}" data-troop-action="${soldiers[0].action}" data-troop-tiers="${soldiers.map(s=>s.tier).join(',')}" data-troop-count="${soldiers.length}" data-troop-soldiers="${esc(JSON.stringify(soldiers))}" data-troop-color="${esc(country.color)}" data-troop-width="${grid.width}" data-troop-height="${grid.height}" data-troop-origin-y="${-y+35}" style="width:${grid.width}px;height:${grid.height}px;pointer-events:none" aria-label="소속 병력"></canvas></foreignObject>`;
+ const grid=troopGrid(soldiers.length),x=-grid.width/2,y=35-grid.height/2;
+ return `<foreignObject x="${x}" y="${y}" width="${grid.width}" height="${grid.height}" pointer-events="none" class="troop-token"><canvas xmlns="http://www.w3.org/1999/xhtml" width="${grid.width}" height="${grid.height}" data-troop-action="${soldiers[0].action}" data-troop-tiers="${soldiers.map(s=>s.tier).join(',')}" data-troop-count="${soldiers.length}" data-troop-soldiers="${esc(JSON.stringify(soldiers))}" data-troop-color="${esc(country.color)}" data-troop-width="${grid.width}" data-troop-height="${grid.height}" data-troop-origin-y="${grid.height/2+troopCenterOffset(soldiers.length)}" style="width:${grid.width}px;height:${grid.height}px;pointer-events:none" aria-label="소속 병력"></canvas></foreignObject>`;
 }
