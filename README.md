@@ -1,6 +1,6 @@
 # 사국쟁패 Studio v0.49.0 · 선택 조작·고립지 철수
 
-**[v0.49.0 단일 HTML 다운로드](https://github.com/doododoo123-create/-/releases/download/v0.49.0/Saguk-Studio-v0.49.0.html)**
+**[v0.49.0 단일 HTML 다운로드](https://github.com/doododoo123-create/-/raw/refs/tags/v0.49.0/사국쟁패%20Studio.html)**
 
 HTML을 저장해 최신 Chrome·Edge에서 여세요. 설치·인터넷 연결 없이 실행하는 일반판 하나입니다.
 
@@ -136,7 +136,7 @@ HTML을 저장해 최신 Chrome·Edge에서 여세요. 설치·인터넷 연결 
 
 ## 설치 없이 실행
 
-**[일반판 HTML 다운로드](https://github.com/doododoo123-create/-/releases/download/v0.49.0/Saguk-Studio-v0.49.0.html)**
+**[일반판 HTML 다운로드](https://github.com/doododoo123-create/-/raw/refs/tags/v0.49.0/사국쟁패%20Studio.html)**
 
 모바일 경량판은 v0.38을 마지막으로 제작을 종료했습니다. 이전 배포본은 당시 Git 태그에 보존되어 있습니다. 새 배포에는 일반판 하나만 포함합니다.
 
