@@ -650,3 +650,8 @@ v0.49: HistorySelection은 이벤트 위임으로 체크/강조/개수만 갱신
 ## v0.50 병사·전투 지역 강조
 
 ui/troop-presentation.js는 기록 기반 외형/동작과 카드 안의 비상호작용 캔버스를 만든다. troop-animation.js가 MapAnimation의 같은 시계에서 공유 국가색 시트로 프레임을 그린다. 카드의 기존 이동/포개기/대형 변환 안에 있어 병사만 따로 이동하지 않는다. 최대24개 합성 시트 캐시와 화면 밖 그리기 생략을 사용한다. assets/troops 원본과 runtime은 prepare-troops.py로 연결하며 실행은 Python 없이 내장 그림을 읽는다. victory-badge.js는 battle 앵커를 SVG 화면 좌표로 투영해 컷아웃을 배치한다. 화면 효과만 변경하며 엔진38과 선택 턴 촬영 데이터는 유지한다.
+
+
+## v0.50.1 병사 중심 배치
+
+ui/troop-layout.js가 병사54/발35와 카드0.75/상단 이동을 공유한다. unit-focal-body의 공통 이동 아래 병사와 commander-caption을 나눠 카드만 들어올린다. 집단군 보조 카드도 같은 상단 변환을 사용한다. troop-animation의 공용 시계/합성 시트 캐시는 그대로이며 발밑 타원들을 먼저 그린다. battle-presentation은 대형의 폭으로 전투자 간격을 정하되 실제 데이터/전투 중심은 바꾸지 않는다.

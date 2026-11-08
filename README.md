@@ -1,8 +1,16 @@
-# 사국쟁패 Studio v0.50.0 · 전투 지역 강조·병사 애니메이션
+# 사국쟁패 Studio v0.50.1 · 병사 확대·상단 지휘관 카드
 
-**[v0.50.0 단일 HTML 다운로드](https://github.com/doododoo123-create/-/raw/refs/tags/v0.50.0/사국쟁패%20Studio.html)**
+**[v0.50.1 단일 HTML 다운로드](https://github.com/doododoo123-create/-/raw/refs/tags/v0.50.1/사국쟁패%20Studio.html)**
 
 HTML을 저장해 최신 Chrome·Edge에서 여세요. 설치·인터넷 연결 없이 실행하는 일반판 하나입니다.
+
+## v0.50.1 변경
+
+- 병사를 이전의3배로 키우고 병사 발을 이전 카드 핀 위치에 맞춥니다. 발밑에 부드러운 타원 그림자를 표시합니다.
+- 지휘관 카드 본체/상태 표시는75%로 줄여 병사 머리 위에 붙입니다. 얼굴·이름·병력·별·왕 표시·상태·클릭 상세는 유지합니다. 집단군 보조 카드도 같은 위치 관계를 따릅니다.
+- 전투 양측과 포개기 간격은 병사 대형 폭을 반영합니다. 기존 전투·이동·RNG·저장·배속 규칙은 유지합니다.
+
+[검증 범위](docs/validation-v0.50.1.md)
 
 ## v0.50.0 변경
 
@@ -145,7 +153,7 @@ HTML을 저장해 최신 Chrome·Edge에서 여세요. 설치·인터넷 연결 
 
 ## 설치 없이 실행
 
-**[일반판 HTML 다운로드](https://github.com/doododoo123-create/-/raw/refs/tags/v0.50.0/사국쟁패%20Studio.html)**
+**[일반판 HTML 다운로드](https://github.com/doododoo123-create/-/raw/refs/tags/v0.50.1/사국쟁패%20Studio.html)**
 
 모바일 경량판은 v0.38을 마지막으로 제작을 종료했습니다. 이전 배포본은 당시 Git 태그에 보존되어 있습니다. 새 배포에는 일반판 하나만 포함합니다.
 

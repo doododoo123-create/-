@@ -1,3 +1,4 @@
+import {TROOP_BODY_HEIGHT,TROOP_FOOT_Y,troopPositions} from './troop-layout.js';
 import {TROOP_ART} from '../data/troop-art.js';
 import {localImageURL} from './local-image-url.js';
 // Shared, bounded atlases. A canvas belongs to a card, not to an independent clock.
@@ -23,9 +24,11 @@ export class TroopAnimation {
   if(!e.node.isConnected)return;
   const now=Date.now();if(!e.visibilityAt||now-e.visibilityAt>250){const box=e.node.getBoundingClientRect();e.visible=box.right>=0&&box.bottom>=0&&box.left<=innerWidth&&box.top<=innerHeight;e.visibilityAt=now;}if(!e.visible)return;
   const p=this.playback,t=p.sceneProgress*Math.max(0,p.duration?.()||0),sample=troopFrame(e.action,t),key=sample.frame+':'+sample.opacity;
-  if(e.last===key)return;e.last=key;const ctx=e.node.getContext('2d');ctx.clearRect(0,0,336,108);
-  const x=[-28,28,-43],height=18,scale=height/96;
-  for(let i=0;i<e.count;i++){const atlas=e.images.get(e.tiers[i%e.tiers.length]);if(!atlas)continue;ctx.save();ctx.scale(3,3);ctx.translate(56+x[i],34);ctx.scale(e.flip?-scale:scale,scale);ctx.globalAlpha=sample.opacity;ctx.drawImage(atlas,sample.frame%5*165,Math.floor(sample.frame/5)*138,165,138,-174*96/224,-292*96/224,165,138);ctx.restore();}
+  if(e.last===key)return;e.last=key;const ctx=e.node.getContext('2d');ctx.clearRect(0,0,e.node.width,e.node.height);
+  const x=troopPositions(e.count),height=TROOP_BODY_HEIGHT,scale=height/96;
+  // Cheap layered ellipses create a soft contact shadow without SVG filters.
+  for(const offset of x){for(let layer=3;layer>=0;layer--){ctx.save();ctx.scale(3,3);ctx.globalAlpha=sample.opacity*(layer===0?.17:.035);ctx.fillStyle="#101511";ctx.beginPath();ctx.ellipse(60+offset,58+TROOP_FOOT_Y,9+layer*1.5,2+layer*.65,0,0,Math.PI*2);ctx.fill();ctx.restore();}}
+  for(let i=0;i<e.count;i++){const atlas=e.images.get(e.tiers[i%e.tiers.length]);if(!atlas)continue;ctx.save();ctx.scale(3,3);ctx.translate(60+x[i],58+TROOP_FOOT_Y);ctx.scale(e.flip?-scale:scale,scale);ctx.globalAlpha=sample.opacity;ctx.drawImage(atlas,sample.frame%5*165,Math.floor(sample.frame/5)*138,165,138,-174*96/224,-292*96/224,165,138);ctx.restore();}
  }
  tick(){if(!this.entries)return;for(const e of this.entries)this.draw(e);}
 }
