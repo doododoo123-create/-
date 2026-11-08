@@ -1,34 +1,27 @@
-import {TROOP_BODY_HEIGHT,TROOP_FOOT_Y,troopPositions} from './troop-layout.js';
+import {TROOP_BODY_HEIGHT,troopGrid,troopCanvasSize} from './troop-layout.js';
 import {TROOP_ART} from '../data/troop-art.js';
 import {localImageURL} from './local-image-url.js';
-// Shared, bounded atlases. A canvas belongs to a card, not to an independent clock.
-const troopAtlases=new Map(),troopPending=new Map();
+// Six shared original action pairs, 48MiB of colored frames; no per-commander sheets.
+const troopSources=new Map(),troopPending=new Map(),troopFrames=new Map(),troopMasks=new Map();
 const loadTroopImage=source=>new Promise((resolve,reject)=>{const image=new Image();image.onload=()=>resolve(image);image.onerror=reject;image.src=localImageURL(source);});
-async function troopAtlas(tier,action,color){
- const key=tier+':'+action+':'+color;
- if(troopAtlases.has(key)){const value=troopAtlases.get(key);troopAtlases.delete(key);troopAtlases.set(key,value);return value;}
- if(troopPending.has(key))return troopPending.get(key);
- const job=(async()=>{const art=TROOP_ART[tier][action],[body,shade]=await Promise.all([loadTroopImage(art.body),loadTroopImage(art.shade)]),canvas=document.createElement('canvas');canvas.width=body.width;canvas.height=body.height;const ctx=canvas.getContext('2d');ctx.drawImage(shade,0,0);const pixels=ctx.getImageData(0,0,canvas.width,canvas.height),rgb=[1,3,5].map(i=>parseInt(color.slice(i,i+2),16));for(let k=0;k<pixels.data.length;k+=4)if(pixels.data[k+3]){const light=pixels.data[k]/255/.34;for(let c=0;c<3;c++)pixels.data[k+c]=Math.min(255,Math.round(rgb[c]*light));}ctx.putImageData(pixels,0,0);ctx.drawImage(body,0,0);troopAtlases.set(key,canvas);while(troopAtlases.size>24)troopAtlases.delete(troopAtlases.keys().next().value);return canvas;})();
- troopPending.set(key,job);try{return await job;}finally{troopPending.delete(key);}
-}
-export function troopFrame(action,time){
- const a=TROOP_ART.tier1[action],duration=a.durations.reduce((s,n)=>s+n,0);let t=a.loop?time%duration:time,acc=0,frame=9;
- for(let i=0;i<10;i++){acc+=a.durations[i];if(t<acc){frame=i;break;}}
- return {frame,opacity:action==='death'?Math.max(0,Math.min(1,1-(time-duration-450)/350)):1};
-}
-export class TroopAnimation {
- start(root,playback){this.root=root;this.playback=playback;this.entries=[...root.querySelectorAll('canvas[data-troop-action]')].map(node=>({node,action:node.dataset.troopAction,tiers:node.dataset.troopTiers.split(','),count:Number(node.dataset.troopCount),flip:node.dataset.troopFlip==='true',color:node.dataset.troopColor,images:new Map()}));
-  for(const e of this.entries)for(const tier of new Set(e.tiers))void troopAtlas(tier,e.action,e.color).then(atlas=>{if(!e.node.isConnected)return;e.images.set(tier,atlas);e.last=null;this.draw(e);}).catch(()=>{});
+async function troopSource(tier,action){const key=tier+':'+action;if(troopSources.has(key)){const s=troopSources.get(key);troopSources.delete(key);troopSources.set(key,s);return s;}if(troopPending.has(key))return troopPending.get(key);const job=Promise.all([loadTroopImage(TROOP_ART[tier][action].body),loadTroopImage(TROOP_ART[tier][action].shade)]).then(images=>{troopSources.set(key,images);while(troopSources.size>6)troopSources.delete(troopSources.keys().next().value);return images;});troopPending.set(key,job);try{return await job;}finally{troopPending.delete(key);}}
+function troopFrameArt(images,tier,action,frame,color){const key=[tier,action,frame,color].join(':');if(troopFrames.has(key)){const c=troopFrames.get(key);troopFrames.delete(key);troopFrames.set(key,c);return c;}const c=document.createElement('canvas');c.width=384;c.height=320;const ctx=c.getContext('2d'),sx=frame%5*384,sy=Math.floor(frame/5)*320;ctx.drawImage(images[1],sx,sy,384,320,0,0,384,320);const pixels=ctx.getImageData(0,0,384,320),rgb=[1,3,5].map(i=>parseInt(color.slice(i,i+2),16));for(let k=0;k<pixels.data.length;k+=4)if(pixels.data[k+3]){const light=pixels.data[k]/255/.34;for(let j=0;j<3;j++)pixels.data[k+j]=Math.min(255,Math.round(rgb[j]*light));}ctx.putImageData(pixels,0,0);ctx.drawImage(images[0],sx,sy,384,320,0,0,384,320);troopFrames.set(key,c);while(troopFrames.size*384*320*4>48*1024*1024)troopFrames.delete(troopFrames.keys().next().value);return c;}
+function troopMask(art,key){if(troopMasks.has(key))return troopMasks.get(key);const c=document.createElement('canvas');c.width=384;c.height=320;const ctx=c.getContext('2d');ctx.drawImage(art,0,0);ctx.globalCompositeOperation='source-in';ctx.fillStyle='#fff';ctx.fillRect(0,0,384,320);troopMasks.set(key,c);while(troopMasks.size>24)troopMasks.delete(troopMasks.keys().next().value);return c;}
+export function troopFrame(action,time){const a=TROOP_ART.tier1[action],duration=a.durations.reduce((s,n)=>s+n,0);let t=a.loop?time%duration:time,acc=0,frame=9;for(let i=0;i<10;i++){acc+=a.durations[i];if(t<acc){frame=i;break;}}return {frame,opacity:action==='death'?Math.max(0,Math.min(1,1-(time-duration-450)/350)):1};}
+export class TroopAnimation{
+ watchDensity(){if(!globalThis.matchMedia)return;if(this.densityQuery&&this.densityHandler)this.densityQuery.removeEventListener?.('change',this.densityHandler);this.densityQuery=matchMedia(`(resolution: ${globalThis.devicePixelRatio||1}dppx)`);this.densityHandler=()=>{this.tick();this.watchDensity();};this.densityQuery.addEventListener?.('change',this.densityHandler,{once:true});}
+ start(root,playback){this.watchDensity();this.playback=playback;this.entries=[...root.querySelectorAll('canvas[data-troop-soldiers]')].map(node=>({node,soldiers:JSON.parse(node.dataset.troopSoldiers),color:node.dataset.troopColor,width:Number(node.dataset.troopWidth),height:Number(node.dataset.troopHeight),originY:Number(node.dataset.troopOriginY),images:new Map()}));for(const e of this.entries)for(const s of e.soldiers){const key=s.tier+':'+s.action;if(e.images.has(key))continue;e.images.set(key,null);void troopSource(s.tier,s.action).then(images=>{if(!e.node.isConnected)return;e.images.set(key,images);e.last=null;this.draw(e);}).catch(()=>{});}}
+ draw(e){if(!e.node.isConnected)return;const box=e.node.getBoundingClientRect();if(!box.width||box.right<0||box.bottom<0||box.left>innerWidth||box.top>innerHeight)return;
+  const p=this.playback,time=p.sceneProgress*Math.max(0,p.duration?.()||0),dpr=globalThis.devicePixelRatio||1,size=troopCanvasSize(e.width,e.height,box.width/e.width,dpr),samples=e.soldiers.map(s=>troopFrame(s.action,time)),key=size.width+':'+size.height+':'+samples.map(s=>s.frame+':'+s.opacity).join('|');if(key===e.last)return;e.last=key;
+  if(e.node.width!==size.width)e.node.width=size.width;if(e.node.height!==size.height)e.node.height=size.height;const ctx=e.node.getContext('2d'),rx=size.width/e.width,ry=size.height/e.height;ctx.setTransform(rx,0,0,ry,0,0);ctx.clearRect(0,0,e.width,e.height);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';const grid=troopGrid(e.soldiers.length),active=e.soldiers.some(s=>s.active),alpha=Math.max(...samples.map(s=>s.opacity));
+  // A low national-color ground marker, then local contact shadows.
+  const cy=e.originY-(grid.rows-1)*36;ctx.save();ctx.globalAlpha=alpha;ctx.beginPath();ctx.ellipse(e.width/2,cy,grid.columns*38,Math.max(9,grid.rows*11),0,0,Math.PI*2);ctx.fillStyle=e.color+'18';ctx.fill();ctx.strokeStyle=e.color;ctx.lineWidth=(active?1.7:1)/rx;ctx.stroke();ctx.restore();
+  for(let i=0;i<e.soldiers.length;i++){const s=e.soldiers[i],pos=grid.positions[i],sample=samples[i],images=e.images.get(s.tier+':'+s.action);if(!images)continue;const art=troopFrameArt(images,s.tier,s.action,sample.frame,e.color),x=e.width/2+pos.x,y=e.originY+pos.y,scale=TROOP_BODY_HEIGHT/224,w=384*scale,h=320*scale,dx=-174*scale,dy=-292*scale;
+   ctx.save();ctx.globalAlpha=sample.opacity;for(let k=3;k>=0;k--){ctx.fillStyle=k?'#1015110c':'#10151150';ctx.beginPath();ctx.ellipse(x,y,11+k*1.5,2.5+k*.7,0,0,Math.PI*2);ctx.fill();}ctx.translate(x,y);if(s.flip)ctx.scale(-1,1);
+   // Outer silhouette from the fully composed frame; clothes remain unoutlined.
+   ctx.shadowColor='rgba(0,0,0,.4)';ctx.shadowBlur=2*dpr;ctx.shadowOffsetY=1*dpr;ctx.drawImage(art,dx,dy,w,h);ctx.shadowBlur=0;ctx.shadowOffsetY=0;
+   ctx.globalCompositeOperation='source-over';const edge=(s.active?1.15:.8)/rx;ctx.globalAlpha=sample.opacity*.65;const mask=troopMask(art,s.tier+':'+s.action+':'+sample.frame);for(const [ox,oy] of [[-edge,0],[edge,0],[0,-edge],[0,edge]])ctx.drawImage(mask,dx+ox,dy+oy,w,h);ctx.globalAlpha=sample.opacity;ctx.drawImage(art,dx,dy,w,h);ctx.restore();
+  }
  }
- draw(e){
-  if(!e.node.isConnected)return;
-  const now=Date.now();if(!e.visibilityAt||now-e.visibilityAt>250){const box=e.node.getBoundingClientRect();e.visible=box.right>=0&&box.bottom>=0&&box.left<=innerWidth&&box.top<=innerHeight;e.visibilityAt=now;}if(!e.visible)return;
-  const p=this.playback,t=p.sceneProgress*Math.max(0,p.duration?.()||0),sample=troopFrame(e.action,t),key=sample.frame+':'+sample.opacity;
-  if(e.last===key)return;e.last=key;const ctx=e.node.getContext('2d');ctx.clearRect(0,0,e.node.width,e.node.height);
-  const x=troopPositions(e.count),height=TROOP_BODY_HEIGHT,scale=height/96;
-  // Cheap layered ellipses create a soft contact shadow without SVG filters.
-  for(const offset of x){for(let layer=3;layer>=0;layer--){ctx.save();ctx.scale(3,3);ctx.globalAlpha=sample.opacity*(layer===0?.17:.035);ctx.fillStyle="#101511";ctx.beginPath();ctx.ellipse(60+offset,58+TROOP_FOOT_Y,9+layer*1.5,2+layer*.65,0,0,Math.PI*2);ctx.fill();ctx.restore();}}
-  for(let i=0;i<e.count;i++){const atlas=e.images.get(e.tiers[i%e.tiers.length]);if(!atlas)continue;ctx.save();ctx.scale(3,3);ctx.translate(60+x[i],58+TROOP_FOOT_Y);ctx.scale(e.flip?-scale:scale,scale);ctx.globalAlpha=sample.opacity;ctx.drawImage(atlas,sample.frame%5*165,Math.floor(sample.frame/5)*138,165,138,-174*96/224,-292*96/224,165,138);ctx.restore();}
- }
- tick(){if(!this.entries)return;for(const e of this.entries)this.draw(e);}
+ tick(){for(const e of this.entries||[])this.draw(e);}
 }

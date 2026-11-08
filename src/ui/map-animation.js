@@ -9,17 +9,23 @@ import { polylineAt, operationPath,armyArrowWidth } from './operation-geometry.j
 export class MapAnimation {
  constructor(){this.troops=new TroopAnimation();this.frame=null;this.root=null;this.playback=null;this.waves=[];this.progressKey=null;}
  start(root,playback){
-  this.stop();this.troops.start(root,playback);this.root=root;this.playback=playback;const world=playback.displayWorld,geometry=world?atlasGeometry(world):null;
+  this.stop();this.contrastKey=null;this.troops.start(root,playback);this.root=root;this.playback=playback;const world=playback.displayWorld,geometry=world?atlasGeometry(world):null;
   this.waves=[...root.querySelectorAll('[data-front-wave]')].map(e=>({element:e,index:Number(e.dataset.frontWave),order:Number(e.dataset.waveOrder),count:Number(e.dataset.waveCount),span:Number(e.dataset.wipeSpan),lines:[...root.querySelectorAll(`[data-wave-line="${e.dataset.frontWave}"]`)],glows:[...root.querySelectorAll(`[data-wave-glow="${e.dataset.frontWave}"]`)],model:buildFrontWave(world,geometry,Number(e.dataset.frontWave),e.dataset.waveFrom)}));
   const cards=new Map([...root.querySelectorAll('.map-unit-position')].map(c=>[c.dataset.person,c]));
   this.nodes={svg:root.querySelector('.atlas-map'),countdowns:[...root.querySelectorAll('[data-campaign-countdown]')],armies:[...root.querySelectorAll('[data-army-forming="true"]')].map(card=>({leader:card.querySelector('.army-leader-scale'),minis:[...card.querySelectorAll('.army-mini-unit')],ring:card.querySelector('.army-formation-ring')})),rallies:[...root.querySelectorAll('[data-rally-spot] circle')],formations:[...root.querySelectorAll('[data-forming="true"]')].map(card=>({card,node:card.querySelector('.clock-formation'),target:card.dataset.formationTarget.split(',').map(Number)})),arrows:[...root.querySelectorAll('.operation-arrow[data-route-points]')].map(element=>{const pair=element.querySelector('.campaign-route-pair'),card=cards.get(element.dataset.routePerson);return {element,points:JSON.parse(element.dataset.routePoints),width:Number(pair?.dataset.arrowWidth)||armyArrowWidth(Number(pair?.dataset.arrowArmy)||0),paths:[...element.querySelectorAll('.campaign-route,.campaign-route-shadow')],card,node:card?.querySelector('.clock-marching')};})};
   const list=root.querySelector('.campaign-duel-list'),row=list?.querySelector('[data-current-duel=true]');if(list&&row)list.scrollTop=Math.max(0,row.getBoundingClientRect().top-list.getBoundingClientRect().top+list.scrollTop-(list.clientHeight-row.clientHeight)/2);this.tick();
  }
+ focusContrast(){
+ if(!this.root?.querySelector||!this.root?.querySelectorAll)return;
+ const scene=this.playback?.scene,active=this.root?.querySelector('.map-unit-position[data-combat-side]'),key=(scene?.id||'')+':'+this.nodes?.svg?.getAttribute('viewBox');if(key===this.contrastKey)return;this.contrastKey=key;
+ const area=(active?.querySelector('canvas')||active)?.getBoundingClientRect(),participants=new Set([...this.root.querySelectorAll('.map-unit-position[data-combat-side]')].map(n=>n.dataset.person));for(const label of this.root?.querySelectorAll('[data-territory-label]')||[]){let dim=false;if(area&&label.dataset.territoryLabel!==this.playback?.state?.record.battles?.[scene?.battleIndex]?.territoryId){const b=label.getBoundingClientRect();dim=Math.hypot(b.x-area.x,b.y-area.y)<180;}label.style.opacity=dim?'.55':'';}
+ for(const route of this.root?.querySelectorAll('.operation-arrow')||[]){const b=route.getBoundingClientRect();route.style.opacity=area&&route.dataset.liveMarch!=='true'&&!participants.has(route.dataset.routePerson)&&Math.hypot(b.x-area.x,b.y-area.y)<180?'.6':'';}
+ }
  stop(){if(this.frame!==null)cancelAnimationFrame(this.frame);this.frame=null;}
  tick(){
   this.frame=null;const root=this.root,p=this.playback,nodes=this.nodes;if(!root?.isConnected||!p||!nodes)return;
   const progress=p.sceneProgress,movement=p.movementProgress;
-  this.onFrame?.();this.troops.tick();placeVictoryBadge(root,p.sceneProgress);
+  this.onFrame?.();this.troops.tick();this.focusContrast();placeVictoryBadge(root,p.sceneProgress);
   const progressKey=p.scene?.kind==='capture'?p.state.record.turn+':'+p.scene.id+':'+Math.floor(progress*(p.state.record.battles[p.scene.battleIndex]?.takenTerritoryIds?.length||1)):null;if(progressKey&&progressKey!==this.progressKey){this.progressKey=progressKey;this.onMapProgress?.();}
   for(const line of nodes.countdowns)line.style.transform='scaleX('+(1-progress)+')';
   const settling=p.scene?.kind==='round-settle',travel=settling?Math.max(0,(progress-.18)/.82):progress,highlight=settling&&progress<.18?Math.sin(progress/.18*Math.PI)*.85:0;

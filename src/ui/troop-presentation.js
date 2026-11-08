@@ -1,3 +1,4 @@
+import {troopGrid} from './troop-layout.js';
 import {mapAnchor} from '../model/cartography-geometry.js';
 import {esc} from './icons.js';
 import {armyRatioBonus} from '../model/combat-rules.js';
@@ -17,13 +18,30 @@ export function troopState(person,scene,record){
  }
  return {action:'idle',side};
 }
+export const troopCount=army=>army>0?(army>=15?3:army>=8?2:1):0;
+export function troopGroups(markers,scene,armies=new Map()){
+ const groups=new Map(),byPerson=new Map();
+ for(const m of markers){const p=m.person;if(!p||p.role==='minister'||!p.active||p.alive===false&&!m.ghost)continue;
+  const moving=scene?.kind==='movement'&&scene.moves?.some(v=>v.personId===p.id),key=moving?'move:'+p.id:[m.country.id,m.territory.id,m.batchSide||'',m.ghost?p.id:''].join(':');
+  if(!groups.has(key))groups.set(key,{leaderId:p.id,members:[],ids:new Set()});const g=groups.get(key);
+  for(const member of armies.get(p.id)?.members||[p])if(!g.ids.has(member.id)){g.ids.add(member.id);g.members.push(member);}
+  byPerson.set(p.id,g);
+ }
+ return byPerson;
+}
 export function renderTroopToken(person,country,world,scene,record,group=null){
  if(!person||person.role==='minister'||!person.active||person.alive===false&&scene?.event?.type!=='death')return '';
- const {action,side}=troopState(person,scene,record),b=record?.battles?.[scene?.battleIndex],before=side?scene.worldBefore?.people.find(p=>p.id===person.id):null,army=side?b[side].army:person.troops;
- if(!(person.troops>0)&&action!=='death'&&action!=='hurt')return '';
- const members=group?.members||[person],tiers=members.map(p=>troopTier(side&&p.id===person.id?before||p:p,side&&p.id===person.id?army:p.troops,world.rules));
- const total=group?.army??army,count=total>=15?3:total>=8?2:1;
- let flip=side==='defense';if(side&&b){const a=world.territories.find(t=>t.id===b.fromId),d=world.territories.find(t=>t.id===b.territoryId);if(a&&d){const left=mapAnchor(world,a.id,'reference')[0]<=mapAnchor(world,d.id,'reference')[0];flip=side==='attack'?!left:left;}}
- if(!side&&scene?.moves){const move=scene.moves.find(m=>m.personId===person.id);if(move?.fromId&&move?.toId){const a=mapAnchor(world,move.fromId,'station'),d=mapAnchor(world,move.toId,'station');flip=move.kind==='retreat'?d[0]>a[0]:d[0]<a[0];}}
- return `<foreignObject x="-60" y="-58" width="120" height="100" pointer-events="none" class="troop-token"><canvas xmlns="http://www.w3.org/1999/xhtml" width="360" height="300" data-troop-action="${action}" data-troop-tiers="${tiers.join(',')}" data-troop-count="${count}" data-troop-flip="${flip}" data-troop-color="${esc(country.color)}" aria-label="소속 병력" style="width:120px;height:100px;pointer-events:none"></canvas></foreignObject>`;
+ if(group?.leaderId&&group.leaderId!==person.id)return '';
+ const members=group?.members||[person],seen=new Set(),soldiers=[];
+ for(const p of members){if(seen.has(p.id))continue;seen.add(p.id);
+  const state=troopState(p,scene,record),b=record?.battles?.[scene?.battleIndex],before=state.side?scene.worldBefore?.people.find(q=>q.id===p.id):null,army=state.side?b[state.side].army:p.troops;
+  if(!(p.troops>0)&&!['death','hurt'].includes(state.action))continue;
+  const tier=troopTier(before||p,army,world.rules);let flip=state.side==='defense';
+  if(state.side&&b){const left=mapAnchor(world,b.fromId,'reference')[0]<=mapAnchor(world,b.territoryId,'reference')[0];flip=state.side==='attack'?!left:left;}
+  const move=scene?.kind==='movement'&&scene.moves?.find(m=>m.personId===p.id);if(!state.side&&move){const a=mapAnchor(world,move.fromId,'station'),d=mapAnchor(world,move.toId,'station');flip=move.kind==='retreat'?d[0]>a[0]:d[0]<a[0];}
+  for(let n=0;n<Math.max(state.action==='death'?1:0,troopCount(army));n++)soldiers.push({tier,action:state.action,personId:p.id,flip,active:!!state.side&&!b?.automatic&&['territory','attack_roll','defense_roll','resolve'].includes(scene?.event?.type)&&!['capture','arrival','summary'].includes(scene?.kind)});
+ }
+ if(!soldiers.length)return '';
+ const grid=troopGrid(soldiers.length),x=-grid.width/2,y=35-grid.height+10;
+ return `<foreignObject x="${x}" y="${y}" width="${grid.width}" height="${grid.height}" pointer-events="none" class="troop-token"><canvas xmlns="http://www.w3.org/1999/xhtml" width="${grid.width}" height="${grid.height}" data-troop-action="${soldiers[0].action}" data-troop-tiers="${soldiers.map(s=>s.tier).join(',')}" data-troop-count="${soldiers.length}" data-troop-soldiers="${esc(JSON.stringify(soldiers))}" data-troop-color="${esc(country.color)}" data-troop-width="${grid.width}" data-troop-height="${grid.height}" data-troop-origin-y="${-y+35}" style="width:${grid.width}px;height:${grid.height}px;pointer-events:none" aria-label="소속 병력"></canvas></foreignObject>`;
 }

@@ -13,6 +13,7 @@ export function duelDirection(origin,target){
 export function fitMapUnits(element){
  const svg=element.querySelector('.atlas-map'),matrix=svg?.getScreenCTM?.();if(!matrix)return;
  const scale=Math.hypot(matrix.a,matrix.b);if(!Number.isFinite(scale)||scale<=0)return;
+ for(const card of svg.querySelectorAll('.map-unit-position'))card.querySelector('.troop-ground')?.setAttribute('transform',`translate(${-Number(card.dataset.stackOffset||0)},0)`);
  const filming=element.closest('.filming-mode'),filmScale=Number(filming?.style.getPropertyValue('--film-card-scale'))||1;
  const bounds=element.getBoundingClientRect(),zoom=Number(element.dataset.zoom)||1,ordinaryWidth=filming?52*filmScale:UNIT_CARD_WIDTH*scale*mapUnitScale(scale,zoom),width=filming?84*filmScale:Math.min(96,Math.max(48,ordinaryWidth*1.2));
  svg.style.setProperty('--unit-display-scale',String(filming?ordinaryWidth/(UNIT_CARD_WIDTH*scale):mapUnitScale(scale,zoom)));
@@ -27,12 +28,14 @@ export function fitMapUnits(element){
  const cards=[...svg.querySelectorAll('.map-unit-position[data-combat-side]')],layout=duelStacks({left:bounds.left,right:bounds.right,center:center[0],width:width*TROOP_FOOTPRINT,iconRadius:Math.max(14,r.width/2),direction:direction.x,attack:cards.filter(c=>c.dataset.combatSide==='attack').length,defense:cards.filter(c=>c.dataset.combatSide==='defense').length});
  const bodyWidth=layout.width/TROOP_FOOTPRINT,half=bodyWidth*40/32,top=(hasLoss?125:113)*bodyWidth/32;
  svg.style.setProperty('--duel-display-scale',String(bodyWidth/(UNIT_CARD_WIDTH*scale)));
+ const rowTop=Math.max(113,...[...svg.querySelectorAll('canvas[data-troop-height]')].map(c=>Number(c.dataset.troopHeight)+40));
  svg.dataset.duelAxis='horizontal';
  // Clamp the whole pair together, preserving both horizontal alignment and card order.
- const cy=Math.max(bounds.top+top+8,Math.min(bounds.bottom-half-8,center[1]));
+ const cy=Math.max(bounds.top+Math.max(top,rowTop*bodyWidth/32)+8,Math.min(bounds.bottom-half-8,center[1]));
  for(const card of cards){
   const side=card.dataset.combatSide,placement=layout[side],x=placement.x,y=cy,rank=Number(card.dataset.stackOffset||0)/24;
   card.querySelector('.unit-stack-card')?.setAttribute('transform',`translate(${placement.sign*rank*placement.step*UNIT_CARD_WIDTH/bodyWidth},0)`);
+  card.querySelector('.troop-ground')?.setAttribute('transform',`translate(${-placement.sign*rank*placement.step*UNIT_CARD_WIDTH/bodyWidth},0)`);
   card.dataset.stackDirection=String(placement.sign);
   const point=new DOMPoint(x,y).matrixTransform(inverse);
   svg.style.setProperty(`--battle-${side}-x`,`${point.x-Number(card.dataset.mapX)}px`);
