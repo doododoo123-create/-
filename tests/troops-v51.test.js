@@ -11,15 +11,16 @@ test('garrison and real army retain each commanders soldier count, tier and iden
  const moving=troopGroups(markers,{kind:'movement',moves:[{personId:ps[0].id}]});assert.equal(moving.get(ps[0].id).members.length,1);assert.equal(moving.get(ps[1].id).members.length,2);
  const enemy={...markers[2],country:{...c,id:'other'},person:{...ps[2],countryId:'other'}};assert.notEqual(troopGroups([markers[0],enemy],null).get(ps[0].id),troopGroups([markers[0],enemy],null).get(ps[2].id));
 });
-test('all original body poses fit the non-overlapping grid and canvas sizing follows zoom and screen density even at a paused frame',()=>{
- // Conservative bounds across every original pose, including mirrored weapons,
- // at the compact 40.5-unit body height: width <55 and height <43.
- for(const n of [1,2,3,6,12,24]){const g=troopGrid(n);assert.equal(g.positions.length,n);for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){const a=g.positions[i],b=g.positions[j];assert(Math.abs(a.x-b.x)>=55||Math.abs(a.y-b.y)>=43);}}
- // Measured maximum widths of all three original types at 40.5 body height.
- for(const [action,width] of Object.entries({idle:30.38,walk:32.18,retreat:39.42,guard:45.56,attack:54.61,hurt:33.27,death:50.27})){
-  const g=troopGrid(12,Array.from({length:12},()=>({action})));assert(g.pitch>width);assert(g.width<4*76+28);
+test('dense ranks retain all figures and full pose padding while zoom and screen density remain adaptive',()=>{
+ // Original full-pose bounds including mirrored weapons, at 40.5-unit body height.
+ for(const n of [1,2,3,6,12,24]){
+  const g=troopGrid(n);assert.equal(g.positions.length,n);
+  for(const p of g.positions){const x=g.width/2+p.x,y=g.height-10+p.y;assert(x-27.303>=0&&x+27.303<=g.width);assert(y-41.586>=0&&y+.543<=g.height);}
+  if(n>1)assert(g.positions[1].x-g.positions[0].x<=18);
+  if(n>4)assert(Math.abs(g.positions[4].y-g.positions[0].y)<=28);
  }
- assert(troopGrid(12,[{action:'idle'}]).width<troopGrid(12,[{action:'attack'}]).width);
- assert.equal(troopGrid(12,[{action:'idle'},{action:'attack'}]).pitch,troopGrid(12,[{action:'attack'}]).pitch);
+ // Ranks stay compact even with mixed attacks; a spear's outer silhouette may overlap.
+ const idle=troopGrid(12,[{action:'idle'}]),attack=troopGrid(12,[{action:'attack'}]);
+ assert.deepEqual(idle,attack);assert(idle.pitch<30.38);assert(idle.width<4*36+24);
  assert.deepEqual(troopCanvasSize(120,100,1,1),{width:120,height:100});assert.deepEqual(troopCanvasSize(120,100,3,2),{width:720,height:600});
 });

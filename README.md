@@ -1,8 +1,16 @@
-# 사국쟁패 Studio v0.51.1 · 작고 촘촘한 병사 대형
+# 사국쟁패 Studio v0.51.2 · 밀집 병사 대형
 
-**[v0.51.1 단일 HTML 다운로드](https://raw.githubusercontent.com/doododoo123-create/-/refs/tags/v0.51.1/사국쟁패%20Studio.html)**
+**[v0.51.2 단일 HTML 다운로드](https://raw.githubusercontent.com/doododoo123-create/-/refs/tags/v0.51.2/사국쟁패%20Studio.html)**
 
 HTML을 저장해 최신 Chrome·Edge에서 여세요. 설치·인터넷 연결 없이 실행하는 일반판 하나입니다.
+
+## v0.51.2 변경
+
+- 병사 크기는 유지하고 좌우 간격을18,앞뒤 간격을28로 크게 줄여 거의 붙은 밀집 대형으로 표시합니다. 무기/방패와 뒷줄 하체의 일부 겹침을 허용합니다. 공격할 때도 대형 간격을 넓히지 않습니다.
+- 뒷줄부터 그려 앞줄 병사의 얼굴이 뒤 병사의 발에 가리지 않게 하고,바닥 표식·카드 높이·전투 간격도 대형에 맞춥니다.
+- 원본 화질/확대,지휘관별 병사 수와 카드 정보,기존 게임 규칙/저장/배속은 유지합니다.
+
+[검증 범위](docs/validation-v0.51.2.md)
 
 ## v0.51.1 변경
 
@@ -170,7 +178,7 @@ HTML을 저장해 최신 Chrome·Edge에서 여세요. 설치·인터넷 연결 
 
 ## 설치 없이 실행
 
-**[일반판 HTML 다운로드](https://raw.githubusercontent.com/doododoo123-create/-/refs/tags/v0.51.1/사국쟁패%20Studio.html)**
+**[일반판 HTML 다운로드](https://raw.githubusercontent.com/doododoo123-create/-/refs/tags/v0.51.2/사국쟁패%20Studio.html)**
 
 모바일 경량판은 v0.38을 마지막으로 제작을 종료했습니다. 이전 배포본은 당시 Git 태그에 보존되어 있습니다. 새 배포에는 일반판 하나만 포함합니다.
 
