@@ -1,8 +1,15 @@
-# 사국쟁패 Studio v0.52.0 · 기록 기반 집단전 연출
+# 사국쟁패 Studio v0.52.1 · 집단전 종료 후 지도 복귀 오류 수정
 
-**[v0.52.0 단일 HTML 다운로드](https://raw.githubusercontent.com/doododoo123-create/-/refs/tags/v0.52.0/사국쟁패%20Studio.html)**
+**[v0.52.1 단일 HTML 다운로드](https://raw.githubusercontent.com/doododoo123-create/-/refs/tags/v0.52.1/사국쟁패%20Studio.html)**
 
 HTML을 저장해 최신 Chrome·Edge에서 여세요. 설치·인터넷 연결 없이 실행하는 일반판 하나입니다.
+
+## v0.52.1 변경
+
+- 집단전 종료 후 지도/다음 국가로 자동 복귀할 때 발생하던 `nodes.countdowns is not iterable` 오류를 수정했습니다.
+- 지도 시점 갱신과 화면 초기화 사이의 이전 애니메이션 호출을 차단합니다. 기존 전투·저장 형식·배속·병사 그림을 유지합니다.
+
+[검증 결과](docs/validation-v0.52.1.md)
 
 ## v0.52.0 변경
 
@@ -188,7 +195,7 @@ HTML을 저장해 최신 Chrome·Edge에서 여세요. 설치·인터넷 연결 
 
 ## 설치 없이 실행
 
-**[일반판 HTML 다운로드](https://raw.githubusercontent.com/doododoo123-create/-/refs/tags/v0.52.0/사국쟁패%20Studio.html)**
+**[일반판 HTML 다운로드](https://raw.githubusercontent.com/doododoo123-create/-/refs/tags/v0.52.1/사국쟁패%20Studio.html)**
 
 모바일 경량판은 v0.38을 마지막으로 제작을 종료했습니다. 이전 배포본은 당시 Git 태그에 보존되어 있습니다. 새 배포에는 일반판 하나만 포함합니다.
 

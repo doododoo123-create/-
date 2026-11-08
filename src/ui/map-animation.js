@@ -10,7 +10,7 @@ import { polylineAt, operationPath,armyArrowWidth } from './operation-geometry.j
 export class MapAnimation {
  constructor(){this.massBattle=new MassBattleAnimation();this.troops=new TroopAnimation();this.frame=null;this.root=null;this.playback=null;this.waves=[];this.progressKey=null;}
  start(root,playback){
-  this.stop();this.contrastKey=null;this.massBattle.start(root,playback);if(playback.scene?.massPlan&&this.massBattle.canvas){this.troops.entries=[];this.root=root;this.playback=playback;this.nodes={};this.waves=[];this.tick();return;}this.troops.start(root,playback);this.root=root;this.playback=playback;const world=playback.displayWorld,geometry=world?atlasGeometry(world):null;
+  this.stop();this.boundScene=playback.scene;this.contrastKey=null;this.massBattle.start(root,playback);if(playback.scene?.massPlan&&this.massBattle.canvas){this.troops.entries=[];this.root=root;this.playback=playback;this.nodes={svg:null,countdowns:[],armies:[],rallies:[],formations:[],arrows:[]};this.waves=[];this.tick();return;}this.troops.start(root,playback);this.root=root;this.playback=playback;const world=playback.displayWorld,geometry=world?atlasGeometry(world):null;
   this.waves=[...root.querySelectorAll('[data-front-wave]')].map(e=>({element:e,index:Number(e.dataset.frontWave),order:Number(e.dataset.waveOrder),count:Number(e.dataset.waveCount),span:Number(e.dataset.wipeSpan),lines:[...root.querySelectorAll(`[data-wave-line="${e.dataset.frontWave}"]`)],glows:[...root.querySelectorAll(`[data-wave-glow="${e.dataset.frontWave}"]`)],model:buildFrontWave(world,geometry,Number(e.dataset.frontWave),e.dataset.waveFrom)}));
   const cards=new Map([...root.querySelectorAll('.map-unit-position')].map(c=>[c.dataset.person,c]));
   this.nodes={svg:root.querySelector('.atlas-map'),countdowns:[...root.querySelectorAll('[data-campaign-countdown]')],armies:[...root.querySelectorAll('[data-army-forming="true"]')].map(card=>({leader:card.querySelector('.army-leader-scale'),minis:[...card.querySelectorAll('.army-mini-unit')],ring:card.querySelector('.army-formation-ring')})),rallies:[...root.querySelectorAll('[data-rally-spot] circle')],formations:[...root.querySelectorAll('[data-forming="true"]')].map(card=>({card,node:card.querySelector('.clock-formation'),target:card.dataset.formationTarget.split(',').map(Number)})),arrows:[...root.querySelectorAll('.operation-arrow[data-route-points]')].map(element=>{const pair=element.querySelector('.campaign-route-pair'),card=cards.get(element.dataset.routePerson);return {element,points:JSON.parse(element.dataset.routePoints),width:Number(pair?.dataset.arrowWidth)||armyArrowWidth(Number(pair?.dataset.arrowArmy)||0),paths:[...element.querySelectorAll('.campaign-route,.campaign-route-shadow')],card,node:card?.querySelector('.clock-marching')};})};
@@ -22,9 +22,13 @@ export class MapAnimation {
  const area=(active?.querySelector('canvas')||active)?.getBoundingClientRect(),participants=new Set([...this.root.querySelectorAll('.map-unit-position[data-combat-side]')].map(n=>n.dataset.person));for(const label of this.root?.querySelectorAll('[data-territory-label]')||[]){let dim=false;if(area&&label.dataset.territoryLabel!==this.playback?.state?.record.battles?.[scene?.battleIndex]?.territoryId){const b=label.getBoundingClientRect();dim=Math.hypot(b.x-area.x,b.y-area.y)<180;}label.style.opacity=dim?'.55':'';}
  for(const route of this.root?.querySelectorAll('.operation-arrow')||[]){const b=route.getBoundingClientRect();route.style.opacity=area&&route.dataset.liveMarch!=='true'&&!participants.has(route.dataset.routePerson)&&Math.hypot(b.x-area.x,b.y-area.y)<180?'.6':'';}
  }
+ // Rendering may synchronously update the camera before start() can bind the
+ // new DOM. Invalidate old bindings first, while retaining shared sprite caches.
+ beginRender(){this.stop();this.root=null;this.playback=null;this.nodes=null;this.boundScene=null;this.waves=[];}
  stop(){if(this.frame!==null)cancelAnimationFrame(this.frame);this.frame=null;}
  tick(){
   this.frame=null;const root=this.root,p=this.playback,nodes=this.nodes;if(!root?.isConnected||!p||!nodes)return;
+  if(this.boundScene&&p.scene!==this.boundScene)return;
   if(p.scene?.massPlan&&this.massBattle.canvas){this.massBattle.tick();if(p.playing&&this.massBattle.canvas)this.frame=requestAnimationFrame(()=>this.tick());return;}
   const progress=p.sceneProgress,movement=p.movementProgress;
   this.onFrame?.();this.troops.tick();this.focusContrast();placeVictoryBadge(root,p.sceneProgress);

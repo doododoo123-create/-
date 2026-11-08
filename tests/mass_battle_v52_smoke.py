@@ -8,7 +8,7 @@ with sync_playwright() as pw:
  context=b.new_context(viewport={'width':1600,'height':1000},device_scale_factor=2)
  context.route('**/game.html',lambda r:r.fulfill(status=200,content_type='text/html',path=str(ROOT/'dist/사국쟁패 Studio.html')));context.set_offline(True)
  page=context.new_page();page.on('pageerror',lambda e:errors.append(str(e)));page.on('requestfailed',lambda r:requests.append(r.url) if not r.url.startswith('blob:') else None)
- page.goto('http://127.0.0.1:3000/game.html',wait_until='networkidle',timeout=120000);expect(page.locator('.page-footer')).to_contain_text('v0.52.0',timeout=90000)
+ page.goto('http://127.0.0.1:3000/game.html',wait_until='networkidle',timeout=120000);expect(page.locator('.page-footer')).to_contain_text('v0.52.1',timeout=90000)
  page.locator('#world-file').set_input_files(str(ROOT/'.artifacts/v52-10.history.json'));expect(page.locator('[data-import-confirm]')).to_be_enabled(timeout=90000);page.locator('[data-import-confirm]').click();expect(page.locator('#file-import-dialog')).not_to_be_visible(timeout=90000)
  page.locator('#sim-speed').select_option('16');page.clock.install(time=0);page.clock.pause_at(1000);page.locator('.history-entry[data-id="1"]').click();page.locator('[data-action=map-fullscreen]').click();page.evaluate('document.activeElement?.blur()')
  for i in range(2000):
@@ -48,7 +48,7 @@ with sync_playwright() as pw:
  page.screenshot(path=str(ROOT/'docs/v52-map-return.png'))
  # Death/critical speed protection in a separately reconstructed real history.
  q=context.new_page();q.on('pageerror',lambda e:errors.append(str(e)));q.goto('http://127.0.0.1:3000/game.html',wait_until='networkidle',timeout=120000)
- expect(q.locator('.page-footer')).to_contain_text('v0.52.0',timeout=90000);q.locator('#world-file').set_input_files(str(ROOT/'.artifacts/v52-1.history.json'));expect(q.locator('[data-import-confirm]')).to_be_enabled(timeout=90000);q.locator('[data-import-confirm]').click();expect(q.locator('#file-import-dialog')).not_to_be_visible(timeout=90000)
+ expect(q.locator('.page-footer')).to_contain_text('v0.52.1',timeout=90000);q.locator('#world-file').set_input_files(str(ROOT/'.artifacts/v52-1.history.json'));expect(q.locator('[data-import-confirm]')).to_be_enabled(timeout=90000);q.locator('[data-import-confirm]').click();expect(q.locator('#file-import-dialog')).not_to_be_visible(timeout=90000)
  q.locator('#sim-speed').select_option('16');q.clock.install(time=0);q.clock.pause_at(1000);q.locator('.history-entry[data-id="1"]').click();q.locator('[data-action=map-fullscreen]').click();q.evaluate('document.activeElement?.blur()')
  for i in range(2000):
   if q.locator('[data-mass-critical=death]').count():break
