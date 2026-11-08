@@ -23,6 +23,7 @@ export class MapCamera {
  resetFollow(){this.followRecord=null;this.followKey=null;this.filmKey=null;this.filmPlan=null;this.cancelMotion();}
  setFollowing(value,playback){this.autoFollow=!!value;this.followKey=null;this.filmKey=null;this.cancelMotion();if(this.autoFollow)this.follow(playback);}
  follow(playback){
+  if(playback?.scene?.massPlan)return;
   if(playback?.state?.filming){this.followFilm(playback);return;}
   if(this.inspectedTerritory&&!playback?.playing)return;if(this.inspectedTerritory){this.inspectedTerritory=null;this.followKey=null;}
   const record=playback?.state?.record,scene=playback?.scene;if(!record||!scene)return;

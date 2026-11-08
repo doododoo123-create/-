@@ -78,7 +78,7 @@ function updateFullscreenStage(old,next){
    if(n.classList.contains('map-stage-atlas')){
     const map=existing.querySelector('.atlas-scroll'),nextMap=n.querySelector('.atlas-scroll');
     if(map&&nextMap){const patched=updateMobileMap(map,nextMap);if(patched!==map)map.replaceWith(patched);syncAttributes(existing,n);live=existing;}
-   }else if(n.classList.contains('film-layer')){updateFilmTree(existing,n);live=existing;}else if(n.classList.contains('campaign-popup')){updateCampaignPanel(existing,n);live=existing;}else if(mobileMarkup.get(existing)===markup)live=existing;
+   }else if(n.classList.contains('mass-battle')){updateFilmTree(existing,n);live=existing;}else if(n.classList.contains('film-layer')){updateFilmTree(existing,n);live=existing;}else if(n.classList.contains('campaign-popup')){updateCampaignPanel(existing,n);live=existing;}else if(mobileMarkup.get(existing)===markup)live=existing;
    if(live!==existing){existing.replaceWith(live);if(cursor===existing)cursor=live;}
   }
   mobileMarkup.set(live,markup);if(live!==cursor)old.insertBefore(live,cursor);cursor=live.nextElementSibling;
@@ -90,6 +90,7 @@ export function renderApp(root,html){
  const template=document.createElement('template');template.innerHTML=html;
  const stage=root.querySelector(':scope > .map-stage'),first=template.content.firstElementChild,nextStage=first?.matches('.map-stage')?first:null;
  if(stage&&nextStage){updateFullscreenStage(stage,nextStage);hydrateAtlasFragments(root);hydrateCampaignFragments(root);releaseCampaignFragments();mountHanMaps(root);return;}
+ for(const next of template.content.querySelectorAll('.mass-battle')){const old=root.querySelector('.mass-battle');if(old){updateFilmTree(old,next);next.replaceWith(old);}}
  for(const next of template.content.querySelectorAll('.campaign-popup')){const old=root.querySelector('.campaign-popup');if(old){updateCampaignPanel(old,next);next.replaceWith(old);}}
  for(const next of template.content.querySelectorAll('.atlas-scroll[data-map-camera]')){
   const old=[...root.querySelectorAll('.atlas-scroll[data-map-camera]')].find(n=>n.dataset.mapCamera===next.dataset.mapCamera);

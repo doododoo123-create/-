@@ -3,6 +3,7 @@ export const PRESENTATION_RATE=1.2;
 export const movementRate=scene=>scene?.rapidMovement&&!['roll','reel','season','summary'].includes(scene.kind)&&!['death','elimination','capital_fall','finish'].includes(scene.event?.type)?1.5:1;
 export function criticalScene(scene){
  if(!scene||['roll','reel'].includes(scene.kind))return false;
+ if(scene.massCritical)return true;
  if(['death','appointment'].includes(scene.event?.type))return scene.kind==='apply';
  if(['capital_fall','elimination'].includes(scene.event?.type))return true;
  return scene.event?.type==='roster'&&scene.kind==='apply'&&scene.worldAfter?.people.some(p=>p.role==='general'&&p.active&&p.alive&&!scene.worldBefore.people.some(old=>old.id===p.id&&old.countryId===p.countryId&&old.active&&old.alive));

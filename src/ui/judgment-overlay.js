@@ -1,3 +1,4 @@
+import {renderMassBattle} from './mass-battle-view.js';
 import {renderUnificationAnnouncement} from './unification-notice.js';
 import {renderNationFall} from './nation-fall.js';
 import {portraitConfusion} from './readiness-display.js';
@@ -25,6 +26,7 @@ function judgmentTraits(person,role,country){
   return `<p class="judgment-feature">${esc(person?.feature||trait||'')}<span>${role==='minister'?`${esc(trait)} · 능력 ${judgmentSign(person?.ability)}`:role==='king'?esc(trait||''):`능력 ${judgmentSign(person?.ability)}`}</span></p>`;
 }
 export function renderJudgmentOverlay({world,playback}) {
+  if(playback.scene?.massPlan)return renderMassBattle({playback});
   if(playback.state?.filming&&playback.scene?.filmPhase)return '';
   if(playback.state?.filming&&playback.scene?.kind==='apply'&&playback.scene.event?.type==='death')return `<aside class="global-history-notice" data-notice="death"><strong>${esc(displayEventText(playback.scene.event.title))}</strong><small>${esc(displayEventText(playback.scene.event.detail))}</small></aside>`;
   if(playback.scene?.kind==='unification'&&!playback.complete)return renderUnificationAnnouncement(playback.scene.worldAfter,playback.scene.result);

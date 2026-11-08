@@ -1,3 +1,4 @@
+import {massBattleSoundCues} from './mass-battle-cues.js';
 import {campaignSummary} from '../ui/campaign-playback.js';
 import { SOUND_PACK } from '../data/sound-art.js';
 import { SOUND_DEFAULTS } from './settings.js';
@@ -6,6 +7,7 @@ export function soundHash(text){let h=2166136261;for(const ch of String(text)){h
 export function presentationSoundCues(state,{speed=1,settings=SOUND_DEFAULTS,duration=900,rollingDuration=900}={}){
  if(!state||state.finished)return [];
  const scene=state.scenes?.[state.index];if(!scene)return [];
+ if(scene.massPlan)return massBattleSoundCues(scene,{speed});
  const e=scene.event||{},record=state.record||{},b=record.battles?.[scene.battleIndex],phase=state.phase==='departing'?'locked':state.phase,actual=duration/Math.max(.1,speed),simple=settings.simplify,selectedSpeed=state.filming?state.selectedSpeed:speed,fast=simple&&selectedSpeed>=4,veryFast=simple&&selectedSpeed>=8;
  const result=[],eventKey=String(e.index??scene.id),prefix=`${record.turn}:${eventKey}`,cue=(id,key=scene.id,group='battle',extra={})=>result.push({id,key:prefix+':'+key,group,priority:{ui:10,dice:30,movement:20,battle:40,important:60}[group],at:0,...extra});
  const notable=(id,key,priority)=>cue(id,key,'important',{priority,maxDuration:speed>=4?.65:undefined});

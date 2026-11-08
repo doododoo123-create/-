@@ -60,6 +60,7 @@ const v32Css=await readFile(resolve(root,'src/ui/studio-v32.css'),'utf8');
 const v30Css=await readFile(resolve(root,'src/ui/studio-v30.css'),'utf8');
 const css = await readFile(resolve(root, 'src/ui/style.css'), 'utf8');
 const visuals = await readFile(resolve(root, 'src/ui/visuals.css'), 'utf8');
+const massBattleCss=await readFile(resolve(root,'src/ui/mass-battle.css'),'utf8');
 const mapStage = await readFile(resolve(root, 'src/ui/map-stage.css'), 'utf8');
 const mapEditorCss = await readFile(resolve(root, 'src/ui/map-editor.css'), 'utf8');
 const reformCss=await readFile(resolve(root,'src/ui/studio-v11.css'),'utf8');
@@ -93,6 +94,7 @@ let html = await readFile(resolve(root, 'index.html'), 'utf8');
 html = html.replace('<link rel="stylesheet" href="./src/ui/fonts-licensed.css">',`<style>${fontCss}</style>`).replace('<link rel="stylesheet" href="./src/ui/style.css">', `<style>${css}</style>`)
   .replace('<link rel="stylesheet" href="./src/ui/visuals.css">', `<style>${visuals}</style>`)
   .replace('<link rel="stylesheet" href="./src/ui/filming.css">', `<style>${filmingCss}</style>`)
+  .replace('<link rel="stylesheet" href="./src/ui/mass-battle.css">', `<style>${massBattleCss}</style>`)
   .replace('<link rel="stylesheet" href="./src/ui/map-stage.css">', `<style>${mapStage}</style>`)
   .replace('<link rel="stylesheet" href="./src/ui/map-editor.css">', `<style>${mapEditorCss}</style>`)
   .replace('<link rel="stylesheet" href="./src/ui/lacquer-bronze.css">', `<style>${lacquerCss}</style>`)
