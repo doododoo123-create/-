@@ -1,3 +1,4 @@
+import {IsolatedEvacuation} from './isolated-evacuation.js';
 import {addPersonalBonus,officerAbility,officerFatigue} from '../model/officer-traits.js';
 import { capitalFall } from './capital-fall.js';
 import { campaignDeath } from './campaign-deaths.js';
@@ -13,6 +14,7 @@ import { returnEmptyCommanders, defeatedAttackPosition, moveToNearbyRetreat } fr
 // New campaign rules are isolated from the original v11 / v0.8 turn algorithm.
 export function resolveCampaign(ctx){
  const {s,Atlas,rules,actor,opponent,ctl,events,battles,emit,die,randomInt,helpers:h}=ctx;
+ const evacuation=new IsolatedEvacuation(ctx);
  const me=s.countries[actor],other=s.countries[opponent],recent=[];
  const move=(nation,g,path,kind,moves)=>{
   if(!path||path.length<2)return;
@@ -20,7 +22,7 @@ export function resolveCampaign(ctx){
   g.position=path.at(-1);g.stranded=false;
  };
  const retreat=(nation,g,battleIndex)=>{
-  if(!g.active||!g.alive||!Number.isInteger(g.position))return;
+  if(evacuation.has(g,battleIndex)||!g.active||!g.alive||!Number.isInteger(g.position))return;
   if(rules.nearbyRetreat&&g.troops>0){
    const battle=battles[battleIndex],placement=moveToNearbyRetreat(s,Atlas,nation,g,battle?.cellId??g.position,nation===actor?battle?.cellId:battle?.from);
    if(placement)emit('retreat',g.name+' · 전장 인근 후퇴',placement.encircled?'인접 자국 영토가 없어 전장에서 가장 가까운 자국 영토로 재배치했어.':'전투 영토 바로 옆 자국 영토로 후퇴했어.',{nation,slot:g.slot,role:'general',battleIndex,...placement},true);return;
@@ -88,6 +90,7 @@ export function resolveCampaign(ctx){
     a.troops=roundedTroops(a.troops-b.losses.attack.amount,rules);d.troops=roundedTroops(d.troops-b.losses.defense.amount,rules);
     if(b.winner!==null){const winner=b.winner===actor?a:d;winner.wins++;if(rules.underdogExperience&&((b.winner===actor?b.attack.army:b.defense.army)<(b.winner===actor?b.defense.army:b.attack.army)))winner.underdogWins=(winner.underdogWins||0)+1;b.victorWins=winner.wins;}
    }
+   evacuation.snapshot([actor,opponent]);
    const capitalsBefore=s.countries.map(c=>h.capitalCell(s,c.id)),ownersBefore=s.cells.map(c=>c.owner);
    const finalWin=b.winner===actor&&wave===queue.length-1;
    b.captureLimit=finalWin?h.conquestLimit(b):0;
@@ -103,6 +106,7 @@ export function resolveCampaign(ctx){
    else if(b.counterCaptureLimit)b.summary=d.name+' 방어 대승 · 역점령 가능한 영토 없음';
    emit('resolve',b.summary,automatic?'병력 손실 없음':`공격 ${b.attack.army} → ${a.troops}만 / 방어 ${b.defense.army} → ${d.troops}만`,{battleIndex:index,success:b.winner===actor},true);
    deathCheck(b,a,d,wave);
+   evacuation.finish(b);
    if(rules.nearbyRetreat){
     if(a.alive&&a.troops>0&&b.winner!==actor)retreat(actor,a,index);
     if(d.alive&&d.troops>0&&b.winner===actor&&!automatic)retreat(opponent,d,index);

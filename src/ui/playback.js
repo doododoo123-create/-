@@ -1,5 +1,5 @@
 import {unificationCountry} from './unification-notice.js';
-import {makeFilmingScenes,filmingDuration} from './filming-playback.js';
+import {makeFilmingScenes,filmingDuration,filmBattleMetadata} from './filming-playback.js';
 import {cohortMapScenes,parallelReturnScenes} from './battle-cohorts.js';
 import {directUnopposedScenes,formationScenes} from './studio-scenes-v36.js';
 import {criticalScene,animationRate} from './presentation-tempo.js';
@@ -49,7 +49,7 @@ export class TurnPlayback {
     Object.assign(this,{onChange,onFinish,speed,options,reducedMotion,schedule,cancel,now});
     this.groupEnd=null;this.groupDone=false;this.state=null;this.handle=null;this.remaining=0;this.deadline=0;this.scheduledSpeed=1;
   }
-  get effectiveSpeed(){if(this.state?.filming||this.scene?.kind==='army-formed-hold'||this.scene?.campaignPhase==='report'||criticalScene(this.scene))return 1;return this.options().kingChoiceNormalSpeed&&this.scene?.kind==='reel'&&this.scene.event?.type==='king'?1:this.speed();}
+  get effectiveSpeed(){if(this.scene?.victoryMeta&&this.state?.effectStage==='outcome')return 1;if(this.state?.filming||this.scene?.kind==='army-formed-hold'||this.scene?.campaignPhase==='report'||criticalScene(this.scene))return 1;return this.options().kingChoiceNormalSpeed&&this.scene?.kind==='reel'&&this.scene.event?.type==='king'?1:this.speed();}
   get animationSpeed(){if(this.state?.filming){const scene=this.scene,phase=this.state.phase==='departing'?'departing':this.state.effectStage||this.state.phase,base=scene?.filmPhase==='judgment'?900:observerDuration(scene,this.state.record,phase,this.reducedMotion())*animationRate(scene);return Math.max(.1,base/Math.max(1,this.duration()));}return this.effectiveSpeed*animationRate(this.scene);}
   get scene(){return this.state?.scenes[this.state.index]||null;}
   get playing(){return !!this.state?.playing;}
@@ -58,10 +58,11 @@ export class TurnPlayback {
   get displayWorld(){return this.state?.finished?this.state.after:this.scene?.kind==='apply'&&this.state.phase!=='settled'?applicationWorld(this.scene,this.state.effectStage):this.scene?.worldAfter;}
   get movementProgress(){if(this.scene?.kind!=='movement')return 0;const left=this.playing&&this.handle!==null?Math.max(0,(this.deadline-this.now())*this.scheduledSpeed):this.remaining,duration=this.duration();return duration?Math.max(0,Math.min(1,1-left/duration)):1;}
   get sceneProgress(){if(!this.scene)return 0;const left=this.playing&&this.handle!==null?Math.max(0,(this.deadline-this.now())*this.scheduledSpeed):this.remaining,duration=this.duration();return duration?Math.max(0,Math.min(1,1-left/duration)):1;}
-  duration(){const scene=this.scene;if(!scene)return 0;const phase=this.state.phase==='departing'?'departing':this.state.effectStage||this.state.phase;if(this.state.filming){const speed=this.options().kingChoiceNormalSpeed&&scene.kind==='reel'&&scene.event?.type==='king'?1:this.speed();return filmingDuration(scene,this.state.record,phase,speed,this.reducedMotion());}return scene.kind==='campaign'?campaignSceneDuration(scene):observerDuration(scene,this.state.record,phase,this.reducedMotion());}
+  duration(){const scene=this.scene;if(!scene)return 0;if(scene.victoryMeta&&this.state.effectStage==='outcome')return 900;const phase=this.state.phase==='departing'?'departing':this.state.effectStage||this.state.phase;if(this.state.filming){const speed=this.options().kingChoiceNormalSpeed&&scene.kind==='reel'&&scene.event?.type==='king'?1:this.speed();return filmingDuration(scene,this.state.record,phase,speed,this.reducedMotion());}return scene.kind==='campaign'?campaignSceneDuration(scene):observerDuration(scene,this.state.record,phase,this.reducedMotion());}
   clearTimer(){if(this.handle!==null)this.cancel(this.handle);this.handle=null;}
   load(record,before,after,play=true,history=[]){
     this.clearTimer();this.groupEnd=null;this.groupDone=false;this.detailReturn=null;this.campaignExpanded=false;const filming=!!this.options().filming,modern=!!this.options().armyPresentation,raw=makeTurnScenes(record,before,history),original=(modern?parallelReturnScenes(formationScenes(directUnopposedScenes(raw,record))):raw).map(s=>modern?{...s,rapidMovement:true}:s),compact=filming?makeFilmingScenes(original,record,history):this.options().compactCampaigns?compactCampaignScenes(original,record,{modern,reportAfterMap:modern&&!!this.options().armyResultReport}):original,scenes=modern&&!filming?cohortMapScenes(compact,record):compact;scenes.at(-1).worldAfter=after;
+    const victory=filmBattleMetadata(record,history);for(const scene of scenes){const meta=victory.get(scene.battleIndex);if(scene.kind==='apply'&&scene.event?.type==='resolve'&&(meta?.upset||meta?.streak))scene.victoryMeta=meta;}
     this.state={record,before,after,scenes,filming,selectedSpeed:this.speed(),latestRoutes:modern,turnRoutes:modern,index:0,previousRoundRecords:history.filter(r=>r.round===record.round-1),roundRecords:history.filter(r=>r.round===record.round&&r.turn<record.turn),phase:['roll','reel'].includes(scenes[0].kind)?'rolling':'holding',playing:play,finished:false};
     this.remaining=this.duration();this.onChange();if(play)this.arm();
   }

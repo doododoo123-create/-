@@ -642,3 +642,6 @@ movementRate와 campaignSceneDuration은 추가 가속1.5다. roll/reel 시간�
 
 
 v0.48 선택 턴 촬영은 selected-turns.js의 완료 턴 대기열과 기존 replayTurn 복원을 사용한다. 촬영 전용 단계 대신 기존 관전 연출을 재사용하며 현재 경기의 presentation과 카메라를 별도로 보존한다.
+
+
+v0.49: HistorySelection은 이벤트 위임으로 체크/강조/개수만 갱신하여 목록 DOM과 스크롤을 보존한다. isolated-evacuation은 점령 직전 육지 연결권역을 기억하고 전투/전사 판정 뒤 철수를 기록한다. controls.isolatedEvacuation 활성화와 지속 상태는 과거 명령 호환을 유지한다. 작은 승리 배지는 불변 전투 기록의 연승/병력 비율을 읽는다.
