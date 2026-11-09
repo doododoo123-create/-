@@ -1,3 +1,4 @@
+import {batchRetreats} from './batched-movement.js';
 // Reuse committed movement/ownership frames, without replaying dice or deaths.
 export function massBattleRecap(group,plan){
  const visible=w=>({...w,people:plan.after.people}),out=[];
@@ -8,5 +9,10 @@ export function massBattleRecap(group,plan){
  if(plan.changes.length&&!out.some(s=>s.kind==='capture')){
   const first=group.originalScenes[0],last=group.originalScenes.at(-1);out.push({...last,id:group.id+'-recap-land',kind:'capture',massRecap:true,dissolveArmies:true,battleIndex:group.battles.at(-1).index,worldBefore:visible(plan.before),worldAfter:plan.after,event:{...last.event,type:'occupation'},camps:last.camps});
  }
- return out;
+ const lastByPerson=new Map();for(const s of out)for(const m of s.moves||[])lastByPerson.set(m.personId,{s,m});
+ const retreats=[...lastByPerson.values()].filter(({s,m})=>plan.after.people.some(p=>p.id===m.personId&&p.alive!==false)&&(['retreat','redeploy','isolated-return','evacuation'].includes(m.kind)));
+ const remaining=out.flatMap(s=>{if(s.kind!=='movement')return [s];const moves=s.moves.filter(m=>!['retreat','redeploy','isolated-return','evacuation'].includes(m.kind));return moves.length?[{...s,moves}]:[];});
+ if(retreats.length){const source=retreats[0].s,campsBefore={...(group.originalScenes[0].campsBefore||group.originalScenes[0].camps)},camps={...campsBefore};for(const {m} of retreats){campsBefore[m.personId]={territoryId:m.fromId};camps[m.personId]={territoryId:m.toId};}
+ remaining.unshift({...source,id:group.id+'-retreat',batchMovement:true,batchRetreat:true,battleIndex:undefined,event:{type:'retreat',index:source.event.index},moves:retreats.map(({m})=>({...m,kind:'retreat'})),campsBefore,camps});}
+ return remaining;
 }

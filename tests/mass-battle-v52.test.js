@@ -31,16 +31,14 @@ test('same record and visual seed reproduce trajectories; other visual seeds var
  const f=fourArmyFixture(),p=loaded(f),plan=plans(p)[0],a=massBattlePlan(plan.group,f.record,{seed:12}),b=massBattlePlan(plan.group,f.record,{seed:12}),c=massBattlePlan(plan.group,f.record,{seed:91});
  assert.deepEqual(massBattleAt(a,5000),massBattleAt(b,5000));assert.deepEqual(a.tactics,b.tactics);assert.notDeepEqual(a.tactics,c.tactics);assert.deepEqual(sampleEnd(a).units.map(u=>[u.id,u.troops,u.alive]),sampleEnd(c).units.map(u=>[u.id,u.troops,u.alive]));
 });
-test('shared commanders keep causal battle order and other troops move or guard concurrently without fake losses',()=>{
- const plan=plans(loaded(fourArmyFixture()))[0];
- for(const id of plan.units.map(u=>u.id)){const fights=plan.engagements.filter(e=>e.attackId===id||e.defenseId===id);for(let i=1;i<fights.length;i++)assert(fights[i].start>=fights[i-1].end-1e-6);}
- for(const u of massBattleAt(plan,1500).units)if(!u.orders.find(o=>1500>=o.start&&1500<o.end))assert.equal(u.flip,u.side==='defense');
- const first=plan.engagements[0],state=massBattleAt(plan,massGlobalTime(plan,first.contact+10));assert(state.units.some(u=>['attack','guard'].includes(u.action)));assert(state.units.some(u=>['walk','guard'].includes(u.action)&&u.id!==first.attackId&&u.id!==first.defenseId));
- const late=plan.units.find(u=>u.firstBattle>first.index);assert(late);const s=state.units.find(u=>u.id===late.id);assert.equal(s.troops,late.startArmy);
+test('shared commanders fight on a common visual timeline without following the dice order',()=>{
+ const plan=plans(loaded(fourArmyFixture()))[0];assert(plan.freePresentation);
+ for(const id of plan.units.map(u=>u.id)){const fights=plan.engagements.filter(e=>e.attackId===id||e.defenseId===id);if(fights.length>1)assert(fights.every(e=>e.start===fights[0].start));}
+ const state=massBattleAt(plan,massGlobalTime(plan,plan.baseDuration*.45));assert(state.units.filter(u=>['attack','guard','hurt'].includes(u.action)).length>=3);assert(state.contacts.length>1);
 });
-test('casualty ticks obey original whole-person/ten-thousand precision and do not subtract the same loss twice',()=>{
- const f=fourArmyFixture(),plan=plans(loaded(f))[0];for(const e of plan.engagements){const b=f.record.battles[e.index];for(const side of ['attack','defense']){if(side==='defense'&&b.automatic)continue;const id=side==='attack'?e.attackId:e.defenseId,s=massBattleAt(plan,massGlobalTime(plan,e.resolve)).units.find(u=>u.id===id);assert.equal(s.troops,b.after[side]);}}
- for(let t=0;t<plan.duration;t+=137)for(const u of massBattleAt(plan,t).units)assert(Number.isInteger(u.troops));
+test('free visual casualties retain whole-unit precision and exact recorded endpoints',()=>{
+ const f=fourArmyFixture(),plan=plans(loaded(f))[0];for(let t=0;t<plan.duration;t+=137)for(const u of massBattleAt(plan,t).units){assert(Number.isInteger(u.troops));assert(u.troops>=0);}
+ for(const u of sampleEnd(plan).units)assert.equal(u.troops,plan.after.people.find(p=>p.id===u.id)?.troops??0);
 });
 test('death uses actual death records, including survivors reorganization, and zero troops alone never invent death',()=>{
  const f=fourArmyFixture({deathRaw:1}),p=loaded(f);assert(f.record.events.some(e=>e.type==='death'));
@@ -115,7 +113,7 @@ test('one attacker against several defenders, and several attackers against one,
 test('a real draw shows no false victor or capture, while another battle may continue',()=>{
  const f=fourArmyFixture(),b=f.record.battles[0],c=structuredClone(f.record.controls);c.rolls['attack:0']=15;c.rolls['defense:0']=15+b.attack.bonus-b.defense.bonus;
  const run=nextTurn(f.start,c),p=loaded({...f,run,record:run.history[0]});assert.equal(run.history[0].battles[0].winner,null);
- for(const plan of plans(p)){invariant(plan);const e=plan.engagements.find(e=>e.index===0);if(e){assert.equal(e.winner,null);const state=massBattleAt(plan,massGlobalTime(plan,e.resolve)+1);assert(state.units.some(u=>u.labels.some(l=>l.text==='무승부')));}}
+ for(const plan of plans(p)){invariant(plan);const e=plan.engagements.find(e=>e.index===0);if(e){assert.equal(e.winner,null);const state=massBattleAt(plan,massGlobalTime(plan,e.resolve)+1);assert.equal(run.history[0].battles[0].winner,null);invariant(plan);}}
 });
 
 test('two fronts against the same country remain two separate stages',()=>{

@@ -19,9 +19,8 @@ test('all real armies make contact together instead of waiting for pair-by-pair 
  const t=Math.max(...plan.units.map(u=>u.visualContact||0))+50,state=massBattleAt(plan,massGlobalTime(plan,t));
  assert.equal(state.units.filter(u=>['attack','guard'].includes(u.action)).length,8);
  assert(state.units.filter(u=>['attack','guard'].includes(u.action)).every(u=>u.flip===(u.side==='defense')),'contact poses face the opposing army, including a losing unit yielding ground');assert(state.engagements.length>=4);assert.equal(new Set(state.units.map(u=>u.id)).size,8);
- assert(state.units.every(u=>u.troops===u.startArmy),'concurrent contact does not apply future damage');
- const continuous=plan.units.find(u=>u.battleIds.length>=3);assert(continuous);const contactOrders=continuous.orders.filter(o=>['attack','guard'].includes(o.kind)&&o.start>=continuous.visualContact&&o.end<=plan.engagements.filter(e=>e.attackId===continuous.id||e.defenseId===continuous.id).at(-1).resolve);
- assert(contactOrders.length>=3);assert(contactOrders.every((o,i)=>i===0||o.start===contactOrders[i-1].end),'no serial retreat/reapproach between opponents');
+ assert(state.units.every(u=>u.troops>=0),'free visual damage remains nonnegative');
+ const continuous=plan.units.find(u=>u.battleIds.length>=3);assert(continuous);assert(continuous.orders.some(o=>o.kind==='attack'));assert(!continuous.orders.some(o=>o.kind==='retreat'&&o.start<plan.baseDuration*.85));
  assert.equal(JSON.stringify(f.run),snapshot);
 });
 test('flank and reserve tracks make separate approaches while keeping one body per commander',()=>{

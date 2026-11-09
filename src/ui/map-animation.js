@@ -1,3 +1,4 @@
+import {batchMovementPins} from './batched-movement.js';
 import {MassBattleAnimation} from './mass-battle-animation.js';
 import {TroopAnimation} from './troop-animation.js';
 import {placeVictoryBadge} from './victory-badge.js';
@@ -51,13 +52,16 @@ export class MapAnimation {
    for(const ring of nodes.rallies){const t=p.reducedMotion?.()?0:progress;ring.setAttribute('r',String(16+7*Math.sin(Math.PI*t)));ring.style.opacity=String(.5+.35*Math.sin(Math.PI*t));}
    const duelScale=Number(svg.style.getPropertyValue('--duel-display-scale'))||1;
    const screenScale=Math.hypot(matrix.a,matrix.b);
+   const batchPins=new Map();
+   if(p.scene?.batchMovement){const endpoints=new Map([...root.querySelectorAll('.map-unit-position')].map(c=>[c.dataset.person,{x:Number(c.dataset.mapX),y:Number(c.dataset.mapY)+35}]));const ordinary=32*screenScale*(Number(svg.style.getPropertyValue('--unit-display-scale'))||1),pins=batchMovementPins(p.scene.moves,p.displayWorld,movement,screenScale,ordinary,endpoints);for(const pin of pins){batchPins.set(pin.id,pin);const card=[...root.querySelectorAll('.map-unit-position')].find(c=>c.dataset.person===pin.id),node=card?.querySelector('.clock-marching,.unit-redeploy');if(node){node.style.transform=`translate(${pin.x-Number(card.dataset.mapX)}px,${pin.y-35-Number(card.dataset.mapY)}px)`;card.dataset.motionPin=[pin.x,pin.y].join(',');}}}
    for(const entry of nodes.arrows){
     const {element:arrow,points,width,paths,card,node}=entry;if(!arrow.isConnected)continue;
     const moving=arrow.dataset.liveMarch==='true',fraction=moving?Math.min(1,movement*(Number(arrow.dataset.arrivalFactor)||1)):1,key=fraction+':'+screenScale;if(entry.lastKey===key)continue;entry.lastKey=key;
     const part=polylineAt(points,fraction),gap=arrow.dataset.routeTerminal==='false'?0:Math.min(part.total,(22+width*1.5)/screenScale),drawn=polylineAt(points,Math.min(fraction,part.total?(part.total-gap)/part.total:0));
+    if(moving&&p.scene?.batchMovement){const pin=batchPins.get(arrow.dataset.routePerson);if(pin){const dx=pin.x-part.point[0],dy=pin.y-part.point[1],path=part.path.map(v=>[v[0]+dx,v[1]+dy]);for(const line of paths)line.setAttribute('d',operationPath(path));arrow.dataset.motionTip=[pin.x,pin.y].join(',');}continue;}
     // Very short routes have no room for a shaft outside the enlarged battle icon.
     for(const path of paths)path.setAttribute('d',part.total>gap?(arrow.dataset.smoothRoute==='true'?roundedRoutePath(drawn.path):operationPath(drawn.path)):'');
-    if(moving&&node){const x=part.point[0]-Number(card.dataset.mapX),y=part.point[1]-35-Number(card.dataset.mapY);node.style.transform=`translate(${x}px,${y}px)`;card.dataset.motionPin=part.point.join(',');}
+    if(moving&&node&&!p.scene?.batchMovement){const x=part.point[0]-Number(card.dataset.mapX),y=part.point[1]-35-Number(card.dataset.mapY);node.style.transform=`translate(${x}px,${y}px)`;card.dataset.motionPin=part.point.join(',');}
     arrow.dataset.motionTip=drawn.point.join(',');arrow.dataset.iconClearance=String(gap*screenScale);
    }
    for(const {card,node,target} of nodes.formations){

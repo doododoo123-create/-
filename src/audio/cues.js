@@ -7,6 +7,9 @@ export function soundHash(text){let h=2166136261;for(const ch of String(text)){h
 export function presentationSoundCues(state,{speed=1,settings=SOUND_DEFAULTS,duration=900,rollingDuration=900}={}){
  if(!state||state.finished)return [];
  const scene=state.scenes?.[state.index];if(!scene)return [];
+ if(scene.batchRetreat)return [{id:'battle_defeat',key:state.record.turn+':'+scene.id+':retreat',at:0,group:'battle',priority:45,maxDuration:.65},{id:'army_march',key:state.record.turn+':'+scene.id+':withdraw',at:90,group:'movement',priority:30,maxDuration:Math.min(.9,duration/Math.max(1,speed)/1000)}];
+ if(scene.entryLocation)return [{id:'battle_impact',key:state.record.turn+':'+scene.id+':arrive',at:0,group:'battle',priority:45,maxDuration:.4}];
+ if(scene.entryMarch)return [{id:'army_march',key:state.record.turn+':'+scene.id+':approach',at:0,group:'movement',priority:25,maxDuration:Math.min(1.2,duration/Math.max(1,speed)/1000)}];
  if(scene.massPlan)return massBattleSoundCues(scene,{speed});
  const e=scene.event||{},record=state.record||{},b=record.battles?.[scene.battleIndex],phase=state.phase==='departing'?'locked':state.phase,actual=duration/Math.max(.1,speed),simple=settings.simplify,selectedSpeed=state.filming?state.selectedSpeed:speed,fast=simple&&selectedSpeed>=4,veryFast=simple&&selectedSpeed>=8;
  const result=[],eventKey=String(e.index??scene.id),prefix=`${record.turn}:${eventKey}`,cue=(id,key=scene.id,group='battle',extra={})=>result.push({id,key:prefix+':'+key,group,priority:{ui:10,dice:30,movement:20,battle:40,important:60}[group],at:0,...extra});

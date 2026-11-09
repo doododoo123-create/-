@@ -25,8 +25,8 @@ export function fitMapUnits(element){
  const ring=svg.querySelector('.battle-emblem .target-ring'),campaign=svg.querySelector('.map-campaign');if(!ring||!campaign){if(filming)fitFilmClusters(element);return;}
  const r=ring.getBoundingClientRect(),center=[r.x+r.width/2,r.y+r.height/2],inverse=matrix.inverse(),raw=(campaign.dataset.attackOrigin||'0,0').split(',').map(Number),target=(campaign.dataset.targetReference||'0,0').split(',').map(Number);
  const direction=duelDirection(raw,target),hasLoss=!!svg.querySelector('.unit-loss-label');
- const cards=[...svg.querySelectorAll('.map-unit-position[data-combat-side]')],layout=duelStacks({left:bounds.left,right:bounds.right,center:center[0],width:width*TROOP_FOOTPRINT,iconRadius:Math.max(14,r.width/2),direction:direction.x,attack:cards.filter(c=>c.dataset.combatSide==='attack').length,defense:cards.filter(c=>c.dataset.combatSide==='defense').length});
- const bodyWidth=layout.width/TROOP_FOOTPRINT,half=bodyWidth*40/32,top=(hasLoss?125:113)*bodyWidth/32;
+ const cards=[...svg.querySelectorAll('.map-unit-position[data-combat-side]')],footprint=Math.max(1.5,...cards.map(c=>((Math.min(4,Number(c.querySelector('canvas[data-troop-count]')?.dataset.troopCount)||1)-1)*18+55)/32)),layout=duelStacks({left:bounds.left,right:bounds.right,center:center[0],width:width*footprint,gap:8,iconRadius:Math.max(14,r.width/2),direction:direction.x,attack:cards.filter(c=>c.dataset.combatSide==='attack').length,defense:cards.filter(c=>c.dataset.combatSide==='defense').length});
+ const bodyWidth=layout.width/footprint,half=bodyWidth*40/32,top=(hasLoss?125:113)*bodyWidth/32;
  svg.style.setProperty('--duel-display-scale',String(bodyWidth/(UNIT_CARD_WIDTH*scale)));
  const rowTop=Math.max(113,...[...svg.querySelectorAll('canvas[data-troop-height]')].map(c=>Number(c.dataset.troopHeight)+40));
  svg.dataset.duelAxis='horizontal';

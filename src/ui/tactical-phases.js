@@ -10,3 +10,5 @@ export function tacticalPhases(units,tactics){
  return phases.sort((a,b)=>a.at-b.at).filter((p,i,a)=>!i||p.at-a[i-1].at>150);
 }
 export function activeTacticAt(plan,time){return (plan.tacticalPhases||[]).filter(p=>p.at<=time&&p.end>time).at(-1)||null;}
+
+export function activeCommandsAt(plan,time){return ['attack','defense'].map(side=>(plan.tacticalPhases||[]).filter(p=>p.side===side&&p.at<=time&&p.end>time).at(-1)).filter(Boolean);}
