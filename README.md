@@ -1,8 +1,12 @@
-# 사국쟁패 Studio v0.57.0 · 연속 집단군 전투
+# 사국쟁패 Studio v0.57.1 · 녹화용 전술화면 선택
 
-**[v0.57.0 단일 HTML 다운로드](https://raw.githubusercontent.com/doododoo123-create/-/refs/tags/v0.57.0/사국쟁패%20Studio.html)**
+**[v0.57.1 단일 HTML 다운로드](https://raw.githubusercontent.com/doododoo123-create/-/refs/tags/v0.57.1/사국쟁패%20Studio.html)**
 
 HTML을 저장해 최신 Chrome·Edge에서 여세요. 설치·인터넷 연결 없이 실행하는 일반판 하나입니다.
+
+## v0.57.1 변경
+
+역사 목록의 녹화 대상 선택 옆에 **집단군 전술화면** 체크칸을 추가했습니다. 끄고 ‘선택한 턴 재생’을 누르면 전술창을 건너뛰고 지도에서 이동·퇴각·점령 결과를 재생합니다. 일반 관전과 실제 전투 결과는 유지합니다. [적용 범위와 검증](docs/recording-v571.md).
 
 ## v0.57.0 변경
 

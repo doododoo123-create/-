@@ -38,8 +38,8 @@ test('no fake final correction, death is explicit and dead formations stop movin
 test('grouped map entry retains both armies and recap snapshots are not rewritten',()=>{
  const f=fixture('normal'),p=tacticalPlayback(f),scenes=p.state.scenes,entry=scenes.findIndex(s=>s.entryLocation);assert(entry>=0&&entry<scenes.findIndex(s=>s.massPlan));p.state.index=entry;assert.equal(visibleArmyGroups(p.displayWorld,p.state).length,2);assert.deepEqual(scenes[entry].readySides,['attack','defense']);const original=tacticalPlans(f)[0].group.originalScenes;assert(original.every(s=>!s.entryArmyGroups));for(const s of scenes.filter(s=>s.massRecap))assert(!s.entryArmyGroups);
 });
-test('protected core, storage, map recap/camera and global sound/playback are byte-identical',()=>{
- const baseline=JSON.parse(readFileSync('tests/tactical-v57-baseline.json'));for(const [file,sha]of Object.entries(baseline.protected))assert.equal(createHash('sha256').update(readFileSync(file)).digest('hex'),sha,file);
+test('protected core/storage/map/sound stay identical; playback only forwards the approved recording option',()=>{
+ const baseline=JSON.parse(readFileSync('tests/tactical-v57-baseline.json'));for(const [file,sha]of Object.entries(baseline.protected))assert.equal(createHash('sha256').update(file==='src/ui/playback.js'?readFileSync(file,'utf8').replace('massBattleScenes(original,record,{mapOnly:!!this.options().massBattleMapOnly})','massBattleScenes(original,record)'):readFileSync(file)).digest('hex'),sha,file);
 });
 test('missing identities, final snapshots and invalid troop data fail instead of inventing death',()=>{
  const f=fixture('normal'),p=tacticalPlans(f)[0];for(const edit of [a=>a.after.people.splice(a.after.people.findIndex(p=>p.id===a.units[0].id),1),a=>a.units[0].startArmy=NaN,a=>delete a.record.frames[a.events[0].index]]){const a=structuredClone(analyzeMassBattle(p.group,f.record));a.record.frames=structuredClone(f.record.frames);edit(a);assert.throws(()=>tacticalRecord(a),/전술 기록/);}
