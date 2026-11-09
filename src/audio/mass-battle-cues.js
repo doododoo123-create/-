@@ -5,7 +5,7 @@ export function massBattleSoundCues(scene,{speed=1}={}){
  const prefix=plan.id+':',important={death:'bp_sfx_general_fallen',capital_fall:'capital_fall',elimination:'country_eliminated',appointment:'general_appointed'};
  if(scene.massCritical)return [{id:important[scene.event.type]||'battle_impact',key:prefix+scene.event.type+':'+scene.event.index,at:0,group:'important',priority:80,maxDuration:scene.event.type==='death'?1.9:1.4}];
  if(scene.massPhase==='summary')return [{id:'bp_sfx_battle_end',key:prefix+'summary',at:0,group:'battle',priority:45,maxDuration:2.2}];
- const result=[],contact=Math.min(...plan.units.filter(u=>u.combatant).map(u=>u.visualContact??plan.baseDuration*.24)),combatEnd=plan.baseDuration*.85;
+ const result=[],contact=plan.story?Math.min(...plan.story.contacts.map(c=>c.start)):Math.min(...plan.units.filter(u=>u.combatant).map(u=>u.visualContact??plan.baseDuration*.24)),combatEnd=plan.story?Math.max(contact,...plan.story.contacts.map(c=>c.end)):plan.baseDuration*.85;
  const loop=(id,from,to,group)=>{const start=massGlobalTime(plan,from),end=massGlobalTime(plan,to),a=Math.max(scene.massStart,start),b=Math.min(scene.massEnd,end);if(b<=a)return;const offset=(a-start)/speed/1000;result.push({id,key:prefix+scene.id+':'+id,at:(a-scene.massStart)/speed,offset,loop:true,sustain:true,scope:'stage',group,priority:15,maxDuration:offset+(b-a)/speed/1000});};
  if(Number.isFinite(contact)){
   loop('bp_foley_army_march_loop',0,contact,'movement');loop('bp_amb_battle_distant_loop',contact,combatEnd,'battle');

@@ -1,8 +1,14 @@
-# 사국쟁패 Studio v0.56.0 · 지도 이동 안정화와 전투 소재 적용
+# 사국쟁패 Studio v0.57.0 · 연속 집단군 전투
 
-**[v0.56.0 단일 HTML 다운로드](https://raw.githubusercontent.com/doododoo123-create/-/refs/tags/v0.56.0/사국쟁패%20Studio.html)**
+**[v0.57.0 단일 HTML 다운로드](https://raw.githubusercontent.com/doododoo123-create/-/refs/tags/v0.57.0/사국쟁패%20Studio.html)**
 
 HTML을 저장해 최신 Chrome·Edge에서 여세요. 설치·인터넷 연결 없이 실행하는 일반판 하나입니다.
+
+## v0.57.0 변경
+
+집단군 전술창을 여러 교전이 이어지는 전장으로 개편했습니다. 실제 승패·병력 손실·점령·재탈환을 진행 중에 보여주고, 14개 전술의 이동 경로와 상대 대응을 구분합니다. 병사 그림에는 양국 공통 축척을 사용합니다. 집단군은 전장 도착까지 유지한 뒤 전투 아이콘에서 전술창이 펼쳐집니다.
+
+게임 규칙·주사위·저장 형식과 기존 지도 후퇴·점령 공개는 유지합니다. [상세 구조와 적용 범위](docs/tactical-v57.md), [검증 결과](docs/tactical-v57-validation.md)를 참고하세요. 개발 검증용 자료는 실제 게임 저장이 아닙니다. 별도 모바일 버전은 만들지 않습니다.
 
 ## v0.56.0 변경
 

@@ -1,0 +1,211 @@
+{
+  "policies": [
+    {
+      "id": "center-break",
+      "name": "중앙 집중 돌파",
+      "kind": "normal",
+      "start": 19100,
+      "contact": 20300,
+      "resolve": 22100,
+      "end": 24500,
+      "distinctStates": 4
+    },
+    {
+      "id": "wing-focus",
+      "name": "편익 집중 공세",
+      "kind": "normal",
+      "start": 1700,
+      "contact": 4100,
+      "resolve": 5900,
+      "end": 8300,
+      "distinctStates": 4
+    },
+    {
+      "id": "oblique",
+      "name": "사선 진격",
+      "kind": "normal",
+      "start": 1700,
+      "contact": 4900,
+      "resolve": 6700,
+      "end": 9100,
+      "distinctStates": 4
+    },
+    {
+      "id": "pincer",
+      "name": "양익 협공",
+      "kind": "normal",
+      "start": 1700,
+      "contact": 4900,
+      "resolve": 6700,
+      "end": 9100,
+      "distinctStates": 4
+    },
+    {
+      "id": "hook",
+      "name": "편익 포위",
+      "kind": "normal",
+      "start": 1700,
+      "contact": 4900,
+      "resolve": 6700,
+      "end": 9100,
+      "distinctStates": 4
+    },
+    {
+      "id": "breach",
+      "name": "돌출부 확대",
+      "kind": "advance",
+      "start": 26700,
+      "contact": 27900,
+      "resolve": 27900,
+      "end": 31300,
+      "distinctStates": 4
+    },
+    {
+      "id": "waves",
+      "name": "파상 공세",
+      "kind": "normal",
+      "start": 1700,
+      "contact": 4100,
+      "resolve": 5900,
+      "end": 8300,
+      "distinctStates": 4
+    },
+    {
+      "id": "pressure",
+      "name": "집중 압박",
+      "kind": "normal",
+      "start": 1700,
+      "contact": 4100,
+      "resolve": 5900,
+      "end": 8300,
+      "distinctStates": 4
+    },
+    {
+      "id": "reserves",
+      "name": "후속대 투입",
+      "kind": "normal",
+      "start": 1700,
+      "contact": 4100,
+      "resolve": 5900,
+      "end": 8300,
+      "distinctStates": 4
+    },
+    {
+      "id": "hold",
+      "name": "전선 유지",
+      "kind": "normal",
+      "start": 1700,
+      "contact": 4100,
+      "resolve": 5900,
+      "end": 8300,
+      "distinctStates": 4
+    },
+    {
+      "id": "staged-retreat",
+      "name": "단계적 후퇴",
+      "kind": "normal",
+      "start": 1700,
+      "contact": 4100,
+      "resolve": 5900,
+      "end": 8300,
+      "distinctStates": 4
+    },
+    {
+      "id": "local-counter",
+      "name": "국지 역습",
+      "kind": "normal",
+      "start": 1700,
+      "contact": 4100,
+      "resolve": 5900,
+      "end": 8300,
+      "distinctStates": 4
+    },
+    {
+      "id": "counter-break",
+      "name": "반격 돌파",
+      "kind": "counter",
+      "start": 41900,
+      "contact": 43100,
+      "resolve": 43100,
+      "end": 46500,
+      "distinctStates": 4
+    },
+    {
+      "id": "split-retreat",
+      "name": "분리된 철수",
+      "kind": "normal",
+      "start": 1700,
+      "contact": 4100,
+      "resolve": 5900,
+      "end": 8300,
+      "distinctStates": 4
+    }
+  ],
+  "performance": {
+    "environment": "headless Chromium / Linux container /1280x760 /DPR1 / real RAF /960 initial figures",
+    "samples": 1497,
+    "medianFrameMs": 16.700000000000728,
+    "p95FrameMs": 66.59999999999854,
+    "meanRafFps": 35.517446729761346,
+    "canvasDrawFps": 22.511111111111113,
+    "errors": []
+  },
+  "ownershipTransitions": [
+    {
+      "id": "tile-6",
+      "name": "운곡",
+      "from": "b",
+      "to": "a",
+      "sourceIndex": 45,
+      "beatIndex": 6,
+      "recapture": false,
+      "kind": "territory",
+      "at": 39680,
+      "end": 42880
+    },
+    {
+      "id": "tile-6",
+      "name": "운곡",
+      "from": "a",
+      "to": "b",
+      "sourceIndex": 49,
+      "beatIndex": 7,
+      "recapture": true,
+      "kind": "territory",
+      "at": 46080,
+      "end": 49280
+    }
+  ],
+  "postOptimizationPerformance": {
+    "environment": "Linux container / headless Chromium /1280x760 /DPR1 /960 initial figures / no recording / real wall time",
+    "runs": [
+      {
+        "speed": 1,
+        "draws": 249,
+        "elapsed": 8021.799999952316,
+        "meanRafFps": 57.62716101853819,
+        "canvasDrawFps": 31.040414869665177,
+        "medianFrameMs": 16.699999999999818,
+        "p95FrameMs": 16.800000000000182
+      },
+      {
+        "speed": 4,
+        "draws": 303,
+        "elapsed": 8090.899999976158,
+        "meanRafFps": 37.56369091157036,
+        "canvasDrawFps": 37.44948028042528,
+        "medianFrameMs": 16.700000000000728,
+        "p95FrameMs": 50
+      },
+      {
+        "speed": 8,
+        "draws": 166,
+        "elapsed": 3005.699999988079,
+        "meanRafFps": 55.030664677606495,
+        "canvasDrawFps": 55.22839937474078,
+        "medianFrameMs": 16.700000000000728,
+        "p95FrameMs": 33.29999999999927
+      }
+    ]
+  }
+}

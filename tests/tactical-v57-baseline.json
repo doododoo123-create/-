@@ -1,0 +1,254 @@
+{
+  "sourceCommit": "4e9ab30",
+  "originalSha256": "56ca58708e505328ce85bb4263860d4fb2b5a33142809b4489cc1c566e90af1f",
+  "protected": {
+    "src/ui/mass-battle-recap.js": "e9d4871fd4a57e051ef9b39986741485d1d2cc931b74cc540b1492675456b5f3",
+    "src/ui/round-campaign.js": "c902d3c9b89d8e951b11c80b936300e33523960c9a1c7408d875bfc8168e22ed",
+    "src/ui/recent-map-events.js": "17ec360b3a74fd7028630ad5bf1b9cff9dc76f214bc3384193029e75c740a53f",
+    "src/ui/map-camera.js": "ca929fda8f412a85b8352a28f125bd108ca1d200a681ca98f8b329cd7ccfc332",
+    "src/ui/campaign-playback.js": "caf8d01bd517db5ab6532b3e76cb3e15197495dc54dfd0111c7f37ed603eaa08",
+    "src/audio/mixer.js": "a1310a1d2e4733e14d9f8fae6d2f87819604485cd6ad6362ae344d9d7ac1ab70",
+    "src/audio/director.js": "aeb5805a0705eeef5bbd4b2b578b5b318626c5d5782cf1d6e1c46313f60a36d3",
+    "src/ui/playback.js": "141183629792eaa82fb42b20cffa0cb9d21e38d13a59955fa2671ed5fbf1e2e1",
+    "src/engine/advance-defenders.js": "82520e5f4797ab93cd2bf6779945c65c977eb967f5ee914745e0670e9de77b84",
+    "src/engine/army-assembly.js": "583d560b532588ac9f16252695999ad2e409b9c918cc9a272d2404387d7cb32b",
+    "src/engine/army-deployment.js": "56c438bf1ad33c427f576542803d65204611af53df39f7da036d61e20ce25e72",
+    "src/engine/battlefield-movement.js": "73d8396830ba857b6162818332d39f9508ac9392e959b768dbfd24f93b46100e",
+    "src/engine/campaign-combat.js": "6e3dbbe7e8ee18713e9dfdc06e9e52ac97c0536acadd607ce2b9f96b6193e1b6",
+    "src/engine/campaign-deaths.js": "24db5661a4d23fd0fbc81530030c6b3f808ca08ed0f5b034815200fbd497e386",
+    "src/engine/campaign-logistics.js": "0ae9ba1c3d999b186b18cf01cac117911e47547f7edeb843641797d19575d908",
+    "src/engine/campaign-survivors.js": "5c92b26e27b3edd7195149f73293f6fe0a83fb83b9f481c02f6d4f2ba744e541",
+    "src/engine/capital-fall.js": "cb09eadd5a280651a53195714eaa199f3209c5eff7cda2825cffd467dcbbcec6",
+    "src/engine/command-movement.js": "4c7c214b6ed23a54b034d487e1ab74d7b2f42314b5324606b439d10daf4f810f",
+    "src/engine/command-reform.js": "83f91bd1bd1bc4497722ac47d87a66760e0ae704da26f27bcbbeb498724bfdc9",
+    "src/engine/command-regions.js": "b745dde5c3a225e45743c68eab23894deca2966d03031f546c80e1dca7708793",
+    "src/engine/continuous-campaign.js": "60191b694ee30d1730e4a9617bd3ea436d1155323cc3c587c02c50570e12e775",
+    "src/engine/counterattack.js": "6c5780d69c905bdf55450d0bf156eb69c4b36a274018f3971f4a9fd726240f7a",
+    "src/engine/economy-v27.js": "04410aca50a52079ac09bf83cf47f7082fbb055f2cd3a4697c05c1f781942b72",
+    "src/engine/exile-officers.js": "d2e93544913f97c21cc518c74938796668e485a8efd42dfbe19e8fc9241e2d26",
+    "src/engine/field-command.js": "06c27f205fa4e7ff7397a229db306889c3e07842290efc5153b97d748e9041bb",
+    "src/engine/front-deployment.js": "fefabf331bafa361ff8c073926bb631437f79b716480b0195d76837eedb4efba",
+    "src/engine/front-operations.js": "1d31fd90e6860f87b1865bbd58f451ad5cd46677984891cff7df19d76cf32d3c",
+    "src/engine/frontier-reserves.js": "6331f95f256919f228f791b8e39f1db0028b39e6b2da175210bb1e476845cdfa",
+    "src/engine/frontier.js": "edb7482844b2132f8cca7b95312c82a92c66cf2b600166bcdb4bb782f173b5df",
+    "src/engine/initial-deployment.js": "666790da3fbc0a21df872e2c9567168c44a82826f6a60d75802213ce59a90153",
+    "src/engine/isolated-evacuation.js": "3fc9307206a4daacfe2d8c861a0c36c6fefc7eb4664f59ef292d5550c2f6b7ca",
+    "src/engine/officer-names.js": "b4ff5df5fa06e02312cb4ebe38992a8808a529944dd74f24e98689edfbf718b2",
+    "src/engine/random.js": "727af004e140a7b2f6724d198f385020c35951e360650c1d21f3c0977bf3af5d",
+    "src/engine/recovery-priority.js": "2f9f7386a8559f375503d2f25f8e32ceca2c8cb0a73da2d22ae2e2603c7e3c15",
+    "src/engine/replay.js": "83116ba61bd35fef85140e2355c87b141a6cdd5830b2691d5645394b7b242c21",
+    "src/engine/retreat-home.js": "9db70f5d7cedc1166c76a95f3da68ef9e9e0d714cb31ba553a0822b1f83752a3",
+    "src/engine/royal-army.js": "d13843ec249400272fc48e616e143f2a159d1a973c7a8af2805b536ae0cbca5b",
+    "src/engine/simulation.js": "69384663671b7f77f7246222ec5ca94f71e6b74d7016616850a76436a7149a8c",
+    "src/engine/strategic-targets.js": "1a3fa951eddec7b8f92701cc728a39e8fb41b0d9c497b8aa9d494fc53fdc5307",
+    "src/engine/supply-regions.js": "9d70533f8b7849c94f140b29c9000963632217fb2bd8281b512e7d4cf5f57284",
+    "src/engine/unit-spacing.js": "dfd63d5535ac2d07f102bab483f6ef264601e19844809da84470b41e3a13c91a",
+    "src/engine/v11-core.js": "8b070f1893f8e7807f6538d6ecee5fcf27eeb9561282d5911640419367b1ed91",
+    "src/engine/war-readiness.js": "25d77a1377b83276ea74bcb82f86da1154e02fbff0a1eef0cebdc44ec501c937",
+    "src/model/balance-v27.js": "94831c6e9128d955229947cd0e60fb21f2dc858257f0cc1d4b39569eb7a80e19",
+    "src/model/calendar.js": "499d4d473d8cf2b22b2cf0a78a2ea1b543c01697761b8738423093247738d982",
+    "src/model/campaign-v22.js": "aae1aaa92ce6861a1fb05eb076b934401d115a7133353751572928ca70ab9765",
+    "src/model/campaign-v23.js": "88117a41b365fb0972b077c7c37eb13d95e42751dbb75c8bbe4a64c1d65d8b35",
+    "src/model/campaign-v27.js": "06638ab0341d14ad67d943cfe0710119c90d74eb3b6d69db4f7a5e7f4e97541e",
+    "src/model/campaign-v28.js": "d3297bc88e84cb3fd6beb29c5894f15eac0ad2f73378ccaaebc2fe8137803b8e",
+    "src/model/campaign-v31.js": "f3eb043f9e70c1f0bf0ef8bb57a1407c93dd1c452aeda4a5e39ff04fe30e9103",
+    "src/model/cartography-geometry.js": "211f4a0767a4e7ab27e0472627d8802c660d4597630bd794659af25daaf4d867",
+    "src/model/cartography.js": "375bf93c4e9c7a497d982cc7f72372f79abe11a2d0ae5307211744526c126f34",
+    "src/model/combat-rules.js": "3fc9ef006a332f756e6ea0ef1b9f050d706da275aac8316f2c26f3d0d028f057",
+    "src/model/continent160-layout.js": "165db14bdba9014da0acac84ed2f0c1f7d80ed706625ad8ae60f06ddcc16f7ff",
+    "src/model/deployment.js": "be3b3ce0cae99d09aeca19c210a53dd6be1af23c670824d8d63b3c09c807c38b",
+    "src/model/free-map.js": "5b9ed8071c6fb6890426b5fa2e5f6314804b9ef0ac66ce94566a45c6248aa213",
+    "src/model/land-supply.js": "5d9a4bf6a3ebc98a5fb1bfaa40ad8e74bee6d9df02985c767526b1bf48d19fcc",
+    "src/model/map-generation.js": "13c2f1fa6fa67cdbd0c809e69dee813703cbe93115126ebbe04c2050f85242d4",
+    "src/model/map-geometry.js": "4858345b8ee865685c0396501b37f71822454d9d776eff240fdf57e0c1fba366",
+    "src/model/map-scale.js": "69f20007aba17dbe40b1a2b9d6473a2a56b7df95b0ea957bf64316ddc09d8d62",
+    "src/model/officer-traits.js": "06e82ddc98bbdb0b65b3239e104ff9bbc1ed98d621c71bc294ec8c2b043e9218",
+    "src/model/portrait-allocation.js": "bbfc38b0f06b0380446299fcb3b9c12107bceb59574b3819d750b29443a9091b",
+    "src/model/portrait-keys.js": "273ae483a554db80332c2ee1f09561079a6ad696256e52ef2d499d8a983d88ca",
+    "src/model/sea-supply.js": "5e9ab5005b3e71a178686ec8a3169c33a554ebad0b53944e58467ae522839355",
+    "src/model/territory-preset-v25.js": "768d88ba5f50758b5ef2e531c5199951d448e2b081e992e6de43e81d98d2cbae",
+    "src/model/world-v13.js": "4a17eab00ebcc5782f30017847e14ba0e14f8113e2c30a5404edb2bc2c7db158",
+    "src/model/world.js": "2c84426019b0794fbc4aac312f2c5d1420a1a3cff53f1bf34faf5d2baf9b4119",
+    "src/storage/file-reader.js": "c56f56d0261c60b8934c79d6f4fbcd210e7ac9736dce37931eb18f7a3062f59b",
+    "src/storage/history-file.js": "53d74aa066bc50b26fe09be7d8de76005099e23f0b717c06e53639febc125ce9",
+    "src/storage/import-commit.js": "2ec53012fb9ef1a7735b5f0efb97c57060b734e29e2f2802516624ba2ea0e177",
+    "src/storage/run-archive.js": "7889fcc9bdc25380c32ddadf5427828ce3428240cd39174dadafb20cae882c3d",
+    "src/storage/run-store.js": "afae942d44c4879226afe84bab548dcaaa10ea672bb87c6fcdec4cc84192be26",
+    "src/storage/world-archive.js": "a65df5b5c6fbeeda1da128d889da630f4432a145d1ca6da9e0926435e2daaea7",
+    "src/storage/world-store.js": "ec27631e73b1bb408a96794f39ea9f21df0bb4784ceb484e6ad55dfe60e6ab30"
+  },
+  "scenes": {
+    "v56-campaign": [
+      {
+        "id": "king-0-0",
+        "hash": "c5594187a1422238b99ec60eb57f11145abfcedc7f2f7be846b322344413f0c4"
+      },
+      {
+        "id": "war_target-1-0",
+        "hash": "2da8e23668c97b96573d902ac995fd35f4d6bae952d168634e7521eb21dcfb09"
+      },
+      {
+        "id": "apply-1",
+        "hash": "efae20423987c938dea41545ef8b1aa5143d5b03b07cfe3b4b7c1e764e11afd1"
+      },
+      {
+        "id": "hold-6",
+        "hash": "131cd36aa702ae552ec6165872d6c1bb48d3e432320873b65c060447f9415e2e"
+      },
+      {
+        "id": "army-move-7",
+        "hash": "d7c2d0ff391bb82209a66d86f45b3184fff4afe9908abf2bfad24f2326d953fc"
+      },
+      {
+        "id": "army-formed-formation-1-1-0",
+        "hash": "a14940a9594f221508ffa07cc216c31aa14df0fdc2934c714c3d289c7af946ff"
+      },
+      {
+        "id": "army-formed-hold-formation-1-1-0",
+        "hash": "75494cd0de99108af8f1d67444aa13027289dbee28b413dc51c56c9c9407d9f5"
+      },
+      {
+        "id": "batch-campaign-2-0-recap-0",
+        "hash": "5eec3fae174e68735a63f6db7559dc2d72b5b3e076aa7568efb0694543329e8a"
+      },
+      {
+        "id": "campaign-2-0-recap-1",
+        "hash": "750b0c5ac1c318342fd0d4e7b1830f1b19ba85ecda5cbb4964f7d2f462364e18"
+      },
+      {
+        "id": "campaign-2-0-recap-2",
+        "hash": "089e1bad3f085bafe082bda1ebfa4370a7212d08c2a90bf6339986e4cc96d7cc"
+      },
+      {
+        "id": "campaign-2-0-recap-3",
+        "hash": "a8003c3f0dcf107b6de87f1b4faae97fb2ed8d7e7385c36fb4c7fe56cec810c2"
+      },
+      {
+        "id": "campaign-2-0-recap-4",
+        "hash": "d8b069799036ef08b555741c2d79b4d0b0a12a7b4f23559cafeeaddba245bacd"
+      },
+      {
+        "id": "campaign-2-0-recap-5",
+        "hash": "c2c75b161041e1a9c18bceab2b4049a66d76f8214b6dd4b0d0c75903e58ba61b"
+      },
+      {
+        "id": "campaign-2-0-recap-6",
+        "hash": "f5b2da5c5b2e94a57895161e39ab74ae330e07be0a2fe4e013314ec8adfe3816"
+      },
+      {
+        "id": "campaign-2-0-recap-7",
+        "hash": "765d6cf46bc965bf2adc80285455e1c4e0c2e89e418df40158d84c3a05c2630f"
+      },
+      {
+        "id": "campaign-2-0-recap-8",
+        "hash": "40db9bd9fd8770e04ce7c036faea1ce6960dd31fd9c22639c4eb99f62330c589"
+      },
+      {
+        "id": "campaign-2-0-map-return",
+        "hash": "b564b08334d2c00ebd05150005dfc7c188366ce57b41a59c44d3b1b5ab8c1cca"
+      },
+      {
+        "id": "apply-45",
+        "hash": "efa43df731daf933d321747d33b6ce16be6421de32d1bea481ce3620e44714b8"
+      },
+      {
+        "id": "roster-46",
+        "hash": "ff062dee10f1adc0a20d436c09abced6140c0c3233a222afff4bcbbacffae4a1"
+      },
+      {
+        "id": "apply-46",
+        "hash": "82f815f867b1352562683896deb74773d7c568fdcc51b6e863ab4ed8a2d1477b"
+      },
+      {
+        "id": "move-47-officer-nation-0-5-0",
+        "hash": "fc641d40f704a63e79e5ef2234c0838cc644b7372d0d66c0295a73e483f4c723"
+      },
+      {
+        "id": "empty_return-47",
+        "hash": "86f51907fa4aa98b19e5db1adbdcaba845af52580f583cd6b86cc35fcf5ce3ac"
+      },
+      {
+        "id": "apply-47",
+        "hash": "c444457d479f8d72e95adfdf2394a572c0c9668e00fda6b77ec7f85de0a4f10b"
+      },
+      {
+        "id": "result",
+        "hash": "8617741392d9f8eb59bd1394ff6b070cc73decfe18c12080355472d0643a7122"
+      }
+    ],
+    "v56-army": [
+      {
+        "id": "season-1",
+        "hash": "0e73b663339d4f5cefd129ab11bfc52bc700600bbf965ea7359416a2bd86254f"
+      },
+      {
+        "id": "king-0-0",
+        "hash": "a021e98163ec20ef8757ec7e14b20a84d769ca03fa61ce5a2f9b3c4116700872"
+      },
+      {
+        "id": "war_target-1-0",
+        "hash": "e1687c63dbdc0a57d72d5876e1c10fb1a60f0d394c2bab7f94e6d04af7fbf615"
+      },
+      {
+        "id": "formation-6",
+        "hash": "5bcbe357f9a9ff87be82db2864b1b9ba5be650fc6b25d33d6a48a85118e731fb"
+      },
+      {
+        "id": "army-formed-formation-0-0-0",
+        "hash": "e3e9e485c797ed44b1b23fd0d31d1366926809c238c4af969173f0e130877b23"
+      },
+      {
+        "id": "army-formed-hold-formation-0-0-0",
+        "hash": "3f30bd295832d221ed73375f3d3617940ae26a46ba6427b7813b3cbcf1dc6856"
+      },
+      {
+        "id": "formation-7",
+        "hash": "453c8b14275248dfb2ffbf301e2ab94459cce09ab6956ab75438fbd6e9645ec6"
+      },
+      {
+        "id": "formation-8",
+        "hash": "4f616da667437bac1f1d7981b8e536d9c4cc80cbdf5f07218843b017c269befc"
+      },
+      {
+        "id": "army-formed-formation-0-1-1",
+        "hash": "c44155bd42f21a265bb589731a544382f2caefd10d3f50441b83aa1c89c932cd"
+      },
+      {
+        "id": "army-formed-hold-formation-0-1-1",
+        "hash": "d2f325ecb48920690cce0cc0f37ea51126051926bb1f9e632dbac40ad3a63c37"
+      },
+      {
+        "id": "formation-9",
+        "hash": "aa2fc9686256c579fd53a277f315f65ce8c743f917dfc23f7b0465c20a831268"
+      },
+      {
+        "id": "batch-campaign-1-0-recap-0",
+        "hash": "1a12f490c776c3a06fcf66ca6b6835cfe7d7c4e54ead4210f2a7a1aaedc73d02"
+      },
+      {
+        "id": "campaign-1-0-recap-1",
+        "hash": "043b2a805ae62f066eafa64c4402108141da5c7465fc4af40523ca14a42ff143"
+      },
+      {
+        "id": "campaign-1-0-recap-2",
+        "hash": "5e7b503df1452913180e394f1cb6c5a4f3bc8dfc830c7171614e60033cd4c284"
+      },
+      {
+        "id": "campaign-1-0-map-return",
+        "hash": "2df007e0bb57be840ffdc71bff339ce20fc4d35a874b6a89ad9737e8cc2dcaf1"
+      },
+      {
+        "id": "roster-50",
+        "hash": "b34d1f958af6d222d11fb6492fa800c105cd6b10b644603c85ea79144be92ac9"
+      },
+      {
+        "id": "apply-50",
+        "hash": "c40d5dcb1effb4cc667be84f6ad2bb3b97b9ce371537a54c54774f2eaabe709f"
+      },
+      {
+        "id": "result",
+        "hash": "5bdcd9618cff1a27c6cb23a70a63f6be4e4f999ceeecf425de24cbbae6255167"
+      }
+    ]
+  }
+}

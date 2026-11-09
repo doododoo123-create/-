@@ -18,23 +18,23 @@ function sampleEnd(plan){return massBattleAt(plan,plan.duration);}
 function invariant(plan){
  assert.equal(new Set(plan.units.map(u=>u.id)).size,plan.units.length);
  for(const e of plan.engagements){assert(plan.units.some(u=>u.id===e.attackId));if(!e.automatic)assert(plan.units.some(u=>u.id===e.defenseId));}
- for(const u of plan.units){for(let i=1;i<u.orders.length;i++){assert(u.orders[i].start>=u.orders[i-1].end-1e-6);assert.deepEqual(u.orders[i].from,u.orders[i-1].to);}}
+ for(const u of plan.story.groups){for(let i=1;i<u.motions.length;i++){assert(u.motions[i].start>=u.motions[i-1].end-1e-6);assert.deepEqual(u.motions[i].from,u.motions[i-1].to);}}
  for(const u of sampleEnd(plan).units){const actual=plan.after.people.find(p=>p.id===u.id);assert.equal(u.troops,actual?.troops??0,u.id);assert.equal(u.alive,actual?.alive!==false,u.id);assert(u.troops>=0);}
- for(const t of [0,1700,plan.duration*.35,plan.duration*.7,plan.duration]){const state=massBattleAt(plan,t);assert.equal(state.units.length,plan.units.length);for(const u of state.units){assert(Number.isFinite(u.x)&&Number.isFinite(u.y));assert(u.troops>=0);assert(u.figures<=16);}}
+ for(const t of [0,1700,plan.duration*.35,plan.duration*.7,plan.duration]){const state=massBattleAt(plan,t);assert.equal(state.units.length,plan.units.length);for(const u of state.units){assert(Number.isFinite(u.x)&&Number.isFinite(u.y));assert(u.troops>=0);assert(u.figures<=480);}}
 }
 test('real army record produces reusable tactics and preserves identities, all troops and final state without duplicating map duels',()=>{
  const f=fourArmyFixture(),snapshot=JSON.stringify(f.run),before=JSON.stringify(f.start.world),p=loaded(f),all=plans(p);assert(all.length);assert.equal(MASS_TACTICS.length,14);
- for(const plan of all){invariant(plan);assert(plan.baseDuration>=12000&&plan.baseDuration<=18000);const covered=new Set(plan.engagements.map(e=>e.index));assert(!p.state.scenes.some(s=>!s.massRecap&&s.battleIndex!==undefined&&covered.has(s.battleIndex)&&['roll','movement','apply'].includes(s.kind)));assert(plan.tactics.eligible.length>=4);assert(plan.tactics.selected.length>=2);}
+ for(const plan of all){invariant(plan);assert(plan.baseDuration>=15000&&plan.baseDuration<=120000);const covered=new Set(plan.engagements.map(e=>e.index));assert(!p.state.scenes.some(s=>!s.massRecap&&s.battleIndex!==undefined&&covered.has(s.battleIndex)&&['roll','movement','apply'].includes(s.kind)));assert(plan.tactics.eligible.length>=4);assert(plan.tactics.selected.length>=2);}
  assert.equal(JSON.stringify(f.run),snapshot);assert.equal(JSON.stringify(f.start.world),before);
 });
 test('same record and visual seed reproduce trajectories; other visual seeds vary paths without varying facts',()=>{
  const f=fourArmyFixture(),p=loaded(f),plan=plans(p)[0],a=massBattlePlan(plan.group,f.record,{seed:12}),b=massBattlePlan(plan.group,f.record,{seed:12}),c=massBattlePlan(plan.group,f.record,{seed:91});
  assert.deepEqual(massBattleAt(a,5000),massBattleAt(b,5000));assert.deepEqual(a.tactics,b.tactics);assert.notDeepEqual(a.tactics,c.tactics);assert.deepEqual(sampleEnd(a).units.map(u=>[u.id,u.troops,u.alive]),sampleEnd(c).units.map(u=>[u.id,u.troops,u.alive]));
 });
-test('shared commanders fight on a common visual timeline without following the dice order',()=>{
+test('shared commanders retain causal battle order inside the continuous battlefield',()=>{
  const plan=plans(loaded(fourArmyFixture()))[0];assert(plan.freePresentation);
- for(const id of plan.units.map(u=>u.id)){const fights=plan.engagements.filter(e=>e.attackId===id||e.defenseId===id);if(fights.length>1)assert(fights.every(e=>e.start===fights[0].start));}
- const state=massBattleAt(plan,massGlobalTime(plan,plan.baseDuration*.45));assert(state.units.filter(u=>['attack','guard','hurt'].includes(u.action)).length>=3);assert(state.contacts.length>1);
+ for(const id of plan.units.map(u=>u.id)){const fights=plan.engagements.filter(e=>e.attackId===id||e.defenseId===id);if(fights.length>1)assert(fights.every((e,i)=>!i||e.start>=fights[i-1].end));}
+ const state=massBattleAt(plan,massGlobalTime(plan,plan.baseDuration*.45));assert(state.units.length===plan.units.length);assert(new Set(plan.engagements.map(e=>e.resolve)).size>1);
 });
 test('free visual casualties retain whole-unit precision and exact recorded endpoints',()=>{
  const f=fourArmyFixture(),plan=plans(loaded(f))[0];for(let t=0;t<plan.duration;t+=137)for(const u of massBattleAt(plan,t).units){assert(Number.isInteger(u.troops));assert(u.troops>=0);}
@@ -119,7 +119,7 @@ test('a real draw shows no false victor or capture, while another battle may con
 test('two fronts against the same country remain two separate stages',()=>{
  const start=studio37Fixture({twoFronts:true}),run=nextTurn(start,studio37Controls({twoFronts:true})),all=plans(loaded({start,run,record:run.history[0]}));assert.equal(all.length,2);assert.notEqual(all[0].group.frontId,all[1].group.frontId);for(const p of all)invariant(p);
 });
-test('a real32commander campaign preserves every participant and all512 initial figures',()=>{
- const f=largeMassFixture(),p=loaded(f),all=plans(p);assert.equal(all.length,1);const plan=all[0];assert.equal(plan.units.length,32);assert.equal(plan.units.reduce((n,u)=>n+u.figures,0),512);invariant(plan);
+test('a real32commander campaign preserves every participant within the common960figure budget',()=>{
+ const f=largeMassFixture(),p=loaded(f),all=plans(p);assert.equal(all.length,1);const plan=all[0];assert.equal(plan.units.length,32);assert.equal(plan.units.reduce((n,u)=>n+u.figures,0),960);invariant(plan);
  p.state.index=p.state.scenes.findIndex(s=>s.massPlan);p.remaining=p.duration();const html=renderMassBattle({playback:p});assert.equal((html.match(/data-mass-unit=/g)||[]).length,32);
 });

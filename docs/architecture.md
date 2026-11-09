@@ -720,3 +720,9 @@ ui/troop-layout.js가 병사54/발35와 카드0.75/상단 이동을 공유한다
 - `mass-battle-recap.js`는 camps와 표시용 영토를 순서대로 갱신하고 mapReveal에 공개한 전투/점령/이동을 따로 기록한다. `round-campaign.js`/`recent-map-events.js`가 이 목록을 읽어 미래의 경로/점령을 한꺼번에 드러내지 않는다. 실제 최종 상태로 돌아갈 때도 같은 공개 목록을 유지한다. 다중 영토 점령은 captureSteps만큼 표시 시간을 확보한다.
 - `battle-theme.css`는 첨부 WebP/재질SVG/9분할PNG/이름표를 CSS로 표시한다. 전술 캔버스는 병사/그림자/효과만 그린다. `battle-pack-art.mjs`는 사용한 UI와OGG의 원본 해시를 검사하고 배포용13소리를 생성한다. `audio/sounds.js`는 기존42개와 새13개를 합친다. 반복음도 기존 Director의 시계/장부와 Mixer의 동일한4소스 제한에 포함되며 playbackRate를 변경하지 않는다.
 - `data/officer-names.js`는200개 이름,`engine/officer-names.js`는 별도 고정 해시와 사용 중 이름 목록으로 신규 이름을 선택한다. 게임 RNG는 소비하지 않는다. controls.officerNames의 턴 경계와 지속 상태 플래그로 기존 기록을 유지하며 사용자 정의 최초 장수·재등용 장수를 덮어쓰지 않는다. 세계/역사 형식과 엔진38의 전투 규칙은 유지한다.
+
+### v0.57 전술창의 기록 재생
+
+`massBattlePlan`의 서비스 경로는 `buildTacticalStory`다. `tacticalRecord`가 원본 프레임과 교전별 정수 손실에서 읽기 전용 장부를 만들고, `tacticalScale`이 국가 공통 축척으로 표시 구획을 나눈다. `tactical-maneuvers`의 조건·이동 경로와 `tactical-story`의 접촉/공개 시간표를 `sampleTacticalStory(plan,t)`가 순수하게 평가한다. 렌더러는 원본에서 만든 작은 크기의 프레임 캐시를 사용하고 기존 RAF만 따른다. 상세 계약과 재현 방법은 [v57 문서](tactical-v57.md)에 있다. 구형 `freeBattlePresentation`은 현재 집단군 서비스 경로에서 호출하지 않는다.
+
+집단군 진입의 `entryArmyGroups/entryDuel`은 사용자가 승인한 화면 전용 메타데이터다. 실제 집단군 구성·이동 거리·게임 상태를 바꾸지 않는다. 이 메타데이터는 기존 `massBattleRecap`이나 저장 형식으로 전달하지 않는다. v56 보호 모듈 해시와 42개 외부 장면 스냅샷이 변경 경계를 검증한다.
