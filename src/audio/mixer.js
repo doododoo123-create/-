@@ -1,9 +1,9 @@
 import { SOUND_OUTPUT_GAIN,soundLevelGain } from './loudness.js';
-import { SOUND_PACK } from '../data/sound-art.js';
+import {ALL_SOUNDS} from './sounds.js';
 import { normalizeSoundSettings,soundGroupGain,SOUND_GROUPS } from './settings.js';
 const audioBytes=url=>{const text=atob(url.slice(url.indexOf(',')+1)),bytes=new Uint8Array(text.length);for(let i=0;i<text.length;i++)bytes[i]=text.charCodeAt(i);return bytes.buffer;};
 export class SoundMixer {
- constructor({sounds=SOUND_PACK,settings,contextFactory=()=>{const C=globalThis.AudioContext||globalThis.webkitAudioContext;return C?new C():null;},now=()=>performance.now(),onPlay=()=>{}}={}){
+ constructor({sounds=ALL_SOUNDS,settings,contextFactory=()=>{const C=globalThis.AudioContext||globalThis.webkitAudioContext;return C?new C():null;},now=()=>performance.now(),onPlay=()=>{}}={}){
   Object.assign(this,{contextFactory,now,onPlay});this.sounds=new Map(sounds.map(s=>[s.id,s]));this.settings=normalizeSoundSettings(settings);this.context=null;this.unlocked=false;this.unsupported=false;this.voices=new Set();this.buffers=new Map();this.pending=new Map();this.cacheBytes=0;this.cacheLimit=8*1024*1024;this.last=new Map();this.epochs={game:0,action:0,preview:0};this.maxVoices=4;this.unlocking=null;
  }
  get ready(){return this.unlocked&&this.context?.state==='running';}
@@ -37,17 +37,18 @@ export class SoundMixer {
   if(!s||!this.ready||!this.settings.enabled||!this.settings.volume||!preview&&soundGroupGain(this.settings,group)===0)return false;
   try{
    const buffer=await this.buffer(cue.id),late=Math.max(0,this.now()-requested)/1000;
-   if(epoch!==this.epochs[kind]||!valid()||!this.ready||!this.settings.enabled||late>(cue.priority>=60?.7:.25))return false;
-   const start=offset+(cue.sustain?late:0),allowed=cue.maxDuration===undefined?Infinity:cue.maxDuration-offset-late,duration=Math.min(buffer.duration-start,allowed);if(duration<=.012)return false;
+   if(epoch!==this.epochs[kind]||!valid()||!this.ready||!this.settings.enabled||late>(cue.loop?1:cue.priority>=60?.7:.25))return false;
+   const start=offset+(cue.sustain?late:0),allowed=cue.maxDuration===undefined?Infinity:cue.maxDuration-offset-late,duration=cue.loop?(Number.isFinite(allowed)?allowed:buffer.duration):Math.min(buffer.duration-start,allowed);if(duration<=.012)return false;
+   if(cue.loop&&[...this.voices].some(v=>v.kind===kind&&v.cue.key===cue.key))return false;
    const priority=preview?110:cue.priority??40,stamp=this.now(),lastKey=kind+':'+cue.id;
    if(!cue.sustain&&stamp-(this.last.get(lastKey)??-Infinity)<Math.min(s.cooldown,group==='ui'?90:150))return false;
    if(priority>=50){if([...this.voices].some(v=>v.priority>priority&&v.kind!=='preview'))return false;for(const v of [...this.voices])if(v.priority>=50&&v.priority<=priority)this.stopVoice(v);}
    if(cue.slot)for(const v of [...this.voices])if(v.kind===kind&&v.cue.slot===cue.slot)this.stopVoice(v);
    if(this.voices.size>=this.maxVoices){const lowest=[...this.voices].sort((a,b)=>a.priority-b.priority||a.started-b.started)[0];if(lowest.priority>priority)return false;this.stopVoice(lowest);}
-   const source=this.context.createBufferSource(),gain=this.context.createGain(),t=this.context.currentTime;source.buffer=buffer;source.connect(gain);gain.connect(this.buses[group]||this.buses.battle);
-   const level=s.volume*soundLevelGain(s.id)*(cue.gain??1),fade=Math.min(.035,duration/4);gain.gain.setValueAtTime(0,t);gain.gain.linearRampToValueAtTime(level,t+.008);gain.gain.setValueAtTime(level,t+Math.max(.008,duration-fade));gain.gain.linearRampToValueAtTime(0,t+duration);
+   const source=this.context.createBufferSource(),gain=this.context.createGain(),t=this.context.currentTime;source.buffer=buffer;source.loop=!!cue.loop;source.connect(gain);gain.connect(this.buses[group]||this.buses.battle);
+   const level=s.volume*soundLevelGain(s.id)*(cue.gain??1),fade=Math.min(cue.loop?.2:.035,duration/4);gain.gain.setValueAtTime(0,t);gain.gain.linearRampToValueAtTime(level,t+.008);gain.gain.setValueAtTime(level,t+Math.max(.008,duration-fade));gain.gain.linearRampToValueAtTime(0,t+duration);
    const voice={source,gain,cue,kind,offset:start,started:t,priority,stopping:false};this.voices.add(voice);source.onended=()=>{this.voices.delete(voice);try{source.disconnect();gain.disconnect();}catch{}this.refreshMix();};
-   source.start(t,start,duration);source.stop(t+duration+.01);this.last.set(lastKey,stamp);this.refreshMix();this.onPlay({id:cue.id,key:cue.key,group,priority,offset:start,duration});return true;
+   if(cue.loop)source.start(t,start%buffer.duration);else source.start(t,start,duration);source.stop(t+duration+.01);this.last.set(lastKey,stamp);this.refreshMix();this.onPlay({id:cue.id,key:cue.key,group,priority,offset:start,duration});return true;
   }catch{return false;}
  }
  async action(id){await this.unlock();return this.play({id,group:'ui',priority:10,transport:false});}

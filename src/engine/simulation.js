@@ -28,7 +28,7 @@ export function engineFor(definition){
     return Array.from({length:last+1},(_,slot)=>{const g=generals.find(p=>p.slot===slot);return g?[g.name,g.ability,g.commandBonus,g.feature,...(definition.rules.officerTraits?[officerProfile(g,g.id)]:[])]:[`${c.name.slice(0,1)}${slot+1}군`,0,0,'새 지역 지휘관'];});
   });
   const deployment=(definition.deployment?.generals||[]).map(e=>{const p=definition.people.find(p=>p.id===e.personId);return {nation:ids.indexOf(p.countryId),slot:p.slot,station:territoryIndex.get(e.stationId),position:territoryIndex.get(e.positionId),territories:e.territoryIds.map(id=>territoryIndex.get(id))};});
-  const engine=createV11Engine(atlas,{countryIds:ids,deployment,freeform:free,rows:free?800001:definition.rows,cols:free?1200001:definition.cols,nations,rosters,initials:definition.countries.map(c=>({troops:c.troops,recruitment:c.recruitment})),maxGenerals:Math.max(20,Math.ceil(definition.territories.length/4)),rules:definition.rules,terrains:definition.territories.map(t=>t.terrain||'plain'),seaPorts:definition.rules.seaSupply?seaSupplyPorts(definition):[]});
+  const engine=createV11Engine(atlas,{countryIds:ids,deployment,freeform:free,rows:free?800001:definition.rows,cols:free?1200001:definition.cols,nations,rosters,authoredSlots:definition.people.filter(p=>p.role==='general').map(p=>({nation:ids.indexOf(p.countryId),slot:p.slot})),initials:definition.countries.map(c=>({troops:c.troops,recruitment:c.recruitment})),maxGenerals:Math.max(20,Math.ceil(definition.territories.length/4)),rules:definition.rules,terrains:definition.territories.map(t=>t.terrain||'plain'),seaPorts:definition.rules.seaSupply?seaSupplyPorts(definition):[]});
   const result={engine,ids,territoryIds:definition.territories.map(t=>t.id)};engineCache.set(definition,result);return result;
 }
 function projectRoyal(person,c,id,territoryIds,engine){const g=c.royal;return {...person,...g,id:g.generation?`monarch-${id}-${g.generation}`:person.id,countryId:id,stationId:territoryIds[g.station]||null,positionId:territoryIds[g.position]||null,capacity:engine.capacity(c,g)};}
@@ -72,7 +72,7 @@ export function createRun(input,seed=123456){
 export function currentActor(run){return run.result?null:run.world.countries.find(c=>c.id===run.schedule[run.scheduleIndex])||null;}
 export function nextTurn(input,controls){
   if(input.result)return input;
-  if(['armyAssembly','armyFormation','unitSpacing','frontOperations','directArmyRelease','royalCapitalSync','personalAbility','landSupplyOnly','regionalMaintenance','recruitExiles','isolatedEvacuation'].some(key=>controls?.[key]!==undefined&&typeof controls[key]!=='boolean'))throw Error('집단군 집결 설정이 올바르지 않습니다.');
+  if(['armyAssembly','armyFormation','unitSpacing','frontOperations','directArmyRelease','royalCapitalSync','personalAbility','landSupplyOnly','regionalMaintenance','recruitExiles','isolatedEvacuation','officerNames'].some(key=>controls?.[key]!==undefined&&typeof controls[key]!=='boolean'))throw Error('집단군 집결 설정이 올바르지 않습니다.');
   const context=engineFor(input.initialWorld),ctl=controls?{...controls}:undefined;
   if(ctl?.targetId!==undefined&&typeof ctl.targetId==='string')ctl.targetId=context.ids.indexOf(ctl.targetId);
   if(ctl?.targetCells)ctl.targetCells=Object.fromEntries(Object.entries(ctl.targetCells).map(([slot,id])=>[slot,typeof id==='string'?context.territoryIds.indexOf(id):id]));

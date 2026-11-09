@@ -1,0 +1,10 @@
+{
+  "method": "Built-in image generation for original backgrounds and material art. Native SVG for precise UI geometry.",
+  "prompts": {
+    "ground_meadow": "Top-down muted sage short grass and beige compacted soil, central 75% calm, sparse dry grass and pebbles near edges; original classic historical strategy ground only; no text, units, horizon, vignette or frame.",
+    "lacquer": "Very dark desaturated oxblood matte lacquered wood, subtle horizontal grain, low contrast, flat illumination, no ornaments or objects.",
+    "cloth": "Dark forest-green military tent cloth, fine natural linen weave, no folds, seams, symbols, embroidery or lighting gradient.",
+    "bronze": "Matte aged bronze, muted warm brown brass, subtle fine brushed wear and sparse patina, no glossy highlights, bevels or symbols."
+  },
+  "export": "Ground exported at 2048x1152; material sources at512x512. Native SVG mirrored wrapping for edge matching. Centre alpha verified for9slice frame."
+}

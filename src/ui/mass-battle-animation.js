@@ -28,14 +28,7 @@ export class MassBattleAnimation{
   const dpr=globalThis.devicePixelRatio||1,w=Math.ceil(rect.width*dpr),h=Math.ceil(rect.height*dpr),key=[Math.floor(time/32),w,h,this.playback.playing].join(':');if(this.last===key&&c.width===w&&c.height===h)return;this.last=key;
   if(c.width!==w)c.width=w;if(c.height!==h)c.height=h;
   const ctx=c.getContext('2d'),scale=Math.min(w/p.width,h/p.height),sx=scale,sy=scale,ox=(w-p.width*scale)/2,oy=(h-p.height*scale)/2;ctx.setTransform(sx,0,0,sy,ox,oy);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
-  if(!this.background||this.background.width!==w||this.background.height!==h){
-   const bg=document.createElement('canvas');bg.width=w;bg.height=h;const b=bg.getContext('2d');b.setTransform(sx,0,0,sy,ox,oy);
-   const ground=b.createLinearGradient(0,0,p.width,p.height);ground.addColorStop(0,'#b9c3a666');ground.addColorStop(.5,'#d4cdb366');ground.addColorStop(1,'#aebc9b66');b.fillStyle=ground;b.fillRect(-ox/sx,-oy/sy,w/sx,h/sy);
-   b.strokeStyle='#69785b1a';b.lineWidth=1;for(let i=0;i<12;i++){b.beginPath();b.moveTo(0,p.height*i/12);b.bezierCurveTo(p.width*.3,p.height*i/12-45,p.width*.7,p.height*i/12+45,p.width,p.height*i/12);b.stroke();}
-   b.fillStyle='#83916813';for(const [x,y,rx,ry] of [[.1,.2,180,70],[.8,.7,170,60],[.4,.9,200,50]]){b.beginPath();b.ellipse(p.width*x,p.height*y,rx,ry,0,0,Math.PI*2);b.fill();}
-   this.background=bg;
-  }
-  ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,w,h);ctx.drawImage(this.background,0,0);ctx.setTransform(sx,0,0,sy,ox,oy);
+  ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,w,h);ctx.setTransform(sx,0,0,sy,ox,oy);
   const commands=activeCommandsAt(p,state.base),tactic=activeTacticAt(p,state.base);
   for(const side of ['attack','defense']){const box=this.root.querySelector(`[data-mass-command="${side}"]`),command=commands.find(c=>c.side===side);if(box){box.classList.toggle('is-active',!!command);box.querySelector('[data-command-text]').textContent=command?.text||'';}}
   for(const command of commands){ctx.save();ctx.strokeStyle=p.countries.find(c=>c.id===command.countryId)?.color||'#fff';ctx.lineWidth=3;ctx.globalAlpha=.55;for(const id of command.ids.slice(0,6)){const u=state.units.find(v=>v.id===id),order=u?.orders.find(o=>o.kind==='walk'&&o.start>=command.at&&o.start<command.end);if(!u||!order)continue;ctx.beginPath();ctx.moveTo(u.x,u.y);ctx.quadraticCurveTo((u.x+order.to.x)/2,u.y+(order.curveY||0),order.to.x,order.to.y);ctx.stroke();}ctx.restore();}

@@ -2,7 +2,7 @@ import { presentationSoundCues } from './cues.js';
 export class SoundDirector {
  constructor(mixer,{schedule=(fn,ms)=>setTimeout(fn,ms),cancel=id=>clearTimeout(id)}={}){Object.assign(this,{mixer,schedule,cancel});this.ledgers=new WeakMap();this.state=null;this.stage=null;this.timers=new Map();this.resumes=new Map();this.sustains=new Map();this.playing=false;this.epoch=0;}
  clearTimers(){for(const id of this.timers.values())this.cancel(id);this.timers.clear();}
- pause(){if(this.playing){this.resumes=new Map(this.mixer.offsets().map(v=>[v.key,v]));for(const [key,cue] of this.sustains){if(this.resumes.has(key)||!this.playback?.scene)continue;const offset=this.playback.duration()/Math.max(.1,(this.playback.effectiveSpeed??this.playback.speed()))*this.playback.sceneProgress/1000-cue.at/1000+(cue.offset||0);if(offset>=0&&offset<(this.mixer.sounds.get(cue.id)?.duration||0))this.resumes.set(key,{key,cue,offset});}}this.playing=false;this.clearTimers();this.mixer.stopGameplay();}
+ pause(){if(this.playing){this.resumes=new Map(this.mixer.offsets().map(v=>[v.key,v]));for(const [key,cue] of this.sustains){if(this.resumes.has(key)||!this.playback?.scene)continue;const offset=this.playback.duration()/Math.max(.1,(this.playback.effectiveSpeed??this.playback.speed()))*this.playback.sceneProgress/1000-cue.at/1000+(cue.offset||0);if(offset>=0&&(cue.loop||offset<(this.mixer.sounds.get(cue.id)?.duration||0)))this.resumes.set(key,{key,cue,offset});}}this.playing=false;this.clearTimers();this.mixer.stopGameplay();}
  reset(){this.pause();this.state=null;this.stage=null;this.sustains.clear();this.resumes.clear();this.epoch++;}
  suppressStage(playback){this.pause();if(playback?.state){const ledger=this.ledgers.get(playback.state);if(ledger)for(const cue of presentationSoundCues(playback.state,{settings:this.mixer.settings,speed:(playback.effectiveSpeed??playback.speed()),duration:playback.duration(),rollingDuration:playback.reducedMotion?.()?80:900}))ledger.add(cue.key);}this.resumes.clear();}
  sync(playback,{audible=true}={}){
@@ -19,11 +19,12 @@ export class SoundDirector {
   if(!this.mixer.ready)return;
   for(const cue of cues){
    if(this.timers.has(cue.key))continue;
-   const resume=cue.sustain&&this.resumes.get(cue.key);if(seen.has(cue.key)&&!resume)continue;
+   const resume=cue.sustain&&this.resumes.get(cue.key);if(seen.has(cue.key)&&!resume&&!cue.loop)continue;
+   if(cue.loop&&[...this.mixer.voices||[]].some(v=>v.cue.key===cue.key))continue;
    const delay=cue.at-elapsed;
-   if(!resume&&delay<-(cue.priority>=60?700:150)){seen.add(cue.key);continue;}
+   if(!resume&&!cue.loop&&delay<-(cue.priority>=60?700:150)){seen.add(cue.key);continue;}
    const valid=()=>this.state===state&&this.epoch===epoch&&this.stage===stage&&playback.playing&&!playback.complete;
-   const perform=()=>{this.timers.delete(cue.key);if(!valid())return;seen.add(cue.key);const left=duration*(1-playback.sceneProgress),entry=resume?{...resume.cue,maxDuration:resume.offset+left/1000}:cue,offset=resume?.offset??(cue.sustain?(cue.offset||0)+Math.max(0,elapsed-cue.at)/1000:0);this.resumes.delete(cue.key);if(cue.sustain)this.sustains.set(cue.key,entry);void this.mixer.play(entry,{offset,valid});};
+   const perform=()=>{this.timers.delete(cue.key);if(!valid())return;seen.add(cue.key);const left=duration*(1-playback.sceneProgress),entry=resume?{...resume.cue,maxDuration:resume.offset+Math.min(left/1000,Math.max(0,cue.at/1000+(cue.maxDuration-(cue.offset||0))-elapsed/1000))}:cue,offset=resume?.offset??(cue.sustain?(cue.offset||0)+Math.max(0,elapsed-cue.at)/1000:0);this.resumes.delete(cue.key);if(cue.sustain)this.sustains.set(cue.key,entry);void this.mixer.play(entry,{offset,valid});};
    if(delay>8&&!resume)this.timers.set(cue.key,this.schedule(perform,delay));else perform();
   }
  }

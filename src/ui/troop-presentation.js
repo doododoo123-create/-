@@ -8,7 +8,7 @@ export function troopTier(person,army,rules){
  return strength>=14?'tier3':strength>=4?'tier2':'tier1';
 }
 export function troopState(person,scene,record){
- const b=record?.battles?.[scene?.battleIndex],side=b&&(person.id===b.attackerPersonId?'attack':person.id===b.defenderPersonId?'defense':null);
+ const b=record?.battles?.[scene?.battleIndex],side=!scene?.massRecap&&b&&(person.id===b.attackerPersonId?'attack':person.id===b.defenderPersonId?'defense':null);
  const move=scene?.kind==='movement'&&scene.moves?.find(m=>m.personId===person.id);
  if(scene?.kind==='apply'&&scene.event?.type==='death'&&scene.event.nationId===person.countryId&&scene.event.slot===person.slot)return {action:'death',side};
  if(move)return {action:scene.batchRetreat?'retreat':move.kind==='retreat'?'retreat':move.kind==='redeploy'?'idle':'walk',side};

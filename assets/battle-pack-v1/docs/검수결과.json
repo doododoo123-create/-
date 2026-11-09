@@ -1,0 +1,128 @@
+{
+  "date": "2026-11-09",
+  "audioCount": 13,
+  "audioChecks": [
+    {
+      "id": "amb_wind_field_loop",
+      "wav": true,
+      "oggDecode": true,
+      "peakWav": 0.3548,
+      "peakOgg": 0.335,
+      "loopSeamExact": true
+    },
+    {
+      "id": "foley_army_march_loop",
+      "wav": true,
+      "oggDecode": true,
+      "peakWav": 0.3548,
+      "peakOgg": 0.3825,
+      "loopSeamExact": true
+    },
+    {
+      "id": "sfx_first_clash",
+      "wav": true,
+      "oggDecode": true,
+      "peakWav": 0.631,
+      "peakOgg": 0.6214,
+      "loopSeamExact": null
+    },
+    {
+      "id": "amb_battle_distant_loop",
+      "wav": true,
+      "oggDecode": true,
+      "peakWav": 0.3548,
+      "peakOgg": 0.3429,
+      "loopSeamExact": true
+    },
+    {
+      "id": "sfx_clash_metal_01",
+      "wav": true,
+      "oggDecode": true,
+      "peakWav": 0.631,
+      "peakOgg": 0.5902,
+      "loopSeamExact": null
+    },
+    {
+      "id": "sfx_clash_metal_02",
+      "wav": true,
+      "oggDecode": true,
+      "peakWav": 0.631,
+      "peakOgg": 0.5629,
+      "loopSeamExact": null
+    },
+    {
+      "id": "sfx_clash_metal_03",
+      "wav": true,
+      "oggDecode": true,
+      "peakWav": 0.631,
+      "peakOgg": 0.6227,
+      "loopSeamExact": null
+    },
+    {
+      "id": "sfx_shield_01",
+      "wav": true,
+      "oggDecode": true,
+      "peakWav": 0.631,
+      "peakOgg": 0.5687,
+      "loopSeamExact": null
+    },
+    {
+      "id": "sfx_shield_02",
+      "wav": true,
+      "oggDecode": true,
+      "peakWav": 0.631,
+      "peakOgg": 0.6233,
+      "loopSeamExact": null
+    },
+    {
+      "id": "foley_retreat_01",
+      "wav": true,
+      "oggDecode": true,
+      "peakWav": 0.631,
+      "peakOgg": 0.6226,
+      "loopSeamExact": null
+    },
+    {
+      "id": "foley_retreat_02",
+      "wav": true,
+      "oggDecode": true,
+      "peakWav": 0.631,
+      "peakOgg": 0.6291,
+      "loopSeamExact": null
+    },
+    {
+      "id": "sfx_general_fallen",
+      "wav": true,
+      "oggDecode": true,
+      "peakWav": 0.631,
+      "peakOgg": 0.6119,
+      "loopSeamExact": null
+    },
+    {
+      "id": "sfx_battle_end",
+      "wav": true,
+      "oggDecode": true,
+      "peakWav": 0.631,
+      "peakOgg": 0.6225,
+      "loopSeamExact": null
+    }
+  ],
+  "imageChecks": {
+    "backgroundPixels": [
+      2048,
+      1152
+    ],
+    "svgParse": "passed",
+    "webpDecode": "passed",
+    "frameCentreTransparent": true,
+    "materialSeams": "Mirrored opposite-edge construction; SVG and sources included.",
+    "visualReview": "Native SVG rendered to PNG and inspected."
+  },
+  "previewChecks": {
+    "javascriptSyntax": "passed",
+    "selfContained": true,
+    "unfilledPlaceholders": 0,
+    "browserPlayback": "Not verified: local Chromium launch blocked by environment socket permission.",
+    "gameIntegration": "Not performed; assets and insertion guide only."
+  }
+}

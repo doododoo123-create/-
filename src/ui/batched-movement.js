@@ -1,4 +1,5 @@
-import {mapAnchor} from '../model/cartography-geometry.js';
+import {stableUnitGround} from './stable-unit-placement.js';
+import {landMovementPath} from './land-movement.js';
 import {polylineAt} from './operation-geometry.js';
 export function batchRetreats(scenes){
  const result=[];
@@ -12,11 +13,11 @@ export function batchRetreats(scenes){
  }
  return result;
 }
-// A stable formation footprint is reserved at every progress value. This solver
-// uses screen-sized boxes, never changes a legal path or game position.
-export function batchMovementPins(moves,world,progress,scale=1,unitWidth=42,endpoints=null){
- const columns=Math.ceil(Math.sqrt(moves.length)),spacingX=unitWidth*3/scale,spacingY=unitWidth*3.6/scale;
- const desired=moves.map((m,i)=>{const path=(m.path?.length>1?m.path:[m.fromId,m.toId]).map(id=>mapAnchor(world,id,'station')),p=polylineAt(path,progress).point,col=i%columns,row=Math.floor(i/columns),rows=Math.ceil(moves.length/columns);const endpoint=endpoints?.get(m.personId),last=path.at(-1),dx=endpoint?endpoint.x-last[0]:(col-(columns-1)/2)*spacingX,dy=endpoint?endpoint.y-last[1]:(row-(rows-1)/2)*spacingY;return {id:m.personId,x:p[0]+dx,y:p[1]+dy};});
- const placed=[];for(const d of desired){let y=d.y;while(placed.some(p=>Math.abs(d.x-p.x)<spacingX*.95&&Math.abs(y-p.y)<spacingY*.95))y+=spacingY;placed.push({...d,y});}
- return placed;
+// Fixed territory slots and a cached land corridor; no reactive collision push
+// is permitted during travel. Disconnected relocations fade at their endpoints.
+export function batchMovementPins(moves,world,progress){
+ return moves.map(m=>{const person=world.people.find(p=>p.id===m.personId),start=stableUnitGround(world,person,m.fromId),end=stableUnitGround(world,person,m.toId),ids=m.path?.length>1?[...m.path]:[m.fromId];if(ids.at(-1)!==m.toId)ids.push(m.toId);
+  const route=landMovementPath(world,ids,start,end,.2+.6*(((person?.slot??0)+1)%7)/7),sample=route?polylineAt(route,progress):null,point=sample?.point||(progress<.5?start:end),opacity=route?1:Math.abs(1-2*progress);
+  return {id:m.personId,x:point[0],y:point[1],opacity,path:sample?.path||[],route};
+ });
 }

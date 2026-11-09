@@ -1,0 +1,271 @@
+{
+  "version": 1,
+  "target": "사국쟁패 Studio (58).html",
+  "files": [
+    {
+      "path": "README_먼저읽기.txt",
+      "bytes": 971,
+      "sha256": "bb18bf66af7693c5ceaffacac982ed52c11e7615b44b6795613b2e6e30a5d3fa"
+    },
+    {
+      "path": "audio/audio_manifest.json",
+      "bytes": 7220,
+      "sha256": "bc9d039346cc286447774b9055e8df9a1ddf105e5182d51a8b5edb538a46a4fb"
+    },
+    {
+      "path": "audio/ogg/amb_battle_distant_loop.ogg",
+      "bytes": 170401,
+      "sha256": "df5d24047cbf11e7212b2a98fa42ea8ec400f13b5f3e0815784446ecb6282de0"
+    },
+    {
+      "path": "audio/ogg/amb_wind_field_loop.ogg",
+      "bytes": 199257,
+      "sha256": "0b8c20912604e6e92ac5ed107e0a063022d6e741b2f0670652ea489f6c055fd7"
+    },
+    {
+      "path": "audio/ogg/foley_army_march_loop.ogg",
+      "bytes": 88872,
+      "sha256": "bf2c423cb27d6a8fbb8adc14ca489c6fab17afb01d47850ef67c222d1e4c461a"
+    },
+    {
+      "path": "audio/ogg/foley_retreat_01.ogg",
+      "bytes": 33518,
+      "sha256": "f1968341f463e24d02a60b533e6202d0d19d2df315785b4dbe16caa46e00b238"
+    },
+    {
+      "path": "audio/ogg/foley_retreat_02.ogg",
+      "bytes": 31402,
+      "sha256": "abf276b5eb84e6cb989dab33dedb3a21a65197428a481d66e94535e46c4f3285"
+    },
+    {
+      "path": "audio/ogg/sfx_battle_end.ogg",
+      "bytes": 18543,
+      "sha256": "591e93e476c901238ef60706e417f6a2029f1ad45581af3b3c03c9b57ffb3874"
+    },
+    {
+      "path": "audio/ogg/sfx_clash_metal_01.ogg",
+      "bytes": 12932,
+      "sha256": "2f5804ce7dea9a78bc64d81603db64c39bc3d54f9c2132d97779029aff695493"
+    },
+    {
+      "path": "audio/ogg/sfx_clash_metal_02.ogg",
+      "bytes": 13047,
+      "sha256": "e1938413fbcfd5cfc78efd242cf766f6506bef4a7a81b6dcfbb9d1183d993a88"
+    },
+    {
+      "path": "audio/ogg/sfx_clash_metal_03.ogg",
+      "bytes": 13208,
+      "sha256": "fdbc1d75c38f3ce0b4446f078a77afc7e640c6c87d04020654797bf2c0d186a9"
+    },
+    {
+      "path": "audio/ogg/sfx_first_clash.ogg",
+      "bytes": 17492,
+      "sha256": "a6013a24db92cc1b2dedc0bf557a3fe4b38058157b62d85bee207aaf7899e6e3"
+    },
+    {
+      "path": "audio/ogg/sfx_general_fallen.ogg",
+      "bytes": 20663,
+      "sha256": "264a0c2daaf67755b07e4594da6b191148c0a22abfbab973b878280fc31de240"
+    },
+    {
+      "path": "audio/ogg/sfx_shield_01.ogg",
+      "bytes": 10957,
+      "sha256": "cc9b8b068cf1dd9bafa403db907ca51f044beb084c5c69de4ff7f6358e8bbf27"
+    },
+    {
+      "path": "audio/ogg/sfx_shield_02.ogg",
+      "bytes": 11027,
+      "sha256": "73582e6fc5413327b8dc5c65d1da8df6c924c73ab09682b4a26e597fcff11ad8"
+    },
+    {
+      "path": "audio/wav/amb_battle_distant_loop.wav",
+      "bytes": 2304044,
+      "sha256": "b8b1415c90caff4939a2d50536e1fd3493291e32e97a770e69b0a05df599877c"
+    },
+    {
+      "path": "audio/wav/amb_wind_field_loop.wav",
+      "bytes": 2304044,
+      "sha256": "e722b8f7695eabbfdfedd4c3e3e7bb2f91198b0e8284d35c0714f9483068e488"
+    },
+    {
+      "path": "audio/wav/foley_army_march_loop.wav",
+      "bytes": 1152044,
+      "sha256": "ae95b742521f40bae85b470c31acc69ccbd08c0930b8c839051bb5650fb5c725"
+    },
+    {
+      "path": "audio/wav/foley_retreat_01.wav",
+      "bytes": 432044,
+      "sha256": "6fc02f8b288378a440ea5b154f9b950e9d8a1ca4c973739b1789c397af6542b7"
+    },
+    {
+      "path": "audio/wav/foley_retreat_02.wav",
+      "bytes": 432044,
+      "sha256": "a8490ec846fba7060fc3ca51f2ad4a462f508908be256abf298d32d4881a668e"
+    },
+    {
+      "path": "audio/wav/sfx_battle_end.wav",
+      "bytes": 422444,
+      "sha256": "3f405cb161e5b01183decda6168595519f571b37f36ed7a089fdcee0d31c1c44"
+    },
+    {
+      "path": "audio/wav/sfx_clash_metal_01.wav",
+      "bytes": 130604,
+      "sha256": "ea289a4ca0687be2685ae80fba665e8e73ede676b9e215e01e35ce6e0533d68e"
+    },
+    {
+      "path": "audio/wav/sfx_clash_metal_02.wav",
+      "bytes": 130604,
+      "sha256": "c77725e5f5d9fbe00b7f367f4566c92030b6964be0080ed0cdec50c75fb85933"
+    },
+    {
+      "path": "audio/wav/sfx_clash_metal_03.wav",
+      "bytes": 130604,
+      "sha256": "aa1543fc6a5aa9e8502744c4d2317ba3a590680ee44fb4f087f825d096f40814"
+    },
+    {
+      "path": "audio/wav/sfx_first_clash.wav",
+      "bytes": 278444,
+      "sha256": "b3f9aa0db5555ff73c428cdb67826360486a4719eb7894326d0c33dfe1d22397"
+    },
+    {
+      "path": "audio/wav/sfx_general_fallen.wav",
+      "bytes": 364844,
+      "sha256": "139e9cbcfdeae72a355e508845572ae9a40de8a14b221bcccac42710eef2c44e"
+    },
+    {
+      "path": "audio/wav/sfx_shield_01.wav",
+      "bytes": 111400,
+      "sha256": "0afc999dc5d0c2ed7f6ede39adb5f1f0ec11e7f81d851711252ebb493780c17a"
+    },
+    {
+      "path": "audio/wav/sfx_shield_02.wav",
+      "bytes": 111400,
+      "sha256": "93c18a60106e5e445e391074a4ae8431b991c37ec95f2aa55798d9a924585000"
+    },
+    {
+      "path": "backgrounds/battle_meadow_2048.png",
+      "bytes": 3391872,
+      "sha256": "4dc5e7ac3dd5fd03227d7ac585a499d4239587c0ccf8b3a65c33de38158af2bb"
+    },
+    {
+      "path": "backgrounds/battle_meadow_2048.webp",
+      "bytes": 454470,
+      "sha256": "b280ddfe68113fb98fa3967235d483903c0585395aedb6104c5e6a76d144b379"
+    },
+    {
+      "path": "docs/검수결과.json",
+      "bytes": 2859,
+      "sha256": "c5674b3f4bc5e437ca882db417532c3eb1dffa0c061ed24ce9a8c03220d17ae5"
+    },
+    {
+      "path": "docs/삽입안내.md",
+      "bytes": 12381,
+      "sha256": "bf62988bb5715bbec73fd1d926fce922a6cdc033e376b9925056abc397fbf66a"
+    },
+    {
+      "path": "docs/삽입위치_안내.png",
+      "bytes": 1311634,
+      "sha256": "e8a49c7ccb2a26475cdef79bc69e0fb88b5962377709b71d9b3246098b4807e3"
+    },
+    {
+      "path": "docs/삽입위치_안내.svg",
+      "bytes": 2736406,
+      "sha256": "6039f3be4f784098ed8bb67005f6433ddcca2d945450d54edfbb6a363802bdb7"
+    },
+    {
+      "path": "docs/이미지_제작사양.json",
+      "bytes": 974,
+      "sha256": "fe08643e8127c5cb35cd1982c3dbba77ec344d6b87a7d02ad6898e4b18a867a0"
+    },
+    {
+      "path": "docs/제작출처.txt",
+      "bytes": 1035,
+      "sha256": "5f21660d00db45717a8f916a80d79439370df550be77b9c0deafbfe2290403cf"
+    },
+    {
+      "path": "docs/코덱스_적용요청.txt",
+      "bytes": 1608,
+      "sha256": "2f634d66c6c416f4958c0fdd786525f4253cd46034cd7dc480978af8ac2a9b2f"
+    },
+    {
+      "path": "integration/battle_pack_data.js",
+      "bytes": 4318937,
+      "sha256": "b8df8cce5cd9370510b5b0bfa413e06192be9ae82ea30b3a88e5b7b820135481"
+    },
+    {
+      "path": "integration/battle_theme.css",
+      "bytes": 1835,
+      "sha256": "28ff830f334e9326461dfa587c43cf0c71c4e3ffc7ec7963d3448a0fafe74cc8"
+    },
+    {
+      "path": "preview/audio_demo_24s.mp3",
+      "bytes": 397268,
+      "sha256": "b0fb7d9678cbbcb0e444b455a8b1cc544e3974034497dfa9b27b3a2e155c9e15"
+    },
+    {
+      "path": "preview/미리보기.html",
+      "bytes": 6378028,
+      "sha256": "6e669355379a2309dbe6b92d949fcc03e2307d5097c0c3562a2f7cfd0b78f510"
+    },
+    {
+      "path": "preview/완성_미리보기.png",
+      "bytes": 1267853,
+      "sha256": "186cae94fda59ca4cf59a2acbc65f6a1e009eea00d79eaa5f0761d208aa15378"
+    },
+    {
+      "path": "preview/완성_미리보기.svg",
+      "bytes": 2734677,
+      "sha256": "7fe6b7f7f2e459981e6193eb9d5da58136e3b51e493c1b11d0e0f6a47e0cec8e"
+    },
+    {
+      "path": "textures/bronze_seamless.svg",
+      "bytes": 490935,
+      "sha256": "ed5fcf77ab6bce146bb3e3a2a3aa9467755d286b30f27aa97e20f377ca3334e7"
+    },
+    {
+      "path": "textures/bronze_source_512.webp",
+      "bytes": 45360,
+      "sha256": "138378532db50cf28b4a9282b05e3c7a53d4653616bb7b33eca6d653587d4432"
+    },
+    {
+      "path": "textures/cloth_seamless.svg",
+      "bytes": 730467,
+      "sha256": "0ce6dcd749772f59b85b9ecb68adb7a323ae68344e2dc1d2ea0a69a27dffab07"
+    },
+    {
+      "path": "textures/cloth_source_512.webp",
+      "bytes": 89712,
+      "sha256": "94d416b9cbc9d682d4cdf1d4d25ec32bac5f58cc938e64d8461dd6f0a94d8cfc"
+    },
+    {
+      "path": "textures/lacquer_seamless.svg",
+      "bytes": 392331,
+      "sha256": "59762a3799b52828bbfad7dbffccc2717061375445336588aa225fe50496c55a"
+    },
+    {
+      "path": "textures/lacquer_source_512.webp",
+      "bytes": 15492,
+      "sha256": "9dadd752b8d749a63c43925b762282f55553b02bc9936631f85c6ac7ae3ebd54"
+    },
+    {
+      "path": "ui/bronze_corner.svg",
+      "bytes": 288,
+      "sha256": "37f98182beb37e69420ad521a212effd49fbc2656d34ab35c5cdb87cf0bffcaf"
+    },
+    {
+      "path": "ui/frame_nineslice.png",
+      "bytes": 12147,
+      "sha256": "d464cd6f937be297274f448a61fbda9a9c08eb52e5077c24b98bd7390728f909"
+    },
+    {
+      "path": "ui/frame_nineslice.svg",
+      "bytes": 524486,
+      "sha256": "a339404476e22669e38fab4604e40d23244055de67deb5b86c0d41c1a7060970"
+    },
+    {
+      "path": "ui/unit_nameplate.svg",
+      "bytes": 426,
+      "sha256": "0857e7207219945fdb62f398a5459c3a7178a34b20be5f52e86a400983fb5ad6"
+    }
+  ]
+}

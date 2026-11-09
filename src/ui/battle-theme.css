@@ -1,0 +1,9 @@
+/* User's meadow, tent cloth and lacquer pack. No new panels or baked text. */
+.mass-battle{--bp-ground:url("../../assets/battle-pack-v1/backgrounds/battle_meadow_2048.webp");--bp-cloth:url("../../assets/battle-pack-v1/textures/cloth_seamless.svg");--bp-lacquer:url("../../assets/battle-pack-v1/textures/lacquer_seamless.svg");--bp-bronze:url("../../assets/battle-pack-v1/textures/bronze_seamless.svg");--bp-frame:url("../../assets/battle-pack-v1/ui/frame_nineslice.png");--bp-nameplate:url("../../assets/battle-pack-v1/ui/unit_nameplate.svg");border:8px solid transparent;border-image-source:var(--bp-frame);border-image-slice:32;border-image-width:8px;border-image-repeat:stretch;border-radius:0;background:#171b16;box-shadow:0 8px 28px #0006}
+.mass-heading,.mass-orders{background-color:#142e25;background-image:linear-gradient(#07130d55,#07130d77),var(--bp-cloth);background-size:auto,256px 256px;border-color:#a78d59;color:#fff}
+.mass-controls{background-color:#321c1c;background-image:linear-gradient(#130c0c30,#130c0c50),var(--bp-lacquer);background-size:auto,256px 256px;border-color:#8e774c}
+.mass-field{background:#9a9f7e}.mass-surface{background:var(--bp-ground) center/cover no-repeat}
+.mass-unit-label{background:var(--bp-nameplate) center/100% 100% no-repeat;border:0;border-left:2px solid var(--nation);padding:3px;color:#fff;text-shadow:0 1px 2px #000}
+.mass-health{height:3px;background:#070c09a8;border:1px solid #a1906155}
+.mass-critical,.mass-result{background-color:#172b22;background-image:linear-gradient(#0c1b13bb,#0c1b13d9),var(--bp-cloth);background-size:auto,256px 256px;border-color:#b39a65}
+.mass-controls .button{background-image:linear-gradient(#131b1799,#131b17bb),var(--bp-bronze);background-size:auto,128px;border-color:#b39a6577}

@@ -1,3 +1,4 @@
+import {syncBattlePack} from './battle-pack-art.mjs';
 import {packStandalone} from './standalone-pack.mjs';
 import {syncLicensedFonts} from './licensed-fonts.mjs';
 import { syncSoundArt } from './sound-art.mjs';
@@ -12,6 +13,7 @@ import { syncStudioArt } from './studio-art.mjs';
 import { syncKitIcons } from './ui-kit.mjs';
 import { syncGeneralPortraits } from './general-portraits.mjs';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+await syncBattlePack(root);
 await syncLicensedFonts(root);
 await syncStudioArt(root);
 await syncTextBoxArt(root);
@@ -60,6 +62,8 @@ const v32Css=await readFile(resolve(root,'src/ui/studio-v32.css'),'utf8');
 const v30Css=await readFile(resolve(root,'src/ui/studio-v30.css'),'utf8');
 const css = await readFile(resolve(root, 'src/ui/style.css'), 'utf8');
 const visuals = await readFile(resolve(root, 'src/ui/visuals.css'), 'utf8');
+let battleThemeCss=await readFile(resolve(root,'src/ui/battle-theme.css'),'utf8');
+for(const match of [...battleThemeCss.matchAll(/url\("(\.\.\/\.\.\/assets\/battle-pack-v1\/[^"\n]+)"\)/g)]){const path=resolve(root,'src/ui',match[1]),mime=path.endsWith('.svg')?'image/svg+xml':path.endsWith('.png')?'image/png':'image/webp';battleThemeCss=battleThemeCss.replace(match[0],`url("data:${mime};base64,${(await readFile(path)).toString('base64')}")`);}
 const massBattleCss=await readFile(resolve(root,'src/ui/mass-battle.css'),'utf8');
 const mapStage = await readFile(resolve(root, 'src/ui/map-stage.css'), 'utf8');
 const mapEditorCss = await readFile(resolve(root, 'src/ui/map-editor.css'), 'utf8');
@@ -95,6 +99,7 @@ html = html.replace('<link rel="stylesheet" href="./src/ui/fonts-licensed.css">'
   .replace('<link rel="stylesheet" href="./src/ui/visuals.css">', `<style>${visuals}</style>`)
   .replace('<link rel="stylesheet" href="./src/ui/filming.css">', `<style>${filmingCss}</style>`)
   .replace('<link rel="stylesheet" href="./src/ui/mass-battle.css">', `<style>${massBattleCss}</style>`)
+  .replace('<link rel="stylesheet" href="./src/ui/battle-theme.css">', `<style>${battleThemeCss}</style>`)
   .replace('<link rel="stylesheet" href="./src/ui/map-stage.css">', `<style>${mapStage}</style>`)
   .replace('<link rel="stylesheet" href="./src/ui/map-editor.css">', `<style>${mapEditorCss}</style>`)
   .replace('<link rel="stylesheet" href="./src/ui/lacquer-bronze.css">', `<style>${lacquerCss}</style>`)

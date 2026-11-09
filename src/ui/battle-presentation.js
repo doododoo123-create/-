@@ -24,14 +24,15 @@ export function fitMapUnits(element){
  svg.style.setProperty('--battle-label-offset',`${20/scale}px`);
  const ring=svg.querySelector('.battle-emblem .target-ring'),campaign=svg.querySelector('.map-campaign');if(!ring||!campaign){if(filming)fitFilmClusters(element);return;}
  const r=ring.getBoundingClientRect(),center=[r.x+r.width/2,r.y+r.height/2],inverse=matrix.inverse(),raw=(campaign.dataset.attackOrigin||'0,0').split(',').map(Number),target=(campaign.dataset.targetReference||'0,0').split(',').map(Number);
- const direction=duelDirection(raw,target),hasLoss=!!svg.querySelector('.unit-loss-label');
+ const direction=duelDirection(raw,target);
  const cards=[...svg.querySelectorAll('.map-unit-position[data-combat-side]')],footprint=Math.max(1.5,...cards.map(c=>((Math.min(4,Number(c.querySelector('canvas[data-troop-count]')?.dataset.troopCount)||1)-1)*18+55)/32)),layout=duelStacks({left:bounds.left,right:bounds.right,center:center[0],width:width*footprint,gap:8,iconRadius:Math.max(14,r.width/2),direction:direction.x,attack:cards.filter(c=>c.dataset.combatSide==='attack').length,defense:cards.filter(c=>c.dataset.combatSide==='defense').length});
- const bodyWidth=layout.width/footprint,half=bodyWidth*40/32,top=(hasLoss?125:113)*bodyWidth/32;
+ const bodyWidth=layout.width/footprint;
  svg.style.setProperty('--duel-display-scale',String(bodyWidth/(UNIT_CARD_WIDTH*scale)));
- const rowTop=Math.max(113,...[...svg.querySelectorAll('canvas[data-troop-height]')].map(c=>Number(c.dataset.troopHeight)+40));
  svg.dataset.duelAxis='horizontal';
- // Clamp the whole pair together, preserving both horizontal alignment and card order.
- const cy=Math.max(bounds.top+Math.max(top,rowTop*bodyWidth/32)+8,Math.min(bounds.bottom-half-8,center[1]));
+ // The troop canvas center is35 local units below the card origin. Anchor
+ // that visible center to the real battle point; viewport fitting must not
+ // move the battle itself to a different part of the territory.
+ const cy=center[1]-35*bodyWidth/UNIT_CARD_WIDTH;
  for(const card of cards){
   const side=card.dataset.combatSide,placement=layout[side],x=placement.x,y=cy,rank=Number(card.dataset.stackOffset||0)/24;
   card.querySelector('.unit-stack-card')?.setAttribute('transform',`translate(${placement.sign*rank*placement.step*UNIT_CARD_WIDTH/bodyWidth},0)`);

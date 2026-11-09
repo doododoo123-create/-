@@ -1,3 +1,4 @@
+import {followsMapScene} from './camera-policy.js';
 import {appointmentFocus} from './appointment-focus.js';
 import {placeMassBattle} from './mass-battle-placement.js';
 import {placeVictoryBadge} from './victory-badge.js';
@@ -36,9 +37,9 @@ export class MapCamera {
   if(this.followRecord!==record){this.followRecord=record;this.followKey=null;const target=!this.autoFollow&&nationFraming(world,record.actorId,viewport);if(target){this.cancelMotion();Object.assign(view,{x:target.x,y:target.y});this.clamp(view);this.update('simulation');}}
   const appointed=appointmentFocus(scene,record);if(this.autoFollow&&appointed){const key='appointment:'+record.turn+':'+scene.event.index;if(this.followKey!==key){this.followKey=key;Object.assign(view,{x:appointed[0],y:appointed[1]});this.update('simulation');}return;}
 
-  if(scene.massRecap&&this.autoFollow){const point=sceneFocus(scene,record),key='recap:'+scene.id;if(point&&this.followKey!==key){this.followKey=key;Object.assign(view,{x:point[0],y:point[1]});this.update('simulation');}return;}
+  if(scene.massRecap&&this.autoFollow){const point=scene.cameraPoint||sceneFocus(scene,record),key=scene.cameraGroup||'recap:'+scene.id;if(point&&this.followKey!==key){this.followKey=key;Object.assign(view,{x:point[0],y:point[1]});this.update('simulation');}return;}
   if(followArmyCampaign(this)){this.followKey='army:'+scene.campaign?.id;return;}
-  if(!this.autoFollow||['season','round-settle','summary'].includes(scene.kind)||['round_end','desertion','production_settlement','war_recovery','season_recovery'].includes(scene.event?.type))return;
+  if(!this.autoFollow||!followsMapScene(scene))return;
   const battle=record.battles?.[scene.battleIndex],point=battle?null:sceneFocus(scene,record),key=battle?'battle:'+battle.territoryId:point?'point:'+point.join(','):null;
   if(!key||key===this.followKey)return;
   this.followKey=key;const anchor=battle?mapAnchor(world,battle.territoryId,'battle'):point,target=anchor?{x:anchor[0],y:anchor[1]}:null;if(!target)return;

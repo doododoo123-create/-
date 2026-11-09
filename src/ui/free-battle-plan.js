@@ -29,7 +29,7 @@ export function freeBattlePresentation(plan,a){
    u.home={x:plan.width/2-sign*(220+rank*125),y:plan.center+(lane-(count-1)/2)*spread};u.formationRole=i===0?'left':i===n-1?'right':rank?'reserve':'center';
    const ownOrders=ordersFor(u),first=ownOrders[0],second=ownOrders[1],reserveCommand=ownOrders.find(c=>['reserves','waves'].includes(c.id)),reserve=n>=3&&i>=Math.ceil(n*.66)&&!!reserveCommand,wing=i<n/2?-1:1,flank=!small&&u.role!=='king'&&['pincer','hook','oblique','wing-focus'].includes(first?.id)&&i%3!==1;
    if(reserve){u.formationRole='reserve';u.home.x-=sign*100;}let from={...u.home},at=0;u.orders=[];
-   const add=(kind,end,to,curveY=0)=>{if(end<=at)return;u.orders.push({kind,start:at,end,from:{...from},to:{...to},curve:0,curveY});from={...to};at=end;};
+   const add=(kind,end,to,curveY=0)=>{if(end<=at)return;to={...to,y:Math.max(80,Math.min(plan.height-80,to.y))};const room=curveY<0?Math.min(from.y,to.y)-80:plan.height-80-Math.max(from.y,to.y);curveY=Math.sign(curveY)*Math.max(0,Math.min(Math.abs(curveY),room));u.orders.push({kind,start:at,end,from:{...from},to:{...to},curve:0,curveY});from={...to};at=end;};
    add('guard',reserve?Math.max(D*.18,reserveCommand.at+300):D*.12,from);
    const line={x:plan.width/2-sign*(62+rank*105),y:u.home.y+(hash(u.id+':lane')%31-15)};
    if(flank){add('walk',D*.22,{x:plan.width/2-sign*130,y:Math.max(60,Math.min(plan.height-70,line.y+wing*100))},wing*70);line.x=plan.width/2+sign*32;}

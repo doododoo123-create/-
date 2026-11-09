@@ -19,7 +19,7 @@ export function roundCampaign(world,presentation){
  // A summary has no event index: it still contains every revealed result of this turn.
  // Keep season effects through production and the inter-turn pause. The next round's
  // first record naturally starts with an empty history at its season announcement.
- const complete=!!presentation.finished||scene?.kind==='summary';
+ const complete=(!!presentation.finished||scene?.kind==='summary')&&!scene?.mapReveal;
  const past=(presentation.roundRecords||[]).filter(r=>r.round===record.round&&r.turn<record.turn),records=[...past,record];
  const before=presentation.before||record.frames?.[0]?.before;
  const baseOwners=new Map((before||world).territories.map(t=>[t.id,t.ownerId]));
@@ -27,13 +27,14 @@ export function roundCampaign(world,presentation){
  for(const r of [...past].reverse())for(const c of [...(r.changes||[])].reverse())baseOwners.set(c.territoryId,c.from);
  const latest=new Map(),activity=(id,turn)=>{if(id)latest.set(id,Math.max(latest.get(id)||0,turn));};
  const captures=new Map(),routes=[],fronts=new Map(),movements=[],lanes=new Map(),battleSites=new Map(),pendingCaptures=new Map();
- const limit=complete?Infinity:scene?.mapEventIndex??scene?.event?.index??-1;
+ const reveal=scene?.mapReveal,limit=complete?Infinity:reveal?.baseIndex??scene?.mapEventIndex??scene?.event?.index??-1;
+ const visibleBattles=new Set(reveal?.battles),visibleCaptures=new Set(reveal?.captures),visibleMoves=new Set(reveal?.moves);
  const applied=r=>r!==record||complete;
  for(const r of records){
-  for(const motion of r.movements||[])for(const m of motion.moves)if(applied(r)||motion.eventIndex<limit||motion.eventIndex===limit&&(scene?.kind!=='movement'||['retreat','redeploy'].includes(m.kind)))movements.push({...m,...(motion.armyGroup?{armyGroup:motion.armyGroup}:{}),eventIndex:motion.eventIndex,army:r.frames?.[motion.eventIndex]?.before?.people.find(p=>p.id===m.personId)?.troops,turn:r.turn,key:`${r.turn}:${motion.eventIndex}:${m.personId}`});
+  for(const motion of r.movements||[])for(const m of motion.moves)if(applied(r)||(r===record&&reveal?motion.eventIndex<=limit||visibleMoves.has(`${motion.eventIndex}:${m.personId}`):motion.eventIndex<limit||motion.eventIndex===limit&&(scene?.kind!=='movement'||['retreat','redeploy'].includes(m.kind))))movements.push({...m,...(motion.armyGroup?{armyGroup:motion.armyGroup}:{}),eventIndex:motion.eventIndex,army:r.frames?.[motion.eventIndex]?.before?.people.find(p=>p.id===m.personId)?.troops,turn:r.turn,key:`${r.turn}:${motion.eventIndex}:${m.personId}`});
   for(const b of r.battles||[]){
    const event=r.events.find(e=>e.type==='territory'&&e.battleIndex===b.index),resolve=r.events.find(e=>e.type==='resolve'&&e.battleIndex===b.index);
-   const revealed=applied(r)||event&&(event.index<=limit);
+   const revealed=applied(r)||(r===record&&reveal?event&&event.index<=limit||visibleBattles.has(b.index):event&&(event.index<=limit));
    if(!revealed)continue;
    if(!b.automatic){const site=battleSites.get(b.territoryId)||{territoryId:b.territoryId,count:0};site.count++;battleSites.set(b.territoryId,site);}
    const frame=r.frames?.[event?.index]?.before,motion=r.movements?.find(m=>m.eventIndex===event?.index);
@@ -49,9 +50,9 @@ export function roundCampaign(world,presentation){
     routes.push({turn:r.turn,key:`${r.turn}-${b.index}-${side}`,path,side,countryId,fromId,frontId:b.fromId,personId:person?.id||(side==='attack'?b.attackerPersonId:b.defenderPersonId),toId:b.territoryId,lane,army:b[side]?.army||0,moving:r===record&&event?.index===limit&&scene?.kind==='movement'&&scene.movementSide===side,active:r===record&&scene?.battleIndex===b.index&&presentation.phase!=='settled'});
    }
    const compactApplied=scene?.kind==='campaign'&&scene.campaignPhase!=='approach';
-   const resolved=applied(r)||resolve&&(resolve.index<limit||resolve.index===limit&&(compactApplied||scene?.kind==='capture'||scene?.kind==='apply'&&(presentation.phase==='settled'||['territory','growth','all'].includes(presentation.effectStage))));
+   const resolved=applied(r)||(r===record&&reveal?resolve&&resolve.index<=limit||visibleCaptures.has(b.index):resolve&&(resolve.index<limit||resolve.index===limit&&(compactApplied||scene?.kind==='capture'||scene?.kind==='apply'&&(presentation.phase==='settled'||['territory','growth','all'].includes(presentation.effectStage)))));
    if(!resolved)continue;
-   const arrival=captureArrival(r,b),arrived=applied(r)||(!arrival?compactApplied||scene?.kind==='capture'||resolve.index<limit:arrival.index<limit||arrival.index===limit&&!['movement','arrival'].includes(scene?.kind));
+   const arrival=captureArrival(r,b),arrived=applied(r)||(r===record&&reveal?resolve&&resolve.index<=limit||visibleCaptures.has(b.index):!arrival?compactApplied||scene?.kind==='capture'||resolve.index<limit:arrival.index<limit||arrival.index===limit&&!['movement','arrival'].includes(scene?.kind));
    if(!arrived){for(const id of b.takenTerritoryIds||[])pendingCaptures.set(id,{ownerId:b.captureOwner===b.target?b.actorId:b.defenderId});continue;}
    const taken=b.takenTerritoryIds||[];
    for(const [i,id] of taken.entries()){const to=world.territories.find(t=>t.id===id),prior=taken.slice(0,i),origin=i===0?(b.captureOwner===b.target?b.territoryId:b.fromId):prior.find(v=>{const t=world.territories.find(t=>t.id===v);return t&&neighbors(world,t).some(n=>n.id===to?.id);})||taken[0];captures.set(id,{territoryId:id,fromId:origin,ownerId:b.captureOwner===b.target?b.defenderId:b.actorId,baseOwnerId:baseOwners.get(id),fromOwnerId:b.captureOwner===b.target?b.actorId:b.defenderId,sequenceIndex:i,sequenceCount:taken.length,previousCapture:r===record&&scene?.kind==='capture'&&scene.battleIndex===b.index?captures.get(id):undefined,revealing:r===record&&scene?.kind==='capture'&&scene.battleIndex===b.index});}

@@ -712,3 +712,11 @@ ui/troop-layout.js가 병사54/발35와 카드0.75/상단 이동을 공유한다
 - `mass-battle-plan.js`의 순수 sampler는 양측 부대가 가까이 접촉한 위치를 찾아 교전 표식을 만들고 공격/방어를 주기적으로 반복한다. `mass-battle-animation.js`는 명령창/이동 곡선/실제 병사 프레임/접촉 섬광을 같은 시계와 단일 캔버스에서 그린다. 게임 난수는 소비하지 않는다.
 - `battle-entry.js`는 원래 실제 집결·전장 이동을 보존하고 전술창 직전에 전투 지역을 지도에서 표시한다. `mass-battle-recap.js`는 최종 이동이 후퇴인 생존 장수를 묶어 동시에 이동시키고 점령 요약을 유지한다. `batched-movement.js`는 실제 경로 위 화면 표시 위치에만 병사 묶음 크기의 공간을 배정한다. `map-animation.js`가 카드와 후퇴 화살표 끝을 같은 위치로 갱신한다.
 - `recording-tempo.js`는2배/4배의 전장 이동·후퇴·점령 장면에 최소 실제 시간을 준다. 엔진 계산 시간과 무관하며 중요 공지1배속/요약1초는 기존 로직이다. `troop-layout.js`는 대표 카드만1.4배 확대하고 병사/보조 카드는 유지한다.
+
+## v0.56 지도 상태의 연속성과 전투 소재
+
+- `camera-policy.js`는 의미 있는 장면만 추적 대상으로 삼는다. 실제 임관 판정은 먼저 처리하므로 roster의 진짜 신규 인물은 여전히 추적한다. `map-camera.js`는 점령군 이동과 같은 영토의 점령 확장에 cameraGroup을 공유한다.
+- `stable-unit-placement.js`는 영토의 육지 내부 후보와 인물의 고정 슬롯으로 위치를 정한다. 같은 영토 구성원 수가 달라져도 기존 장수 위치는 바뀌지 않는다. `land-movement.js`는 실제 영토 경로의 공유 경계를 잇고 오목한 해안/구멍 안에서는 작은 격자 경로를 찾아 단순화한다. 캐시는 geometry별256개이며 지도 설계가 바뀌면 새 geometry가 사용된다. 경로가 없는 재배치는 끝점 페이드다. 이 경로를 엔진의 거리/피로 계산에 역주입하지 않는다.
+- `mass-battle-recap.js`는 camps와 표시용 영토를 순서대로 갱신하고 mapReveal에 공개한 전투/점령/이동을 따로 기록한다. `round-campaign.js`/`recent-map-events.js`가 이 목록을 읽어 미래의 경로/점령을 한꺼번에 드러내지 않는다. 실제 최종 상태로 돌아갈 때도 같은 공개 목록을 유지한다. 다중 영토 점령은 captureSteps만큼 표시 시간을 확보한다.
+- `battle-theme.css`는 첨부 WebP/재질SVG/9분할PNG/이름표를 CSS로 표시한다. 전술 캔버스는 병사/그림자/효과만 그린다. `battle-pack-art.mjs`는 사용한 UI와OGG의 원본 해시를 검사하고 배포용13소리를 생성한다. `audio/sounds.js`는 기존42개와 새13개를 합친다. 반복음도 기존 Director의 시계/장부와 Mixer의 동일한4소스 제한에 포함되며 playbackRate를 변경하지 않는다.
+- `data/officer-names.js`는200개 이름,`engine/officer-names.js`는 별도 고정 해시와 사용 중 이름 목록으로 신규 이름을 선택한다. 게임 RNG는 소비하지 않는다. controls.officerNames의 턴 경계와 지속 상태 플래그로 기존 기록을 유지하며 사용자 정의 최초 장수·재등용 장수를 덮어쓰지 않는다. 세계/역사 형식과 엔진38의 전투 규칙은 유지한다.
