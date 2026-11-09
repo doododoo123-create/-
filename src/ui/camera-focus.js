@@ -1,3 +1,4 @@
+import {appointmentFocus} from './appointment-focus.js';
 import { mapAnchor } from '../model/cartography-geometry.js';
 import { neighbors } from '../model/world.js';
 export function nationFraming(world,id,viewport={width:1200,height:800}){
@@ -53,12 +54,13 @@ export function sceneFocus(scene,record){
  if(!scene?.event||scene.kind==='summary')return null;const world=scene.worldAfter||scene.worldBefore;if(!world)return null;
  // Hold the rally point throughout every participant's approach, the forming
  // animation and its brief completed view. Do not chase individual arrivals.
+ const appointed=appointmentFocus(scene,record);if(appointed)return appointed;
  const group=scene.formationGroup||scene.event.armyGroup;
  if(scene.event.type==='army_assembly'&&group?.members?.length>=2){
   const territory=world.territories[group.location];
   if(territory)return mapAnchor(world,territory.id,'station');
  }
- if(scene.event.type==='appointment'&&scene.kind!=='roll'){
+ if(scene.event.type==='appointment'&&scene.kind==='apply'){
   const e=scene.event,id=e.nationId||record.actorId,newly=world.people.find(p=>p.id===e.personId)||world.people.find(p=>p.countryId===id&&p.role===(e.role||'general')&&p.slot===e.slot&&p.active&&p.alive);
   if(newly)return mapAnchor(world,newly.positionId||newly.stationId||world.countries.find(c=>c.id===id)?.capitalId,'station');
  }

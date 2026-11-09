@@ -24,7 +24,7 @@ function invariant(plan){
 }
 test('real army record produces reusable tactics and preserves identities, all troops and final state without duplicating map duels',()=>{
  const f=fourArmyFixture(),snapshot=JSON.stringify(f.run),before=JSON.stringify(f.start.world),p=loaded(f),all=plans(p);assert(all.length);assert.equal(MASS_TACTICS.length,14);
- for(const plan of all){invariant(plan);assert(plan.baseDuration>=12000&&plan.baseDuration<=18000);const covered=new Set(plan.engagements.map(e=>e.index));assert(!p.state.scenes.some(s=>s.battleIndex!==undefined&&covered.has(s.battleIndex)&&['roll','movement','apply'].includes(s.kind)));assert(plan.tactics.eligible.length>=4);assert(plan.tactics.selected.length>=2);}
+ for(const plan of all){invariant(plan);assert(plan.baseDuration>=12000&&plan.baseDuration<=18000);const covered=new Set(plan.engagements.map(e=>e.index));assert(!p.state.scenes.some(s=>!s.massRecap&&s.battleIndex!==undefined&&covered.has(s.battleIndex)&&['roll','movement','apply'].includes(s.kind)));assert(plan.tactics.eligible.length>=4);assert(plan.tactics.selected.length>=2);}
  assert.equal(JSON.stringify(f.run),snapshot);assert.equal(JSON.stringify(f.start.world),before);
 });
 test('same record and visual seed reproduce trajectories; other visual seeds vary paths without varying facts',()=>{
@@ -54,7 +54,7 @@ test('pause, speed, critical holds, replay, details and handoff share the existi
  const f=fourArmyFixture({deathRaw:1});let now=0,speed=4;const p=new TurnPlayback({options:()=>options,now:()=>now,speed:()=>speed,schedule:()=>1,cancel:()=>{}});p.load(f.record,f.start.world,f.run.world,false);const index=p.state.scenes.findIndex(s=>s.massPlan);p.state.index=index;p.remaining=p.duration();p.resume();now+=200;const t=p.sceneProgress;p.pause();assert.equal(p.sceneProgress,t);now+=500;assert.equal(p.sceneProgress,t);speed=8;p.resume();assert.equal(p.scheduledSpeed,8);
  p.pause();const critical=p.state.scenes.findIndex(s=>s.massCritical);assert(critical>=0);p.state.index=critical;p.remaining=p.duration();assert.equal(p.effectiveSpeed,1);assert.equal(p.duration(),1600);
  p.groupDone=true;p.groupEnd=critical;p.state.rangeDone=true;p.skipMassBattle();assert(!p.groupDone&&!p.state.rangeDone);assert.equal(p.scene.massPhase,'summary');assert.equal(p.duration(),1000);assert.equal(p.effectiveSpeed,1);const html=renderMassBattle({playback:p});assert(html.includes('상세 기록'));assert(!html.includes('계산된 결과'));assert(!html.includes('다이스 판정'));
- p.showCampaignDetails();assert(p.detailReturn);assert(p.state.scenes.some(s=>s.kind==='roll'));p.returnCampaignDetails();assert.equal(p.scene.massPhase,'summary');p.returnMassMap();assert(p.scene.massReturn);assert.equal(p.displayWorld,p.state.scenes[index].massPlan.after);
+ p.showCampaignDetails();assert(p.detailReturn);assert(p.state.scenes.some(s=>s.kind==='roll'));p.returnCampaignDetails();assert.equal(p.scene.massPhase,'summary');p.returnMassMap();assert(p.scene.massRecap||p.scene.massReturn);p.state.index=p.state.scenes.findIndex(s=>s.massReturn);assert.equal(p.displayWorld,p.state.scenes[index].massPlan.after);
 });
 test('mass sound cues use unique ledger keys and speed-scaled offsets with bounded overlap',()=>{
  const p=loaded(fourArmyFixture());for(const s of p.state.scenes.filter(s=>s.massPlan)){for(const speed of [1,4,16]){const cues=massBattleSoundCues(s,{speed});assert.equal(new Set(cues.map(c=>c.key)).size,cues.length);assert(cues.every(c=>c.at>=0));if(!s.massCritical&&s.massPhase!=='summary')assert(cues.length<(s.massEnd-s.massStart)/speed/100+3);}}
@@ -84,7 +84,7 @@ test('real additional advance, defender counteroffensive and royal defense cover
  assert.deepEqual([...covered].sort(),MASS_TACTICS.map(t=>t.id).sort());
 });
 test('all tactic policies are selectable with separate visual seeds and do not add engagements',()=>{
- const selected=new Set();for(const kind of ['advance','counter']){const f=variedFixture(kind),initial=plans(loaded(f))[0];for(let seed=0;seed<32;seed++){const p=massBattlePlan(initial.group,f.record,{seed});p.tactics.selected.forEach(t=>selected.add(t.id));assert.equal(p.engagements.length,initial.engagements.length);}}
+ const selected=new Set();for(const kind of ['advance','counter']){const f=variedFixture(kind),initial=plans(loaded(f))[0];for(let seed=0;seed<128;seed++){const p=massBattlePlan(initial.group,f.record,{seed});p.tactics.selected.forEach(t=>selected.add(t.id));assert.equal(p.engagements.length,initial.engagements.length);}}
  assert.deepEqual([...selected].sort(),MASS_TACTICS.map(t=>t.id).sort());
 });
 

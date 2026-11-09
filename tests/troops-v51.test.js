@@ -5,10 +5,10 @@ import {fourArmyFixture} from './studio-v41-fixture.mjs';
 function canvasData(html){return JSON.parse(html.match(/data-troop-soldiers="([^"]+)"/)[1].replaceAll('&quot;','"').replaceAll('&amp;','&'));}
 test('garrison and real army retain each commanders soldier count, tier and identity without recalculating from the combined army',()=>{
  const f=fourArmyFixture(),w=f.start.world,ps=w.people.filter(p=>p.countryId==='a'&&p.role==='general'&&p.active).slice(0,3).map((p,i)=>({...p,troops:[8,7,20][i]})),c=w.countries[0],markers=ps.map(person=>({person,country:c,territory:w.territories[0]}));
- const groups=troopGroups(markers,null),g=groups.get(ps[0].id),html=renderTroopToken(ps[0],c,w,null,f.record,g),soldiers=canvasData(html);assert.equal(soldiers.length,2+1+3);
- for(const p of ps)assert.equal(soldiers.filter(s=>s.personId===p.id).length,troopCount(p.troops));assert.equal(renderTroopToken(ps[1],c,w,null,f.record,g),'');
+ const groups=troopGroups(markers,null),g=groups.get(ps[0].id),html=renderTroopToken(ps[0],c,w,null,f.record,g),soldiers=canvasData(html);assert.equal(soldiers.length,2);
+ assert.equal(soldiers.filter(s=>s.personId===ps[0].id).length,troopCount(ps[0].troops));assert.notEqual(groups.get(ps[0].id),groups.get(ps[1].id));
  const army=troopGroups([markers[0]],null,new Map([[ps[0].id,{members:ps}]]));assert.equal(canvasData(renderTroopToken(ps[0],c,w,null,f.record,army.get(ps[0].id))).length,6);
- const moving=troopGroups(markers,{kind:'movement',moves:[{personId:ps[0].id}]});assert.equal(moving.get(ps[0].id).members.length,1);assert.equal(moving.get(ps[1].id).members.length,2);
+ const moving=troopGroups(markers,{kind:'movement',moves:[{personId:ps[0].id}]});assert.equal(moving.get(ps[0].id).members.length,1);assert.equal(moving.get(ps[1].id).members.length,1);
  const enemy={...markers[2],country:{...c,id:'other'},person:{...ps[2],countryId:'other'}};assert.notEqual(troopGroups([markers[0],enemy],null).get(ps[0].id),troopGroups([markers[0],enemy],null).get(ps[2].id));
 });
 test('dense ranks retain all figures and full pose padding while zoom and screen density remain adaptive',()=>{

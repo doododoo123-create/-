@@ -11,7 +11,7 @@ export const MASS_TACTICS=[
 export function massSeed(value){let h=2166136261;for(const c of String(value)){h^=c.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0;}
 export function chooseMassTactics(a,seed){
  let rng=massSeed(seed+':'+a.id+':tactics');const random=()=>{rng=(Math.imul(rng,1664525)+1013904223)>>>0;return rng/4294967296;};
- const attacks=a.units.filter(u=>u.side==='attack'),defenses=a.units.filter(u=>u.side==='defense');
+ const attacks=a.units.filter(u=>u.side==='attack'&&(!u.battleIds||u.battleIds.length)),defenses=a.units.filter(u=>u.side==='defense'&&(!u.battleIds||u.battleIds.length));
  const pairs=new Map();for(const b of a.battles.filter(b=>!b.automatic)){if(!pairs.has(b.defenseId))pairs.set(b.defenseId,new Set());pairs.get(b.defenseId).add(b.attackId);}
  const repeated=[...pairs.values()].some(v=>v.size>=2),winningAttackers=a.winners.filter(u=>u.side==='attack'),gained=a.changes.filter(c=>c.to===a.actorId).length,lost=a.changes.filter(c=>c.from===a.actorId).length;
  const conditions={
@@ -21,7 +21,7 @@ export function chooseMassTactics(a,seed){
   hook:winningAttackers.length>=1&&attacks.length>=2&&defenses.length>=2&&gained>=lost,
   breach:a.battles.some(b=>b.continuation==='advance'&&b.takenTerritoryIds?.length),
   waves:repeated,pressure:repeated,
-  reserves:a.battles.some(b=>b.relief)||a.units.some(u=>u.firstBattle!==null&&u.firstBattle>a.battles[0].index),
+  reserves:a.battles.some(b=>b.relief)||a.units.some(u=>u.firstBattle!==null&&u.firstBattle>(a.battles[0]?.index??Infinity)),
   hold:a.defenseWins.length>0,
   'staged-retreat':a.events.some(e=>e.moves?.some(m=>m.kind==='retreat'))&&a.battles.length>1,
   'local-counter':a.defenseWins.length>0,
@@ -32,6 +32,7 @@ export function chooseMassTactics(a,seed){
  const ranked=eligible.map(t=>({...t,rank:random()})).sort((a,b)=>b.rank-a.rank);
  // Counterattack and a real follow-on advance must remain readable regardless
  // of cosmetic selection. The remaining policies vary with a separate seed.
- const selected=ranked.slice(0,4);for(const id of ['counter-break','breach'])if(conditions[id]&&!selected.some(t=>t.id===id)){selected.pop();selected.push(eligible.find(t=>t.id===id));}
+ const small=Math.min(attacks.length,defenses.length),large=Math.max(attacks.length,defenses.length),limit=small>=5?3:small>=3?2:large>=3?1:0;
+ const selected=(small<3?ranked.filter(t=>['pressure','hold'].includes(t.id)):ranked).slice(0,limit);for(const id of [conditions['counter-break']?'counter-break':'breach'])if(limit&&small>=3&&conditions[id]&&!selected.some(t=>t.id===id)){selected.pop();selected.push(eligible.find(t=>t.id===id));}
  return {eligible:eligible.map(({id,name})=>({id,name})),selected:selected.map(({id,name})=>({id,name})),wing:random()<.5?-1:1};
 }

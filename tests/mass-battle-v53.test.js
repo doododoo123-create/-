@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import {fourArmyFixture} from './studio-v41-fixture.mjs';
 import {largeMassFixture} from './mass-battle-v52-fixture.mjs';
 import {TurnPlayback} from '../src/ui/playback.js';
-import {massBattleAt,massGlobalTime} from '../src/ui/mass-battle-plan.js';
+import {massBattleAt,massGlobalTime,massBattlePlan} from '../src/ui/mass-battle-plan.js';
 import {massPersonalStreaks} from '../src/ui/mass-battle-choreography.js';
 import {massPanelPlacement} from '../src/ui/mass-battle-placement.js';
 import {renderMassBattle} from '../src/ui/mass-battle-view.js';
@@ -25,7 +25,7 @@ test('all real armies make contact together instead of waiting for pair-by-pair 
  assert.equal(JSON.stringify(f.run),snapshot);
 });
 test('flank and reserve tracks make separate approaches while keeping one body per commander',()=>{
- const p=v53Loaded(fourArmyFixture()),plan=p.state.scenes.find(s=>s.massPlan).massPlan;
+ const f=fourArmyFixture(),p=v53Loaded(f),initial=p.state.scenes.find(s=>s.massPlan).massPlan,plan=Array.from({length:32},(_,seed)=>massBattlePlan(initial.group,f.record,{seed})).find(v=>v.units.some(u=>u.formationRole==='reserve'));assert(plan);
  const rear=plan.units.filter(u=>u.formationRole==='reserve'),front=plan.units.filter(u=>u.formationRole!=='reserve');
  assert(rear.length&&front.length);assert(rear.some(r=>r.visualContact>Math.min(...front.map(u=>u.visualContact))));
  assert(plan.units.every(u=>u.orders.every((o,i)=>i===0||JSON.stringify(o.from)===JSON.stringify(u.orders[i-1].to))));

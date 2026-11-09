@@ -101,7 +101,7 @@ test('all directly bordering nations remain eligible regardless of connection pl
 });
 test('card stacks expose narrow side strips, keep front tip fixed, cycle and promote the active commander',()=>{
  const markers=Array.from({length:3},(_,slot)=>({territory:{id:'t'},person:{id:'g'+slot,slot},country:{id:'a'},role:'general',point:[100,200]}));
- const stack=stackUnits(markers,{focus:{t:'g1'}});assert.equal(stack.at(-1).person.id,'g1');assert.equal(stack.at(-1).stackOffset,0);assert.deepEqual(stack.at(-1).point,[100,200]);assert.deepEqual(stack.map(v=>v.stackOffset),[48,24,0]);
+ const stack=stackUnits(markers,{focus:{t:'g1'},battle:{actorId:'b'}});assert.equal(stack.at(-1).person.id,'g1');assert.equal(stack.at(-1).stackOffset,0);assert.deepEqual(stack.at(-1).point,[100,200]);assert.deepEqual(stack.map(v=>v.stackOffset),[48,24,0]);
  assert.equal(stackUnits(markers,{focus:{t:'g1'},battle:{actorId:'a',slot:2}}).at(-1).person.id,'g2');
 });
 test('new campaigns preserve fatigue, defense waves, retreat/home movements and exact history after save/replay',async()=>{

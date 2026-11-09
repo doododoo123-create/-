@@ -1,3 +1,4 @@
+import {activeTacticAt} from './tactical-phases.js';
 import {placeMassBattle} from './mass-battle-placement.js';
 import {troopCenterOffset} from './troop-layout.js';
 import {troopSource,troopFrameArt,troopFrame} from './troop-animation.js';
@@ -35,6 +36,7 @@ export class MassBattleAnimation{
    this.background=bg;
   }
   ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,w,h);ctx.drawImage(this.background,0,0);ctx.setTransform(sx,0,0,sy,ox,oy);
+  const tactic=activeTacticAt(p,state.base),notice=this.root.querySelector('[data-mass-tactic]');if(notice){const country=p.countries.find(c=>c.id===tactic?.countryId);notice.textContent=tactic?`${country?.name||''} · ${tactic.name}`:'';}
   const needed=new Set(),soldiers=[],reduced=!!this.playback.reducedMotion?.();
   // Ground markers and every shadow are behind every soldier. Depth is sorted
   // across the entire battle, not commander-by-commander or front-row-first.
@@ -53,14 +55,14 @@ export class MassBattleAnimation{
   for(const s of soldiers){ctx.save();ctx.globalAlpha=s.alpha;ctx.translate(s.x,s.y);if(s.flip)ctx.scale(-1,1);ctx.drawImage(s.art,-174*s.scale,-292*s.scale,384*s.scale,320*s.scale);ctx.restore();}
   c.dataset.depthOrder=soldiers.map(s=>s.y.toFixed(2)).join(',');
   for(const key of this.sources.keys())if(!needed.has(key))this.sources.delete(key);
-  for(const e of state.engagements.filter(e=>!e.automatic)){ctx.save();ctx.font='20px "Studio Symbols", "Studio Emoji"';ctx.textAlign='center';ctx.fillStyle='#b21621';ctx.strokeStyle='#fff9';ctx.lineWidth=3;ctx.strokeText('⚔',e.point.x,e.point.y+7);ctx.fillText('⚔',e.point.x,e.point.y+7);ctx.restore();}
+  for(const e of state.engagements.filter(e=>!e.automatic).slice(0,4)){const a=state.units.find(u=>u.id===e.attackId),d=state.units.find(u=>u.id===e.defenseId);if(!a||!d||a.withdrawn||d.withdrawn)continue;const pulse=((state.base+e.index*83)%620)/620,hit=state.units.some(u=>[a.id,d.id].includes(u.id)&&u.action==='hurt');const contact={x:(a.x+d.x)/2,y:(a.y+d.y)/2};if(pulse<.3||hit){ctx.save();ctx.translate(contact.x,contact.y);ctx.strokeStyle=hit?'#ffda87':'#fff4c6';ctx.lineWidth=hit?4:2;ctx.globalAlpha=1-pulse;for(let k=0;k<6;k++){const angle=k*Math.PI/3;ctx.beginPath();ctx.moveTo(Math.cos(angle)*6,Math.sin(angle)*6);ctx.lineTo(Math.cos(angle)*(hit?27:19),Math.sin(angle)*(hit?27:19));ctx.stroke();}ctx.restore();}ctx.save();ctx.font='20px "Studio Symbols", "Studio Emoji"';ctx.textAlign='center';ctx.fillStyle='#b21621';ctx.strokeStyle='#fff9';ctx.lineWidth=3;ctx.strokeText('⚔',contact.x,contact.y+7);ctx.fillText('⚔',contact.x,contact.y+7);ctx.restore();}
   const px=scale/dpr,py=scale/dpr;
   for(const u of state.units){const label=this.labels.get(u.id);if(!label)continue;
    const width=Math.max(48,Math.min(78,135*px-6)),height=30;
    const half=(Math.min(4,u.figures)-1)*9+30;
    const x=Math.max(0,Math.min(rect.width-width,u.x*px+ox/dpr+(u.side==='attack'?-half*px-width-3:half*px+3)));
    const y=Math.max(0,Math.min(rect.height-height,u.y*py+oy/dpr-height/2));
-   label.style.width=width+'px';label.style.transform=`translate(${x}px,${y}px)`;label.classList.toggle('is-withdrawn',u.withdrawn||!u.alive);label.dataset.action=u.action;label.dataset.centerX=String(u.x);label.dataset.centerY=String(u.y);label.dataset.troops=String(u.troops);label.dataset.figures=String(u.visible?u.figures:0);
+   label.style.width=width+'px';label.style.transform=`translate(${x}px,${y}px)`;label.classList.toggle('is-withdrawn',u.withdrawn||!u.alive);label.classList.toggle('is-tactical',!!tactic?.ids.includes(u.id));label.dataset.action=u.action;label.dataset.centerX=String(u.x);label.dataset.centerY=String(u.y);label.dataset.troops=String(u.troops);label.dataset.figures=String(u.visible?u.figures:0);
    const army=label.querySelector('[data-mass-army]'),notice=label.querySelector('[data-mass-notice]');army.textContent=format(u.troops)+'만';label.querySelector('[data-mass-health]').style.transform=`scaleX(${Math.min(1,u.troops/Math.max(u.startArmy,u.troops,.0001))})`;
    const text=u.labels.at(-1)?.text||(!u.alive?'전사':u.troops<=0?'병력 소진':u.withdrawn?'후퇴':'');notice.textContent=text;notice.dataset.tone=u.labels.at(-1)?.kind||'quiet';
   }

@@ -6,9 +6,9 @@ import {fourArmyFixture} from './studio-v41-fixture.mjs';
 import {TurnPlayback} from '../src/ui/playback.js';
 import {renderAtlas} from '../src/ui/atlas-view.js';
 import {renderCampaignOverlay} from '../src/ui/campaign-view.js';
-test('army body scales by1.4 around the same pin; its title remains in the same button above the unchanged portrait/name/army rows',()=>{
- assert.equal(ARMY_CARD_SCALE,1.4);assert.equal(ARMY_HEADER_HEIGHT,8);assert.equal(armyLeaderTransform(),'translate(0,-14) scale(1.4)');assert.equal(armyLeaderTransform(1),'translate(0,0) scale(1)');
- const x=fourArmyFixture(),p=new TurnPlayback({options:()=>({compactCampaigns:true,armyPresentation:true})});p.load(x.record,x.start.world,x.run.world,false);p.state.index=p.state.scenes.findIndex(s=>s.campaignPhase==='dice');const before=JSON.stringify(x.run),html=renderAtlas(p.displayWorld,{presentation:p.state});assert(html.includes('scale(1.4)'));assert(!html.includes('scale(1.7)'));assert(html.includes('width="32" height="66"'));assert(html.includes('<span class="token-army-caption">집단군</span><span class="token-portraits">'));assert(!html.includes('<span class="token-copy"><span class="token-army-caption">'));
+test('army body keeps its scale around the same pin; its title remains in the same button above the unchanged portrait/name/army rows',()=>{
+ assert.equal(ARMY_CARD_SCALE,1);assert.equal(ARMY_HEADER_HEIGHT,8);assert.equal(armyLeaderTransform(),'translate(0,0) scale(1)');assert.equal(armyLeaderTransform(1),'translate(0,0) scale(1)');
+ const x=fourArmyFixture(),p=new TurnPlayback({options:()=>({compactCampaigns:true,armyPresentation:true})});p.load(x.record,x.start.world,x.run.world,false);p.state.index=p.state.scenes.findIndex(s=>s.campaignPhase==='dice');const before=JSON.stringify(x.run),html=renderAtlas(p.displayWorld,{presentation:p.state});assert(html.includes('scale(1)'));assert(!html.includes('scale(1.7)'));assert(html.includes('width="32" height="66"'));assert(html.includes('<span class="token-army-caption">집단군</span><span class="token-portraits">'));assert(!html.includes('<span class="token-copy"><span class="token-army-caption">'));
  const overlay=renderCampaignOverlay({playback:p});for(const g of p.scene.campaign.defenseMetadata)assert(overlay.includes(g.id));assert(overlay.includes('data-map-army-primary="'+p.scene.campaign.assemblyMetadata.id+'"'));assert.equal(JSON.stringify(x.run),before);
 });
 test('army framing translates the camera below the current pane and is stable once the same card bounds are placed',()=>{

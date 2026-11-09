@@ -2,7 +2,7 @@ import {portraitImage} from './portraits.js';
 import {displayName} from './display-names.js';
 import {esc} from './icons.js';
 
-export const ARMY_CARD_SCALE=1.4,ARMY_HEADER_HEIGHT=8;
+export const ARMY_CARD_SCALE=1,ARMY_HEADER_HEIGHT=8;
 export function armyLeaderTransform(scale=ARMY_CARD_SCALE){return `translate(0,${Number((35*(1-scale)).toFixed(6))}) scale(${Number(scale.toFixed(6))})`;}
 
 // Read only group events already applied to this visible map, never future dice.

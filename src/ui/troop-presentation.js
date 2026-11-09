@@ -22,7 +22,7 @@ export const troopCount=army=>army>0?(army>=15?3:army>=8?2:1):0;
 export function troopGroups(markers,scene,armies=new Map()){
  const groups=new Map(),byPerson=new Map();
  for(const m of markers){const p=m.person;if(!p||p.role==='minister'||!p.active||p.alive===false&&!m.ghost)continue;
-  const moving=scene?.kind==='movement'&&scene.moves?.some(v=>v.personId===p.id),key=moving?'move:'+p.id:[m.country.id,m.territory.id,m.batchSide||'',m.ghost?p.id:''].join(':');
+  const moving=scene?.kind==='movement'&&scene.moves?.some(v=>v.personId===p.id),key='unit:'+p.id;
   if(!groups.has(key))groups.set(key,{leaderId:p.id,members:[],ids:new Set()});const g=groups.get(key);
   for(const member of armies.get(p.id)?.members||[p])if(!g.ids.has(member.id)){g.ids.add(member.id);g.members.push(member);}
   byPerson.set(p.id,g);

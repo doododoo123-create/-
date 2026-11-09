@@ -10,7 +10,7 @@ export function choreographMassArmy(units,engagements,tactics,{width,center,base
   const flank=u.role!=='king'&&u.side==='attack'&&wing&&(policies.has('pincer')||policies.has('hook')&&wing===tactics.wing);
   const reserve=u.formationRole==='reserve'&&(policies.has('reserves')||policies.has('waves'));
   const weight=policies.has('pressure')?.5:.72;
-  const line={x:width/2-sign*44+(policies.has('oblique')?tactics.wing*(u.home.y-center)*.18:0),y:lane(u.home.y*weight+oppositeY*(1-weight)+(policies.has('wing-focus')?tactics.wing*65:0))};
+  const line={x:width/2-sign*60+(policies.has('oblique')?tactics.wing*(u.home.y-center)*.18:0),y:lane(u.home.y*weight+oppositeY*(1-weight)+(policies.has('wing-focus')&&u.side==='attack'?tactics.wing*65:0))};
   if(flank){line.y=lane(line.y+wing*90);line.x=width/2+sign*30;}
   u.orders=[];let at=0,point={...u.home,x:u.home.x-sign*65};
   const add=(kind,end,to,curve=0)=>{if(end<=at)return;u.orders.push({kind,start:at,end,from:{...point},to:{...to},curve:0,curveY:curve});at=end;point={...to};};
@@ -26,7 +26,7 @@ export function choreographMassArmy(units,engagements,tactics,{width,center,base
    if(e.resolve<=at)continue;
    const win=e.winner===u.id,draw=e.winner===null,final=e===last;
    const push=win?(policies.has('center-break')&&u.formationRole==='center'?42:policies.has('pressure')?32:18):draw?0:-12;
-   const target={x:bound(point.x+sign*push),y:lane(point.y+(flank?wing*-8:0))};
+   const target={x:flank?point.x:sign===1?Math.min(width/2-52,bound(point.x+sign*push)):Math.max(width/2+52,bound(point.x+sign*push)),y:lane(point.y+(flank?wing*-8:0))};
    add(e.automatic?'walk':u.side==='attack'||policies.has('local-counter')&&win?'attack':'guard',e.resolve,target,flank?wing*15:0);
    if(!final)continue;
    let retreat=e.winner!==u.id;

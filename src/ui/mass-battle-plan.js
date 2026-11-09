@@ -1,3 +1,4 @@
+import {tacticalPhases} from './tactical-phases.js';
 import {analyzeMassBattle} from './mass-battle-analysis.js';
 import {choreographMassArmy,massPersonalStreaks} from './mass-battle-choreography.js';
 import {chooseMassTactics,massSeed} from './mass-battle-tactics.js';
@@ -21,7 +22,7 @@ export function massBattlePlan(group,record,{seed=null}={}){
   windows.push({battle:b,start,end:finish});ids.forEach(id=>ready.set(id,finish));territories.set(b.territoryId,finish);operations.set(b.operationId,finish);end=finish;
   if(b.takenTerritoryIds?.length||a.events.some(e=>e.battleIndex===b.index&&massImportantEvent(e)))barrier=finish;
  }
- const fighting=a.battles.filter(b=>!b.automatic).length,baseDuration=fighting?Math.min(MASS_BATTLE_TIMING.max,MASS_BATTLE_TIMING.min+Math.max(0,fighting-4)*220):MASS_BATTLE_TIMING.unopposed;
+ const fighting=a.battles.filter(b=>!b.automatic).length,smallBattle=Math.min(...['attack','defense'].map(side=>units.filter(u=>u.side===side&&u.battleIds.length).length))<3,baseDuration=fighting&&smallBattle?8000:fighting?Math.min(MASS_BATTLE_TIMING.max,MASS_BATTLE_TIMING.min+Math.max(0,fighting-4)*220):MASS_BATTLE_TIMING.unopposed;
  const prelude=fighting?1400:0,scale=(baseDuration-MASS_BATTLE_TIMING.prepare-650-prelude)/Math.max(1,end);
  const cues=[],engagements=[],lastBattle=new Map();
  for(const b of a.battles)for(const id of [b.attackId,b.defenseId].filter(Boolean))lastBattle.set(id,b.index);
@@ -74,7 +75,7 @@ export function massBattlePlan(group,record,{seed=null}={}){
  const countries=[a.actorId,a.opponentId].map(id=>a.before.countries.find(c=>c.id===id)).filter(Boolean).map(c=>({id:c.id,name:c.name,color:c.color}));
  const gained=a.changes.filter(c=>c.to===a.actorId).length,lost=a.changes.filter(c=>c.from===a.actorId).length;
  const outcome=gained>lost?`${countries[0]?.name||'공격군'} 진격`:lost>gained?`${countries[1]?.name||'수비군'} 반격`:'공세 종료';
- return {version:2,honors,id:a.id,seed:visualSeed,tactics,units,engagements,eventTimes,holds,cues,countries,width,height,center,baseDuration,duration:baseDuration+holds.length*MASS_BATTLE_TIMING.critical,changes:a.changes,losses:a.losses,gained,lost,outcome,before:a.before,after:a.after,group};
+ return {version:3,tacticalPhases:tacticalPhases(units,tactics),honors,id:a.id,seed:visualSeed,tactics,units,engagements,eventTimes,holds,cues,countries,width,height,center,baseDuration,duration:baseDuration+holds.length*MASS_BATTLE_TIMING.critical,changes:a.changes,losses:a.losses,gained,lost,outcome,before:a.before,after:a.after,group};
 }
 
 export function massBattleTime(plan,time){let elapsed=0;for(const hold of plan.holds){if(time<hold.start)break;if(time<=hold.end)return {base:hold.base,hold,holdProgress:massClamp((time-hold.start)/(hold.end-hold.start))};elapsed+=hold.end-hold.start;}return {base:massClamp(time-elapsed,0,plan.baseDuration),hold:null,holdProgress:0};}

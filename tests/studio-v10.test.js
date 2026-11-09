@@ -50,9 +50,9 @@ test('route-free placement has its own replay motion without drawing a road thro
  const initial=fixture(),r=nextTurn(initial,attack(4)),record=r.history[0],scene=makeTurnScenes(record,initial.world).find(s=>s.kind==='movement'&&s.moves.some(m=>m.kind==='redeploy'));
  assert(scene);assert.equal(scene.title,'생존 지휘관 재배치');const html=renderAtlas(scene.worldAfter,{presentation:{record,scenes:[scene],index:0,phase:'holding',movementProgress:.5}});assert(html.includes('unit-redeploy'));assert(!html.includes('<path class="redeploy"'));assert(html.includes('재배치'));
 });
-test('kings use crown and gold name markup; every stacked card exposes a wider side strip',()=>{
+test('kings use crown and gold name markup; ordinary garrisons get individual blocks',()=>{
  const r=createRun(createReferenceWorld(),3),html=renderAtlas(r.world);assert.equal((html.match(/class="king-crown"/g)||[]).length,7);assert(!html.includes('king-gold-outline'));
- const group=Array.from({length:6},(_,slot)=>({territory:{id:'t'},point:[100,200],role:'general',person:{id:'p'+slot,slot},country:{id:'a'}}));const stack=stackUnits(group);assert.deepEqual(stack.map(m=>m.stackOffset),[120,96,72,48,24,0]);assert.deepEqual(stack.at(-1).point,[100,200]);
+ const group=Array.from({length:6},(_,slot)=>({territory:{id:'t'},point:[100,200],role:'general',person:{id:'p'+slot,slot},country:{id:'a'}}));const stack=stackUnits(group);assert.deepEqual(stack.map(m=>m.stackOffset),[0,0,0,0,0,0]);assert.equal(new Set(stack.map(m=>m.point.join(','))).size,6);
 });
 test('a successor and a newly activated commander both receive gold appointment effect and a green badge only at application',()=>{
  const initial=fixture(),c=initial.engineState.countries[0],g=c.generals[0];g.alive=false;g.troops=0;g.position=null;g.waited=3;c.army=c.reserve;initial.world=projectWorld(initial.initialWorld,initial.engineState);
