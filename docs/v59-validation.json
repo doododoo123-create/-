@@ -1,0 +1,38 @@
+{
+  "version": "0.59.0",
+  "automatedTests": {
+    "command": "npm test",
+    "tests": 684,
+    "passed": 684,
+    "failed": 0
+  },
+  "syntax": {
+    "command": "npm run check",
+    "javascriptFiles": 372
+  },
+  "standalone": {
+    "path": "사국쟁패 Studio.html",
+    "bytes": 46043138,
+    "sha256": "ee9f62d175a0af5ba1549e8a0e330cf9c4689ecdc03d871d0bd6bc50567a92aa"
+  },
+  "preserved": {
+    "engineAndStorageHashes": true,
+    "outsideMapAndEntryFile61Hashes": true,
+    "mapSceneSnapshots": 42,
+    "seededCountryTurns": 96
+  },
+  "browser": {
+    "matrix": "v59-browser-results.json",
+    "compactRealRecords": "v59-orders-browser.json",
+    "offlinePackedHtml": {
+      "importHistory": true,
+      "preferencePersists": true,
+      "tacticsOffRetreatCapture": true,
+      "tacticsOnAll8Commanders": true,
+      "separateOrdersAndTacticReason": true,
+      "depthOrder": true,
+      "finishedMapReturn": true,
+      "pageErrors": []
+    }
+  }
+}

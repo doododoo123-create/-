@@ -4,10 +4,10 @@ export function tacticalFootprint(group,bodyScale=1){
  const columns=Math.min(group.columns,Math.max(1,group.figures)),rows=Math.max(1,Math.ceil(group.figures/columns));
  return {width:((columns-1)*8+302*32/224)*bodyScale,height:((rows-1)*8+233*32/224)*bodyScale,bodyScale};
 }
-export function createTacticalField(groups,width=1260,height=760){
+export function createTacticalField(groups,width=1920,height=760){
  let bodyScale=1,grid;
  for(let attempt=0;attempt<20;attempt++){
-  const footprints=groups.map(g=>tacticalFootprint(g,bodyScale)),cellWidth=Math.max(48,...footprints.map(f=>f.width+14)),cellHeight=Math.max(40,...footprints.map(f=>f.height+18)),cols=2*Math.floor((width-80)/cellWidth/2),rows=Math.floor((height-80)/cellHeight),homeRows=Math.ceil(Math.max(1,rows-2)/2),enough=['attack','defense'].every(side=>{const columns=Array.from({length:cols},(_,i)=>i).filter(c=>c>0&&c<cols-1&&c%2===0&&(side==='attack'?c<cols/2-1:c>cols/2));return columns.length*homeRows>=groups.filter(g=>g.side===side).length+1;});
+  const footprints=groups.map(g=>tacticalFootprint(g,bodyScale)),cellWidth=Math.max(40,...footprints.map(f=>f.width+8)),cellHeight=Math.max(36,...footprints.map(f=>f.height+12)),cols=2*Math.floor((width-80)/cellWidth/2),rows=Math.floor((height-80)/cellHeight),homeRows=Math.ceil(Math.max(1,rows-2)/2),enough=['attack','defense'].every(side=>{const columns=Array.from({length:cols},(_,i)=>i).filter(c=>c>0&&c<cols-1&&c%2===0&&(side==='attack'?c<cols/2-1:c>cols/2));return columns.length*homeRows>=groups.filter(g=>g.side===side).length+1;});
   grid={width,height,cols,rows,cellWidth,cellHeight,bodyScale};if(enough)break;bodyScale*=.9;
  }
  const {cols,rows,cellWidth,cellHeight}=grid;grid.origin={x:(width-(cols-1)*cellWidth)/2,y:(height-(rows-1)*cellHeight)/2};
@@ -35,7 +35,7 @@ export function createTacticalField(groups,width=1260,height=760){
  function step(requestedGoals,start,end,actions=new Map(),priority=new Set()){
   const goals=requestedGoals;
   const obstacles=id=>new Map([...cells].filter(([cell,other])=>other!==id&&(goals.get(other)===cell||(waitAge.get(other)||0)>=4)));
-  const proposed=new Map();for(const g of groups){if(released.has(g.id))continue;const from=positions.get(g.id),to=goals.get(g.id)??from;proposed.set(g.id,firstStep(from,to,obstacles(g.id)));}
+  const proposed=new Map();for(const g of groups){if(released.has(g.id))continue;const from=positions.get(g.id),to=goals.get(g.id)??from;const near=priority.has(g.id)&&Math.floor(from/cols)===Math.floor(to/cols)&&Math.abs(to-from)<=2&&to!==from;proposed.set(g.id,near?from+Math.sign(to-from):priority.has(g.id)&&neighbors(from).includes(to)?to:firstStep(from,to,obstacles(g.id)));}
 
   const claims=new Map(),accepted=new Map();for(const [id,to]of proposed){const from=positions.get(id);if(to===from)continue;if(!claims.has(to))claims.set(to,[]);claims.get(to).push(id);}
   for(const list of claims.values())list.sort((a,b)=>(waitAge.get(b)||0)-(waitAge.get(a)||0)||a.localeCompare(b));

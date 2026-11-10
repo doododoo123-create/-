@@ -6,6 +6,7 @@ import {tacticalFixture,tacticalPlans,tacticalPlayback} from './tactical-v57-fix
 import {massBattlePlan,massBattleAt,massGlobalTime} from '../src/ui/mass-battle-plan.js';
 import {tacticalScale} from '../src/ui/tactical-scale.js';
 import {tacticalPosition} from '../src/ui/tactical-sample.js';
+import {tacticalCombatClock} from '../src/ui/tactical-motion.js';
 import {tacticalRecord} from '../src/ui/tactical-record.js';
 import {analyzeMassBattle} from '../src/ui/mass-battle-analysis.js';
 import {massBattleSoundCues} from '../src/audio/mass-battle-cues.js';
@@ -21,7 +22,7 @@ test('one common figure scale preserves extreme troop ratios independently of co
 test('frozen real records retain exact per-battle quantum losses and causal shared-commander order',()=>{
  for(const kind of ['normal','advance','counter','royal','death']){const f=fixture(kind),snapshot=JSON.stringify(f.record);freezeTree(f.record);for(const initial of tacticalPlans(f)){const p=massBattlePlan(initial.group,f.record);assert(p.baseDuration>=15000);assert.equal(p.story.beats.length,initial.engagements.length);for(const b of p.story.beats){for(const loss of b.losses)assert.equal(Math.abs(p.story.reveals.filter(r=>r.kind==='combat'&&r.beatIndex===b.index&&r.id===loss.id).reduce((n,r)=>n+r.delta,0)),loss.quanta);const earlier=p.story.beats.filter(v=>v.index<b.index&&[v.attackId,v.defenseId].some(id=>id&&[b.attackId,b.defenseId].includes(id)));assert.equal(b.start,0);if(earlier.length)assert(b.resolve>earlier.at(-1).resolve);}
   const end=massBattleAt(p,p.duration);for(const u of end.units){const actual=p.after.people.find(v=>v.id===u.id);assert.equal(u.troops,actual.troops);assert.equal(u.alive,actual.alive!==false);}
-  for(const r of p.story.reveals.filter(r=>r.kind==='combat')){const state=sample(p,r.at),c=state.contacts.find(c=>c.id===r.contactId);assert(c,'loss must have its actual opponent contact');assert([c.attackId,c.defenseId].includes(r.id));const a=state.groups.find(g=>g.id===c.attackGroupId),d=state.groups.find(g=>g.id===c.defenseGroupId);assert(Math.hypot(a.x-d.x,a.y-d.y)<150);const phase=(r.at-c.start)%770;assert(Math.min(Math.abs(phase-340),Math.abs(phase-725))<1e-6,'loss on sprite impact');}
+  for(const r of p.story.reveals.filter(r=>r.kind==='combat')){const state=sample(p,r.at),c=state.contacts.find(c=>c.id===r.contactId);assert(c,'loss must have its actual opponent contact');assert([c.attackId,c.defenseId].includes(r.id));const a=state.groups.find(g=>g.id===c.attackGroupId),d=state.groups.find(g=>g.id===c.defenseGroupId);assert(Math.hypot(a.x-d.x,a.y-d.y)<150);const striker=state.groups.find(g=>g.id===r.strikerGroupId),clock=tacticalCombatClock(striker,r.at);assert.equal(clock.action,'attack');assert.equal(clock.time,340,'loss on complete sprite impact');}
   for(let t=0;t<p.baseDuration;t+=211){const s=sample(p,t);for(const u of s.units){assert(Number.isFinite(u.x)&&Number.isFinite(u.y)&&u.troops>=0);if(!u.alive)assert.equal(u.action,'death');}for(const g of s.groups)if(['attack','guard'].includes(g.action)&&g.contactId)assert(s.contacts.some(c=>c.id===g.contactId));}
  }assert.equal(JSON.stringify(f.record),snapshot);}
 });

@@ -19,3 +19,20 @@
 .mass-battle .mass-unit-label[hidden]{display:none}.mass-battle [data-mass-role]{font:inherit;color:inherit}
 
 .film-selection .selected-battle-mode{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font-size:12px;color:var(--text,#eee)}.film-selection .selected-battle-mode input{width:14px;height:14px;margin:0}
+
+/* v59: persistent tactics and two distinct orders, with a larger useful field. */
+.mass-battle{grid-template-rows:auto auto auto minmax(0,1fr) auto}
+.mass-battle .mass-heading{padding:4px 8px;gap:8px;min-height:32px}
+.mass-battle .mass-heading h2{font-size:12px;line-height:1.3;height:31px;overflow:hidden;display:flex;align-items:center;margin:0}
+.mass-battle .mass-heading>div:first-child>small{font-size:9px}
+.mass-battle .mass-countries{gap:9px}.mass-battle .mass-countries b{font-size:13px}.mass-battle .mass-countries span{font-size:11px}
+.mass-battle .mass-territory-strip{display:none}
+.mass-strategy{padding:4px 8px;background:#172e29ed;border-bottom:1px solid #8b795977;min-height:35px;box-sizing:border-box;color:white}
+.mass-strategy>div{display:flex;align-items:center;gap:7px;min-width:0;white-space:nowrap}.mass-strategy b{font-size:13px;color:#ffe3a6}.mass-strategy small{font-size:10px;padding:1px 4px;background:#081b1c;border:1px solid #8f9e8866;border-radius:2px}
+.mass-strategy em{font:600 10px/1.2 var(--studio-sans);color:#ffcf7e;overflow:hidden;text-overflow:ellipsis}.mass-strategy>span{display:block;font-size:11px;line-height:1.35;color:#e8eee9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mass-strategy.is-changed{border-left:3px solid #f0c977;background:#283a26ed}
+.mass-battle .mass-orders{padding:4px 8px;min-height:53px;max-height:64px;gap:8px;box-sizing:border-box}.mass-battle .mass-command{align-items:center;font-size:11px;gap:5px}.mass-command strong{display:inline;color:#ffe1a1;font-size:10px;margin-right:4px}.mass-command [data-command-text]{font-size:11px;line-height:1.3}.mass-battle .mass-command b{font-size:10px}.mass-battle .mass-command small{font-size:10px}.mass-command-portrait{width:26px;height:34px}
+.mass-battle .mass-unit-label{font-size:9px;line-height:1.1;padding:2px;gap:1px 3px;outline:none;box-shadow:0 1px 2px #0004;background:#10221bd9;border-radius:2px;min-height:0;will-change:transform}
+.mass-battle .mass-unit-label>b{display:flex;align-items:center;gap:3px;max-width:none;overflow:hidden}.mass-unit-number{display:inline-grid;place-items:center;min-width:10px;height:11px;background:var(--nation);color:#fff;font:700 8px/1 var(--studio-sans);font-style:normal;text-shadow:0 1px #000;border:1px solid #fff9;border-radius:1px;flex:none}
+.mass-battle .mass-unit-label>strong{font-size:9px}.mass-battle .mass-unit-role{font-size:8px;grid-column:1/-1;color:#d3decc;line-height:1}.mass-battle .mass-local-notice{min-height:0;font-size:9px}.mass-battle .mass-local-notice:not(:empty){font-size:10px;max-width:135px}
+.mass-battle .mass-unit-label.is-tactical{border-left-width:3px}.mass-battle .mass-health{height:2px;border:0;grid-column:1/-1}.mass-battle .mass-controls{padding:3px 6px}.mass-battle .mass-controls .button{min-height:22px;padding:2px 6px}
