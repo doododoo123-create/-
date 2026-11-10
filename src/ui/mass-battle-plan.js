@@ -7,10 +7,10 @@ export const MASS_BATTLE_TIMING=Object.freeze({prepare:1700,min:12000,max:18000,
 const massClamp=(n,a=0,b=1)=>Math.max(a,Math.min(b,n));
 export function massBattlePlan(group,record,{seed=null,forceTactic=null,figureBudget=480}={}){
  const a=analyzeMassBattle(group,record),visualSeed=seed??massSeed(JSON.stringify([1,record.turn,group.id,a.battles.map(b=>[b.index,b.attack.raw,b.defense.raw,b.winner,b.takenTerritoryIds])])),tactics=chooseMassTactics(a,visualSeed);
- const units=a.units.map(u=>{const result={...u,figures:u.startArmy>=15?16:u.startArmy>=8?12:8};delete result.person;return result;}),count=Math.max(1,...['attack','defense'].map(side=>units.filter(u=>u.side===side).length)),rows=Math.ceil(count/6),width=1260,center=235+rows*105,height=center*2;
+ const units=a.units.map(u=>{const result={...u,figures:u.startArmy>=15?16:u.startArmy>=8?12:8};delete result.person;return result;}),width=1260,height=760,center=380;
  const engagements=a.battles.map(b=>({index:b.index,attackId:b.attackId,defenseId:b.defenseId,automatic:b.automatic,territoryId:b.territoryId,territoryName:b.territoryName,terrain:b.terrain,continuation:b.continuation,captured:!!b.takenTerritoryIds?.length,winner:b.winner===null?null:b.winner===b.actor?b.attackId:b.defenseId,point:{x:width/2,y:center}}));
  const countries=[a.actorId,a.opponentId].map(id=>a.before.countries.find(c=>c.id===id)).filter(Boolean).map(c=>({id:c.id,name:c.name,color:c.color})),gained=a.changes.filter(c=>c.to===a.actorId).length,lost=a.changes.filter(c=>c.from===a.actorId).length;
- const plan={version:6,id:a.id,seed:visualSeed,tactics,units,engagements,countries,width,height,center,changes:a.changes,losses:a.losses,gained,lost,outcome:gained>lost?`${countries[0]?.name||'공격군'} 진격`:lost>gained?`${countries[1]?.name||'수비군'} 반격`:'공세 종료',honors:massPersonalStreaks(engagements,units),before:a.before,after:a.after,group};
+ const plan={version:7,id:a.id,seed:visualSeed,tactics,units,engagements,countries,width,height,center,changes:a.changes,losses:a.losses,gained,lost,outcome:gained>lost?`${countries[0]?.name||'공격군'} 진격`:lost>gained?`${countries[1]?.name||'수비군'} 반격`:'공세 종료',honors:massPersonalStreaks(engagements,units),before:a.before,after:a.after,group};
  buildTacticalStory(plan,a,{forceTactic,figureBudget});return plan;
 }
 

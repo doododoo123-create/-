@@ -1,0 +1,27 @@
+{
+  "automatedTests": {
+    "command": "npm test",
+    "tests": 677,
+    "passed": 677,
+    "failed": 0
+  },
+  "syntax": {
+    "command": "npm run check",
+    "javascriptFiles": 366
+  },
+  "standalone": {
+    "path": "사국쟁패 Studio.html",
+    "bytes": 46036611,
+    "sha256": "4bfd3dbddb91f60dbb211b824e2bc00ef29b45d6d3c454231c345ab0c4b18cd2"
+  },
+  "packedBrowser": {
+    "offlineAfterLoad": true,
+    "importHistory": true,
+    "preferencePersists": true,
+    "mapOnlyRetreatAndCapture": true,
+    "enabledTacticalCommanders": 8,
+    "soldierDepthSorted": true,
+    "returnsToFinishedMap": true,
+    "pageErrors": []
+  }
+}

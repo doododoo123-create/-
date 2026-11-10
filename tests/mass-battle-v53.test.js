@@ -14,9 +14,9 @@ import {sceneFocus} from '../src/ui/camera-focus.js';
 import {MapCamera} from '../src/ui/map-camera.js';
 import {mapAnchor} from '../src/model/cartography-geometry.js';
 function v53Loaded(f){const p=new TurnPlayback({options:()=>({armyPresentation:true,massBattlePresentation:true})});p.load(f.record,f.start.world,f.run.world,false);return p;}
-test('contact pairs come only from the currently recorded battle; waiting armies remain visible',()=>{
+test('simultaneous contact pairs all come from recorded opponents; waiting armies remain visible',()=>{
  const f=fourArmyFixture(),snapshot=JSON.stringify(f.run),p=v53Loaded(f),plan=p.state.scenes.find(s=>s.massPlan).massPlan;
- for(const beat of plan.story.beats){const state=massBattleAt(plan,massGlobalTime(plan,beat.contact+100));assert.equal(state.units.length,8);assert(state.contacts.length);for(const c of state.contacts){assert.equal(c.attackId,beat.attackId);assert.equal(c.defenseId,beat.defenseId);}assert(state.units.every(u=>u.troops>=0));}assert.equal(JSON.stringify(f.run),snapshot);
+ for(const beat of plan.story.beats){const state=massBattleAt(plan,massGlobalTime(plan,beat.contact+100));assert.equal(state.units.length,8);assert(state.contacts.length);for(const c of state.contacts){assert(plan.story.beats.some(b=>b.attackId===c.attackId&&b.defenseId===c.defenseId));}assert(state.units.every(u=>u.troops>=0));}assert.equal(JSON.stringify(f.run),snapshot);
 });
 test('flank and wave routes are distinct while parent commanders and statistics remain unique',()=>{
  const f=fourArmyFixture(),p=v53Loaded(f),initial=p.state.scenes.find(s=>s.massPlan).massPlan,a=massBattlePlan(initial.group,f.record,{forceTactic:'hook'}),b=massBattlePlan(initial.group,f.record,{forceTactic:'waves'});

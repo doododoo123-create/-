@@ -17,7 +17,7 @@ export function massBattleScenes(original,record,{mapOnly=false}={}){
   const plan=mapOnly?{before:first.worldBefore,after:last.worldAfter,engagements:group.battles.map(b=>({index:b.index,territoryId:b.territoryId}))}:massBattlePlan(group,record);
   if(!mapOnly){
    const entry=battleEntry(group,plan);out.push(...entry);
-   const base={entryDuel:entry.at(-1).entryDuel,readySides:['attack','defense'],battleIndex:plan.engagements[0].index,entryArmyGroups:entry.at(-1).entryArmyGroups,mapReveal:ledger,massPlan:plan,campaign:group,campaignPhase:'mass',worldBefore:plan.before,worldAfter:plan.before,camps:first.campsBefore||first.camps,mapEventIndex:first.event.index-1};
+   const base={mapReveal:ledger,massPlan:plan,campaign:group,campaignPhase:'mass',worldBefore:plan.before,worldAfter:plan.before,camps:first.campsBefore||first.camps,mapEventIndex:first.event.index-1};
    let cursor=0,part=0;
    const add=(start,end,event=null)=>{if(end<=start)return;out.push({...base,id:group.id+'-mass-'+part++,kind:'mass-battle',massStart:start,massEnd:end,massCritical:!!event,event:event||{type:'mass_combat',index:first.event.index-1},title:event?.title||'집단군 교전'});};
    for(const hold of plan.holds){add(cursor,hold.start);add(hold.start,hold.end,hold.event);cursor=hold.end;}

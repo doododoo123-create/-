@@ -1,0 +1,256 @@
+{
+  "cases": [
+    {
+      "id": "one",
+      "label": "1만 대1만",
+      "countA": 1,
+      "totalA": 1,
+      "countB": 1,
+      "totalB": 1,
+      "duration": 9680,
+      "initialFigures": 16,
+      "field": {
+        "cols": 14,
+        "rows": 11,
+        "cellWidth": 81.14285714285714,
+        "cellHeight": 59.285714285714285,
+        "bodyScale": 1
+      },
+      "simultaneous": 1,
+      "at": 3403,
+      "moving": 6,
+      "overlaps": 0,
+      "height": 760,
+      "final": [
+        {
+          "id": "a0",
+          "troops": 1,
+          "alive": true,
+          "expected": 1
+        },
+        {
+          "id": "b0",
+          "troops": 1,
+          "alive": true,
+          "expected": 1
+        }
+      ],
+      "losses": {
+        "attack": 0,
+        "defense": 0
+      },
+      "realClockPlaybackSpeed": 2,
+      "completed": true
+    },
+    {
+      "id": "five",
+      "label": "5지휘관5만 대3지휘관30만",
+      "countA": 5,
+      "totalA": 5,
+      "countB": 3,
+      "totalB": 30,
+      "attackLossQuanta": 0,
+      "defenseLossQuanta": 1,
+      "duration": 29840,
+      "initialFigures": 280,
+      "field": {
+        "cols": 14,
+        "rows": 11,
+        "cellWidth": 80.44314285714286,
+        "cellHeight": 59.76128571428572,
+        "bodyScale": 0.7290000000000001
+      },
+      "simultaneous": 5,
+      "at": 5312,
+      "moving": 30,
+      "overlaps": 0,
+      "height": 760,
+      "final": [
+        {
+          "id": "a0",
+          "troops": 1,
+          "alive": true,
+          "expected": 1
+        },
+        {
+          "id": "b0",
+          "troops": 8,
+          "alive": true,
+          "expected": 8
+        },
+        {
+          "id": "a1",
+          "troops": 1,
+          "alive": true,
+          "expected": 1
+        },
+        {
+          "id": "b1",
+          "troops": 8,
+          "alive": true,
+          "expected": 8
+        },
+        {
+          "id": "a2",
+          "troops": 1,
+          "alive": true,
+          "expected": 1
+        },
+        {
+          "id": "b2",
+          "troops": 9,
+          "alive": true,
+          "expected": 9
+        },
+        {
+          "id": "a3",
+          "troops": 1,
+          "alive": true,
+          "expected": 1
+        },
+        {
+          "id": "a4",
+          "troops": 1,
+          "alive": true,
+          "expected": 1
+        }
+      ],
+      "losses": {
+        "attack": 0,
+        "defense": 5
+      },
+      "realClockPlaybackSpeed": 2,
+      "completed": true
+    },
+    {
+      "id": "fifteen",
+      "label": "15지휘관60만 대1지휘관1만",
+      "countA": 15,
+      "totalA": 60,
+      "countB": 1,
+      "totalB": 1,
+      "winner": "b",
+      "attackLossQuanta": 1,
+      "defenseLossQuanta": 0,
+      "duration": 43440,
+      "initialFigures": 488,
+      "field": {
+        "cols": 20,
+        "rows": 13,
+        "cellWidth": 57.59334602857144,
+        "cellHeight": 49.22595475714286,
+        "bodyScale": 0.47829690000000014
+      },
+      "simultaneous": 2,
+      "at": 3652,
+      "moving": 6,
+      "overlaps": 0,
+      "height": 760,
+      "final": [
+        {
+          "id": "a0",
+          "troops": 3,
+          "alive": true,
+          "expected": 3
+        },
+        {
+          "id": "b0",
+          "troops": 1,
+          "alive": true,
+          "expected": 1
+        },
+        {
+          "id": "a1",
+          "troops": 3,
+          "alive": true,
+          "expected": 3
+        },
+        {
+          "id": "a2",
+          "troops": 3,
+          "alive": true,
+          "expected": 3
+        },
+        {
+          "id": "a3",
+          "troops": 3,
+          "alive": true,
+          "expected": 3
+        },
+        {
+          "id": "a4",
+          "troops": 3,
+          "alive": true,
+          "expected": 3
+        },
+        {
+          "id": "a5",
+          "troops": 3,
+          "alive": true,
+          "expected": 3
+        },
+        {
+          "id": "a6",
+          "troops": 3,
+          "alive": true,
+          "expected": 3
+        },
+        {
+          "id": "a7",
+          "troops": 3,
+          "alive": true,
+          "expected": 3
+        },
+        {
+          "id": "a8",
+          "troops": 3,
+          "alive": true,
+          "expected": 3
+        },
+        {
+          "id": "a9",
+          "troops": 3,
+          "alive": true,
+          "expected": 3
+        },
+        {
+          "id": "a10",
+          "troops": 3,
+          "alive": true,
+          "expected": 3
+        },
+        {
+          "id": "a11",
+          "troops": 3,
+          "alive": true,
+          "expected": 3
+        },
+        {
+          "id": "a12",
+          "troops": 3,
+          "alive": true,
+          "expected": 3
+        },
+        {
+          "id": "a13",
+          "troops": 3,
+          "alive": true,
+          "expected": 3
+        },
+        {
+          "id": "a14",
+          "troops": 3,
+          "alive": true,
+          "expected": 3
+        }
+      ],
+      "losses": {
+        "attack": 15,
+        "defense": 0
+      },
+      "realClockPlaybackSpeed": 2,
+      "completed": true
+    }
+  ],
+  "pageErrors": []
+}

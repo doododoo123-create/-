@@ -33,7 +33,7 @@ test('same record and visual seed reproduce trajectories; other visual seeds var
 });
 test('shared commanders retain causal battle order inside the continuous battlefield',()=>{
  const plan=plans(loaded(fourArmyFixture()))[0];assert(plan.freePresentation);
- for(const id of plan.units.map(u=>u.id)){const fights=plan.engagements.filter(e=>e.attackId===id||e.defenseId===id);if(fights.length>1)assert(fights.every((e,i)=>!i||e.start>=fights[i-1].end));}
+ for(const id of plan.units.map(u=>u.id)){const fights=plan.engagements.filter(e=>e.attackId===id||e.defenseId===id);if(fights.length>1)assert(fights.every((e,i)=>!i||e.start===0&&e.resolve>fights[i-1].resolve));}
  const state=massBattleAt(plan,massGlobalTime(plan,plan.baseDuration*.45));assert(state.units.length===plan.units.length);assert(new Set(plan.engagements.map(e=>e.resolve)).size>1);
 });
 test('free visual casualties retain whole-unit precision and exact recorded endpoints',()=>{
