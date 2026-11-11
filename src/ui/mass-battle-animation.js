@@ -1,3 +1,4 @@
+import {regionalFieldView,bindRegionalField,drawRegionalField,drawRegionalOverview} from './regional-field-view.js';
 import {activeTacticAt,activeCommandsAt} from './tactical-phases.js';
 import {placeMassBattle} from './mass-battle-placement.js';
 import {troopCenterOffset} from './troop-layout.js';
@@ -14,7 +15,7 @@ export class MassBattleAnimation{
   const canvas=root.querySelector?.('canvas[data-mass-canvas]'),plan=playback.scene?.massPlan;
   if(!canvas||!plan){this.stop();return;}
   if(this.canvas!==canvas||this.plan!==plan){this.stop();this.canvas=canvas;this.plan=plan;this.root=canvas.closest('.mass-battle');this.watchDensity();this.sources=new Map();this.labels=new Map([...this.root.querySelectorAll('[data-mass-unit]')].map(n=>[n.dataset.massUnit,n]));this.totals=[...this.root.querySelectorAll('[data-mass-total]')];this.title=this.root.querySelector('[data-mass-territory]');this.clock=this.root.querySelector('[data-mass-clock]');}
-  this.playback=playback;this.last=null;this.tick();
+  this.playback=playback;if(plan.field)bindRegionalField(this.root,canvas,plan,()=>{this.last=null;this.tick();});this.last=null;this.tick();
  }
  stop(){if(this.densityQuery&&this.densityHandler)this.densityQuery.removeEventListener?.('change',this.densityHandler);this.densityQuery=null;this.epoch=(this.epoch||0)+1;this.canvas=null;this.plan=null;this.sources?.clear();this.labels=null;this.background=null;this.last=null;}
  source(tier,action){const key=tier+':'+action;if(!this.sources.has(key)){
@@ -28,9 +29,9 @@ export class MassBattleAnimation{
   const state=massBattleAt(p,time),rect={width:c.clientWidth,height:c.clientHeight};if(!rect.width||!rect.height)return;
   const dpr=globalThis.devicePixelRatio||1,w=Math.ceil(rect.width*dpr),h=Math.ceil(rect.height*dpr),key=[Math.floor(time/32),w,h,this.playback.playing].join(':');if(this.last===key&&c.width===w&&c.height===h)return;this.last=key;
   if(c.width!==w)c.width=w;if(c.height!==h)c.height=h;
-  const ctx=c.getContext('2d'),scale=Math.min(w/p.width,h/p.height),sx=scale,sy=scale,ox=(w-p.width*scale)/2,oy=(h-p.height*scale)/2;ctx.setTransform(sx,0,0,sy,ox,oy);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+  const view=p.field?regionalFieldView(p):{zoom:1,x:p.width/2,y:p.height/2},ctx=c.getContext('2d'),scale=Math.min(w/p.width,h/p.height)*view.zoom,sx=scale,sy=scale,ox=w/2-view.x*scale,oy=h/2-view.y*scale;ctx.setTransform(sx,0,0,sy,ox,oy);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
   ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,w,h);ctx.setTransform(sx,0,0,sy,ox,oy);
-  if(p.regional&&state.region){ctx.save();ctx.fillStyle='#d9c59118';ctx.strokeStyle=p.countries.find(c=>c.id===state.owners.get(state.region.territoryId))?.color||'#cbb780';ctx.lineWidth=3;ctx.fillRect(p.width*.27,30,p.width*.46,p.height-60);ctx.strokeRect(p.width*.27,30,p.width*.46,p.height-60);ctx.font='25px serif';ctx.textAlign='center';ctx.fillStyle='#f8e8b9';ctx.fillText(state.region.name,p.width/2,65);if(state.base>=state.region.start+state.region.duration*.86){ctx.font='22px serif';ctx.fillText(state.region.outcome,p.width/2,p.height-35);}ctx.restore();}
+  if(p.field){drawRegionalField(ctx,p,state);drawRegionalOverview(this.root.querySelector('[data-mass-overview]'),p,state,view,rect);this.root.classList.toggle('is-overview',view.zoom<1.6);this.root.dataset.boardZoom=String(view.zoom);c.dataset.regions=String(p.field.nodes.length);}
   for(const node of this.root.querySelectorAll('[data-mass-region]')){const id=node.dataset.massRegion,owner=p.countries.find(c=>c.id===state.owners?.get(id)),present=state.units.filter(u=>u.alive&&u.troops>0&&u.territoryId===id);node.classList.toggle('is-current',id===state.region?.territoryId);node.style.borderColor=owner?.color||'#887b5c';node.querySelector('[data-region-state]').textContent=(owner?.name||'무주지')+(present.length?' · '+present.length+'부대':'');}
   for(const node of this.root.querySelectorAll('[data-mass-role]'))node.textContent=node.dataset.massRole===state.region?.actorId?'⚔ 공격':'🛡 방어';
   const commands=activeCommandsAt(p,state.base),tactic=activeTacticAt(p,state.base);
@@ -45,7 +46,7 @@ export class MassBattleAnimation{
    const poseTime=(u.actionTime+(u.fightOffset||0))*Math.min(1,2/Math.max(1,this.playback.effectiveSpeed));
    const sample=troopFrame(action,reduced?0:(['hurt','death'].includes(action)?u.actionTime:poseTime),{repeat:['attack','guard'].includes(action)}),art=troopFrameArt(source,u.tier,action,sample.frame,u.color),cols=Math.min(4,u.figures),rows=Math.ceil(u.figures/cols),body=50,offset=troopCenterOffset(u.figures,body,18);
    const alternate=['attack','guard'].includes(action)?troopFrameArt(source,u.tier,action,troopFrame(action,reduced?0:poseTime+180,{repeat:true}).frame,u.color):art;
-   let alpha=sample.opacity*(u.withdrawn?.55:1);if(action==='death'&&!reduced)alpha*=.65+.35*Math.abs(Math.sin(u.actionTime/75));
+   let alpha=sample.opacity*(u.withdrawn?.55:1)*(u.movementOpacity??1);if(action==='death'&&!reduced)alpha*=.65+.35*Math.abs(Math.sin(u.actionTime/75));
    ctx.save();ctx.globalAlpha=alpha;ctx.fillStyle=u.color+'22';ctx.strokeStyle=action==='death'?'#ee2637':u.color;ctx.lineWidth=action==='death'?2.5:1.4;
    ctx.beginPath();ctx.ellipse(u.x,u.y+offset-(rows-1)*9,cols*11+9,(rows-1)*9+8,0,0,Math.PI*2);ctx.fill();ctx.stroke();
    for(let n=0;n<u.figures;n++){const row=Math.floor(n/4),count=Math.min(4,u.figures-row*4),x=u.x+(n%4-(count-1)/2)*18,y=u.y+offset-row*18;
@@ -59,12 +60,12 @@ export class MassBattleAnimation{
   for(const e of (state.contacts||state.engagements).filter(e=>!e.automatic).slice(0,6)){const a=state.units.find(u=>u.id===e.attackId),d=state.units.find(u=>u.id===e.defenseId);if(!a||!d||a.withdrawn||d.withdrawn)continue;const pulse=((state.base+e.index*83)%620)/620,hit=state.units.some(u=>[a.id,d.id].includes(u.id)&&u.action==='hurt');const contact={x:(a.x+d.x)/2,y:(a.y+d.y)/2};if(pulse<.3||hit){ctx.save();ctx.translate(contact.x,contact.y);ctx.strokeStyle=hit?'#ffda87':'#fff4c6';ctx.lineWidth=hit?4:2;ctx.globalAlpha=1-pulse;for(let k=0;k<6;k++){const angle=k*Math.PI/3;ctx.beginPath();ctx.moveTo(Math.cos(angle)*6,Math.sin(angle)*6);ctx.lineTo(Math.cos(angle)*(hit?27:19),Math.sin(angle)*(hit?27:19));ctx.stroke();}ctx.restore();}ctx.save();ctx.font='20px "Studio Symbols", "Studio Emoji"';ctx.textAlign='center';ctx.fillStyle='#b21621';ctx.strokeStyle='#fff9';ctx.lineWidth=3;ctx.strokeText('⚔',contact.x,contact.y+7);ctx.fillText('⚔',contact.x,contact.y+7);ctx.restore();}
   const px=scale/dpr,py=scale/dpr;
   for(const u of state.units){const label=this.labels.get(u.id);if(!label)continue;
-   label.hidden=!u.visible;
-   const width=Math.max(48,Math.min(78,135*px-6)),height=30;
+   label.hidden=!u.visible||u.x*px+ox/dpr<0||u.x*px+ox/dpr>rect.width||u.y*py+oy/dpr<0||u.y*py+oy/dpr>rect.height;
+   const width=p.field&&view.zoom<1.6?Math.max(22,Math.min(48,110*px)):Math.max(48,Math.min(78,135*px-6)),height=p.field&&view.zoom<1.6?20:30;
    const half=(Math.min(4,u.figures)-1)*9+30;
    const x=Math.max(0,Math.min(rect.width-width,u.x*px+ox/dpr+(u.side==='attack'?-half*px-width-3:half*px+3)));
    const y=Math.max(0,Math.min(rect.height-height,u.y*py+oy/dpr-height/2));
-   label.style.width=width+'px';label.style.transform=`translate(${x}px,${y}px)`;label.classList.toggle('is-withdrawn',u.withdrawn||!u.alive);label.classList.toggle('is-tactical',commands.some(c=>c.ids.includes(u.id)));label.dataset.action=u.action;label.dataset.centerX=String(u.x);label.dataset.centerY=String(u.y);label.dataset.troops=String(u.troops);label.dataset.figures=String(u.visible?u.figures:0);
+   label.style.opacity=String(u.movementOpacity??1);label.style.width=width+'px';label.style.transform=`translate(${x}px,${y}px)`;label.classList.toggle('is-withdrawn',u.withdrawn||!u.alive);label.classList.toggle('is-tactical',commands.some(c=>c.ids.includes(u.id)));label.dataset.action=u.action;label.dataset.centerX=String(u.x);label.dataset.centerY=String(u.y);label.dataset.troops=String(u.troops);label.dataset.figures=String(u.visible?u.figures:0);
    const army=label.querySelector('[data-mass-army]'),notice=label.querySelector('[data-mass-notice]');army.textContent=format(u.troops)+'만';label.querySelector('[data-mass-health]').style.transform=`scaleX(${Math.min(1,u.troops/Math.max(u.visualArmy??u.startArmy,u.troops,.0001))})`;
    const text=u.labels.at(-1)?.text||(!u.alive?'전사':u.troops<=0?'병력 소진':u.withdrawn?'후퇴':p.regional&&!state.region?.attackIds.includes(u.id)&&!state.region?.defenseIds.includes(u.id)?(p.territories.find(t=>t.id===u.territoryId)?.name||'후방')+' 대기':'');notice.textContent=text;notice.dataset.tone=u.labels.at(-1)?.kind||'quiet';
   }

@@ -1,3 +1,4 @@
+import {spatialBattlefield} from './regional-field-motion.js';
 // Presentation only: ordered territorial visits, one shared body per commander.
 // All casualties/status/owners come from recorded frames; no tactics or game RNG.
 export function regionalVisits(battles){
@@ -22,7 +23,7 @@ export function regionalBattlePresentation(plan,a){
  plan.regional=true;plan.regions=regions;plan.baseDuration=Math.max(1,cursor);plan.tacticalPhases=[];plan.freePresentation=false;plan.eventTimes=new Map();plan.cues=[];
  for(const side of ['attack','defense']){
   const list=plan.units.filter(u=>u.side===side),sign=side==='attack'?1:-1;
-  list.forEach((u,i)=>{u.home={x:plan.width/2-sign*(370+Math.floor(i/6)*95),y:plan.center+((i%6)-Math.min(5,list.length-1)/2)*105};u.orders=[];u.troops=[{at:0,value:u.startArmy}];u.status=[{at:0,alive:u.initialAlive,withdrawn:false}];u.labels=[];u.combatant=false;u.visualArmy=u.startArmy;u.fightOffset=i*137;u.regionSteps=[{at:0,territoryId:u.personPosition||a.before.people.find(p=>p.id===u.id)?.positionId}];});
+  list.forEach((u,i)=>{u.home={x:plan.width/2-sign*(370+Math.floor(i/6)*95),y:plan.center+((i%6)-Math.min(5,list.length-1)/2)*105};u.orders=[];u.troops=[{at:0,value:u.startArmy}];u.status=[{at:0,alive:u.initialAlive,withdrawn:false}];u.labels=[];u.combatant=false;u.visualArmy=u.startArmy;u.fightOffset=i*137;u.regionSteps=[{at:0,territoryId:a.before.people.find(p=>p.id===u.id)?.positionId||u.personPosition}];});
  }
  // Events without a battle belong to the previous visit (post-combat repair).
  let current=regions[0];const assigned=new Map(regions.map(r=>[r,[]]));
@@ -62,4 +63,5 @@ export function regionalBattlePresentation(plan,a){
  plan.holds=important.map(e=>({event:e,base:plan.eventTimes.get(e.index)??cursor})).sort((x,y)=>x.base-y.base||x.event.index-y.event.index).map((h,i)=>({...h,start:h.base+i*1600,end:h.base+(i+1)*1600}));plan.duration=cursor+plan.holds.length*1600;
  const ids=new Set([...regions.flatMap(r=>[r.territoryId,...r.battles.map(b=>b.fromId)]),...plan.units.flatMap(u=>u.regionSteps.map(s=>s.territoryId))].filter(Boolean));
  plan.territories=a.before.territories.filter(t=>ids.has(t.id)).map(t=>({id:t.id,name:t.name,ownerId:t.ownerId}));
+ spatialBattlefield(plan,a);
 }

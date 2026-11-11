@@ -728,3 +728,6 @@ ui/troop-layout.js가 병사54/발35와 카드0.75/상단 이동을 공유한다
 
 
 v0.56.2 지역별 전투는 regional-battle-plan.js에서 전선/방향/지역의 연속 방문과 원본 사건 시간표를 구성한다. mass-battle-plan은14전술/free-battle-plan을 호출하지 않는다. 창 내부의 지역 소유/잔여 병력은 기록 프레임에서 누적하며 mass-battle-scenes는 지역 경계와 중요 사건만 분할하고 마지막 지도 인계에 기존 공개 경로 장부를 재사용한다.
+
+
+v0.56.3은 regional-field-layout/motion/view에서 고정된 전역 도식과 기록 기반 이동/내부 뷰를 구성한다. 기존 지역별 수치 시간표는 그대로 재사용한다. 내부 뷰는 plan별 WeakMap에 저장하며 기존 재생 RAF 하나로 그린다.
