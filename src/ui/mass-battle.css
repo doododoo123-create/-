@@ -18,3 +18,9 @@
 
 .mass-regions>button{text-align:left;background:transparent;cursor:pointer;font-family:inherit}.mass-regions>button:hover{background:#d8bd6940}.mass-overview{position:absolute;right:6px;bottom:6px;width:140px;height:90px;background:#091d2dee;border:1px solid #c8bb8d;z-index:5;pointer-events:none}.mass-overview[hidden]{display:none}.mass-battle.is-overview .mass-unit-label{padding:1px;min-width:0;font-size:8px;line-height:1.1}.mass-battle.is-overview .mass-unit-label b,.mass-battle.is-overview .mass-unit-label strong{font-size:8px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mass-battle.is-overview .mass-local-notice{font-size:7px}.mass-battle [data-mass-canvas]{touch-action:none;cursor:grab}.mass-battle [data-mass-canvas]:active{cursor:grabbing}
 .mass-surface canvas[data-mass-canvas]{pointer-events:auto}.mass-surface canvas.mass-overview{width:140px;height:90px;inset:auto 6px 6px auto;pointer-events:none}
+
+/* Compact geography: places are flags, troops stand beside them. */
+.mass-regions{display:none}.mass-battle{grid-template-rows:auto minmax(0,1fr) auto}
+.mass-surface{background:none}.mass-field{background:#234752}
+.mass-battle.is-overview .mass-unit-label,.mass-battle.is-overview .mass-unit-label b,.mass-battle.is-overview .mass-unit-label strong{font-size:9px}
+.mass-unit-label .mass-local-notice:empty{display:none}

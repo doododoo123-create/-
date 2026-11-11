@@ -10,18 +10,31 @@ export function bindRegionalField(root,canvas,plan,redraw){
  canvas.onpointerdown=e=>{if(e.button!==0)return;drag={id:e.pointerId,x:e.clientX,y:e.clientY,center:{x:view.x,y:view.y}};moved=false;canvas.setPointerCapture(e.pointerId);};
  canvas.onpointermove=e=>{if(!drag||drag.id!==e.pointerId||view.zoom===1)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;moved||=Math.hypot(dx,dy)>4;view.x=drag.center.x-dx/(fit()*view.zoom);view.y=drag.center.y-dy/(fit()*view.zoom);clamp();redraw();};
  canvas.onpointerup=e=>{if(!drag||drag.id!==e.pointerId)return;drag=null;if(canvas.hasPointerCapture(e.pointerId))canvas.releasePointerCapture(e.pointerId);};canvas.onpointercancel=()=>{drag=null;};
- canvas.onclick=e=>{if(moved)return;const box=canvas.getBoundingClientRect(),scale=fit()*view.zoom,x=view.x+(e.clientX-box.left-box.width/2)/scale,y=view.y+(e.clientY-box.top-box.height/2)/scale;const node=plan.field.nodes.find(n=>x>=n.x&&x<=n.x+n.width&&y>=n.y&&y<=n.y+n.height);if(node)focus(node.id);};
+ canvas.onclick=e=>{if(moved)return;const box=canvas.getBoundingClientRect(),scale=fit()*view.zoom,x=view.x+(e.clientX-box.left-box.width/2)/scale,y=view.y+(e.clientY-box.top-box.height/2)/scale;const node=plan.field.nodes.filter(n=>x>=n.label.x&&x<=n.label.x+n.label.w&&y>=n.label.y&&y<=n.label.y+n.label.h||Math.hypot(x-n.cx,y-n.cy)<55).sort((a,b)=>Math.hypot(x-a.cx,y-a.cy)-Math.hypot(x-b.cx,y-b.cy))[0];if(node)focus(node.id);};
 }
-export function drawRegionalField(ctx,plan,state){
- const f=plan.field;ctx.save();
- ctx.strokeStyle='#dccb9a55';ctx.lineWidth=3;ctx.setLineDash([10,8]);for(const edge of f.edges){const a=f.byId.get(edge.from),b=f.byId.get(edge.to);ctx.beginPath();ctx.moveTo(a.x+a.width/2,a.y+a.height/2);ctx.lineTo(b.x+b.width/2,b.y+b.height/2);ctx.stroke();}ctx.setLineDash([]);
- for(const n of f.nodes){const active=n.id===state.region?.territoryId,country=plan.countries.find(c=>c.id===state.owners.get(n.id)),color=country?.color||'#9f987d';ctx.fillStyle=active?'#efe0ae38':'#1b282530';ctx.fillRect(n.x,n.y,n.width,n.height);ctx.strokeStyle=active?'#ffe297':color;ctx.lineWidth=active?8:4;ctx.strokeRect(n.x,n.y,n.width,n.height);ctx.fillStyle='#0a2029dd';ctx.fillRect(n.x,n.y,n.width,65);ctx.font='bold 27px serif';ctx.textAlign='center';ctx.fillStyle='#fff1cb';ctx.fillText(n.name,n.x+n.width/2,n.y+31);ctx.font='20px sans-serif';ctx.fillStyle=color;ctx.fillText((country?.name||'무주지')+(active?' · 현재 전장':''),n.x+n.width/2,n.y+56);if(active&&state.base>=state.region.start+state.region.duration*.86){ctx.font='22px serif';ctx.fillStyle='#ffe8a9';ctx.fillText(state.region.outcome,n.x+n.width/2,n.y+n.height-15);}}
- for(const u of state.units){const o=u.orders.find(o=>state.base>=o.start&&state.base<o.end);if(!u.visible||!o||!['walk','retreat'].includes(o.kind)||o.teleport||o.fromRegion===o.toRegion)continue;ctx.strokeStyle=u.color;ctx.lineWidth=5;ctx.globalAlpha=.65;ctx.beginPath();ctx.moveTo(o.from.x,o.from.y);for(const p of o.path?.slice(1)||[o.to])ctx.lineTo(p.x,p.y);ctx.stroke();const angle=Math.atan2(o.to.y-o.from.y,o.to.x-o.from.x);ctx.beginPath();ctx.moveTo(u.x,u.y);ctx.lineTo(u.x-Math.cos(angle-.4)*28,u.y-Math.sin(angle-.4)*28);ctx.lineTo(u.x-Math.cos(angle+.4)*28,u.y-Math.sin(angle+.4)*28);ctx.closePath();ctx.fillStyle=u.color;ctx.fill();ctx.globalAlpha=1;}
+function regionalPolygonPath(ctx,poly){
+ ctx.beginPath();for(const ring of [poly.points,...(poly.holes||[])]){ring.forEach((q,i)=>i?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y));ctx.closePath();}
+}
+export function drawRegionalField(ctx,p,state){
+ const f=p.field;ctx.save();ctx.fillStyle='#234752';ctx.fillRect(0,0,p.width,p.height);
+ for(const poly of f.polygons){const color=f.countries.find(c=>c.id===(state.owners.get(poly.id)??poly.ownerId))?.color||'#aaa585';regionalPolygonPath(ctx,poly);ctx.fillStyle='#b4ad83';ctx.fill('evenodd');ctx.globalAlpha=.17;ctx.fillStyle=color;ctx.fill('evenodd');ctx.globalAlpha=1;}
+ // Only existing terrain metadata is marked; no invented rivers or roads.
+ for(const poly of f.polygons.filter(p=>p.terrain==='mountain')){const a=poly.points.reduce((v,p)=>({x:v.x+p.x/poly.points.length,y:v.y+p.y/poly.points.length}),{x:0,y:0});if(f.nodes.some(n=>Math.hypot(n.cx-a.x,n.cy-a.y)<140))continue;ctx.strokeStyle='#4a584144';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(a.x-14,a.y+9);ctx.lineTo(a.x,a.y-12);ctx.lineTo(a.x+14,a.y+9);ctx.stroke();}
+ for(const u of state.units){const o=u.orders.find(o=>state.base>=o.start&&state.base<o.end);if(!o||!u.visible||o.teleport||o.fromRegion===o.toRegion||!['walk','retreat'].includes(o.kind))continue;ctx.strokeStyle=u.color;ctx.globalAlpha=.5;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(o.from.x,o.from.y);for(const q of o.path?.slice(1)||[o.to])ctx.lineTo(q.x,q.y);ctx.stroke();ctx.globalAlpha=1;}
+ for(const n of f.nodes){const active=state.region?.territoryId===n.id,country=f.countries.find(c=>c.id===state.owners.get(n.id)),color=country?.color||'#d0c6a1';
+  ctx.strokeStyle='#172822';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(n.cx,n.cy-26);ctx.lineTo(n.cx,n.cy+8);ctx.stroke();ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(n.cx,n.cy-26);ctx.lineTo(n.cx+25,n.cy-17);ctx.lineTo(n.cx,n.cy-8);ctx.closePath();ctx.fill();ctx.fillStyle=active?'#ffe18d':'#e8dcc0';ctx.beginPath();ctx.arc(n.cx,n.cy+8,active?7:4,0,Math.PI*2);ctx.fill();
+  const b=n.label;ctx.fillStyle='#10252bdd';ctx.fillRect(b.x,b.y,b.w,b.h);ctx.font='bold 29px serif';ctx.textAlign='center';ctx.lineWidth=3;ctx.strokeStyle='#14272b';ctx.fillStyle=active?'#ffe19c':'#f4ead1';ctx.strokeText(n.name,b.x+b.w/2,b.y+30,b.w-12);ctx.fillText(n.name,b.x+b.w/2,b.y+30,b.w-12);
+  if(active){ctx.fillStyle='#f5ce70';ctx.font='22px sans-serif';ctx.fillText(state.region.automatic?'⚑ 진입':state.base<state.region.contact?'접근':state.base>=state.region.start+state.region.duration*.86?state.region.outcome:'⚔ 교전',b.x+b.w/2,b.y-7);}
+ }
  ctx.restore();
 }
-export function drawRegionalOverview(canvas,plan,state,view,viewport){
- if(!canvas)return;canvas.hidden=view.zoom===1;if(canvas.hidden)return;canvas.width=280;canvas.height=180;const ctx=canvas.getContext('2d'),scale=Math.min(270/plan.width,170/plan.height),ox=(280-plan.width*scale)/2,oy=(180-plan.height*scale)/2;ctx.clearRect(0,0,280,180);ctx.translate(ox,oy);ctx.scale(scale,scale);
- for(const n of plan.field.nodes){ctx.fillStyle=plan.countries.find(c=>c.id===state.owners.get(n.id))?.color||'#778080';ctx.globalAlpha=.5;ctx.fillRect(n.x,n.y,n.width,n.height);ctx.globalAlpha=1;ctx.strokeStyle=n.id===state.region?.territoryId?'#ffe39d':'#a5b1ac';ctx.lineWidth=n.id===state.region?.territoryId?12:4;ctx.strokeRect(n.x,n.y,n.width,n.height);}
- for(const u of state.units.filter(u=>u.visible&&u.alive)){ctx.fillStyle=u.color;ctx.beginPath();ctx.arc(u.x,u.y,12,0,Math.PI*2);ctx.fill();}
- const fit=Math.min(viewport.width/plan.width,viewport.height/plan.height)*view.zoom;ctx.strokeStyle='#fff';ctx.lineWidth=8;ctx.strokeRect(view.x-viewport.width/(2*fit),view.y-viewport.height/(2*fit),viewport.width/fit,viewport.height/fit);
+export function drawRegionalOverview(canvas,p,state,view,viewport){
+ if(!canvas)return;canvas.hidden=view.zoom===1;if(canvas.hidden)return;
+ canvas.width=280;canvas.height=180;const ctx=canvas.getContext('2d'),scale=Math.min(270/p.width,170/p.height),ox=(280-p.width*scale)/2,oy=(180-p.height*scale)/2;
+ ctx.fillStyle='#234752';ctx.fillRect(0,0,280,180);ctx.save();ctx.translate(ox,oy);ctx.scale(scale,scale);
+ for(const poly of p.field.polygons){ctx.fillStyle='#819786';regionalPolygonPath(ctx,poly);ctx.fill('evenodd');}
+ for(const n of p.field.nodes){ctx.fillStyle=n.id===state.region?.territoryId?'#ffdf83':'#fff';ctx.beginPath();ctx.arc(n.cx,n.cy,9,0,Math.PI*2);ctx.fill();}
+ for(const u of state.units.filter(u=>u.visible&&u.alive)){ctx.fillStyle=u.color;ctx.beginPath();ctx.arc(u.x,u.y,8,0,Math.PI*2);ctx.fill();}
+ const fit=Math.min(viewport.width/p.width,viewport.height/p.height)*view.zoom;
+ ctx.strokeStyle='#fff';ctx.lineWidth=2/scale;ctx.strokeRect(view.x-viewport.width/(2*fit),view.y-viewport.height/(2*fit),viewport.width/fit,viewport.height/fit);ctx.restore();
 }
