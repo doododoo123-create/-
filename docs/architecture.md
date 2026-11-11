@@ -725,3 +725,6 @@ ui/troop-layout.js가 병사54/발35와 카드0.75/상단 이동을 공유한다
 ### v0.56.1 전선별 준비와 전술창 진입
 
 56의 전술창 내부는 유지한다. entry-preparation.js가 각 전선의 원래 집결/진군 장면을 해당 전투 직전으로 옮기며, 대기 부대의 camps와 현재 공개한 세계 상태를 보존한다. battle-entry.js는 초기 실제 참가자로 표시용 집단군과 대치를 만들고, mass-battle-scenes.js가 이 표시를 전술창 진입까지 이어받는다. 아이콘 기준 확대는 mass-battle-animation.js의 기존 시계를 따른다. [검증과 적용 범위](entry-v561.md).
+
+
+v0.56.2 지역별 전투는 regional-battle-plan.js에서 전선/방향/지역의 연속 방문과 원본 사건 시간표를 구성한다. mass-battle-plan은14전술/free-battle-plan을 호출하지 않는다. 창 내부의 지역 소유/잔여 병력은 기록 프레임에서 누적하며 mass-battle-scenes는 지역 경계와 중요 사건만 분할하고 마지막 지도 인계에 기존 공개 경로 장부를 재사용한다.

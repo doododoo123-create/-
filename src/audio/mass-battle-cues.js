@@ -7,7 +7,9 @@ export function massBattleSoundCues(scene,{speed=1}={}){
  if(scene.massPhase==='summary')return [{id:'bp_sfx_battle_end',key:prefix+'summary',at:0,group:'battle',priority:45,maxDuration:2.2}];
  const result=[],contact=Math.min(...plan.units.filter(u=>u.combatant).map(u=>u.visualContact??plan.baseDuration*.24)),combatEnd=plan.baseDuration*.85;
  const loop=(id,from,to,group)=>{const start=massGlobalTime(plan,from),end=massGlobalTime(plan,to),a=Math.max(scene.massStart,start),b=Math.min(scene.massEnd,end);if(b<=a)return;const offset=(a-start)/speed/1000;result.push({id,key:prefix+scene.id+':'+id,at:(a-scene.massStart)/speed,offset,loop:true,sustain:true,scope:'stage',group,priority:15,maxDuration:offset+(b-a)/speed/1000});};
- if(Number.isFinite(contact)){
+ if(plan.regional){
+  for(const r of plan.regions){loop('bp_foley_army_march_loop',r.start,r.automatic?r.end:r.contact,'movement');if(!r.automatic){loop('bp_amb_battle_distant_loop',r.contact,r.end,'battle');const at=(massGlobalTime(plan,r.contact)-scene.massStart)/speed;if(at>=0&&at<(scene.massEnd-scene.massStart)/speed)result.push({id:'bp_sfx_first_clash',key:prefix+'region-contact:'+r.index,at,group:'battle',priority:45,maxDuration:1.45});}}
+ }else if(Number.isFinite(contact)){
   loop('bp_foley_army_march_loop',0,contact,'movement');loop('bp_amb_battle_distant_loop',contact,combatEnd,'battle');
   const at=(massGlobalTime(plan,contact)-scene.massStart)/speed;if(at>=0&&at<(scene.massEnd-scene.massStart)/speed)result.push({id:'bp_sfx_first_clash',key:prefix+'first-contact',at,group:'battle',priority:45,maxDuration:1.45});
  }else loop('bp_foley_army_march_loop',0,plan.baseDuration,'movement');
