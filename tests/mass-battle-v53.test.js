@@ -14,13 +14,20 @@ import {sceneFocus} from '../src/ui/camera-focus.js';
 import {MapCamera} from '../src/ui/map-camera.js';
 import {mapAnchor} from '../src/model/cartography-geometry.js';
 function v53Loaded(f){const p=new TurnPlayback({options:()=>({armyPresentation:true,massBattlePresentation:true})});p.load(f.record,f.start.world,f.run.world,false);return p;}
-test('simultaneous contact pairs all come from recorded opponents; waiting armies remain visible',()=>{
+test('all real armies make contact together instead of waiting for pair-by-pair movements',()=>{
  const f=fourArmyFixture(),snapshot=JSON.stringify(f.run),p=v53Loaded(f),plan=p.state.scenes.find(s=>s.massPlan).massPlan;
- for(const beat of plan.story.beats){const state=massBattleAt(plan,massGlobalTime(plan,beat.contact+100));assert.equal(state.units.length,8);assert(state.contacts.length);for(const c of state.contacts){assert(plan.story.beats.some(b=>b.attackId===c.attackId&&b.defenseId===c.defenseId));}assert(state.units.every(u=>u.troops>=0));}assert.equal(JSON.stringify(f.run),snapshot);
+ const t=Math.max(...plan.units.map(u=>u.visualContact||0))+50,state=massBattleAt(plan,massGlobalTime(plan,t));
+ assert.equal(state.units.filter(u=>['attack','guard'].includes(u.action)).length,8);
+ assert(state.units.filter(u=>['attack','guard'].includes(u.action)).every(u=>u.flip===(u.side==='defense')),'contact poses face the opposing army, including a losing unit yielding ground');assert(state.engagements.length>=4);assert.equal(new Set(state.units.map(u=>u.id)).size,8);
+ assert(state.units.every(u=>u.troops>=0),'free visual damage remains nonnegative');
+ const continuous=plan.units.find(u=>u.battleIds.length>=3);assert(continuous);assert(continuous.orders.some(o=>o.kind==='attack'));assert(!continuous.orders.some(o=>o.kind==='retreat'&&o.start<plan.baseDuration*.85));
+ assert.equal(JSON.stringify(f.run),snapshot);
 });
-test('flank and wave routes are distinct while parent commanders and statistics remain unique',()=>{
- const f=fourArmyFixture(),p=v53Loaded(f),initial=p.state.scenes.find(s=>s.massPlan).massPlan,a=massBattlePlan(initial.group,f.record,{forceTactic:'hook'}),b=massBattlePlan(initial.group,f.record,{forceTactic:'waves'});
- assert.notDeepEqual(a.story.groups.map(g=>g.motions),b.story.groups.map(g=>g.motions));assert.equal(new Set(a.units.map(u=>u.id)).size,a.units.length);for(const g of a.story.groups)for(let i=1;i<g.motions.length;i++)assert.deepEqual(g.motions[i].from,g.motions[i-1].to);
+test('flank and reserve tracks make separate approaches while keeping one body per commander',()=>{
+ const f=fourArmyFixture(),p=v53Loaded(f),initial=p.state.scenes.find(s=>s.massPlan).massPlan,plan=Array.from({length:32},(_,seed)=>massBattlePlan(initial.group,f.record,{seed})).find(v=>v.units.some(u=>u.formationRole==='reserve'));assert(plan);
+ const rear=plan.units.filter(u=>u.formationRole==='reserve'),front=plan.units.filter(u=>u.formationRole!=='reserve');
+ assert(rear.length&&front.length);assert(rear.some(r=>r.visualContact>Math.min(...front.map(u=>u.visualContact))));
+ assert(plan.units.every(u=>u.orders.every((o,i)=>i===0||JSON.stringify(o.from)===JSON.stringify(u.orders[i-1].to))));
 });
 test('personal highest streak is scoped to this group; loss and draw break, automatic capture does not add wins',()=>{
  const units=[{id:'a',name:'가',color:'#f00'},{id:'b',name:'나',color:'#00f'}],fight=(winner,automatic=false)=>({attackId:'a',defenseId:'b',winner,automatic});

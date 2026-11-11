@@ -1,8 +1,0 @@
-{
-  "reference": "v0.56.0 / 사용자 파일61",
-  "files": {
-    "src/ui/atlas-view.js": "41f52c207fc27ac3edb6cf710bbd75bfb9624900b8cfbd120aec9a12e8a37efc",
-    "src/ui/army-presentation.js": "211d2e91e84699e5065482af241a5b1fa47ec83509bf12a6a7c59057a6a7e837",
-    "src/ui/battle-entry.js": "338276878b7ebaa3bbd56d94e4206656eaa39032f14107ea9c891e63dec66aac"
-  }
-}

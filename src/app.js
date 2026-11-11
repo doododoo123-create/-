@@ -1,4 +1,3 @@
-import {selectedBattleOptions,renderSelectedBattleMode} from './ui/selected-battle-mode.js';
 import {HistorySelection} from './ui/history-selection.js';
 import {landSupplyWorld} from './model/land-supply.js';
 import {loadFilmingSettings,saveFilmingSettings} from './ui/filming-settings.js';
@@ -91,7 +90,7 @@ const playback = new TurnPlayback({
     if (ui.page === 'simulation') render();
   },
   speed: () => ui.speed,
-  options:()=>({...playbackSettings,armyPresentation:true,armyResultReport:true,massBattlePresentation:true,...selectedBattleOptions(replaySession),filming:false,kingChoiceNormalSpeed:filmingSettings.kingChoiceNormalSpeed}),
+  options:()=>({...playbackSettings,armyPresentation:true,armyResultReport:true,massBattlePresentation:true,filming:false,kingChoiceNormalSpeed:filmingSettings.kingChoiceNormalSpeed}),
   reducedMotion: () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
 });
 const historySelection=new HistorySelection({selected:selectedFilmTurns,getTurns:()=>{const pending=replaySession?replaySession.livePending:playback.state&&!playback.complete?playback.state.record.turn:null;return (run?.history||[]).filter(r=>r.turn!==pending).map(r=>r.turn);}});historySelection.install();
@@ -148,7 +147,7 @@ function render() {
   renderApp($('#app'), `
     <aside class="sidebar">
       <a class="brand" href="#" data-page="overview" aria-label="사국쟁패 Studio 세계 개요"><span class="brand-symbol">${icon('compass', 29)}</span><span><strong>사국쟁패</strong><small>HISTORY STUDIO</small></span></a>
-      <div class="workspace-label">WORKSPACE <span>v0.59.0</span></div>
+      <div class="workspace-label">WORKSPACE <span>v0.56.0</span></div>
       <button class="world-switch" data-action="world-meta"><span class="world-icon">${icon('globe', 19)}</span><span><b>${esc(world.name)}</b><small>나의 세계 · 편집 가능</small></span>${icon('edit', 13)}</button>
       <div class="nav-label">세계 만들기</div>
       <nav aria-label="주요 메뉴">${Object.entries(pages).slice(0, 5).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}<div class="nav-label nav-second">역사 관찰하기</div>${Object.entries(pages).slice(5).map(([key, [glyph, label]]) => navItem(key, glyph, label)).join('')}</nav>
@@ -160,7 +159,7 @@ function render() {
         ${pageHeading()}
         ${['overview','deployment'].includes(ui.page)?territoryPresetNotice():''}
         ${ui.page === 'overview' ? overview() : ui.page === 'countries' ? countriesPage() : ui.page === 'people' ? peoplePage() : ui.page === 'map' ? mapPage() : ui.page === 'deployment'?deploymentEditor.view():ui.page === 'simulation' ? simulationPage() : ''}
-        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.59.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><button type="button" class="text-button" data-action="font-licenses">글꼴 라이선스</button><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
+        <footer class="page-footer"><span>사국쟁패 Studio <b>v0.56.0</b></span><span>모든 역사는 당신의 세계에서 시작됩니다.</span><button type="button" class="text-button" data-action="font-licenses">글꼴 라이선스</button><span>LOCAL FIRST ${dot('#91a67a')}</span></footer>
       </main>
     </div>`);
   mapCamera.restore();if(ui.page==='simulation')mapCamera.follow(playback);mapAnimation.start($('#app'),playback);
@@ -239,7 +238,7 @@ function historyList() {
   const history = run?.history || [];
   const pending = replaySession?replaySession.livePending:playback.state&&!playback.complete?playback.state.record.turn:null;
   const end=Math.max(0,history.length-ui.historyOffset),shown=history.slice(Math.max(0,end-100),end).reverse();
-  return `<section class="panel history-panel"><div class="panel-head"><div><span class="eyebrow">CHRONICLE</span><h2>역사 기록 <span class="count-badge">${history.length}턴</span></h2></div>${button('export-history', '기록 내보내기', 'download', 'subtle', !history.length || pending ? 'disabled' : '')}</div><div class="film-selection"><span>체크칸 드래그 · Shift+클릭으로 여러 턴 선택 <b data-film-count>${selectedFilmTurns.size}개 선택</b></span>${renderSelectedBattleMode(filmingSettings)}${button('film-selected','선택한 턴 재생','play','primary',!selectedFilmTurns.size?'disabled':'')}${button('film-clear-selection','선택 해제','','subtle',!selectedFilmTurns.size?'disabled':'')}</div><div class="history-scroll">${history.length ? shown.map(r => {
+  return `<section class="panel history-panel"><div class="panel-head"><div><span class="eyebrow">CHRONICLE</span><h2>역사 기록 <span class="count-badge">${history.length}턴</span></h2></div>${button('export-history', '기록 내보내기', 'download', 'subtle', !history.length || pending ? 'disabled' : '')}</div><div class="film-selection"><span>체크칸 드래그 · Shift+클릭으로 여러 턴 선택 <b data-film-count>${selectedFilmTurns.size}개 선택</b></span>${button('film-selected','선택한 턴 재생','play','primary',!selectedFilmTurns.size?'disabled':'')}${button('film-clear-selection','선택 해제','','subtle',!selectedFilmTurns.size?'disabled':'')}</div><div class="history-scroll">${history.length ? shown.map(r => {
     if(r.turn === pending) return `<article class="history-entry pending-entry"><div class="history-time"><b>${String(r.turn).padStart(3,'0')}</b><small>R${r.round}</small></div><span class="event-icon">${icon('dice',17)}</span><div class="history-content"><h3>${esc(r.actorName)}의 판정 진행 중</h3><p>눈금과 결과는 장면이 끝나면 기록됩니다.</p></div></article>`;
     return `<div class="history-select-row ${selectedFilmTurns.has(r.turn)?'is-selected':''}" data-film-row="${r.turn}"><label data-film-select title="드래그 또는 Shift+클릭으로 여러 턴 선택"><input type="checkbox" data-film-turn="${r.turn}" aria-label="${r.turn}턴 촬영 선택" ${selectedFilmTurns.has(r.turn)?'checked':''}></label><article class="history-entry ${replaySession?.turn===r.turn?'replaying':''}" data-action="replay-turn" data-id="${r.turn}" role="button" tabindex="0" aria-label="${r.turn}턴 다시 보기"><div class="history-time"><b>${String(r.turn).padStart(3, '0')}</b><small>R${r.round}</small></div><span class="event-icon ${r.type}">${icon(r.type === 'war' ? 'sword' : 'flag', 17)}</span><div class="history-content"><h3>${esc(displayEventText(r.title))}</h3><p>${esc(displayEventText(r.detail))}</p><div class="roll-pills">${r.rolls.map(d => `<span>${icon('dice', 12)}${esc(displayEventText(d.label))} <b>${d.value}</b><small>/D${d.sides}</small></span>`).join('')}</div>${renderBalanceChronicle(r)}${r.production.length ? `<div class="production-note">라운드 ${r.round} 종료 · ${r.production.map(p => `${esc(p.name)} +${p.gain}만`).join(' / ')}</div>` : ''}</div></article></div>`;
   }).join('') : '<div class="empty history-empty"><span class="empty-icon">' + icon('clock', 29) + '</span><h3>아직 쓰이지 않은 역사</h3><p>‘한 턴 진행’을 누르면 국가의 첫 행동이 기록됩니다.</p></div>'}</div>${history.length>100?`<div class="history-pagination">${button('history-older','이전 기록','','outline',end<=100?'disabled':'')}<span>${Math.max(1,end-99)}~${end} / ${history.length}턴</span>${button('history-newer','최근 기록','','outline',!ui.historyOffset?'disabled':'')}</div>`:''}</section>`;
@@ -355,7 +354,7 @@ async function startSelectedFilm(){
  const queue=selectedTurnQueue(selectedFilmTurns,run.history,pending);
  if(!queue.length){notify('완료된 역사에서 촬영할 턴을 선택해 주세요.');return;}
  stop();ui.inspectedPerson=null;
- replaySession={film:true,massBattlePresentation:filmingSettings.massBattlePresentation!==false,queue,turn:queue[0],endTurn:queue.at(-1),livePending:pending,playing:true,
+ replaySession={film:true,queue,turn:queue[0],endTurn:queue.at(-1),livePending:pending,playing:true,
   presentation:{state:playback.state,detailReturn:playback.detailReturn,remaining:playback.remaining,groupEnd:playback.groupEnd,groupDone:playback.groupDone},
   camera:{...mapCamera.view('simulation')},cameraKey:mapCamera.followKey,cameraRecord:mapCamera.followRecord,cameraFollowing:mapCamera.autoFollow};
  mapCamera.setFollowing(true,playback);openMapFullscreen();await loadHistoryTurn(queue[0],true);
@@ -463,7 +462,6 @@ document.addEventListener('submit', event => {
 });
 document.addEventListener('change', async event => {
   const target = event.target;
-  if(target.matches('[data-selected-battle-mode]')){filmingSettings.massBattlePresentation=target.checked;saveFilmingSettings(localStorage,filmingSettings);return;}
   if(target.matches('[data-film-turn]')){historySelection.change(target);return;}
   if(target.matches('[data-film-setting]')){filmingSettings.kingChoiceNormalSpeed=target.checked;saveFilmingSettings(localStorage,filmingSettings);return;}
   if(target.matches('[data-film-speed]')){setPlaybackSpeed(Number(target.value));return;}

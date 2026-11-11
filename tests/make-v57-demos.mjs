@@ -1,7 +1,0 @@
-import{mkdir,writeFile}from'node:fs/promises';
-import{tacticalFixture,tacticalPlans,tacticalRoundtripFixture}from'./tactical-v57-fixture.mjs';
-import{MASS_TACTICS}from'../src/ui/mass-battle-tactics.js';
-import{massBattlePlan}from'../src/ui/mass-battle-plan.js';
-await mkdir('.artifacts/v57/demos',{recursive:true});const index=[];
-for(const tactic of MASS_TACTICS){let found=false;for(const kind of ['normal','advance','counter','royal']){const f=tacticalFixture(kind);for(const p of tacticalPlans(f)){const plan=massBattlePlan(p.group,f.record,{forceTactic:tactic.id}),beat=plan.story.beats.find(b=>b.tactic.id===tactic.id);if(!beat)continue;plan.group={id:p.group.id,frontName:'전술 검증 · '+tactic.name};await writeFile('.artifacts/v57/demos/'+tactic.id+'.json',JSON.stringify(plan));index.push({id:tactic.id,name:tactic.name,kind,start:beat.start,contact:beat.contact,resolve:beat.resolve,end:beat.end});found=true;break;}if(found)break;}if(!found)throw Error('전술 시연 누락 '+tactic.id);}
-const fixture=tacticalRoundtripFixture(),roundtrip=massBattlePlan(fixture.group,fixture.record);roundtrip.group={id:roundtrip.group.id,frontName:'표시 계층 fixture · 점령과 재탈환 · 게임 저장 아님'};await writeFile('.artifacts/v57/demos/roundtrip.json',JSON.stringify(roundtrip));await writeFile('.artifacts/v57/demos/index.json',JSON.stringify(index,null,2));console.log('14 real-record policy demos + clearly labelled presentation-only recapture fixture');

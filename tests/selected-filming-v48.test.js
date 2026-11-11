@@ -26,7 +26,7 @@ test('actual app restores only selected turns, stops at end, keeps pause on spee
  const p=new TurnPlayback({options:()=>({armyPresentation:true,compactCampaigns:true}),schedule:()=>1,cancel(){}});
  p.load(run.history.at(-1),run.world,run.world,false);p.finish();const live=p.state;
  const ctx=vm.createContext({run,playback:p,replaySession:null,replayToken:0,auto:false,timer:null,selectedFilmTurns:new Set([3,1]),selectedTurnQueue,nextReplayTurn,
- filmingSettings:{kingChoiceNormalSpeed:false,massBattlePresentation:true},ui:{speed:1,replayLoading:false,mapFullscreen:false},soundDirector:{pause(){},reset(){}},
+ ui:{speed:1,replayLoading:false,mapFullscreen:false},soundDirector:{pause(){},reset(){}},
  mapCamera:{views:new Map(),followKey:'live',followRecord:live.record,autoFollow:false,view:()=>({x:600,y:400,zoom:2}),resetFollow(){},cancelMotion(){},setFollowing(value){this.autoFollow=value;}},
  render(){},notify(message){throw Error(message);},openMapFullscreen(){ctx.ui.mapFullscreen=true;},
  replayTurn:async(...args)=>{loaded.push(args[1]);return replayTurn(...args);},
