@@ -720,3 +720,8 @@ ui/troop-layout.js가 병사54/발35와 카드0.75/상단 이동을 공유한다
 - `mass-battle-recap.js`는 camps와 표시용 영토를 순서대로 갱신하고 mapReveal에 공개한 전투/점령/이동을 따로 기록한다. `round-campaign.js`/`recent-map-events.js`가 이 목록을 읽어 미래의 경로/점령을 한꺼번에 드러내지 않는다. 실제 최종 상태로 돌아갈 때도 같은 공개 목록을 유지한다. 다중 영토 점령은 captureSteps만큼 표시 시간을 확보한다.
 - `battle-theme.css`는 첨부 WebP/재질SVG/9분할PNG/이름표를 CSS로 표시한다. 전술 캔버스는 병사/그림자/효과만 그린다. `battle-pack-art.mjs`는 사용한 UI와OGG의 원본 해시를 검사하고 배포용13소리를 생성한다. `audio/sounds.js`는 기존42개와 새13개를 합친다. 반복음도 기존 Director의 시계/장부와 Mixer의 동일한4소스 제한에 포함되며 playbackRate를 변경하지 않는다.
 - `data/officer-names.js`는200개 이름,`engine/officer-names.js`는 별도 고정 해시와 사용 중 이름 목록으로 신규 이름을 선택한다. 게임 RNG는 소비하지 않는다. controls.officerNames의 턴 경계와 지속 상태 플래그로 기존 기록을 유지하며 사용자 정의 최초 장수·재등용 장수를 덮어쓰지 않는다. 세계/역사 형식과 엔진38의 전투 규칙은 유지한다.
+
+
+### v0.56.1 전선별 준비와 전술창 진입
+
+56의 전술창 내부는 유지한다. entry-preparation.js가 각 전선의 원래 집결/진군 장면을 해당 전투 직전으로 옮기며, 대기 부대의 camps와 현재 공개한 세계 상태를 보존한다. battle-entry.js는 초기 실제 참가자로 표시용 집단군과 대치를 만들고, mass-battle-scenes.js가 이 표시를 전술창 진입까지 이어받는다. 아이콘 기준 확대는 mass-battle-animation.js의 기존 시계를 따른다. [검증과 적용 범위](entry-v561.md).

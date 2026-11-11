@@ -16,8 +16,9 @@ export function visibleArmyGroups(world,presentation){
   if(e.index===limit&&e.type==='army_assembly'&&scene.kind==='movement')continue;
   if(e.armyGroup.released)groups.delete(e.armyGroup.id);else groups.set(e.armyGroup.id,e.armyGroup);
  }
+ if(scene?.entryArmyGroups){groups.clear();for(const g of scene.entryArmyGroups)groups.set(g.id,g);}
  return [...groups.values()].flatMap(group=>{
-  const countryId=world.countries[group.nation]?.id,members=group.members.map(m=>world.people.find(p=>p.countryId===countryId&&p.role==='general'&&p.slot===m.slot&&p.generation===m.generation)).filter(p=>p?.active&&p.alive&&p.troops>0);
+  const countryId=world.countries[group.nation]?.id,members=group.members.map(m=>world.people.find(p=>m.personId?p.id===m.personId:p.countryId===countryId&&p.role==='general'&&p.slot===m.slot&&p.generation===m.generation)).filter(p=>p?.active&&p.alive&&p.troops>0);
   if(members.length<2)return [];
   const leader=members.find(p=>p.slot===group.leaderSlot)||members[0];
   return [{...group,countryId,locationId:world.territories[group.location]?.id,leader,members,army:members.reduce((n,p)=>n+p.troops,0)}];

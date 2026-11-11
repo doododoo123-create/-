@@ -1,0 +1,17 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {fourArmyFixture} from './studio-v41-fixture.mjs';import {studio37Fixture,studio37Controls} from './studio-v37-fixture.mjs';
+import {nextTurn} from '../src/engine/simulation.js';import {TurnPlayback} from '../src/ui/playback.js';import {visibleArmyGroups} from '../src/ui/army-presentation.js';import {battleEntry} from '../src/ui/battle-entry.js';
+const load=f=>{const p=new TurnPlayback({options:()=>({armyPresentation:true,massBattlePresentation:true})});p.load(f.record,f.start.world,f.run.world,false);return p;};
+test('two4officer armies persist from the duel into the unchanged tactical scene, with no entry march into later duels',()=>{
+ const f=fourArmyFixture(),before=JSON.stringify(f),p=load(f),ss=p.state.scenes,i=ss.findIndex(s=>s.massPlan),entry=ss[i-1];assert(entry.entryLocation);assert.deepEqual(entry.readySides,['attack','defense']);assert.equal(entry.engagement.people.length,2);
+ for(const n of [i-1,i]){p.state.index=n;const groups=visibleArmyGroups(p.displayWorld,p.state);assert.equal(groups.length,2);assert(groups.every(g=>g.members.length===4));assert.deepEqual(groups.map(g=>g.id),entry.entryArmyGroups.map(g=>g.id));}assert.equal(ss[i].mapEventIndex,entry.mapEventIndex);assert(!ss.slice(0,i).some(s=>s.kind==='movement'&&s.event?.type==='territory'));assert.equal(JSON.stringify(f),before);
+});
+test('each frontier gathers immediately before its own battle; later preparation preserves prior results',()=>{
+ const start=studio37Fixture({twoFronts:true}),run=nextTurn(start,studio37Controls({twoFronts:true})),p=load({start,run,record:run.history[0]}),ss=p.state.scenes,plans=[...new Set(ss.map(s=>s.massPlan).filter(Boolean))];assert.equal(plans.length,2);
+ const first=ss.findIndex(s=>s.massPlan===plans[0]),secondAssembly=ss.findIndex(s=>s.event?.type==='army_assembly'&&s.event.armyGroup.frontId===plans[1].group.frontId);assert(secondAssembly>first);const event=run.history[0].events.find(e=>e.type==='army_assembly'&&e.armyGroup.frontId===plans[1].group.frontId&&e.armyGroup.nation===0),before=run.history[0].frames[event.index].before;for(const m of event.armyGroup.members){const person=before.people.find(p=>p.countryId===before.countries[0].id&&p.slot===m.slot&&p.role==='general');assert.equal(ss[first].camps[person.id].territoryId,person.positionId);}
+ const preparation=ss.filter(s=>s.battleEntry&&s.event?.armyGroup?.frontId===plans[1].group.frontId);for(const s of preparation)assert.deepEqual(s.worldBefore.territories,plans[1].before.territories);assert.equal(new Set(ss.filter(s=>s.event?.type==='army_assembly').map(s=>s.event.index)).size,run.history[0].events.filter(e=>e.type==='army_assembly'&&e.armyGroup.members.length>=2).length);
+});
+test('a lone defender stays individual; missing assembly metadata still groups actual initial defenders',()=>{
+ const f=fourArmyFixture(),p=load(f),plan=p.state.scenes.find(s=>s.massPlan).massPlan,group={...plan.group,defenseMetadata:[]},entry=battleEntry(group,plan,f.record)[0];assert(entry.entryArmyGroups.some(g=>g.members.length>=2&&g.nation===1));
+ const start=studio37Fixture({twoFronts:true}),run=nextTurn(start,studio37Controls({twoFronts:true})),other=load({start,run,record:run.history[0]});for(const s of other.state.scenes.filter(s=>s.entryLocation)){assert.equal(s.engagement.people.length,2);assert(s.entryArmyGroups.every(g=>g.nation===0));}
+});

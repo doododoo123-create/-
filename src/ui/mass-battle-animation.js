@@ -24,7 +24,8 @@ export class MassBattleAnimation{
  tick(){
   const c=this.canvas,p=this.plan;if(!c?.isConnected||!p)return;
   placeMassBattle(this.playback,this.root?.closest('.map-stage')||this.root);
-  const time=massSceneTime(this.playback),state=massBattleAt(p,time),rect=c.getBoundingClientRect();if(!rect.width||!rect.height)return;
+  const time=massSceneTime(this.playback),opening=this.playback.scene.massPhase!=='summary'&&!this.playback.reducedMotion?.()?Math.min(1,time/500):1,stage=this.root.closest('.map-stage');if(stage){const r=stage.getBoundingClientRect();this.root.style.transformOrigin=`${Number(this.root.dataset.anchorX)-r.left-this.root.offsetLeft}px ${Number(this.root.dataset.anchorY)-r.top-this.root.offsetTop}px`;this.root.style.transform=opening<1?`scale(${.04+.96*(1-Math.pow(1-opening,3))})`:'';this.root.style.opacity=String(Math.min(1,.15+opening*2));}
+  const state=massBattleAt(p,time),rect={width:c.clientWidth,height:c.clientHeight};if(!rect.width||!rect.height)return;
   const dpr=globalThis.devicePixelRatio||1,w=Math.ceil(rect.width*dpr),h=Math.ceil(rect.height*dpr),key=[Math.floor(time/32),w,h,this.playback.playing].join(':');if(this.last===key&&c.width===w&&c.height===h)return;this.last=key;
   if(c.width!==w)c.width=w;if(c.height!==h)c.height=h;
   const ctx=c.getContext('2d'),scale=Math.min(w/p.width,h/p.height),sx=scale,sy=scale,ox=(w-p.width*scale)/2,oy=(h-p.height*scale)/2;ctx.setTransform(sx,0,0,sy,ox,oy);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
